@@ -1,0 +1,30 @@
+# Build and simulator outputs
+/build/
+/sim_build/
+/obj_dir/
+/work/
+/simv
+/simv.daidir/
+/csrc/
+/DVEfiles/
+/xsim.dir/
+/.Xil/
+ucli.key
+transcript
+*.vcd
+*.fst
+*.fsdb
+*.vpd
+*.wlf
+*.shm/
+
+# Local Python tooling
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
+
+# Editor and OS files
+*.swp
+*.swo
+.DS_Store
