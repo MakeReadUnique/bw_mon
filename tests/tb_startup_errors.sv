@@ -1,0 +1,28 @@
+module tb_startup_errors;
+  timeunit 1fs; timeprecision 1fs;
+  import bw_mon_pkg::*;
+  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.STARTUP_TIMEOUT_NS(5)) setup();
+  string which;
+  int unused_handle;
+  initial begin
+    if(!$value$plusargs("CASE=%s",which)) $fatal(1,"test requires CASE");
+    case(which)
+      "empty": unused_handle=register_point("","tb.point",BW_NS,10,1,"clk");
+      "bad_width": unused_handle=register_point("p0","tb.p0",BW_NS,0,1,"clk");
+      "bad_stride": unused_handle=register_point("p0","tb.p0",BW_NS,10,11,"clk");
+      default: begin
+        unused_handle=register_point("p0","tb.p0",BW_NS,10,1,"clk");
+        if(which=="duplicate") unused_handle=register_point("p0","tb.p1",BW_NS,10,1,"clk");
+        else if(which=="missing") #6000000;
+        else begin
+          unused_handle=register_point("p1","tb.p1",BW_NS,10,1,"clk");
+          wait(monitor_ready);
+          #1000000;
+          if(which=="late") unused_handle=register_point("p2","tb.p2",BW_NS,10,1,"clk");
+          else if(which=="reconfigure") configure_monitor(2);
+        end
+      end
+    endcase
+    $fatal(1,"expected core error did not occur");
+  end
+endmodule

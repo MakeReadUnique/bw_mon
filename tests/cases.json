@@ -1,0 +1,75 @@
+[
+  {
+    "name": "ns_bind",
+    "top": "tb_ns_bind"
+  },
+  {
+    "name": "ns_stride",
+    "top": "tb_ns_stride"
+  },
+  {
+    "name": "startup_empty",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=empty"
+    ],
+    "expect_error": "BW_CORE_ERROR code=POINT_ID"
+  },
+  {
+    "name": "startup_bad_width",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=bad_width"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_bad_stride",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=bad_stride"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_duplicate",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=duplicate"
+    ],
+    "expect_error": "BW_CORE_ERROR code=DUPLICATE_POINT"
+  },
+  {
+    "name": "startup_missing",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=missing"
+    ],
+    "expect_error": "BW_CORE_ERROR code=STARTUP_TIMEOUT"
+  },
+  {
+    "name": "startup_late",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=late"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REGISTRATION_FROZEN"
+  },
+  {
+    "name": "startup_reconfigure",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=reconfigure"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  },
+  {
+    "name": "startup_deadline",
+    "top": "tb_startup_deadline"
+  },
+  {
+    "name": "byte_config_error",
+    "top": "tb_byte_config_error",
+    "expect_error": "BW_CORE_ERROR code=BYTE_CONFIG"
+  }
+]
