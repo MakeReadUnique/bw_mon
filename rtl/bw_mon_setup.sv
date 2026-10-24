@@ -4,8 +4,12 @@ module bw_mon_setup #(
 ) ();
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
+  import bw_check_report_pkg::*;
+  bw_check_report report;
   bit deadline_reached = 0;
   initial begin
+    report=new;
+    install_check_report(report);
     if (STARTUP_TIMEOUT_NS == 0)
       core_error("STARTUP_TIMEOUT_CONFIG","setup","timeout must be positive");
     configure_monitor(EXPECTED_POINT_COUNT);

@@ -62,6 +62,8 @@ def main():
                       "Fatal:" not in result.stdout)
         passed = passed and all(re.search(pattern, result.stdout) is not None
                                 for pattern in case.get("expect_log", []))
+        passed = passed and all(len(re.findall(pattern, result.stdout)) == count
+                                for pattern, count in case.get("expect_counts", {}).items())
         print(f"{'PASS' if passed else 'FAIL'} {case['name']}: {log_path}", flush=True)
         if not passed:
             failures.append(case["name"])

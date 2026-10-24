@@ -125,6 +125,24 @@ package bw_mon_pkg;
     real e2e_gbps;
   } bw_episode_result_t;
 
+  typedef enum logic [1:0] {
+    BW_REPORT_STATISTICS_ONLY, BW_REPORT_PASS, BW_REPORT_WARNING, BW_REPORT_FAIL
+  } bw_report_status_t;
+  typedef struct packed {
+    bw_report_status_t status;
+    bw_u64_t pass_count,fail_count,warning_count,scopes_done,scopes_expected;
+    bit finalized;
+  } bw_report_summary_t;
+
+  // Dedicated synchronous report transport. The owner implements all cfg,
+  // evidence and comparison state outside this package.
+  virtual class bw_report_sink;
+    pure virtual function void on_ready();
+    pure virtual function void submit_episode(string scope_id,bw_episode_result_t result);
+    pure virtual function void scope_done(bw_scope_t kind,string scope_id,bw_u64_t stats_epoch);
+    pure virtual function bw_report_summary_t summary();
+  endclass
+
   function automatic string episode_reason_name(bw_episode_reason_t reason);
     case (reason)
       BW_EPISODE_REASON_NONE: return "NONE";
@@ -150,6 +168,7 @@ package bw_mon_pkg;
 
   bw_point_registration_t registered_points[$];
   bit monitor_configured = 0;
+  bw_report_sink report_sink;
   bit core_failure_seen = 0;
   bit monitor_ready = 0;
   int unsigned expected_point_count;
@@ -165,8 +184,24 @@ package bw_mon_pkg;
            code, scope_id, $time, detail);
   endfunction
 
+  function automatic void install_check_report(bw_report_sink owner);
+    if(report_sink!=null || monitor_ready || owner==null)
+      core_error("REPORT_OWNER","setup","one report owner must be installed before ready");
+    report_sink=owner;
+  endfunction
+
+  function automatic bw_report_summary_t check_report_summary();
+    if(report_sink==null) return '0;
+    return report_sink.summary();
+  endfunction
+
+  function automatic void report_scope_done(bw_scope_t kind,string scope_id,bw_u64_t stats_epoch=0);
+    if(report_sink!=null && !core_failure_seen) report_sink.scope_done(kind,scope_id,stats_epoch);
+  endfunction
+
   function automatic void emit_episode_result(string scope_id, bw_episode_result_t result);
     if (core_failure_seen) return;
+    if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
     // Type/transport bridge for the dedicated check/report owner. Episode
     // arithmetic stays in bw_stats_core; this entry does no performance check.
     $display("BW_EPISODE scope_kind=%0d scope=%s epoch=%0d episode=%0d result_seq=%0d status=%0d first_ticks=%0d last_ticks=%0d tail_ticks=%0d confirm_ticks=%0d bytes=%0d events=%0d duration_ticks=%0d first_known=%0b last_known=%0b tail_known=%0b bytes_complete=%0b events_complete=%0b member_reset=%0b e2e_valid=%0b e2e_gbps=%0.12g reason=%s",
@@ -175,6 +210,7 @@ package bw_mon_pkg;
       result.byte_count,result.event_count,result.duration_ticks,result.first_known,result.last_known,
       result.tail_known,result.bytes_complete,result.events_complete,result.member_reset_coverage,
       result.e2e_valid,result.e2e_gbps,episode_reason_name(result.reason));
+    if(report_sink!=null) report_sink.submit_episode(scope_id,result);
   endfunction
 
   function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,
@@ -279,6 +315,7 @@ package bw_mon_pkg;
     if (registered_points.size() != expected_point_count) return;
     measurement_start_ticks = $time;
     monitor_ready = 1;
+    if(report_sink!=null) report_sink.on_ready();
     $display("BW_READY time_ticks=%0d points=%0d",measurement_start_ticks,registered_points.size());
   endfunction
 
@@ -318,5 +355,18 @@ package bw_mon_pkg;
       if (registered_points[i].id == id) return i;
     core_error("POINT_REFERENCE", id, "unregistered point control source");
     return -1;
+  endfunction
+
+  function automatic int registered_scope_count(bw_scope_t kind);
+    if(!monitor_ready) core_error("REGISTRY_QUERY","report","scope query before ready");
+    return kind==BW_POINT ? registered_points.size() : 0;
+  endfunction
+
+  function automatic string registered_scope_id(bw_scope_t kind,int index);
+    if(!monitor_ready || kind!=BW_POINT || index<0 || index>=registered_points.size()) begin
+      core_error("REGISTRY_QUERY","report","invalid scope query");
+      return "";
+    end
+    return registered_points[index].id;
   endfunction
 endpackage
