@@ -669,3 +669,108 @@ and the immutable final time budget. Integer
 counts/times/qualities compare exactly; real results use 1e-10 GB/s numerical
 tolerance. `python3 tests/run.py` reproduces the full suite; the `episode_*` case names
 in `tests/cases.json` select the episode regressions individually.
+
+## Automatic traffic phases
+
+Set `PHASE_ENABLE=1` together with enabled episodes and an explicit Q. Phases
+consume the same newly published real GB/s window results shown at the public
+point. There is no second bandwidth window, external phase label, performance
+target input or Verdi-side calculation. Repeated or missing ramp, steady and
+fall phases are allowed; a zero-bandwidth plateau can be steady.
+
+The following parameters are shared by point and core. All settings are fixed
+before ready. Disabled phase analysis is the default; when enabled every entry
+below must be explicit, including zero relative coefficients.
+
+| Parameter | Type / unit | Required value / behavior |
+| --- | --- | --- |
+| `PHASE_ENABLE` | bit | Default 0; enabled analysis also requires `EPISODE_ENABLE=1` |
+| `PHASE_N` | known unsigned64 count | Required N>=3; automatic queue storage uses signed32 indices, so larger than 2,147,483,647 is a representation error rather than an arbitrary analysis cap |
+| `PHASE_MIN_SPAN` | known unsigned64 ns / cycles | Required positive span in the window basis; ns is converted with checked integer arithmetic |
+| `PHASE_K` | known unsigned64 count | Required positive number of consecutive equal candidates |
+| `PHASE_STEADY_ENTER_ABS`, `PHASE_STEADY_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite coefficients for steady entry |
+| `PHASE_STEADY_EXIT_ABS`, `PHASE_STEADY_EXIT_REL` | real GB/s / unitless fraction | Exit coefficients must each be at least the corresponding entry coefficient |
+| `PHASE_RMS_ENTER_ABS`, `PHASE_RMS_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite residual-fit entry coefficients |
+| `PHASE_RMS_EXIT_ABS`, `PHASE_RMS_EXIT_REL` | real GB/s / unitless fraction | Exit coefficients must each be at least the corresponding entry coefficient |
+| `PHASE_TREND_ABS`, `PHASE_TREND_REL` | real GB/s / unitless fraction | ABS must exceed steady EXIT ABS; REL must be at least steady EXIT REL, guaranteeing strict separation for every nonnegative mean |
+
+Coefficient defaults of -1 are deliberately invalid sentinels, not engineering
+thresholds. Each tolerance is ABS+REL*mean: REL=0.05 means five percent of the
+fit mean, unlike performance cfg keys ending `_rel_tol_pct`, where 5 means five
+percent. N full samples do not bypass `PHASE_MIN_SPAN`; an unattainable span
+remains explicitly insufficient rather than creating a phase. Bad settings are
+fatal `PHASE_CONFIG` before point registration/ready; queue representation uses
+`STORAGE_RANGE`. Nonrepresentable fit or tolerance arithmetic is fatal
+`PHASE_FIT` with scope and publication/operand context.
+
+Eligible evidence is new, full, byte-complete, positive-denominator and owned by
+the active episode. Before a new episode, all older activity is at or before
+its latest retired transfer. Therefore the window includes older activity exactly
+when its left boundary still includes that transfer. This private ownership
+marker includes zero-byte events and uses the scope's episode identity, never
+source reset generation. Unknown older observations independently fail window
+quality until they expire. Own statistics reset clears this ownership with the
+window history. Known silent background is not other-episode activity.
+
+The most recent N consecutive eligible results also require the configured
+span. Fit time uses actual physical publication timestamps, with integer tick
+differences taken before real conversion, including in cycle mode after a
+frequency change. The equal-weight least-squares fit reports its mean, total
+trend delta over those N points and residual RMS. Constant values use a relative
+value origin so an exactly constant 6.4 GB/s series has zero residual even with
+zero tolerances; there is no epsilon clamp. Residual RMS is phase evidence,
+not the later performance population standard deviation.
+
+Strict steady/ramp/fall conditions use entry tolerances; an existing steady
+phase uses wider exit tolerances. A changed candidate starts its K count at1.
+Confirmation preserves the first candidate publication time and its raw-count
+snapshots as the boundary, and exposes the later confirmation time separately.
+Invalid observations immediately clear evidence/candidates and return to
+undetermined without waiting K. Valid fits can also confirm departure to
+undetermined after K; undetermined intervals are gaps, not reliable final
+phase records. New episodes start fresh evidence. Held cycle snapshots create
+no new observations or confirmations.
+
+Public ordinary point fields are:
+
+| Fields | Meaning |
+| --- | --- |
+| `phase_current`, `phase_candidate`, `phase_active` | Current/candidate `BW_PHASE_UNDETERMINED`, `RAMP`, `STEADY` or `FALL`; active means a confirmed reliable fragment exists |
+| `phase_id`, `phase_result_seq` | Lifetime confirmed-fragment identity and delivered final-fragment sequence; discarded outside-episode fragments can leave ID gaps |
+| `phase_window_seq` | Last consumed window `result_seq`; unchanged on a held cycle snapshot |
+| `phase_eligible`, `phase_evidence_continuous`, `phase_evidence_sufficient` | Independent current-observation and N/span qualification |
+| `phase_evidence_count`, `phase_evidence_span` | Retained consecutive count (at most N); span is integer ticks in ns mode, actual edge indices in cycle mode |
+| `phase_candidate_count`, `phase_candidate_ticks` | Consecutive candidate count and first-candidate time |
+| `phase_candidate_total_bytes`, `phase_candidate_total_events` | Known raw cumulative snapshots strictly before that candidate publication |
+| `phase_start_ticks`, `phase_confirmation_ticks` | Confirmed current boundary and later confirmation time |
+| `phase_fit_valid`, `phase_fit_mean`, `phase_fit_delta`, `phase_fit_rms` | Latest qualified fit in GB/s; invalid evidence clears validity rather than extending an old fit |
+| `phase_result` | Latest immutable static `bw_phase_result_t` final record |
+
+The synchronous bridge is `emit_phase_result(string scope_id,
+ bw_phase_result_t result)`. Like episode delivery, identity is separate by-value
+string context because VCS regular struct output ports cannot contain strings.
+The static record includes typed scope, epoch, episode/phase/final identities,
+phase kind, final half-open bounds and independent known flags, original raw
+count snapshots, confirmation time/fit, end reason and episode status at
+submission. Counts are known raw counts, not a completeness proof or a sum of
+overlapping windows. Interval-byte completeness, steady bandwidth, variation
+and last-steady representative selection are supplied by the final-statistics
+and reporting extensions.
+
+Closed fragments stream when their end is guaranteed inside already observed
+episode coverage. Their recorded episode status can still be ACTIVE: later
+incomplete traffic does not undo an earlier known phase interval. Fragments
+whose end can still be clipped are retained until the episode settles. Final
+clipping uses the actual tail and corresponding count snapshot; a phase wholly
+after the measured episode is discarded. Unknown ends remain unknown, and an
+unconfirmed candidate never becomes a formal fragment. Own reset clears current
+phase fields/evidence while preserving old-epoch final records and lifetime IDs.
+
+For example,640 B at 95 ns and a zero-byte event at 135 ns with W100/S10,
+N3/span20/K4 and Q60 produce steady candidate120, confirmation150 and final
+interval[120,136). Its raw start/end byte snapshots are both640; the phase's
+window fit mean is6.4 GB/s while its raw interval bytes are zero. This is an
+acceptance vector, not a product default. Tests also cover true-time fitting
+across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
+ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
+insufficient span, explicit configuration failures and real arithmetic overflow.

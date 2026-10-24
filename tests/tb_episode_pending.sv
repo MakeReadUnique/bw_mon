@@ -28,7 +28,15 @@ module tb_episode_pending;
      .episode_duration_ticks(),.episode_first_known(),.episode_last_known(),
      .episode_tail_known(),.episode_bytes_complete(),.episode_events_complete(),
      .episode_member_reset_coverage(),.episode_duration_valid(),.episode_e2e_valid(),
-     .episode_e2e_gbps());
+     .episode_e2e_gbps(),
+     .phase_current(),.phase_candidate(),.phase_active(),
+     .phase_eligible(),.phase_evidence_continuous(),.phase_evidence_sufficient(),
+     .phase_fit_valid(),.phase_id(),.phase_result_seq(),
+     .phase_window_seq(),.phase_evidence_count(),.phase_evidence_span(),
+     .phase_candidate_count(),.phase_candidate_ticks(),.phase_candidate_total_bytes(),
+     .phase_candidate_total_events(),.phase_start_ticks(),.phase_confirmation_ticks(),
+     .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
+     .phase_result());
   task automatic deliver(bw_u64_t logical_tick,bw_u64_t edge_number,bit transfer);
     frame='0;frame.timestamp_ticks=logical_tick;frame.edge_index=edge_number;frame.record_seq=edge_number;
     frame.reset_n=1;frame.bytes_complete=1;frame.events_complete=1;

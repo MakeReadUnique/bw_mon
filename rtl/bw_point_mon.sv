@@ -19,7 +19,21 @@ module bw_point_mon #(
   parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
   parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx,
   parameter bit EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = 0
+  parameter logic [63:0] SILENCE_THRESHOLD = 0,
+  parameter bit PHASE_ENABLE = 0,
+  parameter logic [63:0] PHASE_N = 0,
+  parameter logic [63:0] PHASE_MIN_SPAN = 0,
+  parameter logic [63:0] PHASE_K = 0,
+  parameter real PHASE_STEADY_ENTER_ABS = -1.0,
+  parameter real PHASE_STEADY_ENTER_REL = -1.0,
+  parameter real PHASE_STEADY_EXIT_ABS = -1.0,
+  parameter real PHASE_STEADY_EXIT_REL = -1.0,
+  parameter real PHASE_RMS_ENTER_ABS = -1.0,
+  parameter real PHASE_RMS_ENTER_REL = -1.0,
+  parameter real PHASE_RMS_EXIT_ABS = -1.0,
+  parameter real PHASE_RMS_EXIT_REL = -1.0,
+  parameter real PHASE_TREND_ABS = -1.0,
+  parameter real PHASE_TREND_REL = -1.0
 ) (
   input logic clk,
   input logic reset_n,
@@ -127,6 +141,28 @@ module bw_point_mon #(
   bw_u64_t episode_bytes,episode_events,episode_duration_ticks;
   real episode_e2e_gbps;
   bw_episode_result_t episode_result;
+  bw_phase_t phase_current;
+  bw_phase_t phase_candidate;
+  bit phase_active;
+  bit phase_eligible;
+  bit phase_evidence_continuous;
+  bit phase_evidence_sufficient;
+  bit phase_fit_valid;
+  bw_u64_t phase_id;
+  bw_u64_t phase_result_seq;
+  bw_u64_t phase_window_seq;
+  bw_u64_t phase_evidence_count;
+  bw_u64_t phase_evidence_span;
+  bw_u64_t phase_candidate_count;
+  bw_u64_t phase_candidate_ticks;
+  bw_u64_t phase_candidate_total_bytes;
+  bw_u64_t phase_candidate_total_events;
+  bw_u64_t phase_start_ticks;
+  bw_u64_t phase_confirmation_ticks;
+  real phase_fit_mean;
+  real phase_fit_delta;
+  real phase_fit_rms;
+  bw_phase_result_t phase_result;
 
   // Unnamed block deliberately preserves exactly the public instance scope.
   initial begin
@@ -140,6 +176,10 @@ module bw_point_mon #(
     validate_hint_config(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE,SHORTAGE_BASIS,
                          SHORTAGE_THRESHOLD,scope_id,"credit_shortage");
     validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
+    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
+      PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
+      PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
+      PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
   end
@@ -168,7 +208,21 @@ module bw_point_mon #(
      .credit_record_seq(credit_record_seq),.backpressure_result(backpressure_result),.shortage_result(shortage_result));
   bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),
                   .UPDATE_STRIDE(UPDATE_STRIDE),.EPISODE_ENABLE(EPISODE_ENABLE),
-                  .SILENCE_THRESHOLD(SILENCE_THRESHOLD)) core
+                  .SILENCE_THRESHOLD(SILENCE_THRESHOLD),
+                  .PHASE_ENABLE(PHASE_ENABLE),
+                  .PHASE_N(PHASE_N),
+                  .PHASE_MIN_SPAN(PHASE_MIN_SPAN),
+                  .PHASE_K(PHASE_K),
+                  .PHASE_STEADY_ENTER_ABS(PHASE_STEADY_ENTER_ABS),
+                  .PHASE_STEADY_ENTER_REL(PHASE_STEADY_ENTER_REL),
+                  .PHASE_STEADY_EXIT_ABS(PHASE_STEADY_EXIT_ABS),
+                  .PHASE_STEADY_EXIT_REL(PHASE_STEADY_EXIT_REL),
+                  .PHASE_RMS_ENTER_ABS(PHASE_RMS_ENTER_ABS),
+                  .PHASE_RMS_ENTER_REL(PHASE_RMS_ENTER_REL),
+                  .PHASE_RMS_EXIT_ABS(PHASE_RMS_EXIT_ABS),
+                  .PHASE_RMS_EXIT_REL(PHASE_RMS_EXIT_REL),
+                  .PHASE_TREND_ABS(PHASE_TREND_ABS),
+                  .PHASE_TREND_REL(PHASE_TREND_REL)) core
     (.scope_id(scope_id),.scope_kind(scope_kind),.record(raw_record),.record_toggle(record_toggle),
      .stats_reset_n(reset_n),.accepted_record_seq(accepted_record_seq),
      .member_control('0),.member_control_toggle(1'b0),.accepted_control_count(),
@@ -191,5 +245,27 @@ module bw_point_mon #(
      .episode_tail_known(episode_tail_known),.episode_bytes_complete(episode_bytes_complete),
      .episode_events_complete(episode_events_complete),.episode_member_reset_coverage(episode_member_reset_coverage),
      .episode_duration_valid(episode_duration_valid),.episode_e2e_valid(episode_e2e_valid),
-     .episode_e2e_gbps(episode_e2e_gbps),.episode_result(episode_result));
+     .episode_e2e_gbps(episode_e2e_gbps),.episode_result(episode_result),
+     .phase_current(phase_current),
+     .phase_candidate(phase_candidate),
+     .phase_active(phase_active),
+     .phase_eligible(phase_eligible),
+     .phase_evidence_continuous(phase_evidence_continuous),
+     .phase_evidence_sufficient(phase_evidence_sufficient),
+     .phase_fit_valid(phase_fit_valid),
+     .phase_id(phase_id),
+     .phase_result_seq(phase_result_seq),
+     .phase_window_seq(phase_window_seq),
+     .phase_evidence_count(phase_evidence_count),
+     .phase_evidence_span(phase_evidence_span),
+     .phase_candidate_count(phase_candidate_count),
+     .phase_candidate_ticks(phase_candidate_ticks),
+     .phase_candidate_total_bytes(phase_candidate_total_bytes),
+     .phase_candidate_total_events(phase_candidate_total_events),
+     .phase_start_ticks(phase_start_ticks),
+     .phase_confirmation_ticks(phase_confirmation_ticks),
+     .phase_fit_mean(phase_fit_mean),
+     .phase_fit_delta(phase_fit_delta),
+     .phase_fit_rms(phase_fit_rms),
+     .phase_result(phase_result));
 endmodule
