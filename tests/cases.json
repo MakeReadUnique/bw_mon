@@ -182,7 +182,7 @@
   {
     "name": "hint_ns",
     "top": "tb_hint_ns",
-    "required_output": [
+    "expect_log": [
       "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED.*duration_ticks=2500000"
     ]
   },
@@ -205,7 +205,7 @@
   {
     "name": "hint_cycle_truncation",
     "top": "tb_hint_cycle_truncation",
-    "required_output": [
+    "expect_log": [
       "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED hit=0.*duration_ticks=10000000 duration_cycles=1"
     ]
   },
@@ -321,7 +321,7 @@
     "name": "hint_time_budget",
     "top": "tb_hint_time_budget",
     "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT",
-    "required_output": [
+    "expect_log": [
       "CORE_FAILURE_LATCHED"
     ]
   },
@@ -341,5 +341,83 @@
   {
     "name": "hint_same_cycle_cycle_live",
     "top": "tb_hint_same_cycle_cycle_live"
+  },
+  {
+    "name": "episode_boundary",
+    "top": "tb_episode_boundary"
+  },
+  {
+    "name": "episode_gaps",
+    "top": "tb_episode_gaps"
+  },
+  {
+    "name": "episode_cycle",
+    "top": "tb_episode_cycle"
+  },
+  {
+    "name": "episode_controls",
+    "top": "tb_episode_controls"
+  },
+  {
+    "name": "episode_reset_deadline",
+    "top": "tb_episode_reset_deadline"
+  },
+  {
+    "name": "episode_final",
+    "top": "tb_episode_final",
+    "expect_log": [
+      "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000000 last_ticks=1000000 tail_ticks=2000000 confirm_ticks=3000000 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
+      "(?s)^(?!.*BW_EPISODE[^\\n]*scope=episode.none)"
+    ]
+  },
+  {
+    "name": "episode_final_budget",
+    "top": "tb_episode_final_budget",
+    "expect_error": "(?s)^(?!.*BW_EPISODE).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "episode_config_error",
+    "top": "tb_episode_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "episode_unknown_q",
+    "top": "tb_episode_unknown_q",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "episode_late_metadata",
+    "top": "tb_episode_late_metadata",
+    "expect_log": [
+      "EPISODE_TIMER_FIRST_METADATA"
+    ]
+  },
+  {
+    "name": "episode_frame_first",
+    "top": "tb_episode_late_metadata",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "episode_pending",
+    "top": "tb_episode_pending"
+  },
+  {
+    "name": "episode_pending_reset",
+    "top": "tb_episode_pending",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "episode_pending_final",
+    "top": "tb_episode_pending",
+    "plusargs": [
+      "+MODE=2"
+    ],
+    "expect_log": [
+      "BW_EPISODE scope_kind=1 scope=episode.pending .*status=4 .*bytes=8 events=1 duration_ticks=0 .*last_known=0 .*bytes_complete=0 events_complete=0 .*e2e_valid=0"
+    ]
   }
 ]

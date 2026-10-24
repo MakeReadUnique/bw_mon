@@ -95,6 +95,50 @@ package bw_mon_pkg;
     logic reset_n;
   } bw_control_t;
 
+  typedef enum logic [2:0] {
+    BW_EPISODE_NONE, BW_EPISODE_ACTIVE, BW_EPISODE_COMPLETE,
+    BW_EPISODE_RESET_INTERRUPTED, BW_EPISODE_TRUNCATED
+  } bw_episode_status_t;
+  typedef enum logic [3:0] {
+    BW_EPISODE_REASON_NONE, BW_EPISODE_RESET, BW_EPISODE_OBSERVATION_END,
+    BW_EPISODE_FIRST_UNKNOWN, BW_EPISODE_LAST_UNKNOWN, BW_EPISODE_TAIL_UNKNOWN,
+    BW_EPISODE_BYTES_UNKNOWN, BW_EPISODE_DURATION_UNKNOWN
+  } bw_episode_reason_t;
+
+  // Immutable final record. A synchronous delivery function preserves every
+  // result even when several source actions are drained in the same time slot.
+  typedef struct {
+    bw_scope_t scope_kind;
+    bw_u64_t stats_epoch;
+    bw_u64_t result_seq;
+    bw_u64_t episode_id;
+    bw_episode_status_t status;
+    bw_episode_reason_t reason;
+    bw_u64_t first_ticks, last_ticks, tail_ticks, confirmation_ticks;
+    bw_u64_t first_cycle, last_cycle, tail_cycle;
+    bw_u64_t byte_count, event_count, duration_ticks;
+    bw_u64_t start_total_bytes, end_total_bytes;
+    bw_u64_t start_total_events, end_total_events;
+    bit first_known, last_known, tail_known;
+    bit bytes_complete, events_complete, member_reset_coverage;
+    bit duration_valid, e2e_valid;
+    real e2e_gbps;
+  } bw_episode_result_t;
+
+  function automatic string episode_reason_name(bw_episode_reason_t reason);
+    case (reason)
+      BW_EPISODE_REASON_NONE: return "NONE";
+      BW_EPISODE_RESET: return "RESET_INTERRUPTED";
+      BW_EPISODE_OBSERVATION_END: return "OBSERVATION_TRUNCATED";
+      BW_EPISODE_FIRST_UNKNOWN: return "FIRST_BOUNDARY_UNKNOWN";
+      BW_EPISODE_LAST_UNKNOWN: return "LAST_BOUNDARY_UNKNOWN";
+      BW_EPISODE_TAIL_UNKNOWN: return "TAIL_CYCLE_UNKNOWN";
+      BW_EPISODE_BYTES_UNKNOWN: return "BYTES_INCOMPLETE";
+      default: return "DURATION_UNAVAILABLE";
+    endcase
+  endfunction
+
+
   typedef struct {
     string id;
     string monitor_path;
@@ -119,6 +163,18 @@ package bw_mon_pkg;
     core_failure_seen=1;
     $fatal(1, "BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",
            code, scope_id, $time, detail);
+  endfunction
+
+  function automatic void emit_episode_result(string scope_id, bw_episode_result_t result);
+    if (core_failure_seen) return;
+    // Type/transport bridge for the dedicated check/report owner. Episode
+    // arithmetic stays in bw_stats_core; this entry does no performance check.
+    $display("BW_EPISODE scope_kind=%0d scope=%s epoch=%0d episode=%0d result_seq=%0d status=%0d first_ticks=%0d last_ticks=%0d tail_ticks=%0d confirm_ticks=%0d bytes=%0d events=%0d duration_ticks=%0d first_known=%0b last_known=%0b tail_known=%0b bytes_complete=%0b events_complete=%0b member_reset=%0b e2e_valid=%0b e2e_gbps=%0.12g reason=%s",
+      result.scope_kind,scope_id,result.stats_epoch,result.episode_id,result.result_seq,
+      result.status,result.first_ticks,result.last_ticks,result.tail_ticks,result.confirmation_ticks,
+      result.byte_count,result.event_count,result.duration_ticks,result.first_known,result.last_known,
+      result.tail_known,result.bytes_complete,result.events_complete,result.member_reset_coverage,
+      result.e2e_valid,result.e2e_gbps,episode_reason_name(result.reason));
   endfunction
 
   function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,
@@ -168,6 +224,14 @@ package bw_mon_pkg;
     if($isunknown(threshold) || threshold==0)
       core_error("HINT_CONFIG",id,{hint_name," requires explicit positive threshold"});
     if(basis==BW_NS) void'(ns_to_ticks(threshold,{id," ",hint_name}));
+  endfunction
+
+  function automatic void validate_episode_config(bit enable, logic [63:0] silence,
+                                                   bw_basis_t basis, string id);
+    if (!enable) return;
+    if ($isunknown(silence) || silence==0)
+      core_error("EPISODE_CONFIG",id,"enabled episode analysis requires explicit positive Q");
+    if (basis==BW_NS) void'(ns_to_ticks(silence,id));
   endfunction
 
   function automatic bit monitor_time_supported(bw_u64_t at_ticks);

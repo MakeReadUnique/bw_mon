@@ -61,7 +61,7 @@ def main():
             passed = (result.returncode == 0 and "TB_PASS" in result.stdout and
                       "Fatal:" not in result.stdout)
         passed = passed and all(re.search(pattern, result.stdout) is not None
-                                for pattern in case.get("required_output", []))
+                                for pattern in case.get("expect_log", []))
         print(f"{'PASS' if passed else 'FAIL'} {case['name']}: {log_path}", flush=True)
         if not passed:
             failures.append(case["name"])

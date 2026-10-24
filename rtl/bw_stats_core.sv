@@ -1,12 +1,16 @@
 module bw_stats_core #(
   parameter bw_mon_pkg::bw_basis_t WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter bw_mon_pkg::bw_u64_t WINDOW_WIDTH = 0,
-  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE = 0
+  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE = 0,
+  parameter bit EPISODE_ENABLE = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = 0
 ) (
   input string scope_id,
+  input bw_mon_pkg::bw_scope_t scope_kind = bw_mon_pkg::BW_POINT,
   input bw_mon_pkg::bw_record_t record,
   input bit record_toggle,
   input logic stats_reset_n = 1'b1,
+  input bw_mon_pkg::bw_u64_t progress_watermark_ticks = bw_mon_pkg::BW_U64_MAX,
   input bw_mon_pkg::bw_control_t member_control = '0,
   input bit member_control_toggle = 1'b0,
   output bw_mon_pkg::bw_u64_t accepted_record_seq = 0,
@@ -31,7 +35,31 @@ module bw_stats_core #(
   output bit events_complete = 1,
   output bit denominator_valid = 0,
   output bit window_valid = 0,
-  output bit member_reset_coverage = 0
+  output bit member_reset_coverage = 0,
+  output bit episode_active = 0,
+  output bw_mon_pkg::bw_episode_status_t episode_status = bw_mon_pkg::BW_EPISODE_NONE,
+  output bw_mon_pkg::bw_u64_t episode_id = 0,
+  output bw_mon_pkg::bw_u64_t episode_result_seq = 0,
+  output bw_mon_pkg::bw_u64_t episode_first_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_last_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_tail_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_confirmation_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_first_cycle = 0,
+  output bw_mon_pkg::bw_u64_t episode_last_cycle = 0,
+  output bw_mon_pkg::bw_u64_t episode_tail_cycle = 0,
+  output bw_mon_pkg::bw_u64_t episode_bytes = 0,
+  output bw_mon_pkg::bw_u64_t episode_events = 0,
+  output bw_mon_pkg::bw_u64_t episode_duration_ticks = 0,
+  output bit episode_first_known = 0,
+  output bit episode_last_known = 0,
+  output bit episode_tail_known = 0,
+  output bit episode_bytes_complete = 1,
+  output bit episode_events_complete = 1,
+  output bit episode_member_reset_coverage = 0,
+  output bit episode_duration_valid = 0,
+  output bit episode_e2e_valid = 0,
+  output real episode_e2e_gbps = 0.0,
+  output bw_mon_pkg::bw_episode_result_t episode_result
 );
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
@@ -76,6 +104,201 @@ module bw_stats_core #(
   bit cycle_initialized = 0;
   bit initialized = 0;
 
+  bit silence_active=0;
+  bw_u64_t silence_start_ticks=0, silence_start_cycle=0;
+  bit scheduled_episode_deadline_valid=0;
+  bw_u64_t scheduled_episode_deadline=0;
+  bw_u64_t episode_start_total_bytes=0, episode_end_total_bytes=0;
+  bw_u64_t episode_start_total_events=0, episode_end_total_events=0;
+  bit pre_episode_gap=0, observation_gap_active=0, gap_waits_for_edge=0;
+  bit pending_sample_reset_coverage=0;
+  quality_interval_t episode_quality_intervals[$];
+
+  function automatic bw_u64_t silence_deadline_ticks();
+    return checked_add(silence_start_ticks,ns_to_ticks(SILENCE_THRESHOLD,scope_id),scope_id);
+  endfunction
+
+  task automatic update_episode_duration();
+    episode_duration_valid=episode_first_known && episode_last_known && episode_tail_known &&
+                           episode_tail_ticks>episode_first_ticks;
+    episode_duration_ticks=episode_duration_valid ? episode_tail_ticks-episode_first_ticks : 0;
+  endtask
+
+  function automatic bit unknown_episode_control();
+    foreach (active_quality[key])
+      if ($isunknown(active_quality[key].reset_n)) return 1;
+    return 0;
+  endfunction
+
+  task automatic interrupt_silence();
+    silence_active=0; observation_gap_active=1;
+    if (episode_active) begin
+      episode_bytes_complete=0; episode_events_complete=0; episode_last_known=0;
+      update_episode_duration();
+    end else pre_episode_gap=1;
+  endtask
+
+  task automatic start_silence(bw_u64_t at_ticks, bw_u64_t at_cycle);
+    if (!silence_active) begin
+      silence_active=1; silence_start_ticks=at_ticks; silence_start_cycle=at_cycle;
+    end
+  endtask
+
+  task automatic update_episode_reset_coverage();
+    if (!EPISODE_ENABLE || !episode_active || !episode_tail_known) return;
+    foreach (episode_quality_intervals[i]) begin
+      if (episode_quality_intervals[i].known_reset && episode_tail_known &&
+          episode_quality_intervals[i].start_ticks<episode_tail_ticks &&
+          episode_quality_intervals[i].end_ticks>episode_first_ticks)
+        episode_member_reset_coverage=1;
+    end
+    foreach (active_quality[key]) begin
+      if (active_quality[key].reset_n === 1'b0 && episode_tail_known &&
+          active_quality[key].start_ticks<episode_tail_ticks)
+        episode_member_reset_coverage=1;
+    end
+  endtask
+
+  task automatic finish_episode(bw_episode_status_t status, bw_u64_t confirmation);
+    if (!EPISODE_ENABLE || !episode_active || core_failure_seen) return;
+    update_episode_duration();
+    update_episode_reset_coverage();
+    episode_active=0; episode_status=status; episode_confirmation_ticks=confirmation;
+    silence_active=0;
+    episode_e2e_valid=(status==BW_EPISODE_COMPLETE && episode_duration_valid && episode_bytes_complete);
+    episode_e2e_gbps=episode_e2e_valid ?
+      real'(episode_bytes)*real'(BW_TICKS_PER_NS)/real'(episode_duration_ticks) : 0.0;
+    episode_result_seq=checked_add(episode_result_seq,1,scope_id);
+    if (core_failure_seen) return;
+    episode_result.scope_kind=scope_kind;
+    episode_result.stats_epoch=stats_epoch; episode_result.result_seq=episode_result_seq;
+    episode_result.episode_id=episode_id; episode_result.status=status;
+    episode_result.first_ticks=episode_first_ticks; episode_result.last_ticks=episode_last_ticks;
+    episode_result.tail_ticks=episode_tail_ticks; episode_result.confirmation_ticks=confirmation;
+    episode_result.first_cycle=episode_first_cycle; episode_result.last_cycle=episode_last_cycle;
+    episode_result.tail_cycle=episode_tail_cycle; episode_result.byte_count=episode_bytes;
+    episode_result.event_count=episode_events; episode_result.duration_ticks=episode_duration_ticks;
+    episode_result.start_total_bytes=episode_start_total_bytes;
+    episode_result.end_total_bytes=episode_end_total_bytes;
+    episode_result.start_total_events=episode_start_total_events;
+    episode_result.end_total_events=episode_end_total_events;
+    episode_result.first_known=episode_first_known; episode_result.last_known=episode_last_known;
+    episode_result.tail_known=episode_tail_known; episode_result.bytes_complete=episode_bytes_complete;
+    episode_result.events_complete=episode_events_complete;
+    episode_result.member_reset_coverage=episode_member_reset_coverage;
+    episode_result.duration_valid=episode_duration_valid; episode_result.e2e_valid=episode_e2e_valid;
+    episode_result.e2e_gbps=episode_e2e_gbps;
+    if (status==BW_EPISODE_RESET_INTERRUPTED) episode_result.reason=BW_EPISODE_RESET;
+    else if (status==BW_EPISODE_TRUNCATED) episode_result.reason=BW_EPISODE_OBSERVATION_END;
+    else if (!episode_first_known) episode_result.reason=BW_EPISODE_FIRST_UNKNOWN;
+    else if (!episode_last_known) episode_result.reason=BW_EPISODE_LAST_UNKNOWN;
+    else if (!episode_tail_known) episode_result.reason=BW_EPISODE_TAIL_UNKNOWN;
+    else if (!episode_bytes_complete) episode_result.reason=BW_EPISODE_BYTES_UNKNOWN;
+    else if (!episode_duration_valid) episode_result.reason=BW_EPISODE_DURATION_UNKNOWN;
+    else episode_result.reason=BW_EPISODE_REASON_NONE;
+    emit_episode_result(scope_id,episode_result);
+    pre_episode_gap=0; observation_gap_active=0; gap_waits_for_edge=0;
+    pending_sample_reset_coverage=0; episode_quality_intervals.delete();
+  endtask
+
+  task automatic capture_episode_edge(bw_record_t incoming);
+    if (!EPISODE_ENABLE) return;
+    gap_waits_for_edge=0;
+    if (!episode_active || episode_tail_known) return;
+    if (incoming.edge_index>episode_last_cycle) begin
+      episode_tail_ticks=incoming.timestamp_ticks; episode_tail_cycle=incoming.edge_index;
+      episode_tail_known=1;
+      episode_end_total_bytes=total_bytes; episode_end_total_events=total_events;
+      update_episode_duration();
+      update_episode_reset_coverage();
+      if (!observation_gap_active && !unknown_episode_control())
+        start_silence(incoming.timestamp_ticks,incoming.edge_index);
+    end
+  endtask
+
+  task automatic advance_episode_time(bw_u64_t at_ticks, bw_u64_t at_cycle, bit is_edge);
+    bit reached;
+    bw_u64_t confirmation, safe_ticks;
+    if (!EPISODE_ENABLE || !silence_active || current_reset_n === 1'b0) return;
+    reached=0; confirmation=at_ticks;
+    safe_ticks=(at_ticks<progress_watermark_ticks) ? at_ticks : progress_watermark_ticks;
+    if (WINDOW_BASIS==BW_NS && safe_ticks>=silence_deadline_ticks()) begin
+      reached=1; confirmation=silence_deadline_ticks();
+    end else if (WINDOW_BASIS==BW_CYCLE && is_edge &&
+                 at_cycle>=checked_add(silence_start_cycle,SILENCE_THRESHOLD,scope_id)) reached=1;
+    if (reached) begin
+      if (episode_active) finish_episode(BW_EPISODE_COMPLETE,confirmation);
+      else begin pre_episode_gap=0; silence_active=0; end
+    end
+  endtask
+
+  task automatic account_episode_frame(bw_record_t incoming);
+    if (!EPISODE_ENABLE) return;
+    if (incoming.event_inc==0) begin
+      if (!incoming.events_complete || unknown_episode_control()) begin
+        interrupt_silence();
+        if (!incoming.events_complete) gap_waits_for_edge=1;
+      end else begin
+        observation_gap_active=0;
+        if (episode_active) begin
+          episode_bytes_complete &= incoming.bytes_complete;
+          pending_sample_reset_coverage |= (incoming.reset_points!=0);
+          if (episode_tail_known) start_silence(incoming.timestamp_ticks,incoming.edge_index);
+        end else if (pre_episode_gap) start_silence(incoming.timestamp_ticks,incoming.edge_index);
+      end
+      return;
+    end
+    if (!episode_active) begin
+      episode_id=checked_add(episode_id,1,scope_id);
+      episode_active=1; episode_status=BW_EPISODE_ACTIVE;
+      episode_first_ticks=incoming.timestamp_ticks; episode_first_cycle=incoming.edge_index;
+      episode_first_known=!pre_episode_gap; episode_bytes=0; episode_events=0;
+      episode_bytes_complete=!pre_episode_gap; episode_events_complete=!pre_episode_gap;
+      episode_member_reset_coverage=0; pending_sample_reset_coverage=0;
+      episode_start_total_bytes=total_bytes; episode_start_total_events=total_events;
+      episode_end_total_bytes=0; episode_end_total_events=0;
+      pre_episode_gap=0; episode_quality_intervals.delete();
+    end
+    episode_last_ticks=incoming.timestamp_ticks; episode_last_cycle=incoming.edge_index;
+    episode_last_known=1; episode_tail_known=0; episode_tail_ticks=0; episode_tail_cycle=0;
+    episode_end_total_bytes=0; episode_end_total_events=0;
+    episode_duration_valid=0; episode_duration_ticks=0;
+    episode_e2e_valid=0; episode_e2e_gbps=0.0; episode_confirmation_ticks=0;
+    episode_bytes=checked_add(episode_bytes,incoming.byte_inc,scope_id);
+    episode_events=checked_add(episode_events,incoming.event_inc,scope_id);
+    episode_bytes_complete &= incoming.bytes_complete;
+    episode_events_complete &= incoming.events_complete;
+    episode_member_reset_coverage |= pending_sample_reset_coverage || (incoming.reset_points!=0);
+    pending_sample_reset_coverage=0;
+    observation_gap_active=!incoming.events_complete || unknown_episode_control();
+    gap_waits_for_edge=observation_gap_active;
+    if (observation_gap_active) begin episode_bytes_complete=0; episode_events_complete=0; end
+    silence_active=0;
+  endtask
+
+  task automatic episode_control_changed(bw_u64_t at_ticks);
+    if (!EPISODE_ENABLE || current_reset_n === 1'b0) return;
+    update_episode_reset_coverage();
+    if (unknown_episode_control()) interrupt_silence();
+    else if (observation_gap_active && !gap_waits_for_edge) begin
+      observation_gap_active=0;
+      if (WINDOW_BASIS==BW_NS && ((episode_active && episode_tail_known) ||
+          (!episode_active && pre_episode_gap))) start_silence(at_ticks,last_edge_index);
+    end
+  endtask
+
+  task automatic reschedule_episode_timer();
+    bit valid_deadline;
+    bw_u64_t deadline;
+    valid_deadline=EPISODE_ENABLE && WINDOW_BASIS==BW_NS &&
+                   (episode_active || pre_episode_gap) && silence_active;
+    deadline=valid_deadline ? silence_deadline_ticks() : 0;
+    if (valid_deadline!=scheduled_episode_deadline_valid || deadline!=scheduled_episode_deadline) begin
+      scheduled_episode_deadline_valid=valid_deadline; scheduled_episode_deadline=deadline;
+      timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
+    end
+  endtask
+
   task automatic update_quality(int key, logic reset_level, bw_u64_t at_ticks);
     quality_interval_t interval;
     active_quality_t active;
@@ -88,6 +311,10 @@ module bw_stats_core #(
         interval.known_reset=(active.reset_n === 1'b0);
         check_queue_growth(quality_intervals.size(),scope_id);
         quality_intervals.push_back(interval);
+        if (EPISODE_ENABLE && episode_active && interval.known_reset) begin
+          check_queue_growth(episode_quality_intervals.size(),scope_id);
+          episode_quality_intervals.push_back(interval);
+        end
       end
       active_quality.delete(key);
     end
@@ -173,6 +400,19 @@ module bw_stats_core #(
   endtask
 
   task automatic clear_statistics(bw_u64_t at_ticks);
+    if (EPISODE_ENABLE && episode_active && progress_watermark_ticks<at_ticks)
+      interrupt_silence();
+    finish_episode(BW_EPISODE_RESET_INTERRUPTED,at_ticks);
+    silence_active=0;
+    pre_episode_gap=0; observation_gap_active=0; gap_waits_for_edge=0;
+    pending_sample_reset_coverage=0; episode_quality_intervals.delete();
+    episode_status=BW_EPISODE_NONE;
+    episode_first_ticks=0; episode_last_ticks=0; episode_tail_ticks=0; episode_confirmation_ticks=0;
+    episode_first_cycle=0; episode_last_cycle=0; episode_tail_cycle=0;
+    episode_bytes=0; episode_events=0; episode_duration_ticks=0;
+    episode_first_known=0; episode_last_known=0; episode_tail_known=0;
+    episode_bytes_complete=1; episode_events_complete=1; episode_member_reset_coverage=0;
+    episode_duration_valid=0; episode_e2e_valid=0; episode_e2e_gbps=0.0;
     stats_epoch=checked_add(stats_epoch,1,scope_id);
     stats_start_ticks=at_ticks;
     history.delete(); cycle_boundary_ticks.delete();
@@ -206,6 +446,10 @@ module bw_stats_core #(
   endtask
 
   task automatic apply_reset(reset_action_t action);
+    if (reset_applied && action.reset_n !== 1'b0 && current_reset_n !== 1'b0) begin
+      if (WINDOW_BASIS==BW_NS) publish_due(action.timestamp_ticks);
+      advance_episode_time(action.timestamp_ticks,last_edge_index,0);
+    end
     if (action.reset_n === 1'b0 && (!reset_applied || current_reset_n !== 1'b0)) begin
       clear_statistics(action.timestamp_ticks);
       last_assert_ticks=action.timestamp_ticks;
@@ -222,6 +466,7 @@ module bw_stats_core #(
     current_reset_n=action.reset_n;
     reset_applied=1;
     update_quality(-1,action.reset_n,action.timestamp_ticks);
+    episode_control_changed(action.timestamp_ticks);
   endtask
 
   task automatic apply_member_control(bw_control_t incoming);
@@ -243,13 +488,18 @@ module bw_stats_core #(
       core_error("CONTROL_TIME",scope_id,$sformatf("point_handle=%0d time_ticks=%0d",key,incoming.timestamp_ticks));
     member_control_sequences[key]=incoming.control_seq;
     member_control_times[key]=incoming.timestamp_ticks;
+    if (WINDOW_BASIS==BW_NS && current_reset_n !== 1'b0) publish_due(incoming.timestamp_ticks);
+    advance_episode_time(incoming.timestamp_ticks,last_edge_index,0);
     update_quality(key,incoming.reset_n,incoming.timestamp_ticks);
+    episode_control_changed(incoming.timestamp_ticks);
     accepted_control_count=checked_add(accepted_control_count,1,scope_id);
   endtask
 
   task automatic publish_due(bw_u64_t through_ticks);
+    bw_u64_t safe_ticks;
+    safe_ticks=(through_ticks<progress_watermark_ticks) ? through_ticks : progress_watermark_ticks;
     initialize_state();
-    while (next_update_ticks <= through_ticks) begin
+    while (next_update_ticks <= safe_ticks) begin
       publish_window(next_update_ticks);
       next_update_ticks=checked_add(next_update_ticks,ns_to_ticks(UPDATE_STRIDE,scope_id),scope_id);
     end
@@ -277,6 +527,7 @@ module bw_stats_core #(
         accepted_record_seq=incoming.record_seq;
         return;
       end
+      capture_episode_edge(incoming);
       if (WINDOW_BASIS == BW_CYCLE) begin
         if (!cycle_initialized) begin
           cycle_origin=incoming.edge_index;
@@ -300,7 +551,9 @@ module bw_stats_core #(
     end
     if (current_reset_n === 1'b0) return;
     if (WINDOW_BASIS == BW_NS) publish_due(now_ticks);
+    advance_episode_time(now_ticks,is_frame ? incoming.edge_index : last_edge_index,is_frame);
     if (!is_frame) return;
+    account_episode_frame(incoming);
     total_bytes=checked_add(total_bytes,incoming.byte_inc,scope_id);
     total_events=checked_add(total_events,incoming.event_inc,scope_id);
     retained_bytes=checked_add(retained_bytes,incoming.byte_inc,scope_id);
@@ -356,6 +609,7 @@ module bw_stats_core #(
         timer_receipts=checked_add(timer_receipts,1,scope_id);
       end
       consumed_actions=checked_add(consumed_actions,1,scope_id);
+      reschedule_episode_timer();
     end
   endtask
 
@@ -373,6 +627,10 @@ module bw_stats_core #(
           wait(timer_schedule_seq != observed_schedule);
         end else begin
           due_tick=next_update_ticks;
+          if (scheduled_episode_deadline_valid && scheduled_episode_deadline<due_tick)
+            due_tick=scheduled_episode_deadline;
+          if (due_tick>progress_watermark_ticks)
+            wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks);
           if ($time < due_tick) begin
             fork : wait_for_timer
               begin #(due_tick-$time); end
@@ -380,7 +638,8 @@ module bw_stats_core #(
             join_any
             disable wait_for_timer;
           end
-          if (timer_schedule_seq == observed_schedule && $time >= due_tick) begin
+          if (timer_schedule_seq == observed_schedule && $time >= due_tick &&
+              due_tick<=progress_watermark_ticks) begin
             check_queue_growth(pending_timers.size(),scope_id);
             pending_timers.push_back($time);
             timer_requests=checked_add(timer_requests,1,scope_id);
@@ -390,6 +649,21 @@ module bw_stats_core #(
           end
         end
       end
+    end
+  end
+
+  initial begin
+    wait(scope_id.len()!=0);
+    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
+  end
+
+  final begin
+    if (EPISODE_ENABLE && monitor_ready && !core_failure_seen) begin
+      if (monitor_time_supported($time)) begin
+        advance_episode_time($time,last_edge_index,0);
+        if (episode_active && progress_watermark_ticks<$time) interrupt_silence();
+        if (!core_failure_seen) finish_episode(BW_EPISODE_TRUNCATED,$time);
+      end else check_monitor_time($time,scope_id);
     end
   end
 endmodule
