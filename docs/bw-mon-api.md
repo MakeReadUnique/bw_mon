@@ -537,3 +537,13 @@ Hint action producers reuse the same `check_monitor_time` and
 `check_queue_growth` guards as the recorder/core. Every queue push checks its
 representable entry count; a rejected fatal time/storage action cannot publish a
 final hint interval. No user queue-depth or history-capacity setting is added.
+
+`core_failure_seen` is a shared terminal-core-error latch, set before
+`core_error` calls `$fatal`, and never cleared by local resets. Performance
+FAIL/WARNING and credit-protocol anomalies do not set it. VCS can continue a
+final block after `$fatal`; finalizers therefore check this latch before output
+and after checked arithmetic. The pure
+`monitor_time_supported(bw_u64_t at_ticks)` predicate permits an explicit branch
+before final settlement, while `check_monitor_time` supplies the fatal diagnostic.
+The budget regression also verifies the failure latch is visible to other final
+blocks before they emit results.

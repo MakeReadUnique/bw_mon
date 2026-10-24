@@ -23,53 +23,57 @@ module bw_hint_duration #(
   bw_u64_t requested_actions=0,consumed_actions=0;
   bw_u64_t timer_requests=0,timer_receipts=0,timer_schedule_seq=0;
   bw_u64_t edge_sequence=0,last_edge_ticks=0,last_edge_index=0,threshold_ticks=0;
-  bit configured=0,reset_held=0,edge_seen=0,accepting_action=0;
+  bit configured=0,reset_held=0,edge_seen=0;
 
   function automatic void begin_action(int current_size,string queue_kind);
-    // A rejected time/storage action has no final valid interval to publish.
-    accepting_action=1;
     check_monitor_time($time,{scope_id," ",HINT_NAME});
     check_queue_growth(current_size,{scope_id," ",HINT_NAME," ",queue_kind});
   endfunction
 
   function automatic void touch(bw_u64_t at_ticks);
+    if(core_failure_seen) return;
     result.update_ticks=at_ticks;
     result.result_seq=checked_add(result.result_seq,1,{scope_id," ",HINT_NAME," result"});
   endfunction
   function automatic void hit_once(bw_u64_t at_ticks);
-    if(result.hit) return;
+    if(result.hit || core_failure_seen) return;
     result.hit=1;
     result.trigger_ticks=(BASIS==BW_NS) ? checked_add(result.start_ticks,threshold_ticks,scope_id) : at_ticks;
     result.hit_count=checked_add(result.hit_count,1,{scope_id," ",HINT_NAME," hit count"});
     timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
     touch(at_ticks);
+    if(core_failure_seen) return;
     $display("BW_HINT_HIT scope=%s kind=%s epoch=%0d interval_id=%0d result_seq=%0d basis=%s threshold=%0d start_ticks=%0d trigger_ticks=%0d duration_ticks=%0d duration_cycles=%0d",
       scope_id,HINT_NAME,result.interval_epoch,result.interval_id,result.result_seq,
       BASIS==BW_NS ? "ns" : "cycle",THRESHOLD,result.start_ticks,result.trigger_ticks,
       result.duration_ticks,result.duration_cycles);
   endfunction
   function automatic void advance_interval(bw_u64_t at_ticks);
-    if(!result.active) return;
+    if(!result.active || core_failure_seen) return;
     if(at_ticks<result.start_ticks)
       core_error("HINT_TIME",scope_id,$sformatf("start_ticks=%0d received_ticks=%0d",result.start_ticks,at_ticks));
+    if(core_failure_seen) return;
     result.observed_through_ticks=at_ticks;
     result.duration_ticks=at_ticks-result.start_ticks;
     if((BASIS==BW_NS && result.duration_ticks>=threshold_ticks) ||
        (BASIS==BW_CYCLE && result.duration_cycles>=THRESHOLD)) hit_once(at_ticks);
   endfunction
   function automatic void close_interval(bw_u64_t at_ticks,bw_hint_end_t reason);
-    if(!result.active) return;
+    if(!result.active || core_failure_seen) return;
     // [start,T) is settled before the condition/reset value at T is applied.
     advance_interval(at_ticks);
+    if(core_failure_seen) return;
     result.active=0;result.end_ticks=at_ticks;result.end_reason=reason;
     result.interval_count=checked_add(result.interval_count,1,scope_id);
     timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
     touch(at_ticks);
+    if(core_failure_seen) return;
     $display("BW_HINT_END scope=%s kind=%s epoch=%0d interval_id=%0d result_seq=%0d reason=%s hit=%0d start_ticks=%0d trigger_ticks=%0d end_ticks=%0d duration_ticks=%0d duration_cycles=%0d",
       scope_id,HINT_NAME,result.interval_epoch,result.interval_id,result.result_seq,hint_end_name(reason),
       result.hit,result.start_ticks,result.trigger_ticks,result.end_ticks,result.duration_ticks,result.duration_cycles);
   endfunction
   function automatic void start_interval(bw_u64_t at_ticks);
+    if(core_failure_seen) return;
     result.active=1;result.hit=0;result.end_reason=BW_HINT_NOT_ENDED;
     result.interval_id=checked_add(result.interval_id,1,scope_id);result.interval_epoch=result.epoch;
     result.start_ticks=at_ticks;result.observed_through_ticks=at_ticks;
@@ -81,7 +85,9 @@ module bw_hint_duration #(
     touch(at_ticks);
   endfunction
   function automatic void process_status(status_action_t action);
+    if(core_failure_seen) return;
     advance_interval(action.at_ticks);
+    if(core_failure_seen) return;
     if(action.reset_value===1'b0) begin
       close_interval(action.at_ticks,BW_HINT_RESET);
       if(!reset_held) result.epoch=checked_add(result.epoch,1,scope_id);
@@ -99,10 +105,11 @@ module bw_hint_duration #(
     touch(action.at_ticks);
   endfunction
   function automatic void process_edge(edge_action_t action);
+    if(core_failure_seen) return;
     if(edge_seen && action.at_ticks<=last_edge_ticks)
       core_error("HINT_CLOCK",scope_id,"sampling edge timestamps must strictly increase");
     edge_seen=1;last_edge_ticks=action.at_ticks;last_edge_index=action.index;
-    if(!result.active) return;
+    if(!result.active || core_failure_seen) return;
     if(BASIS==BW_CYCLE) begin
       if(!result.cycle_anchor_valid) begin
         result.cycle_anchor_valid=1;result.start_cycle=action.index;
@@ -113,17 +120,16 @@ module bw_hint_duration #(
   endfunction
   function automatic void enqueue_status();
     status_action_t action;
-    if(!configured || !monitor_ready || !SUPPORTED || !ENABLED) return;
+    if(!configured || !monitor_ready || !SUPPORTED || !ENABLED || core_failure_seen) return;
     begin_action(pending_status.size(),"status");
     action.at_ticks=$time;action.condition_value=raw_condition;action.reset_value=reset_n;
     pending_status.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
-    accepting_action=0;
   endfunction
   function automatic void drain_actions();
     edge_action_t edge_action;
     status_action_t status_action;
     timer_action_t timer_action;
-    while(consumed_actions!=requested_actions) begin
+    while(consumed_actions!=requested_actions && !core_failure_seen) begin
       // Actual edge metadata exists before recorder ReNBA publication. Complete
       // the prior cycle before applying same-time release/unknown/reset changes.
       if(pending_edges.size()!=0) begin edge_action=pending_edges.pop_front();process_edge(edge_action);end
@@ -135,6 +141,7 @@ module bw_hint_duration #(
         end
         timer_receipts=checked_add(timer_receipts,1,scope_id);
       end
+      if(core_failure_seen) return;
       consumed_actions=checked_add(consumed_actions,1,scope_id);
     end
   endfunction
@@ -149,12 +156,11 @@ module bw_hint_duration #(
   always @(raw_condition or reset_n or monitor_ready) enqueue_status();
   always @(posedge clk) begin
     edge_action_t action;
-    if(configured && monitor_ready && $time>measurement_start_ticks && SUPPORTED && ENABLED) begin
+    if(configured && monitor_ready && $time>measurement_start_ticks && SUPPORTED && ENABLED && !core_failure_seen) begin
       begin_action(pending_edges.size(),"edges");
       edge_sequence=checked_add(edge_sequence,1,scope_id);
       action.at_ticks=$time;action.index=edge_sequence;
       pending_edges.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
-      accepting_action=0;
     end
   end
   bw_hint_duration_scheduler scheduler();
@@ -178,20 +184,17 @@ module bw_hint_duration #(
           action.at_ticks=due_ticks;action.generation=schedule;pending_timers.push_back(action);
           timer_requests=checked_add(timer_requests,1,scope_id);request=timer_requests;
           requested_actions=checked_add(requested_actions,1,scope_id);
-          accepting_action=0;
           wait(timer_receipts>=request);
         end
       end
     end
   end
   final begin
-    if(configured && !accepting_action) begin
+    if(configured && !core_failure_seen) begin
       drain_actions();
-      if(result.active) begin
-        accepting_action=1;
-        check_monitor_time($time,{scope_id," ",HINT_NAME," final"});
-        accepting_action=0;
-        close_interval($time,BW_HINT_TRUNCATED);
+      if(!core_failure_seen && result.active) begin
+        if(monitor_time_supported($time)) close_interval($time,BW_HINT_TRUNCATED);
+        else check_monitor_time($time,{scope_id," ",HINT_NAME," final"});
       end
     end
   end

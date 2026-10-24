@@ -8,4 +8,5 @@ module tb_hint_time_budget;
     .BACKPRESSURE_ENABLE(1),.BACKPRESSURE_BASIS(BW_NS),.BACKPRESSURE_THRESHOLD(40001)) point
     (.clk(1'b0),.reset_n(1'b1),.valid(1'b1),.ready(1'b0));
   initial begin wait(monitor_ready);#(64'd40002000000);$fatal(1,"expected core error did not occur");end
+  final if(core_failure_seen) $display("CORE_FAILURE_LATCHED");
 endmodule

@@ -68,6 +68,7 @@ package bw_mon_pkg;
 
   localparam bw_u64_t BW_TICKS_PER_NS = 1000000;
   localparam bw_u64_t BW_U64_MAX = 64'hffffffffffffffff;
+  localparam bw_u64_t BW_MONITOR_LIMIT_TICKS = 64'd40000000000;
 
   // This is a per-edge record, including idle/unknown/reset edges. Time, edge,
   // record sequence and source epoch remain distinct quantities.
@@ -105,6 +106,7 @@ package bw_mon_pkg;
 
   bw_point_registration_t registered_points[$];
   bit monitor_configured = 0;
+  bit core_failure_seen = 0;
   bit monitor_ready = 0;
   int unsigned expected_point_count;
   bw_u64_t measurement_start_ticks = 0;
@@ -112,6 +114,9 @@ package bw_mon_pkg;
   bw_u64_t registration_seq = 0;
 
   function automatic void core_error(string code, string scope_id, string detail);
+    // VCS can return from $fatal while executing final blocks. Retain a shared
+    // terminal-failure fact before reporting, so no finalizer emits new results.
+    core_failure_seen=1;
     $fatal(1, "BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",
            code, scope_id, $time, detail);
   endfunction
@@ -165,16 +170,21 @@ package bw_mon_pkg;
     if(basis==BW_NS) void'(ns_to_ticks(threshold,{id," ",hint_name}));
   endfunction
 
+  function automatic bit monitor_time_supported(bw_u64_t at_ticks);
+    if(!monitor_configured) return 1;
+    if(at_ticks<monitor_start_ticks) return 0;
+    return at_ticks-monitor_start_ticks<=BW_MONITOR_LIMIT_TICKS;
+  endfunction
+
   function automatic void check_monitor_time(bw_u64_t at_ticks, string scope_context);
-    if (!monitor_configured) return;
-    if (at_ticks<monitor_start_ticks)
+    if(monitor_time_supported(at_ticks)) return;
+    if(at_ticks<monitor_start_ticks)
       core_error("SIM_TIME_LIMIT",scope_context,
         $sformatf("system_start_ticks=%0d received_ticks=%0d precedes monitoring start",
                   monitor_start_ticks,at_ticks));
-    else if (at_ticks-monitor_start_ticks>64'd40000000000)
-      core_error("SIM_TIME_LIMIT",scope_context,
+    else core_error("SIM_TIME_LIMIT",scope_context,
         $sformatf("system_start_ticks=%0d received_ticks=%0d supported_duration_ticks=%0d",
-                  monitor_start_ticks,at_ticks,64'd40000000000));
+                  monitor_start_ticks,at_ticks,BW_MONITOR_LIMIT_TICKS));
   endfunction
 
   function automatic void check_queue_growth(int current_size, string scope_context);
