@@ -561,6 +561,320 @@
     "top": "tb_phase_candidate_change"
   },
   {
+    "name": "group_basic",
+    "top": "tb_group_basic"
+  },
+  {
+    "name": "group_matching",
+    "top": "tb_group_matching"
+  },
+  {
+    "name": "group_delayed",
+    "top": "tb_group_delayed"
+  },
+  {
+    "name": "group_metadata_order",
+    "top": "tb_group_metadata_order"
+  },
+  {
+    "name": "transport_retention",
+    "top": "tb_transport_retention"
+  },
+  {
+    "name": "group_fault_missing_first",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=missing_first"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250000.*expected_edge=1.*expected_ticks=250000.*deadline_ticks=1250000.*missing_point=fault"
+  },
+  {
+    "name": "group_fault_missing_second",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=missing_second"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1750000.*expected_edge=2.*expected_ticks=750000.*deadline_ticks=1750000.*missing_point=fault"
+  },
+  {
+    "name": "group_fault_duplicate",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=duplicate"
+    ],
+    "expect_error": "BW_CORE_ERROR code=RECORD_SEQUENCE"
+  },
+  {
+    "name": "group_fault_record_gap",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=record_gap"
+    ],
+    "expect_error": "BW_CORE_ERROR code=RECORD_SEQUENCE"
+  },
+  {
+    "name": "group_fault_wrong_edge",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=wrong_edge"
+    ],
+    "expect_error": "BW_CORE_ERROR code=EDGE_SEQUENCE"
+  },
+  {
+    "name": "group_fault_wrong_time",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=wrong_time"
+    ],
+    "expect_error": "BW_CORE_ERROR code=FRAME_ALIGNMENT"
+  },
+  {
+    "name": "group_fault_reverse",
+    "top": "tb_group_faults",
+    "plusargs": [
+      "+MODE=reverse"
+    ],
+    "expect_error": "BW_CORE_ERROR code=RECORD_SEQUENCE"
+  },
+  {
+    "name": "group_cycle_quality",
+    "top": "tb_group_cycle_quality"
+  },
+  {
+    "name": "group_reset_quality",
+    "top": "tb_group_reset_quality"
+  },
+  {
+    "name": "group_wide",
+    "top": "tb_group_wide"
+  },
+  {
+    "name": "group_config_empty_id",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=empty_id"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_ID"
+  },
+  {
+    "name": "group_config_zero_members",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=zero_members"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
+  },
+  {
+    "name": "group_config_duplicate_definition",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=duplicate_definition"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_DEFINITION"
+  },
+  {
+    "name": "group_config_extra_group",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=extra_group"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_COUNT"
+  },
+  {
+    "name": "group_config_clock",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=clock"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CONTEXT"
+  },
+  {
+    "name": "group_config_window",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=window"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CONTEXT"
+  },
+  {
+    "name": "group_config_stride",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=stride"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CONTEXT"
+  },
+  {
+    "name": "group_config_duplicate_owner",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=duplicate_owner"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=DUPLICATE_OWNER"
+  },
+  {
+    "name": "group_config_unknown_rule",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=unknown_rule"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_RULE"
+  },
+  {
+    "name": "group_config_missing_reference",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=missing_reference"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_REFERENCE"
+  },
+  {
+    "name": "group_config_prefix_empty",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=prefix_empty"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_REFERENCE"
+  },
+  {
+    "name": "group_config_empty_group",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=empty_group"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EMPTY_GROUP"
+  },
+  {
+    "name": "group_config_member_count",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=member_count"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
+  },
+  {
+    "name": "group_config_missing_owner",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=missing_owner"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT"
+  },
+  {
+    "name": "group_config_missing_finish",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=missing_finish"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT"
+  },
+  {
+    "name": "group_config_member_after_seal",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=member_after_seal"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CONFIG_FROZEN"
+  },
+  {
+    "name": "group_config_hot_member",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=hot_member"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  },
+  {
+    "name": "group_config_late_registration",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=late_registration"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REGISTRATION_FROZEN"
+  },
+  {
+    "name": "group_config_repeat_finish",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=repeat_finish"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  },
+  {
+    "name": "group_startup_deadline",
+    "top": "tb_group_startup_deadline"
+  },
+  {
+    "name": "group_missing_ungrouped",
+    "top": "tb_group_missing_ungrouped",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT.*expected_points=3 registered_points=2"
+  },
+  {
+    "name": "group_unknown_count",
+    "top": "tb_group_unknown_count",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_COUNT"
+  },
+  {
+    "name": "group_unknown_timeout",
+    "top": "tb_group_unknown_timeout",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=FRAME_TIMEOUT_CONFIG"
+  },
+  {
+    "name": "group_wide_count",
+    "top": "tb_group_wide_count",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_COUNT"
+  },
+  {
+    "name": "group_config_unknown_member_count",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=unknown_member_count"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
+  },
+  {
+    "name": "group_config_wide_member_count",
+    "top": "tb_group_config_errors",
+    "plusargs": [
+      "+MODE=wide_member_count"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
+  },
+  {
+    "name": "group_metadata_reactive",
+    "top": "tb_group_metadata_order",
+    "plusargs": [
+      "+REACTIVE_CLOCK=1"
+    ]
+  },
+  {
+    "name": "group_control_barrier",
+    "top": "tb_group_control_barrier"
+  },
+  {
+    "name": "group_deferred_final_late",
+    "top": "tb_group_deferred_final",
+    "plusargs": [
+      "+LATE=1"
+    ],
+    "expect_log": [
+      "DEFERRED_FINAL_GUARD_CLEAR",
+      "BW_EPISODE[^\\n]*scope=sentinel",
+      "BW_HINT_END scope=stalled"
+    ]
+  },
+  {
+    "name": "group_deferred_final_missing",
+    "top": "tb_group_deferred_final",
+    "plusargs": [
+      "+LATE=0"
+    ],
+    "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250000",
+    "expect_log": [
+      "DEFERRED_FINAL_GUARD pending=1 seen=0"
+    ]
+  },
+  {
     "name": "metrics_delayed",
     "top": "tb_metrics_delayed",
     "expect_log": [

@@ -28,3 +28,5 @@
 ## 前期调研
 
 [EDA 验证用 bandwidth monitor 开源调研](docs/bandwidth-monitor-research.md) 汇总了已有实现、统计口径差异和可参考的设计方式。
+
+单层聚合入口已实现：每组一个 `bw_group_mon`、统一成员配置与显式配置完成，自动进行原始逐沿汇总、消费确认、复位隔离和缺帧检测。完整集成与复现见[集成说明](docs/bw-mon-api.md)；分层与规模验收仍按对应 ticket 交付。
