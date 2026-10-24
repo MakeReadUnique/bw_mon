@@ -836,7 +836,9 @@ Metric reasons use `bw_metric_reason_t` with `BW_METRIC_` prefix: `OK`,
 `BOUNDARY_UNKNOWN`, `BYTES_UNKNOWN`, `OBSERVATION_UNKNOWN`, `NO_SAMPLES`,
 `TOO_FEW_SAMPLES`, `ZERO_MEAN`, `RESET`, `TRUNCATED`, `NO_STEADY`. A whole episode's
 formal variation requires normal completion and a known final interval/coverage;
-interrupted/truncated records retain unavailable reasons. A previously settled
+interrupted/truncated records retain unavailable reasons. Unresolved phase
+metrics also retain RESET/TRUNCATED reasons rather than losing their interruption
+context behind a generic boundary reason. A previously settled
 complete phase remains valid after a later gap, reset or observation end.
 
 Episode records also contain `last_steady_found`, `last_steady_selection_valid`,

@@ -346,7 +346,9 @@ module bw_stats_core #(
     if(core_failure_seen)return;
     fragment.duration_valid=fragment.start_known && fragment.end_known && fragment.end_ticks>fragment.start_ticks;
     fragment.duration_ticks=fragment.duration_valid ? fragment.end_ticks-fragment.start_ticks : 0;
-    fragment.duration_reason=fragment.duration_valid ? BW_METRIC_OK : BW_METRIC_BOUNDARY_UNKNOWN;
+    fragment.duration_reason=fragment.duration_valid ? BW_METRIC_OK :
+      (fragment.episode_status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
+       (fragment.episode_status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED : BW_METRIC_BOUNDARY_UNKNOWN));
     if(fragment.end_total_bytes<fragment.start_total_bytes || fragment.end_total_events<fragment.start_total_events)begin
       core_error("METRIC_ARITHMETIC",scope_id,"phase cumulative count moved backwards");
       return;
@@ -360,11 +362,11 @@ module bw_stats_core #(
     fragment.member_reset_coverage=(fragment.start_reset_records!=fragment.end_reset_records) ||
       phase_reset_overlap(fragment.start_ticks,fragment.end_ticks);
     fragment.bandwidth_valid=fragment.duration_valid && fragment.bytes_complete;
-    fragment.bandwidth_reason=!fragment.duration_valid ? BW_METRIC_BOUNDARY_UNKNOWN :
+    fragment.bandwidth_reason=!fragment.duration_valid ? fragment.duration_reason :
       (!fragment.bytes_complete ? BW_METRIC_BYTES_UNKNOWN : BW_METRIC_OK);
     fragment.bandwidth_gbps=fragment.bandwidth_valid ?
       real'(fragment.byte_count)*real'(BW_TICKS_PER_NS)/real'(fragment.duration_ticks) : 0.0;
-    fragment.variation=final_variation(stats,fragment.duration_valid,BW_METRIC_OK);
+    fragment.variation=final_variation(stats,fragment.duration_valid,fragment.duration_reason);
     if(!finite_nonnegative_real(fragment.bandwidth_gbps))core_error("METRIC_ARITHMETIC",scope_id,"phase bandwidth is not finite");
     if(core_failure_seen)return;
     next_sequence=checked_add(phase_result_seq,1,scope_id);

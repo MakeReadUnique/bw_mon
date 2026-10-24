@@ -36,6 +36,8 @@ module tb_metrics_interrupted;
        scopes[0].point.episode_result.variation.stddev_reason!=BW_METRIC_RESET ||
        scopes[0].point.episode_result.last_steady_selection_valid ||
        scopes[0].point.episode_result.last_steady_reason!=BW_METRIC_RESET ||
+       scopes[0].point.phase_result.duration_reason!=BW_METRIC_RESET ||
+       scopes[0].point.phase_result.variation.stddev_reason!=BW_METRIC_RESET ||
        !saved_ramp[0].duration_valid || !saved_ramp[0].variation.stddev_valid ||
        !saved_ramp[1].bandwidth_valid)
       $fatal(1,"reset cannot erase an earlier complete ramp or turn an unresolved last steady into a representative");

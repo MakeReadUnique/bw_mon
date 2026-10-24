@@ -604,7 +604,8 @@
     "top": "tb_metrics_interrupted",
     "expect_log": [
       "BW_VARIATION.*scope=metrics.interrupted1 .*interval=EPISODE.*stddev_valid=0.*stddev_reason=OBSERVATION_TRUNCATED",
-      "BW_LAST_STEADY.*scope=metrics.interrupted1 .*selection_valid=0.*reason=OBSERVATION_TRUNCATED"
+      "BW_LAST_STEADY.*scope=metrics.interrupted1 .*selection_valid=0.*reason=OBSERVATION_TRUNCATED",
+      "BW_PHASE_METRICS.*scope=metrics.interrupted1 .*duration_reason=OBSERVATION_TRUNCATED"
     ]
   },
   {
