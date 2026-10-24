@@ -176,8 +176,8 @@ package bw_check_report_pkg;
     virtual function void on_ready();
       scope_state_t entry;
       int fd,line_no,current,split,read_error;
-      string line,body,kind,id,key,token,section_id,section_kind,io_detail;
-      bit duplicate,invalid_id;
+      string line,body,kind,id,key,token,section_id,section_kind,io_detail,argument_suffix;
+      bit duplicate,invalid_id,has_argument_suffix;
       real number;
       for(int k=0;k<2;k++) begin
         for(int i=0;i<registered_scope_count(bw_scope_t'(k));i++) begin
@@ -194,8 +194,16 @@ package bw_check_report_pkg;
       end
       totals.scopes_expected=scopes.size();
       configured=$value$plusargs("BW_EXPECT=%s",cfg_file);
+      // An empty %s is a successful match in VCS, but $fopen("") is a
+      // simulator runtime error rather than a recoverable cfg warning.
+      if(configured && cfg_file.len()==0) begin
+        cfg_file="<missing>";cfg_warning(0,"-","-","FILE_PATH_REQUIRED","-");return;
+      end
       if(!configured) begin
-        if($test$plusargs("BW_EXPECT")) begin
+        // $test$plusargs alone also matches unrelated BW_EXPECTED-style flags.
+        has_argument_suffix=$value$plusargs("BW_EXPECT%s",argument_suffix);
+        if($test$plusargs("BW_EXPECT=") ||
+           ($test$plusargs("BW_EXPECT") && (!has_argument_suffix || argument_suffix.len()==0))) begin
           configured=1;cfg_file="<missing>";cfg_warning(0,"-","-","FILE_PATH_REQUIRED","-");
         end
         return;

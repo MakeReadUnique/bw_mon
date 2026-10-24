@@ -20,6 +20,9 @@ statistics resets. There is no hot reload. With no file, statistics continue
 and the summary is `STATISTICS_ONLY`. An explicitly missing/unreadable file is
 a nonfatal cfg WARNING. Enabling a target does not enable episode analysis or
 choose Q; missing episode evidence produces WARNING.
+An empty `+BW_EXPECT=` value warns before file I/O, and a bare `+BW_EXPECT` warns
+that a path is required. Unrelated names such as `+BW_EXPECTED` do not select
+expectation checking.
 
 ## File grammar and complete supported keys
 

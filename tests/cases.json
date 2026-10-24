@@ -1153,5 +1153,40 @@
       "BW_SUMMARY ": 0,
       "BW_EPISODE ": 0
     }
+  },
+  {
+    "name": "report_unrelated_plusargs",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECTED=other",
+      "+BW_EXPECT_MORE=other",
+      "+EXPECTED=STATISTICS_ONLY"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0"
+    ],
+    "expect_counts": {
+      "BW_CFG ": 0,
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_empty_path",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=",
+      "+EXPECTED=WARNING",
+      "+WARNINGS=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=0 .*reason=FILE_PATH_REQUIRED",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1"
+    ],
+    "expect_counts": {
+      "BW_CFG ": 1,
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
   }
 ]
