@@ -61,8 +61,8 @@ The selected protocol determines whether a transfer occurred (see below). The re
 at the actual positive edge, creates one normalized record per edge, including
 idle/reset/unknown states, and supplies the identical record to the local core.
 Known reset excludes a transfer. Unknown reset/control marks event and byte
-incompleteness; it does not invent zero traffic. Full local reset/restart behavior
-is delivered by the reset ticket.
+incompleteness; it does not invent zero traffic. Known own reset clears local
+statistics, and release restarts window coverage as described below.
 
 ## Normalized component boundary
 
@@ -79,7 +79,7 @@ with future group collectors; local counting does not require a global queue.
 | `source_epoch` | Source generation, unsigned 64-bit (initially 0) |
 | `byte_inc`, `event_inc` | Known raw increments, unsigned 64-bit |
 | `bytes_complete`, `events_complete` | Independent completeness bits |
-| `reset_n` | Original four-state reset sample |
+| `reset_n` | Four-state reset for this edge, including same-time asynchronous reset priority |
 | `reset_points` | Number of observed points known in reset on this edge |
 
 The core has a single run-to-completion `dispatch` owner. A frame first supplies
@@ -109,8 +109,10 @@ layout. `clk`, `reset_n`, and `valid` are also directly visible at that scope.
 | `bytes_complete`, `events_complete` | Every contribution in this window is known for the corresponding quantity |
 | `denominator_valid` | The covered physical duration is positive |
 | `window_valid` | Convenience conjunction: full, bytes complete, denominator valid |
-| `member_reset_coverage` | At least one known point-reset sample remains in the window |
+| `member_reset_coverage` | At least one known point-reset sample or physical reset interval overlaps the window |
 | `raw_record` | Identical normalized record used by the local core, for tracing input evidence |
+| `raw_control`, `control_toggle` | Timestamped original-point reset status and its notification; separate from sampling frames |
+| `accepted_record_seq` | Latest raw source frame accepted or handled during own reset; transport receipt, independent of window-result sequence |
 
 The ns window at T is `[max(start,T−W),T)`. Events at the left endpoint count;
 events at the right endpoint first appear in later windows. During warmup the
@@ -260,6 +262,90 @@ Additional contract cases:
 
 All integer/quality checks remain exact; real comparisons retain the separately
 declared 1e−10 GB/s numeric assertion tolerance.
+
+## Own reset, member reset and no-clock controls
+
+A point's known `reset_n=0` advances its `stats_epoch` once, clears its own
+cumulative/window history and returns a zero-coverage snapshot. While held in
+reset, actual clock edges still produce complete reset frames with zero transfers;
+the core accepts them and advances `accepted_record_seq`. No window is published
+while known own reset is held. Release restarts ns scheduling at release+S and
+cycle coverage at the first eligible actual edge. A known transfer on the release
+edge belongs to the new statistics interval. `result_seq` remains monotonic and
+advances only for a publication; clearing a snapshot does not publish a window.
+Registration, identity and raw source edge/record sequences stay unchanged.
+
+The recorder also publishes `bw_control_t raw_control` on initial ready and every
+observed reset-level change. These controls have no cycle field and never create
+sampling frames. `control_toggle` notifies after the control is stable; internal
+transport can copy/persist it before the next notification. `record_toggle` and
+`raw_record` remain a separate stream. The fields are:
+
+| Control field | Type / meaning |
+| --- | --- |
+| `timestamp_ticks` | Unsigned 64-bit original physical time in fs |
+| `control_seq` | Unsigned 64-bit monotonic per-point control sequence, initially 1; distinct from source records and cycles |
+| `source_epoch` | Unsigned 64-bit point-source generation; advances once on a known reset assertion and never rewinds |
+| `point_handle` | Unsigned 32-bit registered Point ID handle, obtainable through `point_handle_for_id(id)` |
+| `reset_n` | Original four-state observed reset level; X and Z remain unknown |
+
+A source frame carries the current `source_epoch`. Initial known reset at ready
+starts epoch 1; initial release starts epoch 0. Reset assertion/release during a
+stopped clock changes controls without advancing `raw_record.record_seq` or
+`raw_record.edge_index`.
+
+The reusable core keeps own reset separate from member controls:
+
+| Core port | Type / default / contract |
+| --- | --- |
+| `stats_reset_n` | Four-state logic, default 1; resets only this scope's statistics |
+| `member_control`, `member_control_toggle` | `bw_control_t` plus notification, default zero/inactive; original point controls supplied by a collector |
+| `accepted_record_seq` | Unsigned 64-bit receipt after each raw frame has been counted or explicitly handled during own reset; never clears on statistics reset |
+| `accepted_control_count` | Unsigned 64-bit lifetime receipt count after member-control acceptance; never clears on statistics reset |
+
+Member controls retain known-reset and unknown-reset physical intervals, including
+intervals with no sampling edges. A known member reset sets window reset coverage
+without invalidating known bytes or clearing history. Unknown reset marks byte and
+event observation incomplete for overlapping windows; known contributions remain.
+Closed intervals expire exactly at the half-open left boundary. Own reset clears
+its statistics history while retaining current member reset states and transport
+positions. This is the normalized component seam for collectors; the group tickets
+provide the complete topology and transport integration.
+
+An unknown own reset does not assert a known reset or clear its epoch/history.
+Ns results include its unknown interval even with no clocks. Cycle results hold
+the old published snapshot during a clock stop; after resume, new windows account
+for the reset interval in their actual physical coverage. A later complete window
+can recover completeness after the interval leaves it.
+
+Protocol controls and dynamic size are captured from the same pre-NBA edge view.
+The private reactive coordinators settle module reset changes before processing
+queued actions, with own reset before publication. A same-time assertion therefore
+suppresses both the old-epoch window and the point's raw transfer, including NBA
+assertion drives. Deassertion preserves the original edge-sampled reset: a DUT
+sampling reset0 or X before an NBA release does not acquire a fabricated transfer.
+Active release before the edge counts normally. Current-edge data remains excluded from a normal window at T. A
+later frame at the same T still supplies metadata and receives acceptance; time
+alone never suppresses a frame. These coordinators are instantiated internally;
+integrators do not drive them.
+
+The global `monitor_start_ticks` is fixed by the one configuration call and is
+independent of every local statistics origin. The supported duration is 40,000 ns
+from that system start. A subsequent action beyond it terminates with
+`SIM_TIME_LIMIT`, including after a local reset near the limit. Internal queues
+grow/reclaim automatically; queue-index representation exhaustion reports
+`STORAGE_RANGE` with scope and entry count. No user history-depth setting is added.
+
+Reset reproduction uses `python3 tests/run.py reset_rewarm reset_same_time_0
+reset_same_time_1 reset_same_time_2 reset_same_time_3 reset_unknown
+reset_cycle_unknown reset_initial reset_member_controls member_control_error
+member_control_reference_error
+reset_deassert_sample reset_time_budget`. The four same-time variants observe every publication change,
+not merely final cleared scalars, for both window bases. Other cases independently
+check no-edge assertion/release, schedule restart, source/control epochs and
+sequences, physical unknown-interval expiry, member/own isolation, duplicate-control/unregistered-source
+fatal behavior and immutable global time. Integer/state comparisons are exact;
+small real-value assertions retain the separate 1e-10 numerical tolerance.
 
 ## Credit ledger and diagnostic trust
 
@@ -438,3 +524,10 @@ The runner's optional `required_output` patterns test final hint logs through th
 public logging boundary after `$finish`; success still requires `TB_PASS` and no
 fatal diagnostic. All interval, state, sequence and numeric duration comparisons
 are exact integers/four-state values.
+
+Reset/credit integration validation: **46/46 contract cases passed** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including thirteen new
+reset/control cases. The DUT-like NBA-deassert fixture verifies that a sampled
+known reset0 or unknown reset cannot become a transfer after NBA release; its
+Active-release case still counts. The credit-ledger stimulus now explicitly uses
+integer-fs testbench time and checks actual raw timestamps against its event table.

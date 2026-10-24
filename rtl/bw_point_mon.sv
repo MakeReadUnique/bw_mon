@@ -34,6 +34,7 @@ module bw_point_mon #(
   bw_scope_t scope_kind = BW_POINT;
   int source_handle;
   bw_record_t raw_record;
+  bw_control_t raw_control;
   bw_sample_t sampled_view;
   bw_protocol_t protocol = PROTOCOL;
   bit dynamic_bytes = DYNAMIC_BYTES;
@@ -106,7 +107,8 @@ module bw_point_mon #(
   wire [63:0] shortage_duration_cycles=shortage_result.duration_cycles;
   wire [63:0] shortage_hit_count=shortage_result.hit_count;
   wire [63:0] shortage_interval_count=shortage_result.interval_count;
-  bit record_toggle;
+  bit record_toggle, control_toggle;
+  bw_u64_t accepted_record_seq;
   bw_u64_t stats_epoch,result_seq,total_bytes,total_events;
   bw_u64_t window_start_ticks,window_end_ticks,window_start_cycle,window_end_cycle;
   bw_u64_t coverage_ticks,coverage_cycles,window_bytes,window_events;
@@ -132,7 +134,8 @@ module bw_point_mon #(
                        .DYNAMIC_BYTES(DYNAMIC_BYTES)) recorder
     (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.flitv(flitv),.lcrdv(lcrdv),
      .size_bytes(size_bytes),.size_known(size_known),.sampled_view(sampled_view),
-     .record(raw_record),.record_toggle(record_toggle));
+     .record(raw_record),.record_toggle(record_toggle),
+     .control(raw_control),.control_toggle(control_toggle));
   bw_debug_hints #(.PROTOCOL(PROTOCOL),.CREDIT_ENABLE(CREDIT_ENABLE),
     .CREDIT_CAPACITY(CREDIT_CAPACITY),.CREDIT_INITIAL(CREDIT_INITIAL),
     .CREDIT_INITIAL_KNOWN(CREDIT_INITIAL_KNOWN),.CREDIT_RETURN_TIMING(CREDIT_RETURN_TIMING),
@@ -153,6 +156,8 @@ module bw_point_mon #(
   bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),
                   .UPDATE_STRIDE(UPDATE_STRIDE)) core
     (.scope_id(scope_id),.record(raw_record),.record_toggle(record_toggle),
+     .stats_reset_n(reset_n),.accepted_record_seq(accepted_record_seq),
+     .member_control('0),.member_control_toggle(1'b0),.accepted_control_count(),
      .stats_epoch(stats_epoch),.result_seq(result_seq),.total_bytes(total_bytes),.total_events(total_events),
      .window_start_ticks(window_start_ticks),.window_end_ticks(window_end_ticks),
      .window_start_cycle(window_start_cycle),.window_end_cycle(window_end_cycle),
