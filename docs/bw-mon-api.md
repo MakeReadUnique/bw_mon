@@ -1,7 +1,9 @@
 # Bandwidth monitor integration and public results
 
-The current implementation covers the initial ns-window observation-point path
-from [绑定观测点并发布 ns 滑窗带宽](https://github.com/MakeReadUnique/bw_mon/issues/14).
+The implementation covers the initial ns-window observation-point path
+from [绑定观测点并发布 ns 滑窗带宽](https://github.com/MakeReadUnique/bw_mon/issues/14)
+and three-protocol accounting from
+[三类接口的逐传输计量与观测缺口](https://github.com/MakeReadUnique/bw_mon/issues/15).
 The remaining implementation tickets extend this same public contract.
 
 ## Compile and start
@@ -54,7 +56,7 @@ decision. An edge at the common start itself is excluded.
 | point | `CLOCK_CONTEXT` | string | Default `default`, nonempty; an integration declaration, not proof of physical wiring |
 | point/recorder | `FIXED_BYTES` | unsigned 64-bit input, bytes/transfer | Default 0 (legal zero-byte transfers), at most 2^32−1 |
 
-A valid-only interface counts when `valid === 1'b1`. The recorder samples control
+The selected protocol determines whether a transfer occurred (see below). The recorder samples control
 at the actual positive edge, creates one normalized record per edge, including
 idle/reset/unknown states, and supplies the identical record to the local core.
 Known reset excludes a transfer. Unknown reset/control marks event and byte
@@ -63,7 +65,7 @@ is delivered by the reset ticket.
 
 ## Normalized component boundary
 
-`bw_point_recorder` emits `bw_mon_pkg::bw_record_t record` and toggles
+`bw_point_recorder` receives the public `scope_id`, emits `bw_mon_pkg::bw_record_t record` and toggles
 `record_toggle` once after each sampled record. `bw_stats_core` accepts the same
 ports plus `scope_id` and the window parameters. This component contract is shared
 with future group collectors; local counting does not require a global queue.
@@ -145,3 +147,74 @@ This numerical tolerance is separate from any future performance tolerance.
 
 Initial validation: 11/11 contract cases passed on 2026-10-24 with
 VCS W-2024.09-SP1_Full64, GNU g++ and Python 3.6.8 on Linux x86-64.
+
+## Protocols, adapters and coherent samples
+
+Select the accounting convention once per point:
+
+| Point/recorder parameter | Type | Meaning |
+| --- | --- | --- |
+| `PROTOCOL` | `bw_protocol_t` | Default `BW_VALID_ONLY`; also `BW_VALID_READY` and `BW_CREDIT`; unsupported/unknown value is fatal |
+| `DYNAMIC_BYTES` | bit | Default 0: count `FIXED_BYTES` on each transfer. Set 1: use that transfer's decoded `size_bytes` and `size_known` |
+
+| Raw input | Type / default | Role |
+| --- | --- | --- |
+| `valid` | logic, default 0 | Transfer control for valid-only and valid-ready |
+| `ready` | logic, default 0 | Acceptance control for valid-ready |
+| `flitv` | logic, default 0 | Actual send control for credit protocol |
+| `lcrdv` | logic, default 0 | Credit return evidence, independent of counted sends |
+| `size_bytes` | logic [63:0], default X | Current transfer's already decoded accounted bytes, 0..2^32−1 |
+| `size_known` | logic, default 0 | Adapter explicitly proves its byte decode known by driving 1; raw `size_bytes` must also contain no X/Z |
+
+`BW_VALID_ONLY` uses `valid`; `BW_VALID_READY` uses the four-state expression
+`valid & ready`; `BW_CREDIT` uses `flitv` alone. Thus valid=0 or ready=0 can prove
+no handshake even when the other signal is unknown. Unknown control that cannot
+prove activity/idle produces an observation gap. Flitv=1 counts even with lcrdv=0
+or X; credit diagnosis does not grant permission or erase known transfers.
+
+A definite transfer always adds one event, even if it has zero bytes or an
+unknown size. An unknown size adds zero *known* bytes and sets
+`bytes_complete=0`, while `events_complete` remains true. A control gap makes
+both completeness flags false. A definite idle ignores unused unknown size
+fields. Known contributions remain in cumulative/window values with incomplete
+flags; those flags recover when the unknown positions expire from the window.
+Fixed mode ignores dynamic size/knownness altogether. A trusted dynamic decode
+above 2^32−1 is a `TRANSFER_BYTES` core error with Point ID and sampled byte value.
+
+The DUT-specific wrapper owns size encoding conversion. Do not connect the whole
+transaction's byte count on every beat. An executable wrapper example is
+`tests/tb_adapter_decode.sv`: its interface encoding maps the current beat to
+16/32/64/128 B, propagates unknown decode separately, and retains the original
+`size_code` at the wrapper's scope. The generic monitor receives only decoded
+bytes; it does not silently interpret AXI, CHI or other DUT encodings.
+
+All raw fields are copied together at the actual positive sampling edge, in one
+nonblocking-free active-region action. The normalized record is then built from
+that immutable snapshot, and its notification toggles in NBA. A synchronous DUT
+may update its next control and size with nonblocking assignments at the same
+edge: the monitor consistently observes their pre-NBA transfer. Drive TB stimuli
+before the edge; competing blocking DUT/TB updates at the very same edge are a
+SystemVerilog race and are not a supported sampling contract.
+
+The exact snapshot is `sampled_view` (`bw_sample_t`), retained alongside
+`raw_record`. Direct public four-state scalar aliases are `sampled_reset_n`,
+`sampled_valid`, `sampled_ready`, `sampled_flitv`, `sampled_lcrdv`,
+`sampled_size_bytes` and `sampled_size_known`. The live input ports remain visible
+too. `protocol` and `dynamic_bytes` expose the selected convention. A credit point
+also exposes `credit_supported=1`, `credit_enabled=0`, `credit_trusted=0` until the
+credit-diagnostics ticket supplies and configures a ledger. These independent
+diagnostic states never change accounting quality.
+
+Additional contract cases:
+
+| Test | Independent expectation |
+| --- | --- |
+| `protocol_recording` | All three protocols, zero bytes, unused size X, definite event/unknown size, unknown control and independent byte/event quality; known windows recover after unknown positions expire |
+| `subns_vectors` | Spec T5-E2 raw event table translated +1 ns so relative zero is a legal edge after ready; relative T=10/11/12/20/22 gives exactly 320/384/384/256/256 B and 32/38.4/38.4/25.6/25.6 GB/s |
+| `sample_view` | DUT nonblocking control+size updates preserve matching pre-edge fields; 8 B, idle, 16 B, 2^32−1 B produces exactly 4,294,967,319 known bytes and three events |
+| `recorder_edges` | Known reset, unknown reset, definite fixed-byte handshake and idle each publish their own record with original timestamp and monotonically increasing sequence |
+| `adapter_decode` | Two encoded 32-byte beats count 64 B; unknown decode preserves event, unused unknown decode during idle remains complete |
+| `dynamic_size_error`, `protocol_config_error` | Oversized known transfer or unsupported protocol terminates with the precise core diagnostic |
+
+All integer/quality checks remain exact; real comparisons retain the separately
+declared 1e−10 GB/s numeric assertion tolerance.

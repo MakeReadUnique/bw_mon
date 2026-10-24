@@ -4,6 +4,18 @@ package bw_mon_pkg;
   typedef longint unsigned bw_u64_t;
   typedef enum bit {BW_NS, BW_CYCLE} bw_basis_t;
   typedef enum bit {BW_POINT, BW_GROUP} bw_scope_t;
+  typedef enum logic [1:0] {BW_VALID_ONLY, BW_VALID_READY, BW_CREDIT} bw_protocol_t;
+  // A single four-state edge snapshot feeds accounting and local diagnostics.
+  // Adapter-decoded size is distinct from whether that decode is trustworthy.
+  typedef struct packed {
+    logic reset_n;
+    logic valid;
+    logic ready;
+    logic flitv;
+    logic lcrdv;
+    logic [63:0] size_bytes;
+    logic size_known;
+  } bw_sample_t;
   localparam bw_u64_t BW_TICKS_PER_NS = 1000000;
   localparam bw_u64_t BW_U64_MAX = 64'hffffffffffffffff;
 
