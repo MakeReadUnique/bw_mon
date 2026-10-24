@@ -29,11 +29,14 @@ def main():
         build = ROOT / ".build" / "tests" / top
         build.mkdir(parents=True, exist_ok=True)
         files = sources + [ROOT / "tests" / (top + ".sv")]
-        digest = hashlib.sha256(b"".join(path.read_bytes() for path in files)).hexdigest()
+        dependencies = files + sorted(path for path in (ROOT / "rtl").rglob("*")
+                                      if path.suffix in {".svh", ".vh"})
+        digest = hashlib.sha256(b"".join(path.read_bytes() for path in dependencies)).hexdigest()
         stamp = build / "source.sha256"
         if top not in compiled:
             if args.no_cache or not (build / "simv").exists() or not stamp.exists() or stamp.read_text() != digest:
                 cmd = ["vcs", "-full64", "-sverilog", "-timescale=1ns/1fs", "-debug_access+all",
+                       "+incdir+" + str(ROOT / "rtl"), "-assert", "svaext",
                        "-top", top, "-o", str(build / "simv")] + [str(path) for path in files]
                 with (build / "compile.log").open("w") as log:
                     result = subprocess.run(cmd, cwd=build, stdout=log, stderr=subprocess.STDOUT)

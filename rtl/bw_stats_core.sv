@@ -7,6 +7,7 @@ module bw_stats_core #(
   input bw_mon_pkg::bw_record_t record,
   input bit record_toggle,
   input logic stats_reset_n = 1'b1,
+  input bw_mon_pkg::bw_u64_t progress_watermark_ticks = bw_mon_pkg::BW_U64_MAX,
   input bw_mon_pkg::bw_control_t member_control = '0,
   input bit member_control_toggle = 1'b0,
   output bw_mon_pkg::bw_u64_t accepted_record_seq = 0,
@@ -248,8 +249,10 @@ module bw_stats_core #(
   endtask
 
   task automatic publish_due(bw_u64_t through_ticks);
+    bw_u64_t safe_ticks;
+    safe_ticks=(through_ticks<progress_watermark_ticks) ? through_ticks : progress_watermark_ticks;
     initialize_state();
-    while (next_update_ticks <= through_ticks) begin
+    while (next_update_ticks <= safe_ticks) begin
       publish_window(next_update_ticks);
       next_update_ticks=checked_add(next_update_ticks,ns_to_ticks(UPDATE_STRIDE,scope_id),scope_id);
     end
@@ -373,6 +376,8 @@ module bw_stats_core #(
           wait(timer_schedule_seq != observed_schedule);
         end else begin
           due_tick=next_update_ticks;
+          if (due_tick>progress_watermark_ticks)
+            wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks);
           if ($time < due_tick) begin
             fork : wait_for_timer
               begin #(due_tick-$time); end
@@ -380,7 +385,8 @@ module bw_stats_core #(
             join_any
             disable wait_for_timer;
           end
-          if (timer_schedule_seq == observed_schedule && $time >= due_tick) begin
+          if (timer_schedule_seq == observed_schedule && $time >= due_tick &&
+              due_tick<=progress_watermark_ticks) begin
             check_queue_growth(pending_timers.size(),scope_id);
             pending_timers.push_back($time);
             timer_requests=checked_add(timer_requests,1,scope_id);

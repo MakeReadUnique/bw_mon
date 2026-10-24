@@ -27,6 +27,7 @@ module bw_point_mon #(
   string scope_id, monitor_path;
   bw_scope_t scope_kind = BW_POINT;
   int source_handle;
+  int transport_source;
   bw_record_t raw_record;
   bw_control_t raw_control;
   bw_sample_t sampled_view;
@@ -70,7 +71,12 @@ module bw_point_mon #(
                            CREDIT_INITIAL_KNOWN,CREDIT_RETURN_TIMING,scope_id);
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
+    transport_source=point_source_handle(source_handle);
   end
+  always @(record_toggle)
+    if (monitor_ready && raw_record.record_seq!=0) publish_frame(transport_source,raw_record);
+  always @(control_toggle)
+    if (monitor_ready && raw_control.control_seq!=0) publish_control(transport_source,raw_control);
   bw_point_recorder #(.FIXED_BYTES(FIXED_BYTES),.PROTOCOL(PROTOCOL),
                        .DYNAMIC_BYTES(DYNAMIC_BYTES)) recorder
     (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.flitv(flitv),.lcrdv(lcrdv),
@@ -94,6 +100,7 @@ module bw_point_mon #(
                   .UPDATE_STRIDE(UPDATE_STRIDE)) core
     (.scope_id(scope_id),.record(raw_record),.record_toggle(record_toggle),
      .stats_reset_n(reset_n),.accepted_record_seq(accepted_record_seq),
+     .progress_watermark_ticks(BW_U64_MAX),
      .member_control('0),.member_control_toggle(1'b0),.accepted_control_count(),
      .stats_epoch(stats_epoch),.result_seq(result_seq),.total_bytes(total_bytes),.total_events(total_events),
      .window_start_ticks(window_start_ticks),.window_end_ticks(window_end_ticks),
