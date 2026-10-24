@@ -1,9 +1,26 @@
 module bw_stats_core #(
   parameter bw_mon_pkg::bw_basis_t WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter bw_mon_pkg::bw_u64_t WINDOW_WIDTH = 0,
-  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE = 0
+  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE = 0,
+  parameter bit EPISODE_ENABLE = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = 0,
+  parameter bit PHASE_ENABLE = 0,
+  parameter logic [63:0] PHASE_N = 0,
+  parameter logic [63:0] PHASE_MIN_SPAN = 0,
+  parameter logic [63:0] PHASE_K = 0,
+  parameter real PHASE_STEADY_ENTER_ABS = -1.0,
+  parameter real PHASE_STEADY_ENTER_REL = -1.0,
+  parameter real PHASE_STEADY_EXIT_ABS = -1.0,
+  parameter real PHASE_STEADY_EXIT_REL = -1.0,
+  parameter real PHASE_RMS_ENTER_ABS = -1.0,
+  parameter real PHASE_RMS_ENTER_REL = -1.0,
+  parameter real PHASE_RMS_EXIT_ABS = -1.0,
+  parameter real PHASE_RMS_EXIT_REL = -1.0,
+  parameter real PHASE_TREND_ABS = -1.0,
+  parameter real PHASE_TREND_REL = -1.0
 ) (
   input string scope_id,
+  input bw_mon_pkg::bw_scope_t scope_kind = bw_mon_pkg::BW_POINT,
   input bw_mon_pkg::bw_record_t record,
   input bit record_toggle,
   input logic stats_reset_n = 1'b1,
@@ -32,7 +49,53 @@ module bw_stats_core #(
   output bit events_complete = 1,
   output bit denominator_valid = 0,
   output bit window_valid = 0,
-  output bit member_reset_coverage = 0
+  output bit member_reset_coverage = 0,
+  output bit episode_active = 0,
+  output bw_mon_pkg::bw_episode_status_t episode_status = bw_mon_pkg::BW_EPISODE_NONE,
+  output bw_mon_pkg::bw_u64_t episode_id = 0,
+  output bw_mon_pkg::bw_u64_t episode_result_seq = 0,
+  output bw_mon_pkg::bw_u64_t episode_first_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_last_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_tail_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_confirmation_ticks = 0,
+  output bw_mon_pkg::bw_u64_t episode_first_cycle = 0,
+  output bw_mon_pkg::bw_u64_t episode_last_cycle = 0,
+  output bw_mon_pkg::bw_u64_t episode_tail_cycle = 0,
+  output bw_mon_pkg::bw_u64_t episode_bytes = 0,
+  output bw_mon_pkg::bw_u64_t episode_events = 0,
+  output bw_mon_pkg::bw_u64_t episode_duration_ticks = 0,
+  output bit episode_first_known = 0,
+  output bit episode_last_known = 0,
+  output bit episode_tail_known = 0,
+  output bit episode_bytes_complete = 1,
+  output bit episode_events_complete = 1,
+  output bit episode_member_reset_coverage = 0,
+  output bit episode_duration_valid = 0,
+  output bit episode_e2e_valid = 0,
+  output real episode_e2e_gbps = 0.0,
+  output bw_mon_pkg::bw_episode_result_t episode_result,
+  output bw_mon_pkg::bw_phase_t phase_current = bw_mon_pkg::BW_PHASE_UNDETERMINED,
+  output bw_mon_pkg::bw_phase_t phase_candidate = bw_mon_pkg::BW_PHASE_UNDETERMINED,
+  output bit phase_active = 0,
+  output bit phase_eligible = 0,
+  output bit phase_evidence_continuous = 0,
+  output bit phase_evidence_sufficient = 0,
+  output bit phase_fit_valid = 0,
+  output bw_mon_pkg::bw_u64_t phase_id = 0,
+  output bw_mon_pkg::bw_u64_t phase_result_seq = 0,
+  output bw_mon_pkg::bw_u64_t phase_window_seq = 0,
+  output bw_mon_pkg::bw_u64_t phase_evidence_count = 0,
+  output bw_mon_pkg::bw_u64_t phase_evidence_span = 0,
+  output bw_mon_pkg::bw_u64_t phase_candidate_count = 0,
+  output bw_mon_pkg::bw_u64_t phase_candidate_ticks = 0,
+  output bw_mon_pkg::bw_u64_t phase_candidate_total_bytes = 0,
+  output bw_mon_pkg::bw_u64_t phase_candidate_total_events = 0,
+  output bw_mon_pkg::bw_u64_t phase_start_ticks = 0,
+  output bw_mon_pkg::bw_u64_t phase_confirmation_ticks = 0,
+  output real phase_fit_mean = 0.0,
+  output real phase_fit_delta = 0.0,
+  output real phase_fit_rms = 0.0,
+  output bw_mon_pkg::bw_phase_result_t phase_result
 );
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
@@ -77,6 +140,403 @@ module bw_stats_core #(
   bit cycle_initialized = 0;
   bit initialized = 0;
 
+  bit silence_active=0;
+  bw_u64_t silence_start_ticks=0, silence_start_cycle=0;
+  bit scheduled_episode_deadline_valid=0;
+  bw_u64_t scheduled_episode_deadline=0;
+  bw_u64_t episode_start_total_bytes=0, episode_end_total_bytes=0;
+  bw_u64_t episode_start_total_events=0, episode_end_total_events=0;
+  bit pre_episode_gap=0, observation_gap_active=0, gap_waits_for_edge=0;
+  bit pending_sample_reset_coverage=0;
+  quality_interval_t episode_quality_intervals[$];
+
+  typedef struct {
+    bw_u64_t ticks,basis_position;
+    real value;
+  } phase_sample_t;
+  phase_sample_t phase_samples[$];
+  bw_phase_result_t pending_phases[$];
+  bw_u64_t phase_start_total_bytes=0,phase_start_total_events=0;
+  real phase_confirmation_delta=0.0,phase_confirmation_rms=0.0;
+  // Ordered episodes make this an exact compressed ownership query: every
+  // retired episode's activity is at/before the latest retired transfer,
+  // including a zero-byte event. Unknown evidence has a separate quality gate.
+  bit retired_activity_valid=0;
+  bw_u64_t retired_episode_id=0,retired_last_ticks=0,retired_last_cycle=0;
+
+  task automatic clear_phase_evidence();
+    phase_samples.delete();phase_evidence_count=0;phase_evidence_span=0;
+    phase_evidence_continuous=0;phase_evidence_sufficient=0;phase_fit_valid=0;
+    phase_fit_mean=0.0;phase_fit_delta=0.0;phase_fit_rms=0.0;
+    phase_candidate=BW_PHASE_UNDETERMINED;phase_candidate_count=0;phase_candidate_ticks=0;
+    phase_candidate_total_bytes=0;phase_candidate_total_events=0;
+  endtask
+
+  task automatic begin_phase_episode();
+    if(!PHASE_ENABLE)return;
+    if(pending_phases.size()!=0)core_error("PHASE_STATE",scope_id,"unsettled phases at new episode");
+    clear_phase_evidence();phase_current=BW_PHASE_UNDETERMINED;phase_active=0;
+    phase_start_ticks=0;phase_confirmation_ticks=0;phase_eligible=0;
+  endtask
+
+  task automatic deliver_phase(bw_phase_result_t fragment);
+    bw_u64_t next_sequence;
+    if(core_failure_seen)return;
+    next_sequence=checked_add(phase_result_seq,1,scope_id);
+    if(core_failure_seen)return;
+    phase_result_seq=next_sequence;
+    fragment.result_seq=phase_result_seq;phase_result=fragment;
+    emit_phase_result(scope_id,fragment);
+  endtask
+
+  task automatic close_phase(bw_u64_t end_tick,bw_u64_t end_bytes,bw_u64_t end_events,
+                             bit end_known,bw_phase_end_t reason);
+    bw_phase_result_t fragment;
+    if(!PHASE_ENABLE || !phase_active || core_failure_seen)return;
+    if(end_known && end_tick<=phase_start_ticks)begin phase_active=0;return;end
+    fragment.scope_kind=scope_kind;fragment.stats_epoch=stats_epoch;
+    fragment.episode_id=episode_id;fragment.phase_id=phase_id;fragment.result_seq=0;
+    fragment.phase_kind=phase_current;fragment.end_reason=reason;fragment.episode_status=BW_EPISODE_ACTIVE;
+    fragment.start_ticks=phase_start_ticks;fragment.end_ticks=end_tick;
+    fragment.confirmation_ticks=phase_confirmation_ticks;
+    fragment.start_total_bytes=phase_start_total_bytes;fragment.end_total_bytes=end_bytes;
+    fragment.start_total_events=phase_start_total_events;fragment.end_total_events=end_events;
+    fragment.start_known=1;fragment.end_known=end_known;
+    fragment.confirmation_delta=phase_confirmation_delta;fragment.confirmation_rms=phase_confirmation_rms;
+    check_queue_growth(pending_phases.size(),scope_id);
+    if(core_failure_seen)return;
+    pending_phases.push_back(fragment);phase_active=0;
+  endtask
+
+  task automatic flush_safe_phases();
+    bw_phase_result_t fragment;
+    bw_u64_t known_covered_through;
+    if(!PHASE_ENABLE || !episode_active)return;
+    known_covered_through=episode_tail_known ? episode_tail_ticks : episode_last_ticks;
+    while(pending_phases.size()!=0 && pending_phases[0].end_known &&
+          pending_phases[0].end_ticks<=known_covered_through)begin
+      fragment=pending_phases.pop_front();deliver_phase(fragment);
+    end
+  endtask
+
+  task automatic finish_episode_phases(bw_episode_status_t status,bw_u64_t observed_end);
+    bw_phase_result_t fragment;
+    bit known_end;
+    bw_u64_t end_tick,end_bytes,end_events;
+    if(!PHASE_ENABLE || core_failure_seen)return;
+    flush_safe_phases();
+    known_end=episode_tail_known && episode_last_known;
+    end_tick=known_end ? episode_tail_ticks : observed_end;
+    end_bytes=known_end ? episode_end_total_bytes : total_bytes;
+    end_events=known_end ? episode_end_total_events : total_events;
+    close_phase(end_tick,end_bytes,end_events,known_end,BW_PHASE_EPISODE_END);
+    while(pending_phases.size()!=0)begin
+      fragment=pending_phases.pop_front();
+      if(known_end)begin
+        if(fragment.start_ticks>=end_tick)continue;
+        if(fragment.end_ticks>end_tick)begin
+          fragment.end_ticks=end_tick;fragment.end_total_bytes=end_bytes;fragment.end_total_events=end_events;
+          fragment.end_reason=BW_PHASE_EPISODE_END;
+        end
+      end else fragment.end_known=0;
+      fragment.episode_status=status;deliver_phase(fragment);
+    end
+    clear_phase_evidence();phase_active=0;phase_current=BW_PHASE_UNDETERMINED;phase_eligible=0;
+  endtask
+
+  task automatic break_phase_evidence(bw_u64_t at_ticks);
+    close_phase(at_ticks,total_bytes,total_events,1,BW_PHASE_EVIDENCE_GAP);
+    flush_safe_phases();clear_phase_evidence();
+    phase_current=BW_PHASE_UNDETERMINED;phase_active=0;
+    phase_start_ticks=0;phase_confirmation_ticks=0;
+  endtask
+
+  task automatic fit_phase_samples();
+    real x,y,mean_x,mean_y_delta,xx,xy,slope,residual,sum_residual;
+    real anchor_y;
+    bw_u64_t origin;
+    origin=phase_samples[0].ticks;anchor_y=phase_samples[0].value;
+    mean_x=0.0;mean_y_delta=0.0;
+    foreach(phase_samples[i])begin
+      x=real'(phase_samples[i].ticks-origin)/real'(BW_TICKS_PER_NS);
+      mean_x+=x;mean_y_delta+=phase_samples[i].value-anchor_y;
+    end
+    mean_x/=real'(PHASE_N);mean_y_delta/=real'(PHASE_N);
+    phase_fit_mean=anchor_y+mean_y_delta;xx=0.0;xy=0.0;
+    foreach(phase_samples[i])begin
+      x=real'(phase_samples[i].ticks-origin)/real'(BW_TICKS_PER_NS)-mean_x;
+      y=phase_samples[i].value-anchor_y-mean_y_delta;
+      xx+=x*x;xy+=x*y;
+    end
+    if(!finite_nonnegative_real(xx) || xx<=0.0 ||
+       !finite_nonnegative_real(phase_fit_mean))
+      core_error("PHASE_FIT",scope_id,$sformatf("window_end_ticks=%0d N=%0d xx=%0.12g mean=%0.12g",
+        window_end_ticks,PHASE_N,xx,phase_fit_mean));
+    slope=xy/xx;sum_residual=0.0;
+    foreach(phase_samples[i])begin
+      x=real'(phase_samples[i].ticks-origin)/real'(BW_TICKS_PER_NS)-mean_x;
+      residual=phase_samples[i].value-anchor_y-mean_y_delta-slope*x;
+      sum_residual+=residual*residual;
+    end
+    phase_fit_delta=slope*real'(phase_samples[$].ticks-origin)/real'(BW_TICKS_PER_NS);
+    phase_fit_rms=$sqrt(sum_residual/real'(PHASE_N));
+    if(!finite_nonnegative_real($abs(phase_fit_delta)) ||
+       !finite_nonnegative_real(phase_fit_rms))
+      core_error("PHASE_FIT",scope_id,$sformatf("window_end_ticks=%0d delta=%0.12g rms=%0.12g",
+        window_end_ticks,phase_fit_delta,phase_fit_rms));
+    phase_fit_valid=1;
+  endtask
+
+  task automatic consume_phase_window();
+    phase_sample_t sample,discarded;
+    bw_phase_t proposed;
+    real steady_enter,steady_exit,rms_enter,rms_exit,trend;
+    bit residue;
+    if(!PHASE_ENABLE)return;
+    phase_window_seq=result_seq;
+    residue=retired_activity_valid && retired_episode_id!=episode_id &&
+      ((WINDOW_BASIS==BW_NS && window_start_ticks<=retired_last_ticks) ||
+       (WINDOW_BASIS==BW_CYCLE && window_start_cycle<=retired_last_cycle));
+    phase_eligible=episode_active && window_full && bytes_complete && denominator_valid && !residue;
+    if(!phase_eligible)begin break_phase_evidence(window_end_ticks);return;end
+    phase_evidence_continuous=1;
+    if(phase_samples.size()>=PHASE_N)discarded=phase_samples.pop_front();
+    sample.ticks=window_end_ticks;sample.basis_position=(WINDOW_BASIS==BW_NS) ?
+      window_end_ticks : window_end_cycle;sample.value=bandwidth_gbps;
+    check_queue_growth(phase_samples.size(),scope_id);phase_samples.push_back(sample);
+    phase_evidence_count=phase_samples.size();
+    phase_evidence_span=sample.basis_position-phase_samples[0].basis_position;
+    phase_evidence_sufficient=(phase_evidence_count==PHASE_N) &&
+      phase_evidence_span>=((WINDOW_BASIS==BW_NS) ? ns_to_ticks(PHASE_MIN_SPAN,scope_id) : PHASE_MIN_SPAN);
+    phase_fit_valid=0;
+    if(!phase_evidence_sufficient)return;
+    fit_phase_samples();
+    steady_enter=PHASE_STEADY_ENTER_ABS+PHASE_STEADY_ENTER_REL*phase_fit_mean;
+    steady_exit=PHASE_STEADY_EXIT_ABS+PHASE_STEADY_EXIT_REL*phase_fit_mean;
+    rms_enter=PHASE_RMS_ENTER_ABS+PHASE_RMS_ENTER_REL*phase_fit_mean;
+    rms_exit=PHASE_RMS_EXIT_ABS+PHASE_RMS_EXIT_REL*phase_fit_mean;
+    trend=PHASE_TREND_ABS+PHASE_TREND_REL*phase_fit_mean;
+    if(!finite_nonnegative_real(steady_enter) || !finite_nonnegative_real(steady_exit) ||
+       !finite_nonnegative_real(rms_enter) || !finite_nonnegative_real(rms_exit) ||
+       !finite_nonnegative_real(trend))core_error("PHASE_FIT",scope_id,
+         $sformatf("window_end_ticks=%0d mean=%0.12g steady_enter=%0.12g steady_exit=%0.12g rms_enter=%0.12g rms_exit=%0.12g trend=%0.12g",
+           window_end_ticks,phase_fit_mean,steady_enter,steady_exit,rms_enter,rms_exit,trend));
+    if(phase_current==BW_PHASE_STEADY && $abs(phase_fit_delta)<=steady_exit && phase_fit_rms<=rms_exit)
+      proposed=BW_PHASE_STEADY;
+    else if($abs(phase_fit_delta)<=steady_enter && phase_fit_rms<=rms_enter)proposed=BW_PHASE_STEADY;
+    else if(phase_fit_delta>=trend && phase_fit_rms<=rms_enter)proposed=BW_PHASE_RAMP;
+    else if(phase_fit_delta<=-trend && phase_fit_rms<=rms_enter)proposed=BW_PHASE_FALL;
+    else proposed=BW_PHASE_UNDETERMINED;
+    if(proposed==phase_current)begin
+      phase_candidate=BW_PHASE_UNDETERMINED;phase_candidate_count=0;
+      return;
+    end
+    if(phase_candidate_count==0 || proposed!=phase_candidate)begin
+      phase_candidate=proposed;phase_candidate_count=1;phase_candidate_ticks=window_end_ticks;
+      phase_candidate_total_bytes=total_bytes;phase_candidate_total_events=total_events;
+    end else phase_candidate_count=checked_add(phase_candidate_count,1,scope_id);
+    if(phase_candidate_count<PHASE_K)return;
+    close_phase(phase_candidate_ticks,phase_candidate_total_bytes,phase_candidate_total_events,1,BW_PHASE_CHANGE);
+    phase_current=proposed;phase_start_ticks=phase_candidate_ticks;phase_confirmation_ticks=window_end_ticks;
+    phase_start_total_bytes=phase_candidate_total_bytes;phase_start_total_events=phase_candidate_total_events;
+    phase_confirmation_delta=phase_fit_delta;phase_confirmation_rms=phase_fit_rms;
+    if(proposed!=BW_PHASE_UNDETERMINED)begin
+      phase_id=checked_add(phase_id,1,scope_id);phase_active=1;
+    end
+    phase_candidate_count=0;phase_candidate=BW_PHASE_UNDETERMINED;
+    flush_safe_phases();
+  endtask
+
+  function automatic bw_u64_t silence_deadline_ticks();
+    return checked_add(silence_start_ticks,ns_to_ticks(SILENCE_THRESHOLD,scope_id),scope_id);
+  endfunction
+
+  task automatic update_episode_duration();
+    episode_duration_valid=episode_first_known && episode_last_known && episode_tail_known &&
+                           episode_tail_ticks>episode_first_ticks;
+    episode_duration_ticks=episode_duration_valid ? episode_tail_ticks-episode_first_ticks : 0;
+  endtask
+
+  function automatic bit unknown_episode_control();
+    foreach (active_quality[key])
+      if ($isunknown(active_quality[key].reset_n)) return 1;
+    return 0;
+  endfunction
+
+  task automatic interrupt_silence();
+    silence_active=0; observation_gap_active=1;
+    if (episode_active) begin
+      episode_bytes_complete=0; episode_events_complete=0; episode_last_known=0;
+      update_episode_duration();
+    end else pre_episode_gap=1;
+  endtask
+
+  task automatic start_silence(bw_u64_t at_ticks, bw_u64_t at_cycle);
+    if (!silence_active) begin
+      silence_active=1; silence_start_ticks=at_ticks; silence_start_cycle=at_cycle;
+    end
+  endtask
+
+  task automatic update_episode_reset_coverage();
+    if (!EPISODE_ENABLE || !episode_active || !episode_tail_known) return;
+    foreach (episode_quality_intervals[i]) begin
+      if (episode_quality_intervals[i].known_reset && episode_tail_known &&
+          episode_quality_intervals[i].start_ticks<episode_tail_ticks &&
+          episode_quality_intervals[i].end_ticks>episode_first_ticks)
+        episode_member_reset_coverage=1;
+    end
+    foreach (active_quality[key]) begin
+      if (active_quality[key].reset_n === 1'b0 && episode_tail_known &&
+          active_quality[key].start_ticks<episode_tail_ticks)
+        episode_member_reset_coverage=1;
+    end
+  endtask
+
+  task automatic finish_episode(bw_episode_status_t status, bw_u64_t confirmation);
+    if (!EPISODE_ENABLE || !episode_active || core_failure_seen) return;
+    update_episode_duration();
+    update_episode_reset_coverage();
+    finish_episode_phases(status,confirmation);
+    if(core_failure_seen)return;
+    retired_activity_valid=1;retired_episode_id=episode_id;
+    retired_last_ticks=episode_last_ticks;retired_last_cycle=episode_last_cycle;
+    episode_active=0; episode_status=status; episode_confirmation_ticks=confirmation;
+    silence_active=0;
+    episode_e2e_valid=(status==BW_EPISODE_COMPLETE && episode_duration_valid && episode_bytes_complete);
+    episode_e2e_gbps=episode_e2e_valid ?
+      real'(episode_bytes)*real'(BW_TICKS_PER_NS)/real'(episode_duration_ticks) : 0.0;
+    episode_result_seq=checked_add(episode_result_seq,1,scope_id);
+    if (core_failure_seen) return;
+    episode_result.scope_kind=scope_kind;
+    episode_result.stats_epoch=stats_epoch; episode_result.result_seq=episode_result_seq;
+    episode_result.episode_id=episode_id; episode_result.status=status;
+    episode_result.first_ticks=episode_first_ticks; episode_result.last_ticks=episode_last_ticks;
+    episode_result.tail_ticks=episode_tail_ticks; episode_result.confirmation_ticks=confirmation;
+    episode_result.first_cycle=episode_first_cycle; episode_result.last_cycle=episode_last_cycle;
+    episode_result.tail_cycle=episode_tail_cycle; episode_result.byte_count=episode_bytes;
+    episode_result.event_count=episode_events; episode_result.duration_ticks=episode_duration_ticks;
+    episode_result.start_total_bytes=episode_start_total_bytes;
+    episode_result.end_total_bytes=episode_end_total_bytes;
+    episode_result.start_total_events=episode_start_total_events;
+    episode_result.end_total_events=episode_end_total_events;
+    episode_result.first_known=episode_first_known; episode_result.last_known=episode_last_known;
+    episode_result.tail_known=episode_tail_known; episode_result.bytes_complete=episode_bytes_complete;
+    episode_result.events_complete=episode_events_complete;
+    episode_result.member_reset_coverage=episode_member_reset_coverage;
+    episode_result.duration_valid=episode_duration_valid; episode_result.e2e_valid=episode_e2e_valid;
+    episode_result.e2e_gbps=episode_e2e_gbps;
+    if (status==BW_EPISODE_RESET_INTERRUPTED) episode_result.reason=BW_EPISODE_RESET;
+    else if (status==BW_EPISODE_TRUNCATED) episode_result.reason=BW_EPISODE_OBSERVATION_END;
+    else if (!episode_first_known) episode_result.reason=BW_EPISODE_FIRST_UNKNOWN;
+    else if (!episode_last_known) episode_result.reason=BW_EPISODE_LAST_UNKNOWN;
+    else if (!episode_tail_known) episode_result.reason=BW_EPISODE_TAIL_UNKNOWN;
+    else if (!episode_bytes_complete) episode_result.reason=BW_EPISODE_BYTES_UNKNOWN;
+    else if (!episode_duration_valid) episode_result.reason=BW_EPISODE_DURATION_UNKNOWN;
+    else episode_result.reason=BW_EPISODE_REASON_NONE;
+    emit_episode_result(scope_id,episode_result);
+    pre_episode_gap=0; observation_gap_active=0; gap_waits_for_edge=0;
+    pending_sample_reset_coverage=0; episode_quality_intervals.delete();
+  endtask
+
+  task automatic capture_episode_edge(bw_record_t incoming);
+    if (!EPISODE_ENABLE) return;
+    gap_waits_for_edge=0;
+    if (!episode_active || episode_tail_known) return;
+    if (incoming.edge_index>episode_last_cycle) begin
+      episode_tail_ticks=incoming.timestamp_ticks; episode_tail_cycle=incoming.edge_index;
+      episode_tail_known=1;
+      episode_end_total_bytes=total_bytes; episode_end_total_events=total_events;
+      update_episode_duration();
+      update_episode_reset_coverage();
+      if (!observation_gap_active && !unknown_episode_control())
+        start_silence(incoming.timestamp_ticks,incoming.edge_index);
+    end
+  endtask
+
+  task automatic advance_episode_time(bw_u64_t at_ticks, bw_u64_t at_cycle, bit is_edge);
+    bit reached;
+    bw_u64_t confirmation, safe_ticks;
+    if (!EPISODE_ENABLE || !silence_active || current_reset_n === 1'b0) return;
+    reached=0; confirmation=at_ticks;
+    safe_ticks=(at_ticks<progress_watermark_ticks) ? at_ticks : progress_watermark_ticks;
+    if (WINDOW_BASIS==BW_NS && safe_ticks>=silence_deadline_ticks()) begin
+      reached=1; confirmation=silence_deadline_ticks();
+    end else if (WINDOW_BASIS==BW_CYCLE && is_edge &&
+                 at_cycle>=checked_add(silence_start_cycle,SILENCE_THRESHOLD,scope_id)) reached=1;
+    if (reached) begin
+      if (episode_active) finish_episode(BW_EPISODE_COMPLETE,confirmation);
+      else begin pre_episode_gap=0; silence_active=0; end
+    end
+  endtask
+
+  task automatic account_episode_frame(bw_record_t incoming);
+    if (!EPISODE_ENABLE) return;
+    if (incoming.event_inc==0) begin
+      if (!incoming.events_complete || unknown_episode_control()) begin
+        interrupt_silence();
+        if (!incoming.events_complete) gap_waits_for_edge=1;
+      end else begin
+        observation_gap_active=0;
+        if (episode_active) begin
+          episode_bytes_complete &= incoming.bytes_complete;
+          pending_sample_reset_coverage |= (incoming.reset_points!=0);
+          if (episode_tail_known) start_silence(incoming.timestamp_ticks,incoming.edge_index);
+        end else if (pre_episode_gap) start_silence(incoming.timestamp_ticks,incoming.edge_index);
+      end
+      return;
+    end
+    if (!episode_active) begin
+      begin_phase_episode();
+      episode_id=checked_add(episode_id,1,scope_id);
+      episode_active=1; episode_status=BW_EPISODE_ACTIVE;
+      episode_first_ticks=incoming.timestamp_ticks; episode_first_cycle=incoming.edge_index;
+      episode_first_known=!pre_episode_gap; episode_bytes=0; episode_events=0;
+      episode_bytes_complete=!pre_episode_gap; episode_events_complete=!pre_episode_gap;
+      episode_member_reset_coverage=0; pending_sample_reset_coverage=0;
+      episode_start_total_bytes=total_bytes; episode_start_total_events=total_events;
+      episode_end_total_bytes=0; episode_end_total_events=0;
+      pre_episode_gap=0; episode_quality_intervals.delete();
+    end
+    episode_last_ticks=incoming.timestamp_ticks; episode_last_cycle=incoming.edge_index;
+    episode_last_known=1; episode_tail_known=0; episode_tail_ticks=0; episode_tail_cycle=0;
+    episode_end_total_bytes=0; episode_end_total_events=0;
+    episode_duration_valid=0; episode_duration_ticks=0;
+    episode_e2e_valid=0; episode_e2e_gbps=0.0; episode_confirmation_ticks=0;
+    episode_bytes=checked_add(episode_bytes,incoming.byte_inc,scope_id);
+    episode_events=checked_add(episode_events,incoming.event_inc,scope_id);
+    episode_bytes_complete &= incoming.bytes_complete;
+    episode_events_complete &= incoming.events_complete;
+    episode_member_reset_coverage |= pending_sample_reset_coverage || (incoming.reset_points!=0);
+    pending_sample_reset_coverage=0;
+    observation_gap_active=!incoming.events_complete || unknown_episode_control();
+    gap_waits_for_edge=observation_gap_active;
+    if (observation_gap_active) begin episode_bytes_complete=0; episode_events_complete=0; end
+    silence_active=0;
+  endtask
+
+  task automatic episode_control_changed(bw_u64_t at_ticks);
+    if (!EPISODE_ENABLE || current_reset_n === 1'b0) return;
+    update_episode_reset_coverage();
+    if (unknown_episode_control()) interrupt_silence();
+    else if (observation_gap_active && !gap_waits_for_edge) begin
+      observation_gap_active=0;
+      if (WINDOW_BASIS==BW_NS && ((episode_active && episode_tail_known) ||
+          (!episode_active && pre_episode_gap))) start_silence(at_ticks,last_edge_index);
+    end
+  endtask
+
+  task automatic reschedule_episode_timer();
+    bit valid_deadline;
+    bw_u64_t deadline;
+    valid_deadline=EPISODE_ENABLE && WINDOW_BASIS==BW_NS &&
+                   (episode_active || pre_episode_gap) && silence_active;
+    deadline=valid_deadline ? silence_deadline_ticks() : 0;
+    if (valid_deadline!=scheduled_episode_deadline_valid || deadline!=scheduled_episode_deadline) begin
+      scheduled_episode_deadline_valid=valid_deadline; scheduled_episode_deadline=deadline;
+      timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
+    end
+  endtask
+
   task automatic update_quality(int key, logic reset_level, bw_u64_t at_ticks);
     quality_interval_t interval;
     active_quality_t active;
@@ -89,6 +549,10 @@ module bw_stats_core #(
         interval.known_reset=(active.reset_n === 1'b0);
         check_queue_growth(quality_intervals.size(),scope_id);
         quality_intervals.push_back(interval);
+        if (EPISODE_ENABLE && episode_active && interval.known_reset) begin
+          check_queue_growth(episode_quality_intervals.size(),scope_id);
+          episode_quality_intervals.push_back(interval);
+        end
       end
       active_quality.delete(key);
     end
@@ -171,9 +635,25 @@ module bw_stats_core #(
     if (WINDOW_BASIS == BW_CYCLE && coverage_cycles != 0)
       bytes_per_cycle=real'(window_bytes)/real'(coverage_cycles);
     result_seq=checked_add(result_seq,1,scope_id);
+    consume_phase_window();
   endtask
 
   task automatic clear_statistics(bw_u64_t at_ticks);
+    if (EPISODE_ENABLE && episode_active && progress_watermark_ticks<at_ticks)
+      interrupt_silence();
+    finish_episode(BW_EPISODE_RESET_INTERRUPTED,at_ticks);
+    retired_activity_valid=0;
+    begin_phase_episode();
+    silence_active=0;
+    pre_episode_gap=0; observation_gap_active=0; gap_waits_for_edge=0;
+    pending_sample_reset_coverage=0; episode_quality_intervals.delete();
+    episode_status=BW_EPISODE_NONE;
+    episode_first_ticks=0; episode_last_ticks=0; episode_tail_ticks=0; episode_confirmation_ticks=0;
+    episode_first_cycle=0; episode_last_cycle=0; episode_tail_cycle=0;
+    episode_bytes=0; episode_events=0; episode_duration_ticks=0;
+    episode_first_known=0; episode_last_known=0; episode_tail_known=0;
+    episode_bytes_complete=1; episode_events_complete=1; episode_member_reset_coverage=0;
+    episode_duration_valid=0; episode_e2e_valid=0; episode_e2e_gbps=0.0;
     stats_epoch=checked_add(stats_epoch,1,scope_id);
     stats_start_ticks=at_ticks;
     history.delete(); cycle_boundary_ticks.delete();
@@ -207,6 +687,10 @@ module bw_stats_core #(
   endtask
 
   task automatic apply_reset(reset_action_t action);
+    if (reset_applied && action.reset_n !== 1'b0 && current_reset_n !== 1'b0) begin
+      if (WINDOW_BASIS==BW_NS) publish_due(action.timestamp_ticks);
+      advance_episode_time(action.timestamp_ticks,last_edge_index,0);
+    end
     if (action.reset_n === 1'b0 && (!reset_applied || current_reset_n !== 1'b0)) begin
       clear_statistics(action.timestamp_ticks);
       last_assert_ticks=action.timestamp_ticks;
@@ -223,6 +707,7 @@ module bw_stats_core #(
     current_reset_n=action.reset_n;
     reset_applied=1;
     update_quality(-1,action.reset_n,action.timestamp_ticks);
+    episode_control_changed(action.timestamp_ticks);
   endtask
 
   task automatic apply_member_control(bw_control_t incoming);
@@ -244,7 +729,10 @@ module bw_stats_core #(
       core_error("CONTROL_TIME",scope_id,$sformatf("point_handle=%0d time_ticks=%0d",key,incoming.timestamp_ticks));
     member_control_sequences[key]=incoming.control_seq;
     member_control_times[key]=incoming.timestamp_ticks;
+    if (WINDOW_BASIS==BW_NS && current_reset_n !== 1'b0) publish_due(incoming.timestamp_ticks);
+    advance_episode_time(incoming.timestamp_ticks,last_edge_index,0);
     update_quality(key,incoming.reset_n,incoming.timestamp_ticks);
+    episode_control_changed(incoming.timestamp_ticks);
     accepted_control_count=checked_add(accepted_control_count,1,scope_id);
   endtask
 
@@ -280,6 +768,7 @@ module bw_stats_core #(
         accepted_record_seq=incoming.record_seq;
         return;
       end
+      capture_episode_edge(incoming);
       if (WINDOW_BASIS == BW_CYCLE) begin
         if (!cycle_initialized) begin
           cycle_origin=incoming.edge_index;
@@ -303,7 +792,10 @@ module bw_stats_core #(
     end
     if (current_reset_n === 1'b0) return;
     if (WINDOW_BASIS == BW_NS) publish_due(now_ticks);
+    advance_episode_time(now_ticks,is_frame ? incoming.edge_index : last_edge_index,is_frame);
     if (!is_frame) return;
+    account_episode_frame(incoming);
+    flush_safe_phases();
     total_bytes=checked_add(total_bytes,incoming.byte_inc,scope_id);
     total_events=checked_add(total_events,incoming.event_inc,scope_id);
     retained_bytes=checked_add(retained_bytes,incoming.byte_inc,scope_id);
@@ -359,6 +851,7 @@ module bw_stats_core #(
         timer_receipts=checked_add(timer_receipts,1,scope_id);
       end
       consumed_actions=checked_add(consumed_actions,1,scope_id);
+      reschedule_episode_timer();
     end
   endtask
 
@@ -376,6 +869,8 @@ module bw_stats_core #(
           wait(timer_schedule_seq != observed_schedule);
         end else begin
           due_tick=next_update_ticks;
+          if (scheduled_episode_deadline_valid && scheduled_episode_deadline<due_tick)
+            due_tick=scheduled_episode_deadline;
           if (due_tick>progress_watermark_ticks)
             wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks);
           if ($time < due_tick) begin
@@ -396,6 +891,25 @@ module bw_stats_core #(
           end
         end
       end
+    end
+  end
+
+  initial begin
+    wait(scope_id.len()!=0);
+    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
+    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
+      PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
+      PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
+      PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+  end
+
+  final begin
+    if (EPISODE_ENABLE && monitor_ready && !core_failure_seen) begin
+      if (monitor_time_supported($time)) begin
+        advance_episode_time($time,last_edge_index,0);
+        if (episode_active && progress_watermark_ticks<$time) interrupt_silence();
+        if (!core_failure_seen) finish_episode(BW_EPISODE_TRUNCATED,$time);
+      end else check_monitor_time($time,scope_id);
     end
   end
 endmodule

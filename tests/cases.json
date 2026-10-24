@@ -180,6 +180,74 @@
     "top": "tb_credit_reset_unknown"
   },
   {
+    "name": "hint_ns",
+    "top": "tb_hint_ns",
+    "expect_log": [
+      "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED.*duration_ticks=2500000"
+    ]
+  },
+  {
+    "name": "hint_equal",
+    "top": "tb_hint_equal"
+  },
+  {
+    "name": "hint_cycle",
+    "top": "tb_hint_cycle"
+  },
+  {
+    "name": "hint_shortage",
+    "top": "tb_hint_shortage"
+  },
+  {
+    "name": "hint_credit_cycle",
+    "top": "tb_hint_credit_cycle"
+  },
+  {
+    "name": "hint_cycle_truncation",
+    "top": "tb_hint_cycle_truncation",
+    "expect_log": [
+      "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED hit=0.*duration_ticks=10000000 duration_cycles=1"
+    ]
+  },
+  {
+    "name": "hint_missing_basis",
+    "top": "tb_hint_missing_basis",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_missing_threshold",
+    "top": "tb_hint_missing_threshold",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_zero_threshold",
+    "top": "tb_hint_zero_threshold",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_bad_basis",
+    "top": "tb_hint_bad_basis",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_time_overflow",
+    "top": "tb_hint_time_overflow",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=INTEGER_OVERFLOW"
+  },
+  {
+    "name": "hint_accounting",
+    "top": "tb_hint_accounting"
+  },
+  {
+    "name": "hint_reset_release",
+    "top": "tb_hint_reset_release"
+  },
+  {
+    "name": "hint_unknown_protocol",
+    "top": "tb_hint_unknown_protocol",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PROTOCOL_CONFIG"
+  },
+  {
     "name": "reset_rewarm",
     "top": "tb_reset_rewarm"
   },
@@ -248,6 +316,249 @@
   {
     "name": "reset_deassert_sample",
     "top": "tb_reset_deassert_sample"
+  },
+  {
+    "name": "hint_time_budget",
+    "top": "tb_hint_time_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT",
+    "expect_log": [
+      "CORE_FAILURE_LATCHED"
+    ]
+  },
+  {
+    "name": "hint_final_budget",
+    "top": "tb_hint_final_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_END).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "hint_same_cycle_stream",
+    "top": "tb_hint_same_cycle_stream"
+  },
+  {
+    "name": "hint_same_cycle_live",
+    "top": "tb_hint_same_cycle_live"
+  },
+  {
+    "name": "hint_same_cycle_cycle_live",
+    "top": "tb_hint_same_cycle_cycle_live"
+  },
+  {
+    "name": "episode_boundary",
+    "top": "tb_episode_boundary"
+  },
+  {
+    "name": "episode_gaps",
+    "top": "tb_episode_gaps"
+  },
+  {
+    "name": "episode_cycle",
+    "top": "tb_episode_cycle"
+  },
+  {
+    "name": "episode_controls",
+    "top": "tb_episode_controls"
+  },
+  {
+    "name": "episode_reset_deadline",
+    "top": "tb_episode_reset_deadline"
+  },
+  {
+    "name": "episode_final",
+    "top": "tb_episode_final",
+    "expect_log": [
+      "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000000 last_ticks=1000000 tail_ticks=2000000 confirm_ticks=3000000 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
+      "(?s)^(?!.*BW_EPISODE[^\\n]*scope=episode.none)"
+    ]
+  },
+  {
+    "name": "episode_final_budget",
+    "top": "tb_episode_final_budget",
+    "expect_error": "(?s)^(?!.*BW_EPISODE).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "episode_config_error",
+    "top": "tb_episode_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "episode_unknown_q",
+    "top": "tb_episode_unknown_q",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "episode_late_metadata",
+    "top": "tb_episode_late_metadata",
+    "expect_log": [
+      "EPISODE_TIMER_FIRST_METADATA"
+    ]
+  },
+  {
+    "name": "episode_frame_first",
+    "top": "tb_episode_late_metadata",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "episode_pending",
+    "top": "tb_episode_pending"
+  },
+  {
+    "name": "episode_pending_reset",
+    "top": "tb_episode_pending",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "episode_pending_final",
+    "top": "tb_episode_pending",
+    "plusargs": [
+      "+MODE=2"
+    ],
+    "expect_log": [
+      "BW_EPISODE scope_kind=1 scope=episode.pending .*status=4 .*bytes=8 events=1 duration_ticks=0 .*last_known=0 .*bytes_complete=0 events_complete=0 .*e2e_valid=0"
+    ]
+  },
+  {
+    "name": "phase_delayed",
+    "top": "tb_phase_delayed"
+  },
+  {
+    "name": "phase_hysteresis",
+    "top": "tb_phase_hysteresis"
+  },
+  {
+    "name": "phase_actual_time",
+    "top": "tb_phase_actual_time"
+  },
+  {
+    "name": "phase_episode_residue",
+    "top": "tb_phase_episode_residue"
+  },
+  {
+    "name": "phase_reset",
+    "top": "tb_phase_reset"
+  },
+  {
+    "name": "phase_repeated",
+    "top": "tb_phase_repeated"
+  },
+  {
+    "name": "phase_zero",
+    "top": "tb_phase_zero"
+  },
+  {
+    "name": "phase_fit_error",
+    "top": "tb_phase_fit_error",
+    "expect_error": "(?s)^(?!.*BW_PHASE)(?!.*BW_EPISODE).*BW_CORE_ERROR code=PHASE_FIT"
+  },
+  {
+    "name": "phase_config_valid",
+    "top": "tb_phase_config_valid",
+    "sources": [
+      "phase_config_fixture.sv"
+    ]
+  },
+  {
+    "name": "phase_config_n",
+    "top": "tb_phase_config_n",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_span",
+    "top": "tb_phase_config_span",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_k",
+    "top": "tb_phase_config_k",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_negative",
+    "top": "tb_phase_config_negative",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_exit",
+    "top": "tb_phase_config_exit",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_overlap",
+    "top": "tb_phase_config_overlap",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_nan",
+    "top": "tb_phase_config_nan",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_storage",
+    "top": "tb_phase_config_storage",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STORAGE_RANGE"
+  },
+  {
+    "name": "phase_config_episode",
+    "top": "tb_phase_config_episode",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_missing",
+    "top": "tb_phase_config_missing",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_unknown",
+    "top": "tb_phase_config_unknown",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_infinite",
+    "top": "tb_phase_config_infinite",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_candidate_change",
+    "top": "tb_phase_candidate_change"
   },
   {
     "name": "group_basic",

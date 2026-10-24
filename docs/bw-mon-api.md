@@ -404,7 +404,7 @@ Public scalar fields live directly at the observation point:
 | `credit_available_before` | Last checked frame's 65-bit usable credit count, including same-cycle return if selected |
 | `credit_attempted_balance` | Last checked frame's signed 66-bit C+R−S, retaining the exact out-of-range attempted value on an anomaly |
 | `credit_permission_known`, `credit_send_permitted` | Whether the last frame's permission check was possible and its result; these describe that pre-edge check, not future permission |
-| `credit_shortage_known`, `credit_shortage` | Whether the updated ledger balance can be trusted, and whether it is zero; does not prove pending demand |
+| `credit_shortage_known`, `credit_shortage` | Whether current usable-credit shortage can be decided and its result; same-cycle mode includes live return availability, next-cycle mode uses stored balance; does not prove pending demand |
 | `credit_anomaly`, `credit_reason` | First trust-loss latch and reason; cleared by known reset |
 | `credit_anomaly_count` | Unsigned 64-bit cumulative trust-loss count, preserved across resets; initial unknown state alone is not an anomaly |
 | `credit_epoch`, `credit_result_seq` | Unsigned 64-bit reset generation and monotonic diagnostic update sequence |
@@ -412,9 +412,9 @@ Public scalar fields live directly at the observation point:
 
 The last-frame permission/attempt fields become unknown when a later frame cannot
 be checked. The original fault remains in its log and latched reason. Current
-shortage is qualified by trust and live reset, independently from the last frame's
-permission evidence. Duration thresholds and long-condition hints follow in the
-separate duration-hint ticket.
+shortage is a usable-credit predicate, qualified by trust and live reset,
+independently from the last frame's permission evidence. In same-cycle mode live
+return availability can change this predicate without changing stored balance. Duration thresholds and long-condition hints are configured independently below.
 
 Additional independently expected VCS cases:
 
@@ -425,6 +425,121 @@ Additional independently expected VCS cases:
 | `credit_boundaries` | Exact 2^64 permission intermediate and attempted balance; legal zero capacity; zero-byte flits still consume one credit; exact attempted −1; unknown initial value remains unknown |
 | `credit_reset_unknown` | No-clock unknown reset breaks trust; direct return to 1 does not repair it; a subsequent known reset restores seed without inventing record sequences |
 | `credit_config_error`, `credit_initial_error`, `credit_return_error`, `fixed_unknown_config` | Missing capacity, initial balance outside capacity, invalid timing and unknown fixed bytes terminate before any `BW_READY` |
+
+## Sustained backpressure and credit-shortage hints
+
+Each hint has its own explicit configuration, independent of window basis/W/S:
+
+| Point/debug-hints parameter | Type / default | Meaning |
+| --- | --- | --- |
+| `BACKPRESSURE_ENABLE` | bit, 0 | Request sustained valid-ready backpressure hints |
+| `BACKPRESSURE_BASIS` | four-state logic [1:0], X | Required `BW_NS` or `BW_CYCLE` when enabled and supported |
+| `BACKPRESSURE_THRESHOLD` | four-state logic [63:0], X | Required positive integer ns or complete local cycles |
+| `SHORTAGE_ENABLE` | bit, 0 | Request sustained trusted-credit-shortage hints |
+| `SHORTAGE_BASIS` | four-state logic [1:0], X | Required `BW_NS` or `BW_CYCLE` when enabled and supported |
+| `SHORTAGE_THRESHOLD` | four-state logic [63:0], X | Required positive integer ns or complete local cycles |
+
+`validate_hint_config` runs before point registration. Missing, unknown, zero or
+invalid settings terminate with `HINT_CONFIG`; ns thresholds whose tick count
+cannot be represented terminate with checked `INTEGER_OVERFLOW`. No threshold or
+basis is guessed from window configuration. Disabled/unsupported hints need no
+unused threshold and create no duration scheduler. A supported enabled shortage
+hint with an unavailable/disabled ledger remains untrusted; it cannot invent a
+shortage interval.
+
+Backpressure uses the live four-state `valid & ~ready` condition. For example,
+valid=0 proves no backpressure even if ready is unknown. Credit shortage follows
+D4's usable-credit rule, while stored credit C changes only on actual records:
+
+| Trusted stored C | Return timing / live R | Current shortage |
+| --- | --- | --- |
+| C>0 | Either timing, including unknown R | Known false: at least one credit is available |
+| C=0 | Next-cycle, any live R | Known true until a sampled update changes C |
+| C=0 | Same-cycle, R=0 | Known true |
+| C=0 | Same-cycle, R=1 | Known false: this return is usable |
+| C=0 | Same-cycle, R=X/Z | Unknown |
+| Untrusted C or reset | Either | Unknown / reset interruption |
+
+Thus a permitted C=0/S=R=1 same-cycle stream does not accumulate a sustained
+shortage hint. Live same-cycle R can start/release/interrupt a hint during a
+stopped clock, but it never increments the ledger without a sampling record.
+Unknown send activity does not determine current credit availability or pending
+demand. When an actual record has unknown S/R, it still loses ledger trust as
+documented above. Neither hint condition establishes a performance failure.
+
+For ns mode, a raw condition becoming known true starts an interval at its actual
+integer time. A dedicated threshold timer still triggers with no sampling clocks.
+Release, unknown and reset changes close or interrupt the interval at the live
+change time. Cycle mode counts only complete intervals between actual local clock
+edges during which the raw condition continuously remained known true. A
+mid-cycle assertion waits for the next edge anchor; the following edge completes
+its first counted cycle. Stopped clocks add no cycles or new cycle results.
+Resuming after a long stop closes the one actual local cycle ending at that edge.
+
+At a same-time edge and release/unknown/reset, the complete prior cycle is settled
+before closure. At a threshold-equal change, the preceding half-open trusted
+interval retains its hit. Raw changes at T contribute no later unknown/reset time
+to that interval. The implementation keeps durable action counts, captures actual
+clock metadata before recorder ReNBA publication, and uses a private Reactive
+coordinator. A credit-shortage condition starting after a finalized same-time
+ledger frame can attach to the already observed clock boundary, without an extra
+cycle of hint latency. Users do not advance this machinery.
+
+The first threshold crossing emits one `BW_HINT_HIT`; ending an interval emits
+one `BW_HINT_END`, including intervals shorter than threshold. End reasons are
+`RELEASED`, `UNKNOWN`, `RESET` and `TRUNCATED` (observation ended while active).
+Unknown/reset splits intervals, so evidence cannot join across the gap. An active
+interval is settled once at simulation end, preserving only cycles already
+completed. Logs include scope, hint kind, interval epoch/ID, result sequence,
+start/trigger/end times and exact observed tick/cycle durations. Hint counters and
+logs remain separate from all performance conclusions.
+
+Fields below exist directly at `bw_point_mon`, with either `backpressure_` or
+`shortage_` prefix. Their packed `backpressure_result`/`shortage_result` values are
+also available, but scalar aliases are the stable waveform surface.
+
+| Suffix | Meaning |
+| --- | --- |
+| `supported`, `enabled`, `trusted` | Interface capability, requested enable and current known condition/reset |
+| `active`, `hit` | Current interval active; current or most recently ended interval reached threshold |
+| `basis`, `threshold` | Exact independently configured basis and threshold |
+| `epoch`, `interval_epoch`, `interval_id` | Current known-reset generation, this result's original generation, and monotonic interval identity |
+| `result_seq`, `update_ticks` | Monotonic newly processed hint result and its integer fs update time |
+| `start_ticks`, `trigger_ticks`, `end_ticks` | Actual condition start, first threshold crossing and final half-open endpoint; zero trigger means no hit |
+| `duration_ticks`, `observed_through_ticks` | Exact physical duration as of the indicated observation boundary |
+| `cycle_anchor_valid`, `start_cycle`, `end_cycle`, `duration_cycles` | Complete-cycle anchor, actual local edge indices and completed-cycle duration |
+| `end_reason` | `BW_HINT_NOT_ENDED`, `BW_HINT_RELEASED`, `BW_HINT_UNKNOWN`, `BW_HINT_RESET`, `BW_HINT_TRUNCATED` |
+| `hit_count`, `interval_count` | Unsigned 64-bit lifetime count of first hits and closed intervals, never mixed with byte/event or performance counters |
+
+An active duration snapshot updates at raw changes, actual edges and threshold
+publication. After a hit with no further events, its sequence and
+`observed_through_ticks` identify the held snapshot; final closure calculates the
+entire actual interval. Holding that snapshot does not repeat a hit or turn it
+into new evidence. The current reset generation may advance after a summary;
+`interval_epoch` keeps that summary's original identity.
+
+Additional independent tests:
+
+| Test | Evidence |
+| --- | --- |
+| `hint_ns` | No-clock start/hit/release, unknown/reset gaps, no joined evidence, exact final 2.5 ns truncated interval |
+| `hint_equal` | Separate threshold-equal release, unknown and reset retain one hit and exactly 2 ns of prior trusted duration |
+| `hint_cycle` | First edge anchors; stopped clock holds sequence/count; same-edge release closes two completed cycles; mid-cycle/unknown/reset split; capability and enable separate |
+| `hint_shortage` | NEXT mode retains known stored-credit availability off-edge; sampled unknown R/S interrupts trust, real return ends shortage, and definite bytes still match disabled point |
+| `hint_credit_cycle` | Same-edge return closes a completed shortage cycle; late finalized ledger start reuses current actual edge anchor without extra-cycle delay |
+| `hint_same_cycle_stream` | Exact C=0/S=R=1 stream has no ns or cycle shortage interval, retains zero stored balance and counts all five 8-byte sends |
+| `hint_same_cycle_live` | No-clock R0/R1/RX/RZ changes implement the usable-credit truth table; C>0 remains known no-shortage even with unknown R; no phantom ledger/event updates |
+| `hint_same_cycle_cycle_live` | Live R releases/interrupts cycle evidence while stopped; gaps require fresh full cycles; current availability stays separate from the historical sampled permission |
+| `hint_cycle_truncation` | Observation-end summary retains one completed cycle over a long stopped clock and cannot fake a hit from physical time |
+| `hint_accounting` | Enabled ns hint fires before any cycle-window sample, then both enabled/disabled points count the same 24 B/three events and 8 GB/s full cycle window |
+| `hint_reset_release` | A frame sampled while reset was held cannot debit credit when reset releases later at the same T; the first real send and subsequent return create exactly one complete shortage cycle |
+| `hint_time_budget`, `hint_final_budget` | With a stopped clock and cycle windows, both a future ns timer and final settlement still enforce the immutable 40 us budget; rejected actions cannot publish a new hint interval |
+| `hint_missing_basis`, `hint_missing_threshold`, `hint_zero_threshold`, `hint_bad_basis`, `hint_time_overflow`, `hint_unknown_protocol` | Invalid enabled configuration fails before `BW_READY`, including unknown defaults and exact tick overflow |
+
+The runner's optional `expect_log` patterns test final hint logs through the
+public logging boundary after `$finish`; success still requires `TB_PASS` and no
+fatal diagnostic. All interval, state, sequence and numeric duration comparisons
+are exact integers/four-state values.
 
 Reset/credit integration validation: **46/46 contract cases passed** on
 2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including thirteen new
@@ -567,3 +682,226 @@ groups). Retention follows actual consumer lag and cannot be equated to the whol
 80,000-cycle scene. Statistics/phase/episode histories are additional independent
 state. Actual peak memory and the complete scale/history matrix remain later
 acceptance work; no user queue-depth or fixed memory-cap option is introduced.
+
+Hint action producers reuse the same `check_monitor_time` and
+`check_queue_growth` guards as the recorder/core. Every queue push checks its
+representable entry count; a rejected fatal time/storage action cannot publish a
+final hint interval. No user queue-depth or history-capacity setting is added.
+
+`core_failure_seen` is a shared terminal-core-error latch, set before
+`core_error` calls `$fatal`, and never cleared by local resets. Performance
+FAIL/WARNING and credit-protocol anomalies do not set it. VCS can continue a
+final block after `$fatal`; finalizers therefore check this latch before output
+and after checked arithmetic. The pure
+`monitor_time_supported(bw_u64_t at_ticks)` predicate permits an explicit branch
+before final settlement, while `check_monitor_time` supplies the fatal diagnostic.
+The budget regression also verifies the failure latch is visible to other final
+blocks before they emit results.
+
+## Traffic episodes and e2e results
+
+Episode analysis uses the shared `bw_stats_core` behind the point's ordinary
+raw-interface ports. Set `EPISODE_ENABLE=1` and explicitly configure
+`SILENCE_THRESHOLD=Q`. Q is a positive known unsigned 64-bit integer in the
+selected `WINDOW_BASIS` (ns or local cycles). There is no cross-interface Q
+default. `EPISODE_ENABLE=0` is the default window-only mode; Q is then unused.
+An enabled missing/zero/unknown Q is `EPISODE_CONFIG` before the point registers
+and before ready. An unrepresentable ns-to-tick conversion is a core arithmetic
+error. These are startup parameters and cannot be changed during simulation.
+
+A definite transfer starts or extends an episode, including a zero-byte
+transfer. The measured interval begins at its first actual sampling edge and
+ends at the actual edge immediately after its last transfer. This tail edge
+must really occur: a stopped clock cannot supply an estimated period. Internal
+idle cycles count in the duration; the later Q-length confirmation wait does
+not. Ns silence advances with physical time after the tail is known and has an
+independent timer even when Q is not aligned with the window stride. Cycle
+silence advances only at actual edges. A transfer exactly at the quiet deadline
+belongs to a new episode after the old result completes.
+
+Unknown event observations interrupt quiet evidence. Recovery starts a fresh
+quiet interval; two sides of a gap are never joined. An unknown size on a
+definite transfer preserves its event and both transfer-time boundaries but
+makes bytes incomplete. A gap before the first known transfer can make the
+start ambiguous; a gap after the last known transfer can make the end ambiguous.
+A later known transfer can establish the last boundary again, while byte/event
+incompleteness remains sticky for that episode. A complete quiet separator
+allows the next episode to be judged independently. Window recovery does not
+repair an older episode. Actual-point reset controls carry the same quality
+rules through a stopped clock. Known member reset is separate coverage metadata
+and does not reset an ancestor's episode or discard its known bytes.
+
+Own known reset interrupts the current episode before clearing that scope's
+statistics; the interrupted result carries the old statistics epoch. A reset
+at a Q deadline takes priority over normal completion and any same-time transfer.
+Observation end emits a truncated result if an episode remains pending. Neither
+interruption nor truncation is a valid complete e2e. Core errors remain fatal;
+the shared `core_failure_seen` latch prevents final-result output after a core
+failure, including VCS final-block paths where `$fatal` can return to its caller.
+An unsupported final observation time is rejected before settlement.
+
+The following ordinary scalars are directly visible at each public point:
+
+| Fields | Meaning |
+| --- | --- |
+| `episode_active`, `episode_status` | Current activity and `BW_EPISODE_NONE`, `ACTIVE`, `COMPLETE`, `RESET_INTERRUPTED` or `TRUNCATED` status |
+| `episode_id`, `episode_result_seq` | Lifetime monotonic episode identity and final-result sequence; neither is a window sequence |
+| `episode_first_ticks`, `episode_last_ticks`, `episode_tail_ticks` | First/last definite transfer and actual tail-edge timestamps |
+| `episode_first_cycle`, `episode_last_cycle`, `episode_tail_cycle` | Corresponding actual source edge indices; controls do not advance them |
+| `episode_confirmation_ticks` | Normal quiet confirmation, own-reset interruption or observation-end time |
+| `episode_first_known`, `episode_last_known`, `episode_tail_known` | Independent boundary quality; a stored definite event is not proof that no unknown earlier/later event occurred |
+| `episode_bytes`, `episode_events` | Known raw episode increments, including zero-byte events |
+| `episode_bytes_complete`, `episode_events_complete` | Independent sticky whole-episode completeness |
+| `episode_member_reset_coverage` | Known actual-point reset intersects the measured episode interval; trailing confirmation-only reset does not count |
+| `episode_duration_ticks`, `episode_duration_valid` | Actual tail minus first timestamp when all required boundaries are known and the duration is positive |
+| `episode_e2e_gbps`, `episode_e2e_valid` | Raw bytes divided by actual duration, valid only for normally completed byte-complete episodes |
+| `episode_result` | Latest immutable `bw_episode_result_t` final payload; sequence 0 means no result has been emitted |
+
+A zero value with validity false is unavailable, not a measured passing zero.
+Own reset clears current episode fields to `NONE`; the final payload retains the
+interrupted record and its old epoch. Episode and final sequences never rewind.
+No activity creates no fabricated zero-byte episode. Current duration can be
+known while Q confirmation is pending, but complete e2e remains invalid until
+normal completion. No steady phase is required for valid e2e.
+
+`bw_episode_result_t` includes typed scope, statistics epoch, final sequence,
+episode identity/status/reason, boundaries and their quality, raw counts,
+independent completeness, reset coverage, duration/e2e validity, and cumulative
+start/end count snapshots. The synchronous result-delivery contract is:
+
+```systemverilog
+emit_episode_result(string scope_id, bw_episode_result_t result);
+```
+
+The identity string and static payload are passed by value together. VCS rejects
+regular output ports of structs containing dynamic strings, so the public point's
+existing `scope_id` supplies identity while the static `episode_result` payload
+can be connected as an ordinary output. The synchronous function receives every
+final record, including multiple records drained in one time slot and final-block
+truncations; a toggle pulse is not its delivery guarantee. The package is a
+bridge, and episode arithmetic stays in the core. The dedicated check/report
+owner extends this bridge for scene expectations in the reporting tickets. At
+this stage `BW_EPISODE` logs final statistics and reasons without a performance
+comparison, and no user-side read/ack or timing action is required.
+
+At the normalized group/core boundary, pending source progress also gates ns
+window and Q publication. A delayed earlier frame cannot be mistaken for zero
+activity; reset or observation end with prior pending input reports partial
+counts and end-boundary quality. This internal coordination needs no additional
+integrator action. Controls wholly inside this scope's own reset do not poison
+a new epoch after known release.
+
+Independent regressions cover `[80,102)` with 256 B (128/11 GB/s), a deadline
+transfer at 132 ns, stopped clocks and 98 ns actual tail periods, middle/before/
+after-event gaps, unknown size, complete recovery separators, no-edge reset
+controls, same-deadline NBA reset, a valid zero-byte episode, no episode,
+truncation, delayed-input progress and partial settlement, explicit-Q errors
+and the immutable final time budget. Integer
+counts/times/qualities compare exactly; real results use 1e-10 GB/s numerical
+tolerance. `python3 tests/run.py` reproduces the full suite; the `episode_*` case names
+in `tests/cases.json` select the episode regressions individually.
+
+## Automatic traffic phases
+
+Set `PHASE_ENABLE=1` together with enabled episodes and an explicit Q. Phases
+consume the same newly published real GB/s window results shown at the public
+point. There is no second bandwidth window, external phase label, performance
+target input or Verdi-side calculation. Repeated or missing ramp, steady and
+fall phases are allowed; a zero-bandwidth plateau can be steady.
+
+The following parameters are shared by point and core. All settings are fixed
+before ready. Disabled phase analysis is the default; when enabled every entry
+below must be explicit, including zero relative coefficients.
+
+| Parameter | Type / unit | Required value / behavior |
+| --- | --- | --- |
+| `PHASE_ENABLE` | bit | Default 0; enabled analysis also requires `EPISODE_ENABLE=1` |
+| `PHASE_N` | known unsigned64 count | Required N>=3; automatic queue storage uses signed32 indices, so larger than 2,147,483,647 is a representation error rather than an arbitrary analysis cap |
+| `PHASE_MIN_SPAN` | known unsigned64 ns / cycles | Required positive span in the window basis; ns is converted with checked integer arithmetic |
+| `PHASE_K` | known unsigned64 count | Required positive number of consecutive equal candidates |
+| `PHASE_STEADY_ENTER_ABS`, `PHASE_STEADY_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite coefficients for steady entry |
+| `PHASE_STEADY_EXIT_ABS`, `PHASE_STEADY_EXIT_REL` | real GB/s / unitless fraction | Exit coefficients must each be at least the corresponding entry coefficient |
+| `PHASE_RMS_ENTER_ABS`, `PHASE_RMS_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite residual-fit entry coefficients |
+| `PHASE_RMS_EXIT_ABS`, `PHASE_RMS_EXIT_REL` | real GB/s / unitless fraction | Exit coefficients must each be at least the corresponding entry coefficient |
+| `PHASE_TREND_ABS`, `PHASE_TREND_REL` | real GB/s / unitless fraction | ABS must exceed steady EXIT ABS; REL must be at least steady EXIT REL, guaranteeing strict separation for every nonnegative mean |
+
+Coefficient defaults of -1 are deliberately invalid sentinels, not engineering
+thresholds. Each tolerance is ABS+REL*mean: REL=0.05 means five percent of the
+fit mean, unlike performance cfg keys ending `_rel_tol_pct`, where 5 means five
+percent. N full samples do not bypass `PHASE_MIN_SPAN`; an unattainable span
+remains explicitly insufficient rather than creating a phase. Bad settings are
+fatal `PHASE_CONFIG` before point registration/ready; queue representation uses
+`STORAGE_RANGE`. Nonrepresentable fit or tolerance arithmetic is fatal
+`PHASE_FIT` with scope and publication/operand context.
+
+Eligible evidence is new, full, byte-complete, positive-denominator and owned by
+the active episode. Before a new episode, all older activity is at or before
+its latest retired transfer. Therefore the window includes older activity exactly
+when its left boundary still includes that transfer. This private ownership
+marker includes zero-byte events and uses the scope's episode identity, never
+source reset generation. Unknown older observations independently fail window
+quality until they expire. Own statistics reset clears this ownership with the
+window history. Known silent background is not other-episode activity.
+
+The most recent N consecutive eligible results also require the configured
+span. Fit time uses actual physical publication timestamps, with integer tick
+differences taken before real conversion, including in cycle mode after a
+frequency change. The equal-weight least-squares fit reports its mean, total
+trend delta over those N points and residual RMS. Constant values use a relative
+value origin so an exactly constant 6.4 GB/s series has zero residual even with
+zero tolerances; there is no epsilon clamp. Residual RMS is phase evidence,
+not the later performance population standard deviation.
+
+Strict steady/ramp/fall conditions use entry tolerances; an existing steady
+phase uses wider exit tolerances. A changed candidate starts its K count at1.
+Confirmation preserves the first candidate publication time and its raw-count
+snapshots as the boundary, and exposes the later confirmation time separately.
+Invalid observations immediately clear evidence/candidates and return to
+undetermined without waiting K. Valid fits can also confirm departure to
+undetermined after K; undetermined intervals are gaps, not reliable final
+phase records. New episodes start fresh evidence. Held cycle snapshots create
+no new observations or confirmations.
+
+Public ordinary point fields are:
+
+| Fields | Meaning |
+| --- | --- |
+| `phase_current`, `phase_candidate`, `phase_active` | Current/candidate `BW_PHASE_UNDETERMINED`, `RAMP`, `STEADY` or `FALL`; active means a confirmed reliable fragment exists |
+| `phase_id`, `phase_result_seq` | Lifetime confirmed-fragment identity and delivered final-fragment sequence; discarded outside-episode fragments can leave ID gaps |
+| `phase_window_seq` | Last consumed window `result_seq`; unchanged on a held cycle snapshot |
+| `phase_eligible`, `phase_evidence_continuous`, `phase_evidence_sufficient` | Independent current-observation and N/span qualification |
+| `phase_evidence_count`, `phase_evidence_span` | Retained consecutive count (at most N); span is integer ticks in ns mode, actual edge indices in cycle mode |
+| `phase_candidate_count`, `phase_candidate_ticks` | Consecutive candidate count and first-candidate time |
+| `phase_candidate_total_bytes`, `phase_candidate_total_events` | Known raw cumulative snapshots strictly before that candidate publication |
+| `phase_start_ticks`, `phase_confirmation_ticks` | Confirmed current boundary and later confirmation time |
+| `phase_fit_valid`, `phase_fit_mean`, `phase_fit_delta`, `phase_fit_rms` | Latest qualified fit in GB/s; invalid evidence clears validity rather than extending an old fit |
+| `phase_result` | Latest immutable static `bw_phase_result_t` final record |
+
+The synchronous bridge is `emit_phase_result(string scope_id,
+ bw_phase_result_t result)`. Like episode delivery, identity is separate by-value
+string context because VCS regular struct output ports cannot contain strings.
+The static record includes typed scope, epoch, episode/phase/final identities,
+phase kind, final half-open bounds and independent known flags, original raw
+count snapshots, confirmation time/fit, end reason and episode status at
+submission. Counts are known raw counts, not a completeness proof or a sum of
+overlapping windows. Interval-byte completeness, steady bandwidth, variation
+and last-steady representative selection are supplied by the final-statistics
+and reporting extensions.
+
+Closed fragments stream when their end is guaranteed inside already observed
+episode coverage. Their recorded episode status can still be ACTIVE: later
+incomplete traffic does not undo an earlier known phase interval. Fragments
+whose end can still be clipped are retained until the episode settles. Final
+clipping uses the actual tail and corresponding count snapshot; a phase wholly
+after the measured episode is discarded. Unknown ends remain unknown, and an
+unconfirmed candidate never becomes a formal fragment. Own reset clears current
+phase fields/evidence while preserving old-epoch final records and lifetime IDs.
+
+For example,640 B at 95 ns and a zero-byte event at 135 ns with W100/S10,
+N3/span20/K4 and Q60 produce steady candidate120, confirmation150 and final
+interval[120,136). Its raw start/end byte snapshots are both640; the phase's
+window fit mean is6.4 GB/s while its raw interval bytes are zero. This is an
+acceptance vector, not a product default. Tests also cover true-time fitting
+across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
+ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
+insufficient span, explicit configuration failures and real arithmetic overflow.

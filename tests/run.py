@@ -28,10 +28,12 @@ def main():
         top = case["top"]
         build = ROOT / ".build" / "tests" / top
         build.mkdir(parents=True, exist_ok=True)
-        files = sources + [ROOT / "tests" / (top + ".sv")]
+        files = sources + [ROOT / "tests" / name for name in case.get("sources", [])] + [ROOT / "tests" / (top + ".sv")]
         dependencies = files + sorted(path for path in (ROOT / "rtl").rglob("*")
                                       if path.suffix in {".svh", ".vh"})
-        digest = hashlib.sha256(b"".join(path.read_bytes() for path in dependencies)).hexdigest()
+        build_fingerprint = str(ROOT).encode() + Path(__file__).resolve().read_bytes()
+        digest = hashlib.sha256(build_fingerprint + b"".join(str(path).encode() + path.read_bytes()
+                                                           for path in dependencies)).hexdigest()
         stamp = build / "source.sha256"
         if top not in compiled:
             if args.no_cache or not (build / "simv").exists() or not stamp.exists() or stamp.read_text() != digest:
@@ -63,6 +65,8 @@ def main():
         else:
             passed = (result.returncode == 0 and "TB_PASS" in result.stdout and
                       "Fatal:" not in result.stdout)
+        passed = passed and all(re.search(pattern, result.stdout) is not None
+                                for pattern in case.get("expect_log", []))
         print(f"{'PASS' if passed else 'FAIL'} {case['name']}: {log_path}", flush=True)
         if not passed:
             failures.append(case["name"])
