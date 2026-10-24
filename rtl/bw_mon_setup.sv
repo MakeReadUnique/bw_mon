@@ -7,6 +7,8 @@ module bw_mon_setup #(
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   bit deadline_reached = 0;
+  bit startup_failure=0;
+  string startup_failure_detail;
   initial begin
     if ($isunknown(STARTUP_TIMEOUT_NS) || STARTUP_TIMEOUT_NS == 0)
       core_error("STARTUP_TIMEOUT_CONFIG","setup","timeout must be positive");
@@ -17,7 +19,13 @@ module bw_mon_setup #(
   // Re-evaluation through durable state admits same-slot NBA registration
   // chains before the deferred failure decision; no startup timing barrier.
   always @(deadline_reached or registration_seq or configuration_seq or monitor_ready) begin
-    STARTUP_COMPLETE: assert final (!deadline_reached || monitor_ready)
-      else core_error("STARTUP_TIMEOUT","setup",startup_status());
+    startup_failure=deadline_reached && !monitor_ready;
+    if(startup_failure)startup_failure_detail=startup_status();
+    set_deferred_core_failure(0,startup_failure);
+    STARTUP_COMPLETE: assert final (!startup_failure)
+      else report_startup_timeout();
   end
+  function automatic void report_startup_timeout();
+    if(startup_failure)deferred_core_error("STARTUP_TIMEOUT","setup",startup_failure_detail);
+  endfunction
 endmodule

@@ -850,5 +850,28 @@
   {
     "name": "group_control_barrier",
     "top": "tb_group_control_barrier"
+  },
+  {
+    "name": "group_deferred_final_late",
+    "top": "tb_group_deferred_final",
+    "plusargs": [
+      "+LATE=1"
+    ],
+    "expect_log": [
+      "DEFERRED_FINAL_GUARD_CLEAR",
+      "BW_EPISODE[^\\n]*scope=sentinel",
+      "BW_HINT_END scope=stalled"
+    ]
+  },
+  {
+    "name": "group_deferred_final_missing",
+    "top": "tb_group_deferred_final",
+    "plusargs": [
+      "+LATE=0"
+    ],
+    "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250000",
+    "expect_log": [
+      "DEFERRED_FINAL_GUARD pending=1 seen=0"
+    ]
   }
 ]

@@ -31,6 +31,8 @@ module bw_group_mon #(
   } expected_edge_t;
   expected_edge_t expected_edges[$];
   bw_u64_t expected_notice=0,expected_edge_index=0,last_expected_ticks=0,deadline_alarm_seq=0;
+  bit deferred_failure=0;
+  string deferred_failure_code,deferred_failure_detail;
 
   initial begin
     monitor_path=$sformatf("%m");scope_id=GROUP_ID;
@@ -151,28 +153,38 @@ module bw_group_mon #(
     return group_frame_inputs_ready(group_handle,expected_edges[0].edge_index,expected_edges[0].timestamp_ticks);
   endfunction
 
-  function automatic void report_frame_timeout();
+  function automatic void capture_deadline_failure();
     bw_record_t frame;
     int source;
-    if (!deadline_ok()) begin
+    deferred_failure=!deadline_ok();
+    if (deferred_failure) begin
       if (expected_edges.size()==0) begin
         for (int m=0;m<direct_member_count;m++)
           if (peek_member_frame(group_handle,m,frame)) begin
             source=member_source(group_handle,m);
-            core_error("UNEXPECTED_FRAME",scope_id,
-              $sformatf("source=%s edge=%0d ticks=%0d without actual group sampling edge",
-                source_name(source),frame.edge_index,frame.timestamp_ticks));
+            deferred_failure_code="UNEXPECTED_FRAME";
+            deferred_failure_detail=$sformatf("source=%s edge=%0d ticks=%0d without actual group sampling edge",
+                source_name(source),frame.edge_index,frame.timestamp_ticks);
           end
-      end else core_error("FRAME_TIMEOUT",scope_id,group_missing_detail(group_handle,
-        expected_edges[0].edge_index,expected_edges[0].timestamp_ticks));
+      end else begin
+        deferred_failure_code="FRAME_TIMEOUT";
+        deferred_failure_detail=group_missing_detail(group_handle,
+          expected_edges[0].edge_index,expected_edges[0].timestamp_ticks);
+      end
     end
+    set_deferred_core_failure(group_handle+1,deferred_failure);
+  endfunction
+
+  function automatic void report_frame_timeout();
+    if(deferred_failure)deferred_core_error(deferred_failure_code,scope_id,deferred_failure_detail);
   endfunction
 
   initial begin : deadline_checks
     bw_notification notice;
     wait(monitor_ready);notice=group_notification(group_handle);
     forever begin
-      INPUTS_COMPLETE: assert final (deadline_ok())
+      capture_deadline_failure();
+      INPUTS_COMPLETE: assert final (!deferred_failure)
         else report_frame_timeout();
       @(notice.seq or expected_notice or deadline_alarm_seq or accepted_record_seq);
     end

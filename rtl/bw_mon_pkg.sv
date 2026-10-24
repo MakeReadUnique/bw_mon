@@ -172,6 +172,27 @@ package bw_mon_pkg;
   bw_point_registration_t registered_points[$];
   bit monitor_configured = 0;
   bit core_failure_seen = 0;
+  bit deferred_core_failures[int];
+
+  // Candidate conditions may be cancelled by later same-slot arrivals. They
+  // are consulted only at finalization, never to suppress runtime records.
+  function automatic void set_deferred_core_failure(int owner,bit pending);
+    if(pending)deferred_core_failures[owner]=1;
+    else deferred_core_failures.delete(owner);
+  endfunction
+
+  function automatic bit core_failure_pending();
+    if(core_failure_seen)return 1;
+    foreach(deferred_core_failures[owner])
+      if(deferred_core_failures[owner])return 1;
+    return 0;
+  endfunction
+
+  // Deferred assertion actions execute in Postponed, where writes are illegal.
+  // Their current condition was already published by the Active checker.
+  function automatic void deferred_core_error(string code,string scope_id,string detail);
+    $fatal(1,"BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",code,scope_id,$time,detail);
+  endfunction
   bit monitor_ready = 0;
   int unsigned expected_point_count;
   bw_u64_t measurement_start_ticks = 0;
