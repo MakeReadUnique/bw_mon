@@ -68,12 +68,13 @@ package bw_mon_pkg;
     if (width == 0 || stride == 0 || stride > width)
       core_error("WINDOW_CONFIG", id,
                  $sformatf("require 0<S<=W; W=%0d S=%0d", width, stride));
-    if (basis != BW_NS)
-      core_error("WINDOW_BASIS", id, "this build supports BW_NS");
-    if (width > 40000)
-      core_error("WINDOW_CONFIG", id, "ns width exceeds 40000 ns");
-    void'(ns_to_ticks(width, id));
-    void'(ns_to_ticks(stride, id));
+    if (basis == BW_NS) begin
+      if (width > 40000)
+        core_error("WINDOW_CONFIG", id, "ns width exceeds 40000 ns");
+      void'(ns_to_ticks(width, id));
+      void'(ns_to_ticks(stride, id));
+    end else if (width > 80000)
+      core_error("WINDOW_CONFIG", id, "cycle width exceeds 80000 cycles");
   endfunction
 
   function automatic void try_ready();
