@@ -329,5 +329,17 @@
     "name": "hint_final_budget",
     "top": "tb_hint_final_budget",
     "expect_error": "(?s)^(?!.*BW_HINT_END).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "hint_same_cycle_stream",
+    "top": "tb_hint_same_cycle_stream"
+  },
+  {
+    "name": "hint_same_cycle_live",
+    "top": "tb_hint_same_cycle_live"
+  },
+  {
+    "name": "hint_same_cycle_cycle_live",
+    "top": "tb_hint_same_cycle_cycle_live"
   }
 ]

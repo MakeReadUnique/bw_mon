@@ -49,10 +49,21 @@ module bw_debug_hints #(
   bit configured = 0;
   bit in_reset = 0;
 
-  // This is a trusted available-balance condition, not evidence of demand.
+  // Current usable-credit shortage is independent of send demand. A known
+  // positive stored balance proves availability even if live return is unknown.
+  // Only same-cycle mode uses live return; stored balance changes only on a
+  // finalized sampling record, never from this combinational condition.
   always_comb begin
-    credit_shortage_known=credit_supported && credit_enabled && credit_trusted && (reset_n===1'b1);
-    credit_shortage=credit_shortage_known ? (credit_balance==0) : 1'bx;
+    credit_shortage_known=credit_supported && credit_enabled && credit_trusted &&
+                          (reset_n===1'b1) && !$isunknown(credit_balance) && !core_failure_seen;
+    credit_shortage=1'bx;
+    if(credit_shortage_known) begin
+      if(credit_balance!=0) credit_shortage=1'b0;
+      else if(CREDIT_RETURN_TIMING==BW_RETURN_NEXT_CYCLE) credit_shortage=1'b1;
+      else if(lcrdv===1'b0) credit_shortage=1'b1;
+      else if(lcrdv===1'b1) credit_shortage=1'b0;
+      else credit_shortage_known=0;
+    end
   end
 
   task automatic seed_ledger();
@@ -145,9 +156,10 @@ module bw_debug_hints #(
   endtask
 
   wire backpressure_condition=valid & ~ready;
-  // Live unknown control interrupts ns evidence immediately, including while
-  // clocks stop; the sampled ledger itself only changes on actual records.
-  wire shortage_condition=(credit_shortage_known && !$isunknown({flitv,lcrdv})) ? credit_shortage : 1'bx;
+  // Duration consumes the current usable-credit predicate. Unrelated live
+  // send changes do not invent ledger movement; sampled unknown S/R still
+  // invalidates the ledger through dispatch above.
+  wire shortage_condition=credit_shortage;
   if((PROTOCOL===BW_VALID_READY) && BACKPRESSURE_ENABLE) begin : backpressure_hint
     bw_hint_duration #(.HINT_NAME("backpressure"),.SUPPORTED(1),.ENABLED(1),
       .BASIS(BACKPRESSURE_BASIS),.THRESHOLD(BACKPRESSURE_THRESHOLD)) duration

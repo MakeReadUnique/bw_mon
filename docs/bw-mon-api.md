@@ -404,7 +404,7 @@ Public scalar fields live directly at the observation point:
 | `credit_available_before` | Last checked frame's 65-bit usable credit count, including same-cycle return if selected |
 | `credit_attempted_balance` | Last checked frame's signed 66-bit C+R−S, retaining the exact out-of-range attempted value on an anomaly |
 | `credit_permission_known`, `credit_send_permitted` | Whether the last frame's permission check was possible and its result; these describe that pre-edge check, not future permission |
-| `credit_shortage_known`, `credit_shortage` | Whether the updated ledger balance can be trusted, and whether it is zero; does not prove pending demand |
+| `credit_shortage_known`, `credit_shortage` | Whether current usable-credit shortage can be decided and its result; same-cycle mode includes live return availability, next-cycle mode uses stored balance; does not prove pending demand |
 | `credit_anomaly`, `credit_reason` | First trust-loss latch and reason; cleared by known reset |
 | `credit_anomaly_count` | Unsigned 64-bit cumulative trust-loss count, preserved across resets; initial unknown state alone is not an anomaly |
 | `credit_epoch`, `credit_result_seq` | Unsigned 64-bit reset generation and monotonic diagnostic update sequence |
@@ -412,8 +412,9 @@ Public scalar fields live directly at the observation point:
 
 The last-frame permission/attempt fields become unknown when a later frame cannot
 be checked. The original fault remains in its log and latched reason. Current
-shortage is qualified by trust and live reset, independently from the last frame's
-permission evidence. Duration thresholds and long-condition hints are configured independently below.
+shortage is a usable-credit predicate, qualified by trust and live reset,
+independently from the last frame's permission evidence. In same-cycle mode live
+return availability can change this predicate without changing stored balance. Duration thresholds and long-condition hints are configured independently below.
 
 Additional independently expected VCS cases:
 
@@ -447,13 +448,24 @@ hint with an unavailable/disabled ledger remains untrusted; it cannot invent a
 shortage interval.
 
 Backpressure uses the live four-state `valid & ~ready` condition. For example,
-valid=0 proves no backpressure even if ready is unknown. Credit shortage uses the
-updated trusted ledger's zero-balance condition; live unknown flitv/lcrdv also
-interrupts duration evidence immediately. If that uncertainty happens with no
-sampling edge, the ledger balance itself need not be lost: the duration hint
-separately records the unknown observation. A later sampled unknown control does
-lose the ledger as documented above. Neither condition proves pending demand or
-establishes a performance failure.
+valid=0 proves no backpressure even if ready is unknown. Credit shortage follows
+D4's usable-credit rule, while stored credit C changes only on actual records:
+
+| Trusted stored C | Return timing / live R | Current shortage |
+| --- | --- | --- |
+| C>0 | Either timing, including unknown R | Known false: at least one credit is available |
+| C=0 | Next-cycle, any live R | Known true until a sampled update changes C |
+| C=0 | Same-cycle, R=0 | Known true |
+| C=0 | Same-cycle, R=1 | Known false: this return is usable |
+| C=0 | Same-cycle, R=X/Z | Unknown |
+| Untrusted C or reset | Either | Unknown / reset interruption |
+
+Thus a permitted C=0/S=R=1 same-cycle stream does not accumulate a sustained
+shortage hint. Live same-cycle R can start/release/interrupt a hint during a
+stopped clock, but it never increments the ledger without a sampling record.
+Unknown send activity does not determine current credit availability or pending
+demand. When an actual record has unknown S/R, it still loses ledger trust as
+documented above. Neither hint condition establishes a performance failure.
 
 For ns mode, a raw condition becoming known true starts an interval at its actual
 integer time. A dedicated threshold timer still triggers with no sampling clocks.
@@ -513,8 +525,11 @@ Additional independent tests:
 | `hint_ns` | No-clock start/hit/release, unknown/reset gaps, no joined evidence, exact final 2.5 ns truncated interval |
 | `hint_equal` | Separate threshold-equal release, unknown and reset retain one hit and exactly 2 ns of prior trusted duration |
 | `hint_cycle` | First edge anchors; stopped clock holds sequence/count; same-edge release closes two completed cycles; mid-cycle/unknown/reset split; capability and enable separate |
-| `hint_shortage` | Live unknown return/send breaks stopped-clock ns evidence, a finalized credit return ends shortage, ledger anomaly stops hints while known bytes match disabled point |
+| `hint_shortage` | NEXT mode retains known stored-credit availability off-edge; sampled unknown R/S interrupts trust, real return ends shortage, and definite bytes still match disabled point |
 | `hint_credit_cycle` | Same-edge return closes a completed shortage cycle; late finalized ledger start reuses current actual edge anchor without extra-cycle delay |
+| `hint_same_cycle_stream` | Exact C=0/S=R=1 stream has no ns or cycle shortage interval, retains zero stored balance and counts all five 8-byte sends |
+| `hint_same_cycle_live` | No-clock R0/R1/RX/RZ changes implement the usable-credit truth table; C>0 remains known no-shortage even with unknown R; no phantom ledger/event updates |
+| `hint_same_cycle_cycle_live` | Live R releases/interrupts cycle evidence while stopped; gaps require fresh full cycles; current availability stays separate from the historical sampled permission |
 | `hint_cycle_truncation` | Observation-end summary retains one completed cycle over a long stopped clock and cannot fake a hit from physical time |
 | `hint_accounting` | Enabled ns hint fires before any cycle-window sample, then both enabled/disabled points count the same 24 B/three events and 8 GB/s full cycle window |
 | `hint_reset_release` | A frame sampled while reset was held cannot debit credit when reset releases later at the same T; the first real send and subsequent return create exactly one complete shortage cycle |
