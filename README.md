@@ -6,6 +6,8 @@
 
 运行 `make test`，使用 VCS 编译执行组件与公开入口测试。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 
+单点过程结果可通过 `+BW_EXPECT=FILE` 配置全程平均带宽预期，按完整观测点标识比较并输出非终止的 PASS / FAIL / WARNING 与一次最终汇总；见[键表与结算接口](docs/bw-mon-expectations.md)。
+
 ## 已确认需求
 
 - **纯仿真模块**：采用 SystemVerilog `module`，不依赖 UVM，不要求可综合。
@@ -28,3 +30,5 @@
 ## 前期调研
 
 [EDA 验证用 bandwidth monitor 开源调研](docs/bandwidth-monitor-research.md) 汇总了已有实现、统计口径差异和可参考的设计方式。
+
+单层聚合入口已实现：每组一个 `bw_group_mon`、统一成员配置与显式配置完成，自动进行原始逐沿汇总、消费确认、复位隔离和缺帧检测。完整集成与复现见[集成说明](docs/bw-mon-api.md)；分层与规模验收仍按对应 ticket 交付。
