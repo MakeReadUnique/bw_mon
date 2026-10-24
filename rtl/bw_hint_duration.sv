@@ -190,9 +190,9 @@ module bw_hint_duration #(
     end
   end
   final begin
-    if(configured && !core_failure_seen) begin
+    if(configured && !core_failure_pending()) begin
       drain_actions();
-      if(!core_failure_seen && result.active) begin
+      if(!core_failure_pending() && result.active) begin
         if(monitor_time_supported($time)) close_interval($time,BW_HINT_TRUNCATED);
         else check_monitor_time($time,{scope_id," ",HINT_NAME," final"});
       end

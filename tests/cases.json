@@ -1328,5 +1328,67 @@
   {
     "name": "phase_candidate_change",
     "top": "tb_phase_candidate_change"
+  },
+  {
+    "name": "report_transient_deferred",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+TRANSIENT_DEFERRED"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_scope_deferred",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+FINAL_DEFERRED"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REPORT_DEFERRED",
+    "expect_log": [
+      "REPORT_DEFERRED_FACT seen=0 pending=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 2,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "report_final_deferred",
+    "top": "tb_report_final_forward",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_final_order.cfg",
+      "+FINAL_DEFERRED"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REPORT_FINAL_DEFERRED",
+    "expect_log": [
+      "REPORT_FINAL_FACT seen=0 pending=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 0,
+      "BW_EPISODE ": 0
+    }
+  },
+  {
+    "name": "report_hint_deferred",
+    "top": "tb_report_hint_deferred",
+    "expect_error": "BW_CORE_ERROR code=REPORT_HINT_DEFERRED",
+    "expect_log": [
+      "REPORT_HINT_FACT seen=0 pending=1"
+    ],
+    "expect_counts": {
+      "BW_HINT_HIT ": 1,
+      "BW_HINT_END ": 0,
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 0
+    }
   }
 ]

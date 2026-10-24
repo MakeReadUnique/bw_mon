@@ -377,14 +377,14 @@ package bw_check_report_pkg;
       int index;
       bw_report_summary_t value;
       string status;
-      if(core_failure_seen || totals.finalized) return;
+      if(core_failure_pending() || totals.finalized) return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(kind,scope_id);
       // Normalized component fixtures can contain unregistered analysis cores.
       if(index<0 || scopes[index].done) return;
       if((scopes[index].has_min || scopes[index].has_max) && !scopes[index].disabled && !scopes[index].saw_episode) begin
         totals.warning_count=checked_add(totals.warning_count,1,scope_id);
-        if(core_failure_seen) return;
+        if(core_failure_pending()) return;
         $display("BW_CHECK scope_kind=%0d scope=%s epoch=%0d episode=0 result_seq=0 kind=scope_final phase=0 metric=e2e_bw unit=GB/s start_known=0 end_known=0 observation_end_ticks=%0d actual=UNAVAILABLE has_min=%0b min=%.17g has_max=%0b max=%.17g abs_tol=%.17g rel_tol_pct=%.17g effective_min=%.17g effective_max=%.17g cfg_file=%s min_line=%0d max_line=%0d abs_line=%0d rel_line=%0d conclusion=WARNING reason=NO_EPISODE",
           kind,scope_id,stats_epoch,$time,scopes[index].has_min,scopes[index].minimum,
           scopes[index].has_max,scopes[index].maximum,scopes[index].absolute,
@@ -392,7 +392,7 @@ package bw_check_report_pkg;
           cfg_file,scopes[index].min_line,scopes[index].max_line,scopes[index].abs_line,scopes[index].rel_line);
       end
       scopes[index].done=1;totals.scopes_done=checked_add(totals.scopes_done,1,scope_id);
-      if(core_failure_seen || totals.scopes_done!=totals.scopes_expected) return;
+      if(core_failure_pending() || totals.scopes_done!=totals.scopes_expected) return;
       totals.finalized=1;value=summary();
       case(value.status)
         BW_REPORT_FAIL:status="FAIL";

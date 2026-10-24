@@ -145,7 +145,12 @@ flushing all remaining final records, each registered scope's core calls
 do not alter the participant count. The last participant settles missing rules
 and prints exactly one summary after all scope results. There is no independently
 scheduled report `final` block and no extra integrator action. Both final record
-submission and scope completion honor `core_failure_seen`; finalization rejects
+submission honors `core_failure_seen`; final settlement and scope completion use
+`core_failure_pending()` to include unresolved deferred core errors. Deferred
+fatal actions are read-only because VCS forbids latch writes in Postponed;
+their candidate facts are updated in Active. Candidates cancelled by later
+same-slot arrivals never suppress valid runtime records or hint hits.
+Finalization rejects
 an observation beyond the common immutable 40us budget before emitting results.
 Core errors remain fatal and do not become performance WARNINGs.
 

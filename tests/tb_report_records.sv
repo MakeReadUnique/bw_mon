@@ -11,10 +11,11 @@ module tb_report_records;
   initial begin
     bw_episode_result_t result;
     bw_report_summary_t summary;
-    bit later_pass,invalid_actual,spoof_reset,unknown_status;
+    bit later_pass,invalid_actual,spoof_reset,unknown_status,transient_deferred;
     later_pass=$test$plusargs("LATER_PASS");
     invalid_actual=$test$plusargs("INVALID_ACTUAL");spoof_reset=$test$plusargs("SPOOF_RESET");
     unknown_status=$test$plusargs("UNKNOWN_STATUS");
+    transient_deferred=$test$plusargs("TRANSIENT_DEFERRED");
     wait(monitor_ready);#4000000;
     result='{scope_kind:BW_POINT,status:BW_EPISODE_COMPLETE,reason:BW_EPISODE_REASON_NONE,
       e2e_gbps:128.0,default:0};
@@ -27,6 +28,7 @@ module tb_report_records;
     if(invalid_actual) result.e2e_gbps=$bitstoreal(64'h7ff8000000000001);
     if(spoof_reset) result.status=BW_EPISODE_RESET_INTERRUPTED;
     if(unknown_status) result.status=bw_episode_status_t'(3'bxxx);
+    if(transient_deferred) set_deferred_core_failure(0,1);
     emit_episode_result("records.fail",result);
     emit_episode_result("records.fail",result);
     emit_episode_result("records.fail",result);
@@ -39,6 +41,11 @@ module tb_report_records;
     result.status=BW_EPISODE_COMPLETE;
     result.byte_count=0;result.end_total_bytes=0;result.e2e_gbps=0.0;
     emit_episode_result("records.zero",result);
+    if(transient_deferred) begin
+      if(core_failure_seen || !core_failure_pending())
+        $fatal(1,"candidate failure must be pending without latching a terminal runtime error");
+      set_deferred_core_failure(0,0);
+    end
     report_scope_done(BW_POINT,"unregistered.component");
     summary=check_report_summary();
     if(summary.pass_count!=1+int'(later_pass) || summary.fail_count!=int'(!(invalid_actual || spoof_reset || unknown_status)) ||
@@ -46,6 +53,18 @@ module tb_report_records;
        summary.scopes_expected!=3 || summary.finalized ||
        summary.status!=((invalid_actual || spoof_reset || unknown_status) ? BW_REPORT_WARNING : BW_REPORT_FAIL))
       $fatal(1,"immutable final replays must not recount; later PASS must retain earlier FAIL");
+    if($test$plusargs("FINAL_DEFERRED")) begin
+      set_deferred_core_failure(0,1);
+      report_scope_done(BW_POINT,"records.fail",7);
+      report_scope_done(BW_POINT,"records.zero",1);
+      report_scope_done(BW_POINT,"records.missing",0);
+      summary=check_report_summary();
+      if(summary.scopes_done!=0 || summary.warning_count!=0 || summary.finalized)
+        $fatal(1,"pending core failure must suppress final rule settlement and summary");
+      deferred_core_error("REPORT_DEFERRED","records.fixture","unresolved final failure");
+    end
     $display("TB_PASS report_records continued_after_fail=1");$finish;
   end
+  final if($test$plusargs("FINAL_DEFERRED"))
+    $display("REPORT_DEFERRED_FACT seen=%0b pending=%0b",core_failure_seen,core_failure_pending());
 endmodule
