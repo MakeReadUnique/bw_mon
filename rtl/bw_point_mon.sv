@@ -11,7 +11,9 @@ module bw_point_mon #(
   parameter logic [63:0] CREDIT_CAPACITY = 64'bx,
   parameter logic [63:0] CREDIT_INITIAL = 64'bx,
   parameter bit CREDIT_INITIAL_KNOWN = 0,
-  parameter bw_mon_pkg::bw_credit_return_t CREDIT_RETURN_TIMING = bw_mon_pkg::BW_RETURN_NEXT_CYCLE
+  parameter bw_mon_pkg::bw_credit_return_t CREDIT_RETURN_TIMING = bw_mon_pkg::BW_RETURN_NEXT_CYCLE,
+  parameter bit EPISODE_ENABLE = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = 0
 ) (
   input logic clk,
   input logic reset_n,
@@ -60,6 +62,16 @@ module bw_point_mon #(
   real bandwidth_gbps,bytes_per_cycle;
   bit window_warmup,window_full,bytes_complete,events_complete;
   bit denominator_valid,window_valid,member_reset_coverage;
+  bit episode_active,episode_first_known,episode_last_known,episode_tail_known;
+  bit episode_bytes_complete,episode_events_complete,episode_member_reset_coverage;
+  bit episode_duration_valid,episode_e2e_valid;
+  bw_episode_status_t episode_status;
+  bw_u64_t episode_id,episode_result_seq;
+  bw_u64_t episode_first_ticks,episode_last_ticks,episode_tail_ticks,episode_confirmation_ticks;
+  bw_u64_t episode_first_cycle,episode_last_cycle,episode_tail_cycle;
+  bw_u64_t episode_bytes,episode_events,episode_duration_ticks;
+  real episode_e2e_gbps;
+  bw_episode_result_t episode_result;
 
   // Unnamed block deliberately preserves exactly the public instance scope.
   initial begin
@@ -68,6 +80,7 @@ module bw_point_mon #(
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
     validate_credit_config(PROTOCOL,CREDIT_ENABLE,CREDIT_CAPACITY,CREDIT_INITIAL,
                            CREDIT_INITIAL_KNOWN,CREDIT_RETURN_TIMING,scope_id);
+    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
   end
@@ -91,8 +104,9 @@ module bw_point_mon #(
      .credit_result_seq(credit_result_seq),.credit_epoch(credit_epoch),.credit_update_ticks(credit_update_ticks),
      .credit_record_seq(credit_record_seq));
   bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),
-                  .UPDATE_STRIDE(UPDATE_STRIDE)) core
-    (.scope_id(scope_id),.record(raw_record),.record_toggle(record_toggle),
+                  .UPDATE_STRIDE(UPDATE_STRIDE),.EPISODE_ENABLE(EPISODE_ENABLE),
+                  .SILENCE_THRESHOLD(SILENCE_THRESHOLD)) core
+    (.scope_id(scope_id),.scope_kind(scope_kind),.record(raw_record),.record_toggle(record_toggle),
      .stats_reset_n(reset_n),.accepted_record_seq(accepted_record_seq),
      .member_control('0),.member_control_toggle(1'b0),.accepted_control_count(),
      .stats_epoch(stats_epoch),.result_seq(result_seq),.total_bytes(total_bytes),.total_events(total_events),
@@ -103,5 +117,16 @@ module bw_point_mon #(
      .bytes_per_cycle(bytes_per_cycle),.window_warmup(window_warmup),.window_full(window_full),
      .bytes_complete(bytes_complete),.events_complete(events_complete),
      .denominator_valid(denominator_valid),.window_valid(window_valid),
-     .member_reset_coverage(member_reset_coverage));
+     .member_reset_coverage(member_reset_coverage),
+     .episode_active(episode_active),.episode_status(episode_status),.episode_id(episode_id),
+     .episode_result_seq(episode_result_seq),.episode_first_ticks(episode_first_ticks),
+     .episode_last_ticks(episode_last_ticks),.episode_tail_ticks(episode_tail_ticks),
+     .episode_confirmation_ticks(episode_confirmation_ticks),.episode_first_cycle(episode_first_cycle),
+     .episode_last_cycle(episode_last_cycle),.episode_tail_cycle(episode_tail_cycle),
+     .episode_bytes(episode_bytes),.episode_events(episode_events),.episode_duration_ticks(episode_duration_ticks),
+     .episode_first_known(episode_first_known),.episode_last_known(episode_last_known),
+     .episode_tail_known(episode_tail_known),.episode_bytes_complete(episode_bytes_complete),
+     .episode_events_complete(episode_events_complete),.episode_member_reset_coverage(episode_member_reset_coverage),
+     .episode_duration_valid(episode_duration_valid),.episode_e2e_valid(episode_e2e_valid),
+     .episode_e2e_gbps(episode_e2e_gbps),.episode_result(episode_result));
 endmodule
