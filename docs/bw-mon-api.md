@@ -432,3 +432,106 @@ reset/control cases. The DUT-like NBA-deassert fixture verifies that a sampled
 known reset0 or unknown reset cannot become a transfer after NBA release; its
 Active-release case still counts. The credit-ledger stimulus now explicitly uses
 integer-fs testbench time and checks actual raw timestamps against its event table.
+
+## Traffic episodes and e2e results
+
+Episode analysis uses the shared `bw_stats_core` behind the point's ordinary
+raw-interface ports. Set `EPISODE_ENABLE=1` and explicitly configure
+`SILENCE_THRESHOLD=Q`. Q is a positive known unsigned 64-bit integer in the
+selected `WINDOW_BASIS` (ns or local cycles). There is no cross-interface Q
+default. `EPISODE_ENABLE=0` is the default window-only mode; Q is then unused.
+An enabled missing/zero/unknown Q is `EPISODE_CONFIG` before the point registers
+and before ready. An unrepresentable ns-to-tick conversion is a core arithmetic
+error. These are startup parameters and cannot be changed during simulation.
+
+A definite transfer starts or extends an episode, including a zero-byte
+transfer. The measured interval begins at its first actual sampling edge and
+ends at the actual edge immediately after its last transfer. This tail edge
+must really occur: a stopped clock cannot supply an estimated period. Internal
+idle cycles count in the duration; the later Q-length confirmation wait does
+not. Ns silence advances with physical time after the tail is known and has an
+independent timer even when Q is not aligned with the window stride. Cycle
+silence advances only at actual edges. A transfer exactly at the quiet deadline
+belongs to a new episode after the old result completes.
+
+Unknown event observations interrupt quiet evidence. Recovery starts a fresh
+quiet interval; two sides of a gap are never joined. An unknown size on a
+definite transfer preserves its event and both transfer-time boundaries but
+makes bytes incomplete. A gap before the first known transfer can make the
+start ambiguous; a gap after the last known transfer can make the end ambiguous.
+A later known transfer can establish the last boundary again, while byte/event
+incompleteness remains sticky for that episode. A complete quiet separator
+allows the next episode to be judged independently. Window recovery does not
+repair an older episode. Actual-point reset controls carry the same quality
+rules through a stopped clock. Known member reset is separate coverage metadata
+and does not reset an ancestor's episode or discard its known bytes.
+
+Own known reset interrupts the current episode before clearing that scope's
+statistics; the interrupted result carries the old statistics epoch. A reset
+at a Q deadline takes priority over normal completion and any same-time transfer.
+Observation end emits a truncated result if an episode remains pending. Neither
+interruption nor truncation is a valid complete e2e. Core errors remain fatal;
+the shared `core_failure_seen` latch prevents final-result output after a core
+failure, including VCS final-block paths where `$fatal` can return to its caller.
+An unsupported final observation time is rejected before settlement.
+
+The following ordinary scalars are directly visible at each public point:
+
+| Fields | Meaning |
+| --- | --- |
+| `episode_active`, `episode_status` | Current activity and `BW_EPISODE_NONE`, `ACTIVE`, `COMPLETE`, `RESET_INTERRUPTED` or `TRUNCATED` status |
+| `episode_id`, `episode_result_seq` | Lifetime monotonic episode identity and final-result sequence; neither is a window sequence |
+| `episode_first_ticks`, `episode_last_ticks`, `episode_tail_ticks` | First/last definite transfer and actual tail-edge timestamps |
+| `episode_first_cycle`, `episode_last_cycle`, `episode_tail_cycle` | Corresponding actual source edge indices; controls do not advance them |
+| `episode_confirmation_ticks` | Normal quiet confirmation, own-reset interruption or observation-end time |
+| `episode_first_known`, `episode_last_known`, `episode_tail_known` | Independent boundary quality; a stored definite event is not proof that no unknown earlier/later event occurred |
+| `episode_bytes`, `episode_events` | Known raw episode increments, including zero-byte events |
+| `episode_bytes_complete`, `episode_events_complete` | Independent sticky whole-episode completeness |
+| `episode_member_reset_coverage` | Known actual-point reset intersects the measured episode interval; trailing confirmation-only reset does not count |
+| `episode_duration_ticks`, `episode_duration_valid` | Actual tail minus first timestamp when all required boundaries are known and the duration is positive |
+| `episode_e2e_gbps`, `episode_e2e_valid` | Raw bytes divided by actual duration, valid only for normally completed byte-complete episodes |
+| `episode_result` | Latest immutable `bw_episode_result_t` final payload; sequence 0 means no result has been emitted |
+
+A zero value with validity false is unavailable, not a measured passing zero.
+Own reset clears current episode fields to `NONE`; the final payload retains the
+interrupted record and its old epoch. Episode and final sequences never rewind.
+No activity creates no fabricated zero-byte episode. Current duration can be
+known while Q confirmation is pending, but complete e2e remains invalid until
+normal completion. No steady phase is required for valid e2e.
+
+`bw_episode_result_t` includes typed scope, statistics epoch, final sequence,
+episode identity/status/reason, boundaries and their quality, raw counts,
+independent completeness, reset coverage, duration/e2e validity, and cumulative
+start/end count snapshots. The synchronous result-delivery contract is:
+
+```systemverilog
+emit_episode_result(string scope_id, bw_episode_result_t result);
+```
+
+The identity string and static payload are passed by value together. VCS rejects
+regular output ports of structs containing dynamic strings, so the public point's
+existing `scope_id` supplies identity while the static `episode_result` payload
+can be connected as an ordinary output. The synchronous function receives every
+final record, including multiple records drained in one time slot and final-block
+truncations; a toggle pulse is not its delivery guarantee. The package is a
+bridge, and episode arithmetic stays in the core. The dedicated check/report
+owner extends this bridge for scene expectations in the reporting tickets. At
+this stage `BW_EPISODE` logs final statistics and reasons without a performance
+comparison, and no user-side read/ack or timing action is required.
+
+At the normalized group/core boundary, pending source progress also gates ns
+window and Q publication. A delayed earlier frame cannot be mistaken for zero
+activity; reset or observation end with prior pending input reports partial
+counts and end-boundary quality. This internal coordination needs no additional
+integrator action. Controls wholly inside this scope's own reset do not poison
+a new epoch after known release.
+
+Independent regressions cover `[80,102)` with 256 B (128/11 GB/s), a deadline
+transfer at 132 ns, stopped clocks and 98 ns actual tail periods, middle/before/
+after-event gaps, unknown size, complete recovery separators, no-edge reset
+controls, same-deadline NBA reset, a valid zero-byte episode, no episode,
+truncation, delayed-input progress and partial settlement, explicit-Q errors
+and the immutable final time budget. Integer
+counts/times/qualities compare exactly; real results use 1e-10 GB/s numerical
+tolerance. `python3 tests/run.py` reproduces the full suite; the `episode_*` case names
+in `tests/cases.json` select the episode regressions individually.
