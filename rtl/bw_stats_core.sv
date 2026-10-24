@@ -203,6 +203,12 @@ module bw_stats_core #(
   endfunction
 
   task automatic advance_raw_quality(bw_u64_t tick);
+    // A known own reset suspends this statistical epoch. Member notifications
+    // still advance their transport receipts and may describe earlier times.
+    if(current_reset_n===1'b0)begin
+      if(tick>raw_quality_ticks)raw_quality_ticks=tick;
+      return;
+    end
     raw_unknown_ticks=unknown_ticks_at(tick);raw_quality_ticks=tick;
   endtask
 
@@ -967,9 +973,17 @@ module bw_stats_core #(
     member_control_times[key]=incoming.timestamp_ticks;
     if (WINDOW_BASIS==BW_NS && current_reset_n !== 1'b0) publish_due(incoming.timestamp_ticks);
     advance_episode_time(incoming.timestamp_ticks,last_edge_index,0);
-    advance_raw_quality(incoming.timestamp_ticks);
+    if(incoming.timestamp_ticks>=stats_start_ticks)advance_raw_quality(incoming.timestamp_ticks);
     update_quality(key,incoming.reset_n,incoming.timestamp_ticks);
-    episode_control_changed(incoming.timestamp_ticks);
+    if(incoming.timestamp_ticks<stats_start_ticks && !episode_active && current_reset_n!==1'b0)begin
+      // A pre-epoch notification refreshes member state, not lost observation
+      // in the new epoch. The progress barrier prevents newer raw activity
+      // from being accepted before these historical controls catch up.
+      if(unknown_episode_control())interrupt_silence();
+      else begin
+        pre_episode_gap=0;observation_gap_active=0;gap_waits_for_edge=0;silence_active=0;
+      end
+    end else episode_control_changed(incoming.timestamp_ticks);
     accepted_control_count=checked_add(accepted_control_count,1,scope_id);
   endtask
 

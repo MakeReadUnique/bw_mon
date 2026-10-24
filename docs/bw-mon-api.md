@@ -933,7 +933,11 @@ multiply the duration. Record increments at the right endpoint are excluded;
 control intervals ending at the left endpoint do not overlap. These prefixes
 are independent of sticky whole-episode quality and are reset only with the
 scope's statistics history. Public records retain the start/end prefixes for
-rechecking completeness.
+rechecking completeness. Delayed member controls from before a new statistics
+epoch still validate their original sequences/receipts and refresh member state;
+they do not replay pre-epoch unknown duration. Known recovery before the epoch
+cannot poison fresh activity, while unknown coverage persisting after release
+retains its independent incomplete quality.
 
 Both final phase and episode records contain static `bw_variation_result_t
 variation` with these fields:

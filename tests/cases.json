@@ -929,5 +929,19 @@
   {
     "name": "metrics_late_recovery",
     "top": "tb_metrics_late_recovery"
+  },
+  {
+    "name": "metrics_late_recovery_reset",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "metrics_late_recovery_epoch_gap",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=2"
+    ]
   }
 ]

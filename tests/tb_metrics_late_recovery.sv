@@ -50,23 +50,31 @@ module tb_metrics_late_recovery;
     control.point_handle=0;control.reset_n=reset_level;control_toggle<=!control_toggle;
   endtask
   initial begin
+    void'($value$plusargs("MODE=%d",mode));
     handle=register_point("metrics.late.source","tb_metrics_late_recovery",BW_NS,4,1,"clock");
     wait(monitor_ready);
     #1000000;deliver(1000000,1,1);#1000000;deliver(2000000,2,0);
     #500000;deliver_control(2500000,1,1'bx);watermark=3500000;
+    if(mode!=0)begin
+      #(9000000-$time);reset_n=0;
+      #(9500000-$time);reset_n=1;
+    end
     #(10000000-$time);
     // Original recovery3.5 reaches the owner together with its later raw frame.
     // Both channels are the agreed normalized record/control component seam.
-    deliver_control(3500000,2,1'b1);deliver(10000000,3,1);watermark=10000000;
+    deliver_control(mode==2 ? 9750000 : 3500000,2,1'b1);deliver(10000000,3,1);watermark=10000000;
     #1;
-    if(final_seq!=1 || result.status!=BW_EPISODE_COMPLETE || result.confirmation_ticks!=7500000 ||
+    if(final_seq!=1 || result.status!=(mode!=0 ? BW_EPISODE_RESET_INTERRUPTED : BW_EPISODE_COMPLETE) ||
+       result.confirmation_ticks!=(mode!=0 ? 9000000 : 7500000) ||
        result.last_known || result.e2e_valid || result.variation.minmax_valid ||
-       result.variation.minmax_reason!=BW_METRIC_BOUNDARY_UNKNOWN || !active || accepted!=3)
+       result.variation.minmax_reason!=(mode!=0 ? BW_METRIC_RESET : BW_METRIC_BOUNDARY_UNKNOWN) ||
+       !active || accepted!=3 || epoch!=int'(mode!=0))
       $fatal(1,"late original recovery must preserve Q7.5 completion and start new episode10 without backward quality queries");
     #(11000000-$time);deliver(11000000,4,0);watermark=BW_U64_MAX;
     #(15000001-$time);
-    if(final_seq!=2 || !result.e2e_valid || result.first_ticks!=10000000 || result.tail_ticks!=11000000 ||
-       result.confirmation_ticks!=15000000 || result.e2e_gbps!=8.0)
+    if(final_seq!=2 || result.e2e_valid!=(mode!=2) || result.first_known!=(mode!=2) ||
+       result.first_ticks!=10000000 || result.tail_ticks!=11000000 || result.confirmation_ticks!=15000000 ||
+       (mode!=2 && result.e2e_gbps!=8.0))
       $fatal(1,"late metadata cannot poison the independently complete later episode");
     $display("TB_PASS metrics_late_recovery");$finish;
   end
