@@ -105,6 +105,46 @@ package bw_mon_pkg;
     BW_EPISODE_BYTES_UNKNOWN, BW_EPISODE_DURATION_UNKNOWN
   } bw_episode_reason_t;
 
+  typedef enum logic [1:0] {
+    BW_PHASE_UNDETERMINED, BW_PHASE_RAMP, BW_PHASE_STEADY, BW_PHASE_FALL
+  } bw_phase_t;
+  typedef enum logic [2:0] {
+    BW_PHASE_CHANGE, BW_PHASE_EVIDENCE_GAP, BW_PHASE_EPISODE_END
+  } bw_phase_end_t;
+  // Per-metric evidence: normal exclusions and unknown coverage stay distinct.
+  typedef enum logic [3:0] {
+    BW_METRIC_OK, BW_METRIC_BOUNDARY_UNKNOWN, BW_METRIC_BYTES_UNKNOWN,
+    BW_METRIC_OBSERVATION_UNKNOWN, BW_METRIC_NO_SAMPLES, BW_METRIC_TOO_FEW_SAMPLES,
+    BW_METRIC_ZERO_MEAN, BW_METRIC_RESET, BW_METRIC_TRUNCATED, BW_METRIC_NO_STEADY
+  } bw_metric_reason_t;
+  typedef struct {
+    bw_basis_t window_basis;
+    bw_u64_t window_width,update_stride;
+    bw_u64_t sample_count,first_sample_ticks,last_sample_ticks,sample_span_ticks;
+    bw_u64_t excluded_warmup,excluded_foreign,unknown_samples,excluded_denominator;
+    bit interval_known,coverage_complete;
+    bit minmax_valid,stddev_valid,cv_valid;
+    bw_metric_reason_t minmax_reason,stddev_reason,cv_reason;
+    real mean_gbps,min_gbps,max_gbps,stddev_gbps,cv_pct;
+  } bw_variation_result_t;
+  typedef struct {
+    bw_scope_t scope_kind;
+    bw_u64_t stats_epoch,episode_id,phase_id,result_seq;
+    bw_phase_t phase_kind;
+    bw_phase_end_t end_reason;
+    bw_episode_status_t episode_status;
+    bw_u64_t start_ticks,end_ticks,confirmation_ticks;
+    bw_u64_t start_total_bytes,end_total_bytes,start_total_events,end_total_events;
+    bit start_known,end_known;
+    real confirmation_delta,confirmation_rms;
+    bw_u64_t byte_count,event_count,duration_ticks;
+    bw_u64_t start_unknown_records,end_unknown_records,start_unknown_event_records,end_unknown_event_records;
+    bw_u64_t start_unknown_ticks,end_unknown_ticks,start_reset_records,end_reset_records;
+    bit bytes_complete,events_complete,member_reset_coverage,duration_valid,bandwidth_valid;
+    bw_metric_reason_t duration_reason,bandwidth_reason;
+    real bandwidth_gbps;
+    bw_variation_result_t variation;
+  } bw_phase_result_t;
   // Immutable final record. A synchronous delivery function preserves every
   // result even when several source actions are drained in the same time slot.
   typedef struct {
@@ -123,25 +163,13 @@ package bw_mon_pkg;
     bit bytes_complete, events_complete, member_reset_coverage;
     bit duration_valid, e2e_valid;
     real e2e_gbps;
+    bw_variation_result_t variation;
+    bit last_steady_found,last_steady_selection_valid;
+    bw_metric_reason_t last_steady_reason;
+    bw_phase_result_t last_steady;
   } bw_episode_result_t;
 
-  typedef enum logic [1:0] {
-    BW_PHASE_UNDETERMINED, BW_PHASE_RAMP, BW_PHASE_STEADY, BW_PHASE_FALL
-  } bw_phase_t;
-  typedef enum logic [2:0] {
-    BW_PHASE_CHANGE, BW_PHASE_EVIDENCE_GAP, BW_PHASE_EPISODE_END
-  } bw_phase_end_t;
-  typedef struct {
-    bw_scope_t scope_kind;
-    bw_u64_t stats_epoch,episode_id,phase_id,result_seq;
-    bw_phase_t phase_kind;
-    bw_phase_end_t end_reason;
-    bw_episode_status_t episode_status;
-    bw_u64_t start_ticks,end_ticks,confirmation_ticks;
-    bw_u64_t start_total_bytes,end_total_bytes,start_total_events,end_total_events;
-    bit start_known,end_known;
-    real confirmation_delta,confirmation_rms;
-  } bw_phase_result_t;
+
 
   function automatic string episode_reason_name(bw_episode_reason_t reason);
     case (reason)
@@ -169,6 +197,27 @@ package bw_mon_pkg;
   bw_point_registration_t registered_points[$];
   bit monitor_configured = 0;
   bit core_failure_seen = 0;
+  bit deferred_core_failures[int];
+
+  // Candidate conditions may be cancelled by later same-slot arrivals. They
+  // are consulted only at finalization, never to suppress runtime records.
+  function automatic void set_deferred_core_failure(int owner,bit pending);
+    if(pending)deferred_core_failures[owner]=1;
+    else deferred_core_failures.delete(owner);
+  endfunction
+
+  function automatic bit core_failure_pending();
+    if(core_failure_seen)return 1;
+    foreach(deferred_core_failures[owner])
+      if(deferred_core_failures[owner])return 1;
+    return 0;
+  endfunction
+
+  // Deferred assertion actions execute in Postponed, where writes are illegal.
+  // Their current condition was already published by the Active checker.
+  function automatic void deferred_core_error(string code,string scope_id,string detail);
+    $fatal(1,"BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",code,scope_id,$time,detail);
+  endfunction
   bit monitor_ready = 0;
   int unsigned expected_point_count;
   bw_u64_t measurement_start_ticks = 0;
@@ -183,6 +232,37 @@ package bw_mon_pkg;
            code, scope_id, $time, detail);
   endfunction
 
+  function automatic string metric_reason_name(bw_metric_reason_t reason);
+    case(reason)
+      BW_METRIC_OK:return "NONE";
+      BW_METRIC_BOUNDARY_UNKNOWN:return "BOUNDARY_UNKNOWN";
+      BW_METRIC_BYTES_UNKNOWN:return "BYTES_INCOMPLETE";
+      BW_METRIC_OBSERVATION_UNKNOWN:return "OBSERVATION_INCOMPLETE";
+      BW_METRIC_NO_SAMPLES:return "NO_QUALIFIED_SAMPLES";
+      BW_METRIC_TOO_FEW_SAMPLES:return "TOO_FEW_SAMPLES";
+      BW_METRIC_ZERO_MEAN:return "ZERO_MEAN";
+      BW_METRIC_RESET:return "RESET_INTERRUPTED";
+      BW_METRIC_TRUNCATED:return "OBSERVATION_TRUNCATED";
+      default:return "NO_CONFIRMED_STEADY";
+    endcase
+  endfunction
+
+  function automatic void emit_variation_context(string scope_id,string interval_kind,
+      bw_scope_t scope_kind,bw_u64_t epoch,bw_u64_t episode,bw_u64_t phase,bw_u64_t sequence_id,
+      bw_u64_t start_ticks,bw_u64_t end_ticks,bw_variation_result_t result);
+    if(core_failure_seen)return;
+    $display("BW_VARIATION scope_kind=%0d scope=%s epoch=%0d episode=%0d phase=%0d result_seq=%0d interval=%s start_ticks=%0d end_ticks=%0d basis=%0d W=%0d S=%0d samples=%0d first_sample_ticks=%0d last_sample_ticks=%0d sample_span_ticks=%0d mean_gbps=%0.17g min_gbps=%0.17g max_gbps=%0.17g stddev_gbps=%s cv_pct=%s interval_known=%0b coverage_complete=%0b minmax_valid=%0b stddev_valid=%0b cv_valid=%0b minmax_reason=%s stddev_reason=%s cv_reason=%s excluded_warmup=%0d excluded_foreign=%0d unknown_samples=%0d excluded_denominator=%0d",
+      scope_kind,scope_id,epoch,episode,phase,sequence_id,interval_kind,start_ticks,end_ticks,
+      result.window_basis,result.window_width,result.update_stride,result.sample_count,result.first_sample_ticks,
+      result.last_sample_ticks,result.sample_span_ticks,result.mean_gbps,result.min_gbps,result.max_gbps,
+      result.stddev_valid ? $sformatf("%0.17g",result.stddev_gbps) : "UNAVAILABLE",
+      result.cv_valid ? $sformatf("%0.17g",result.cv_pct) : "UNAVAILABLE",
+      result.interval_known,result.coverage_complete,
+      result.minmax_valid,result.stddev_valid,result.cv_valid,metric_reason_name(result.minmax_reason),
+      metric_reason_name(result.stddev_reason),metric_reason_name(result.cv_reason),result.excluded_warmup,
+      result.excluded_foreign,result.unknown_samples,result.excluded_denominator);
+  endfunction
+
   function automatic void emit_episode_result(string scope_id, bw_episode_result_t result);
     if (core_failure_seen) return;
     // Type/transport bridge for the dedicated check/report owner. Episode
@@ -193,6 +273,13 @@ package bw_mon_pkg;
       result.byte_count,result.event_count,result.duration_ticks,result.first_known,result.last_known,
       result.tail_known,result.bytes_complete,result.events_complete,result.member_reset_coverage,
       result.e2e_valid,result.e2e_gbps,episode_reason_name(result.reason));
+    emit_variation_context(scope_id,"EPISODE",result.scope_kind,result.stats_epoch,result.episode_id,0,
+      result.result_seq,result.first_ticks,result.tail_ticks,result.variation);
+    $display("BW_LAST_STEADY scope_kind=%0d scope=%s epoch=%0d episode=%0d result_seq=%0d found=%0b selection_valid=%0b phase=%0d phase_result_seq=%0d start_ticks=%0d end_ticks=%0d bandwidth_valid=%0b bandwidth_gbps=%0.17g reason=%s",
+      result.scope_kind,scope_id,result.stats_epoch,result.episode_id,result.result_seq,result.last_steady_found,
+      result.last_steady_selection_valid,result.last_steady.phase_id,result.last_steady.result_seq,
+      result.last_steady.start_ticks,result.last_steady.end_ticks,result.last_steady.bandwidth_valid,
+      result.last_steady.bandwidth_gbps,metric_reason_name(result.last_steady_reason));
   endfunction
 
   function automatic void emit_phase_result(string scope_id, bw_phase_result_t result);
@@ -202,6 +289,15 @@ package bw_mon_pkg;
       result.phase_kind,result.start_ticks,result.end_ticks,result.confirmation_ticks,
       result.start_known,result.end_known,result.start_total_bytes,result.end_total_bytes,
       result.start_total_events,result.end_total_events,result.confirmation_delta,result.confirmation_rms,result.end_reason);
+    $display("BW_PHASE_METRICS scope_kind=%0d scope=%s epoch=%0d episode=%0d phase=%0d result_seq=%0d start_ticks=%0d end_ticks=%0d bytes=%0d events=%0d duration_ticks=%0d bytes_complete=%0b events_complete=%0b member_reset=%0b duration_valid=%0b bandwidth_valid=%0b bandwidth_gbps=%0.17g duration_reason=%s bandwidth_reason=%s start_unknown_records=%0d end_unknown_records=%0d start_unknown_event_records=%0d end_unknown_event_records=%0d start_unknown_ticks=%0d end_unknown_ticks=%0d",
+      result.scope_kind,scope_id,result.stats_epoch,result.episode_id,result.phase_id,result.result_seq,
+      result.start_ticks,result.end_ticks,result.byte_count,result.event_count,result.duration_ticks,
+      result.bytes_complete,result.events_complete,result.member_reset_coverage,result.duration_valid,result.bandwidth_valid,result.bandwidth_gbps,
+      metric_reason_name(result.duration_reason),metric_reason_name(result.bandwidth_reason),
+      result.start_unknown_records,result.end_unknown_records,result.start_unknown_event_records,
+      result.end_unknown_event_records,result.start_unknown_ticks,result.end_unknown_ticks);
+    emit_variation_context(scope_id,"PHASE",result.scope_kind,result.stats_epoch,result.episode_id,result.phase_id,
+      result.result_seq,result.start_ticks,result.end_ticks,result.variation);
   endfunction
 
   function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,

@@ -749,9 +749,8 @@ The static record includes typed scope, epoch, episode/phase/final identities,
 phase kind, final half-open bounds and independent known flags, original raw
 count snapshots, confirmation time/fit, end reason and episode status at
 submission. Counts are known raw counts, not a completeness proof or a sum of
-overlapping windows. Interval-byte completeness, steady bandwidth, variation
-and last-steady representative selection are supplied by the final-statistics
-and reporting extensions.
+overlapping windows. Interval-byte completeness, raw bandwidth, variation
+and final last-steady representative selection are described below.
 
 Closed fragments stream when their end is guaranteed inside already observed
 episode coverage. Their recorded episode status can still be ACTIVE: later
@@ -770,3 +769,132 @@ acceptance vector, not a product default. Tests also cover true-time fitting
 across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
 ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
 insufficient span, explicit configuration failures and real arithmetic overflow.
+
+
+## Final interval metrics
+
+Enabled episodes collect variation even with `PHASE_ENABLE=0`; enabling phases
+also produces final per-fragment metrics. There are no additional universal
+thresholds or user history capacities. Calculations and retained evidence belong
+to the shared core; package emitters provide static by-value transport and logs.
+
+Each `bw_phase_result_t` now includes known raw `byte_count` / `event_count`,
+`duration_ticks`, `bytes_complete`, `events_complete`, `member_reset_coverage`,
+`duration_valid`, `bandwidth_valid`, `duration_reason`, `bandwidth_reason`, and
+real `bandwidth_gbps`. Duration is the actual physical difference between final
+known boundaries, including for cycle windows and stopped or changing clocks.
+Raw bandwidth is final raw bytes divided by that duration. The same fields are
+available for every reliable fragment; the steady-phase performance metric uses
+the selected final steady fragment. A later unknown size can invalidate a
+fragment's raw bytes while leaving its duration and selected window variation
+valid. Unknown size preserves definite event completeness. No-edge unknown reset
+intervals independently mark raw bytes and events incomplete; known member reset
+coverage is recorded without invalidating known group bytes.
+
+Raw quality uses exact boundary snapshots of unknown record counts, unknown
+event-record counts and elapsed physical ticks covered by any unknown control.
+The control tick measure is a union, so simultaneous unknown members do not
+multiply the duration. Record increments at the right endpoint are excluded;
+control intervals ending at the left endpoint do not overlap. These prefixes
+are independent of sticky whole-episode quality and are reset only with the
+scope's statistics history. Public records retain the start/end prefixes for
+rechecking completeness.
+
+Both final phase and episode records contain static `bw_variation_result_t
+variation` with these fields:
+
+| Fields | Meaning / units |
+| --- | --- |
+| `window_basis`, `window_width`, `update_stride` | Window configuration; width/stride in ns or local cycles |
+| `sample_count`, `first_sample_ticks`, `last_sample_ticks`, `sample_span_ticks` | Qualified new publication count and actual physical publication span |
+| `mean_gbps`, `min_gbps`, `max_gbps`, `stddev_gbps`, `cv_pct` | Equal-weight window mean/extrema, population sigma and percent CV |
+| `interval_known`, `coverage_complete` | Independent final boundary and otherwise-eligible observation coverage |
+| `minmax_valid`, `stddev_valid`, `cv_valid` | At least1, at least2, and at least2 with positive mean, respectively, plus known final interval/coverage |
+| `minmax_reason`, `stddev_reason`, `cv_reason` | Independent metric evidence reason |
+| `excluded_warmup`, `excluded_foreign`, `unknown_samples`, `excluded_denominator` | Publication qualification context; normal exclusion counts may overlap |
+
+Selection uses publication times in the final half-open interval `[a,b)`,
+including a sample at `a` and excluding a sample at `b`. Eligible windows may
+cross stage boundaries within the same episode. Samples begin with publications
+owned by the active episode; the publication before its first raw event does
+not become a new analysis sample afterward. A held cycle snapshot is never
+sampled again. Cycle frequency changes retain equal publication weights rather
+than weighting by physical duration. Population sigma uses the selected sample
+mean, not the raw byte/time ratio or the phase fit residual RMS.
+
+Warmup and known foreign-episode activity, including old zero-byte transfers,
+are normal exclusions. An otherwise-eligible unknown observation increments
+`unknown_samples` and makes the interval's variation unavailable; dropping that
+sample cannot restore complete variation. These conditions are independent of
+raw episode bytes/e2e. For example, an unknown-size final event can make e2e
+unavailable while its unknown window is published exactly at the excluded tail,
+leaving earlier selected window samples complete. CV with mean0 is unavailable;
+a valid zero sigma remains available with at least2 samples. No epsilon or
+clamping changes either condition.
+
+Metric reasons use `bw_metric_reason_t` with `BW_METRIC_` prefix: `OK`,
+`BOUNDARY_UNKNOWN`, `BYTES_UNKNOWN`, `OBSERVATION_UNKNOWN`, `NO_SAMPLES`,
+`TOO_FEW_SAMPLES`, `ZERO_MEAN`, `RESET`, `TRUNCATED`, `NO_STEADY`. A whole episode's
+formal variation requires normal completion and a known final interval/coverage;
+interrupted/truncated records retain unavailable reasons. A previously settled
+complete phase remains valid after a later gap, reset or observation end.
+
+Episode records also contain `last_steady_found`, `last_steady_selection_valid`,
+`last_steady_reason` and embedded immutable `last_steady`. Only a normally
+completed episode with known final boundaries makes representative selection
+formal; the embedded result preserves the original phase identity/result
+sequence and its independent metric validity. Intermediate phase emissions
+report their own final intervals without declaring a formal last representative.
+Multiple steady intervals are allowed. A later good interval cannot erase an
+earlier performance failure.
+
+Settled samples accumulate online using mean and centered second moment,
+count and extrema. Samples whose ownership may change under K backdating or
+whose inclusion may change under final tail clipping remain retained exactly.
+A later definite transfer can settle an earlier internal pause; trailing
+confirmation samples remain excluded. This does not retain every result for the
+whole simulation. Queue growth, counters, quality-time arithmetic and real
+representation are checked; failures are terminal `METRIC_TIME`,
+`METRIC_ARITHMETIC` or the common checked-storage/arithmetic diagnostic. Final
+emission explicitly respects the shared terminal/deferred-failure guard, because
+this VCS version can continue after a fatal call within `final`.
+
+Fixed point scope flattens the immutable records into ordinary scalar aliases:
+`phase_duration_ticks`, `phase_byte_count`, `phase_event_count`,
+`phase_duration_valid`, `phase_bandwidth_valid`, `phase_bytes_complete`,
+`phase_events_complete`, `phase_member_reset_coverage`, `phase_bandwidth_gbps`,
+`phase_duration_reason`, `phase_bandwidth_reason`; all variation fields other than
+window configuration have `phase_variation_` or `episode_variation_` prefixes.
+The selected representative has `episode_last_steady_found`,
+`episode_last_steady_selection_valid`, `episode_last_steady_reason`,
+`episode_last_steady_phase_id`, `episode_last_steady_start_ticks`,
+`episode_last_steady_end_ticks`, `episode_last_steady_bandwidth_gbps`,
+`episode_last_steady_bandwidth_valid` and `episode_last_steady_variation_*`.
+The immutable record's sequence identifies when these aliases change. Existing
+window/evidence/current phase scalars keep their original meanings.
+
+`BW_PHASE_METRICS` logs raw count/time/bandwidth and quality prefixes.
+`BW_VARIATION` logs scope/epoch/episode/phase/result identities, final interval,
+window configuration, sample times/count, values at17-digit precision, independent
+validities/reasons and exclusions. Unavailable sigma/CV print `UNAVAILABLE`;
+public real storage0 with a false validity flag is a placeholder, not a measured
+zero. `BW_LAST_STEADY` accompanies the final episode
+and records selection status plus the original final phase identity. These are
+statistics context; configured comparisons remain owned by check/report.
+
+Independent raw-input regression examples (all integer facts compare exactly;
+real calculations use numerical tolerance1e-10 GB/s or percentage points):
+
+| Test | Independent expected result |
+| --- | --- |
+| `metrics_delayed` |640 B at95 and0 B at135, W100/S10: final steady[120,136), raw0/16=0 GB/s, window samples120/130 both6.4; episode uses four6.4 samples |
+| `metrics_repeated` |24 raw values10,10,10,20,30,40,40,40,30,20,10,10,10, then eleven20s: episode23 samples, mean480/23, variance45600/529, CV44.4878260501%; last steady[17,25), raw160/8=20 and eight20-valued samples. Last-event100 variant changes raw steadyBW to30, keeping variation unchanged |
+| `metrics_actual_clock` |10/12/16 at11/12/14 ns or10.5/11/12 ns: equal-weight mean38/3, variance56/9, sigma2.49443825785, CV19.6929336146%; raw phase durations use actual later edges |
+| `metrics_zero`, `metrics_small` |Zero mean with3 samples gives valid sigma0 and unavailable CV; one-sample steady gives min/max only; episode-only0/1/2 samples and ordinary warmup remain distinct |
+| `metrics_quality`, `metrics_independent` |Unknown raw bytes and unknown selected window coverage have independent effects; definite unknown-size transfers keep event counts complete |
+| `metrics_controls`, `metrics_exclusions` |No-edge unknown versus known member-reset controls; later independently complete stages; old zero-byte residue/left equality and normal warmup versus actual unknown publication coverage |
+| `metrics_interrupted` |Settled ramp[6,8) has raw40 GB/s and duration2 ns, selected30/40 windows give sigma5 despite fitRMS0; later reset/truncation leaves it valid and representative selection unavailable |
+
+Reproduce with `python3 tests/run.py` or pass any listed case name. These
+component/raw-point vectors do not claim full group composition, waveform manual
+review or target-scale acceptance.

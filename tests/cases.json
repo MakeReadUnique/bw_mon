@@ -559,5 +559,56 @@
   {
     "name": "phase_candidate_change",
     "top": "tb_phase_candidate_change"
+  },
+  {
+    "name": "metrics_delayed",
+    "top": "tb_metrics_delayed",
+    "expect_log": [
+      "BW_VARIATION.*scope=phase.delayed .*interval=PHASE.*stddev_gbps=0 cv_pct=0 .*stddev_valid=1 cv_valid=1"
+    ]
+  },
+  {
+    "name": "metrics_repeated",
+    "top": "tb_metrics_repeated"
+  },
+  {
+    "name": "metrics_quality",
+    "top": "tb_metrics_quality"
+  },
+  {
+    "name": "metrics_zero",
+    "top": "tb_metrics_zero",
+    "expect_log": [
+      "BW_VARIATION.*scope=phase.zero0 .*interval=EPISODE.*stddev_gbps=0 cv_pct=UNAVAILABLE .*stddev_valid=1 cv_valid=0.*cv_reason=ZERO_MEAN",
+      "BW_VARIATION.*scope=phase.zero0 .*interval=PHASE.*stddev_gbps=UNAVAILABLE cv_pct=UNAVAILABLE .*stddev_valid=0 cv_valid=0.*stddev_reason=TOO_FEW_SAMPLES"
+    ]
+  },
+  {
+    "name": "metrics_actual_clock",
+    "top": "tb_metrics_actual_clock"
+  },
+  {
+    "name": "metrics_exclusions",
+    "top": "tb_metrics_exclusions"
+  },
+  {
+    "name": "metrics_small",
+    "top": "tb_metrics_small"
+  },
+  {
+    "name": "metrics_controls",
+    "top": "tb_metrics_controls"
+  },
+  {
+    "name": "metrics_interrupted",
+    "top": "tb_metrics_interrupted",
+    "expect_log": [
+      "BW_VARIATION.*scope=metrics.interrupted1 .*interval=EPISODE.*stddev_valid=0.*stddev_reason=OBSERVATION_TRUNCATED",
+      "BW_LAST_STEADY.*scope=metrics.interrupted1 .*selection_valid=0.*reason=OBSERVATION_TRUNCATED"
+    ]
+  },
+  {
+    "name": "metrics_independent",
+    "top": "tb_metrics_independent"
   }
 ]
