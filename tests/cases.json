@@ -1,0 +1,423 @@
+[
+  {
+    "name": "ns_bind",
+    "top": "tb_ns_bind"
+  },
+  {
+    "name": "ns_stride",
+    "top": "tb_ns_stride"
+  },
+  {
+    "name": "startup_empty",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=empty"
+    ],
+    "expect_error": "BW_CORE_ERROR code=POINT_ID"
+  },
+  {
+    "name": "startup_bad_width",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=bad_width"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_bad_stride",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=bad_stride"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_duplicate",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=duplicate"
+    ],
+    "expect_error": "BW_CORE_ERROR code=DUPLICATE_POINT"
+  },
+  {
+    "name": "startup_missing",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=missing"
+    ],
+    "expect_error": "BW_CORE_ERROR code=STARTUP_TIMEOUT"
+  },
+  {
+    "name": "startup_late",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=late"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REGISTRATION_FROZEN"
+  },
+  {
+    "name": "startup_reconfigure",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=reconfigure"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  },
+  {
+    "name": "startup_deadline",
+    "top": "tb_startup_deadline"
+  },
+  {
+    "name": "byte_config_error",
+    "top": "tb_byte_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "cycle_window",
+    "top": "tb_cycle_window"
+  },
+  {
+    "name": "cycle_stride",
+    "top": "tb_cycle_stride"
+  },
+  {
+    "name": "cycle_config",
+    "top": "tb_cycle_config"
+  },
+  {
+    "name": "startup_ns_width_limit",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=ns_width_limit"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_cycle_width_limit",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=cycle_width_limit"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_cycle_bad_stride",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=cycle_bad_stride"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "cycle_edge_error",
+    "top": "tb_cycle_edge_error",
+    "expect_error": "BW_CORE_ERROR code=EDGE_SEQUENCE"
+  },
+  {
+    "name": "protocol_recording",
+    "top": "tb_protocol_recording"
+  },
+  {
+    "name": "subns_vectors",
+    "top": "tb_subns_vectors"
+  },
+  {
+    "name": "sample_view",
+    "top": "tb_sample_view"
+  },
+  {
+    "name": "recorder_edges",
+    "top": "tb_recorder_edges"
+  },
+  {
+    "name": "dynamic_size_error",
+    "top": "tb_dynamic_size_error",
+    "expect_error": "BW_CORE_ERROR code=TRANSFER_BYTES"
+  },
+  {
+    "name": "protocol_config_error",
+    "top": "tb_protocol_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PROTOCOL_CONFIG"
+  },
+  {
+    "name": "adapter_decode",
+    "top": "tb_adapter_decode"
+  },
+  {
+    "name": "credit_timing",
+    "top": "tb_credit_timing"
+  },
+  {
+    "name": "credit_config_error",
+    "top": "tb_credit_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "credit_initial_error",
+    "top": "tb_credit_initial_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "credit_return_error",
+    "top": "tb_credit_return_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "fixed_unknown_config",
+    "top": "tb_fixed_unknown_config",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "credit_ledger",
+    "top": "tb_credit_ledger"
+  },
+  {
+    "name": "credit_boundaries",
+    "top": "tb_credit_boundaries"
+  },
+  {
+    "name": "credit_reset_unknown",
+    "top": "tb_credit_reset_unknown"
+  },
+  {
+    "name": "hint_ns",
+    "top": "tb_hint_ns",
+    "expect_log": [
+      "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED.*duration_ticks=2500000"
+    ]
+  },
+  {
+    "name": "hint_equal",
+    "top": "tb_hint_equal"
+  },
+  {
+    "name": "hint_cycle",
+    "top": "tb_hint_cycle"
+  },
+  {
+    "name": "hint_shortage",
+    "top": "tb_hint_shortage"
+  },
+  {
+    "name": "hint_credit_cycle",
+    "top": "tb_hint_credit_cycle"
+  },
+  {
+    "name": "hint_cycle_truncation",
+    "top": "tb_hint_cycle_truncation",
+    "expect_log": [
+      "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED hit=0.*duration_ticks=10000000 duration_cycles=1"
+    ]
+  },
+  {
+    "name": "hint_missing_basis",
+    "top": "tb_hint_missing_basis",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_missing_threshold",
+    "top": "tb_hint_missing_threshold",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_zero_threshold",
+    "top": "tb_hint_zero_threshold",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_bad_basis",
+    "top": "tb_hint_bad_basis",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_time_overflow",
+    "top": "tb_hint_time_overflow",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=INTEGER_OVERFLOW"
+  },
+  {
+    "name": "hint_accounting",
+    "top": "tb_hint_accounting"
+  },
+  {
+    "name": "hint_reset_release",
+    "top": "tb_hint_reset_release"
+  },
+  {
+    "name": "hint_unknown_protocol",
+    "top": "tb_hint_unknown_protocol",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PROTOCOL_CONFIG"
+  },
+  {
+    "name": "reset_rewarm",
+    "top": "tb_reset_rewarm"
+  },
+  {
+    "name": "reset_same_time_0",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "reset_same_time_1",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "reset_same_time_2",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=2"
+    ]
+  },
+  {
+    "name": "reset_same_time_3",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=3"
+    ]
+  },
+  {
+    "name": "reset_unknown",
+    "top": "tb_reset_unknown"
+  },
+  {
+    "name": "reset_time_budget",
+    "top": "tb_reset_time_budget",
+    "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "reset_member_controls",
+    "top": "tb_reset_member_controls"
+  },
+  {
+    "name": "reset_cycle_unknown",
+    "top": "tb_reset_cycle_unknown"
+  },
+  {
+    "name": "reset_initial",
+    "top": "tb_reset_initial"
+  },
+  {
+    "name": "member_control_error",
+    "top": "tb_member_control_error",
+    "expect_error": "BW_CORE_ERROR code=CONTROL_SEQUENCE"
+  },
+  {
+    "name": "member_control_reference_error",
+    "top": "tb_member_control_error",
+    "plusargs": [
+      "+INVALID_POINT=1"
+    ],
+    "expect_error": "BW_CORE_ERROR code=POINT_REFERENCE"
+  },
+  {
+    "name": "reset_deassert_sample",
+    "top": "tb_reset_deassert_sample"
+  },
+  {
+    "name": "hint_time_budget",
+    "top": "tb_hint_time_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT",
+    "expect_log": [
+      "CORE_FAILURE_LATCHED"
+    ]
+  },
+  {
+    "name": "hint_final_budget",
+    "top": "tb_hint_final_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_END).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "hint_same_cycle_stream",
+    "top": "tb_hint_same_cycle_stream"
+  },
+  {
+    "name": "hint_same_cycle_live",
+    "top": "tb_hint_same_cycle_live"
+  },
+  {
+    "name": "hint_same_cycle_cycle_live",
+    "top": "tb_hint_same_cycle_cycle_live"
+  },
+  {
+    "name": "episode_boundary",
+    "top": "tb_episode_boundary"
+  },
+  {
+    "name": "episode_gaps",
+    "top": "tb_episode_gaps"
+  },
+  {
+    "name": "episode_cycle",
+    "top": "tb_episode_cycle"
+  },
+  {
+    "name": "episode_controls",
+    "top": "tb_episode_controls"
+  },
+  {
+    "name": "episode_reset_deadline",
+    "top": "tb_episode_reset_deadline"
+  },
+  {
+    "name": "episode_final",
+    "top": "tb_episode_final",
+    "expect_log": [
+      "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000000 last_ticks=1000000 tail_ticks=2000000 confirm_ticks=3000000 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
+      "(?s)^(?!.*BW_EPISODE[^\\n]*scope=episode.none)"
+    ]
+  },
+  {
+    "name": "episode_final_budget",
+    "top": "tb_episode_final_budget",
+    "expect_error": "(?s)^(?!.*BW_EPISODE).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "episode_config_error",
+    "top": "tb_episode_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "episode_unknown_q",
+    "top": "tb_episode_unknown_q",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "episode_late_metadata",
+    "top": "tb_episode_late_metadata",
+    "expect_log": [
+      "EPISODE_TIMER_FIRST_METADATA"
+    ]
+  },
+  {
+    "name": "episode_frame_first",
+    "top": "tb_episode_late_metadata",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "episode_pending",
+    "top": "tb_episode_pending"
+  },
+  {
+    "name": "episode_pending_reset",
+    "top": "tb_episode_pending",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "episode_pending_final",
+    "top": "tb_episode_pending",
+    "plusargs": [
+      "+MODE=2"
+    ],
+    "expect_log": [
+      "BW_EPISODE scope_kind=1 scope=episode.pending .*status=4 .*bytes=8 events=1 duration_ticks=0 .*last_known=0 .*bytes_complete=0 events_complete=0 .*e2e_valid=0"
+    ]
+  }
+]
