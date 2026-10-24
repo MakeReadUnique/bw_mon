@@ -1030,6 +1030,7 @@ real calculations use numerical tolerance1e-10 GB/s or percentage points):
 | `metrics_zero`, `metrics_small` |Zero mean with3 samples gives valid sigma0 and unavailable CV; one-sample steady gives min/max only; episode-only0/1/2 samples and ordinary warmup remain distinct |
 | `metrics_quality`, `metrics_independent` |Unknown raw bytes and unknown selected window coverage have independent effects; definite unknown-size transfers keep event counts complete |
 | `metrics_controls`, `metrics_exclusions` |No-edge unknown versus known member-reset controls; later independently complete stages; old zero-byte residue/left equality and normal warmup versus actual unknown publication coverage |
+| `metrics_late_recovery` |Original unknown control2.5/recovery3.5 delivered with raw frame10: old ambiguous episode completes at originalQ7.5 using saved quiet quality prefix; new[10,11) episode remains complete8 GB/s |
 | `metrics_interrupted` |Settled ramp[6,8) has raw40 GB/s and duration2 ns, selected30/40 windows give sigma5 despite fitRMS0; later reset/truncation leaves it valid and representative selection unavailable |
 
 Reproduce with `python3 tests/run.py` or pass any listed case name. These
