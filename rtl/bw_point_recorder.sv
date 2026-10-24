@@ -23,7 +23,7 @@ module bw_point_recorder #(
   bw_u64_t record_seq = 0, edge_index = 0;
   bw_u64_t control_seq = 0, source_epoch = 0;
   bw_u64_t requested_actions = 0, consumed_actions = 0;
-  bw_u64_t last_reset_change_ticks = 0, last_assert_ticks = 0;
+  bw_u64_t last_assert_ticks = 0;
   bit reset_observed = 0, assertion_observed = 0;
   logic observed_reset;
   typedef struct packed {
@@ -53,7 +53,6 @@ module bw_point_recorder #(
     end
     observed_reset=reset_n;
     reset_observed=1;
-    last_reset_change_ticks=$time;
     control_seq=checked_add(control_seq,1,{scope_id," control"});
     next_control='0;
     next_control.timestamp_ticks=$time;
@@ -77,7 +76,7 @@ module bw_point_recorder #(
     if (monitor_ready && $time > measurement_start_ticks) begin
       check_monitor_time($time,scope_id);
       // Protocol controls and size always come from the same pre-NBA beat.
-      // Asynchronous reset changes at this T are resolved before publication.
+      // A same-time assertion has priority; release preserves this edge view.
       sample.sample.reset_n = reset_n;
       sample.sample.valid = valid;
       sample.sample.ready = ready;
@@ -112,8 +111,6 @@ module bw_point_recorder #(
       sampled_view=sample.sample;
       if (assertion_observed && last_assert_ticks==sample.timestamp_ticks)
         sampled_view.reset_n=1'b0;
-      else if (reset_observed && last_reset_change_ticks==sample.timestamp_ticks)
-        sampled_view.reset_n=observed_reset;
       record = '0;
       record.timestamp_ticks = sample.timestamp_ticks;
       record.edge_index = sample.edge_index;

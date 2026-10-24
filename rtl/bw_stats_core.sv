@@ -231,8 +231,9 @@ module bw_stats_core #(
     check_monitor_time(incoming.timestamp_ticks,scope_id);
     if (incoming.timestamp_ticks>$time)
       core_error("CONTROL_TIME",scope_id,"control timestamp is in the future");
-    if (incoming.point_handle>=16384)
-      core_error("POINT_REFERENCE",scope_id,$sformatf("control point_handle=%0d",incoming.point_handle));
+    if (incoming.point_handle>=expected_point_count)
+      core_error("POINT_REFERENCE",scope_id,
+        $sformatf("control point_handle=%0d registered_points=%0d",incoming.point_handle,expected_point_count));
     expected_seq=member_control_sequences.exists(key) ?
                  checked_add(member_control_sequences[key],1,scope_id) : 1;
     if (incoming.control_seq!=expected_seq)

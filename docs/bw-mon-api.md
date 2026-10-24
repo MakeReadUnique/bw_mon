@@ -322,7 +322,9 @@ Protocol controls and dynamic size are captured from the same pre-NBA edge view.
 The private reactive coordinators settle module reset changes before processing
 queued actions, with own reset before publication. A same-time assertion therefore
 suppresses both the old-epoch window and the point's raw transfer, including NBA
-reset drives. Current-edge data remains excluded from a normal window at T. A
+assertion drives. Deassertion preserves the original edge-sampled reset: a DUT
+sampling reset0 or X before an NBA release does not acquire a fabricated transfer.
+Active release before the edge counts normally. Current-edge data remains excluded from a normal window at T. A
 later frame at the same T still supplies metadata and receives acceptance; time
 alone never suppresses a frame. These coordinators are instantiated internally;
 integrators do not drive them.
@@ -337,10 +339,11 @@ grow/reclaim automatically; queue-index representation exhaustion reports
 Reset reproduction uses `python3 tests/run.py reset_rewarm reset_same_time_0
 reset_same_time_1 reset_same_time_2 reset_same_time_3 reset_unknown
 reset_cycle_unknown reset_initial reset_member_controls member_control_error
-reset_time_budget`. The four same-time variants observe every publication change,
+member_control_reference_error
+reset_deassert_sample reset_time_budget`. The four same-time variants observe every publication change,
 not merely final cleared scalars, for both window bases. Other cases independently
 check no-edge assertion/release, schedule restart, source/control epochs and
-sequences, physical unknown-interval expiry, member/own isolation, duplicate-control
+sequences, physical unknown-interval expiry, member/own isolation, duplicate-control/unregistered-source
 fatal behavior and immutable global time. Integer/state comparisons are exact;
 small real-value assertions retain the separate 1e-10 numerical tolerance.
 
@@ -422,3 +425,10 @@ Additional independently expected VCS cases:
 | `credit_boundaries` | Exact 2^64 permission intermediate and attempted balance; legal zero capacity; zero-byte flits still consume one credit; exact attempted −1; unknown initial value remains unknown |
 | `credit_reset_unknown` | No-clock unknown reset breaks trust; direct return to 1 does not repair it; a subsequent known reset restores seed without inventing record sequences |
 | `credit_config_error`, `credit_initial_error`, `credit_return_error`, `fixed_unknown_config` | Missing capacity, initial balance outside capacity, invalid timing and unknown fixed bytes terminate before any `BW_READY` |
+
+Reset/credit integration validation: **46/46 contract cases passed** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including thirteen new
+reset/control cases. The DUT-like NBA-deassert fixture verifies that a sampled
+known reset0 or unknown reset cannot become a transfer after NBA release; its
+Active-release case still counts. The credit-ledger stimulus now explicitly uses
+integer-fs testbench time and checks actual raw timestamps against its event table.

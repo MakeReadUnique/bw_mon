@@ -236,5 +236,17 @@
     "name": "member_control_error",
     "top": "tb_member_control_error",
     "expect_error": "BW_CORE_ERROR code=CONTROL_SEQUENCE"
+  },
+  {
+    "name": "member_control_reference_error",
+    "top": "tb_member_control_error",
+    "plusargs": [
+      "+INVALID_POINT=1"
+    ],
+    "expect_error": "BW_CORE_ERROR code=POINT_REFERENCE"
+  },
+  {
+    "name": "reset_deassert_sample",
+    "top": "tb_reset_deassert_sample"
   }
 ]
