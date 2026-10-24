@@ -611,5 +611,9 @@
   {
     "name": "metrics_independent",
     "top": "tb_metrics_independent"
+  },
+  {
+    "name": "metrics_late_recovery",
+    "top": "tb_metrics_late_recovery"
   }
 ]

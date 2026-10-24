@@ -142,6 +142,7 @@ module bw_stats_core #(
 
   bit silence_active=0;
   bw_u64_t silence_start_ticks=0, silence_start_cycle=0;
+  bw_u64_t silence_unknown_ticks=0;
   bit scheduled_episode_deadline_valid=0;
   bw_u64_t scheduled_episode_deadline=0;
   bw_u64_t episode_start_total_bytes=0, episode_end_total_bytes=0;
@@ -428,7 +429,8 @@ module bw_stats_core #(
     end_events=known_end ? episode_end_total_events : total_events;
     close_phase(end_tick,end_bytes,end_events,known_end,BW_PHASE_EPISODE_END,
       known_end ? episode_end_unknown_records : raw_unknown_records,
-      known_end ? episode_end_unknown_ticks : unknown_ticks_at(observed_end),
+      known_end ? episode_end_unknown_ticks :
+        (status==BW_EPISODE_COMPLETE ? silence_unknown_ticks : unknown_ticks_at(observed_end)),
       known_end ? episode_end_unknown_event_records : raw_unknown_event_records,
       known_end ? episode_end_reset_records : raw_reset_records);
     settle_variation(end_tick,1);
@@ -583,6 +585,10 @@ module bw_stats_core #(
   task automatic start_silence(bw_u64_t at_ticks, bw_u64_t at_cycle);
     if (!silence_active) begin
       silence_active=1; silence_start_ticks=at_ticks; silence_start_cycle=at_cycle;
+      // The unknown-time prefix is constant throughout known quiet. Original
+      // Q may be completed after a delayed control and later frame are drained;
+      // retain its exact prefix rather than querying a past publication cursor.
+      silence_unknown_ticks=unknown_ticks_at(at_ticks);
     end
   endtask
 
