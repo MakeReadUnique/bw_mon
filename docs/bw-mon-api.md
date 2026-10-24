@@ -55,7 +55,7 @@ decision. An edge at the common start itself is excluded.
 | point/core | `UPDATE_STRIDE` | unsigned 64-bit integer ns or cycles | Required, `0<S<=W`; uses the same basis as W |
 | point | `POINT_ID` | string | Default `__BW_AUTO__`; otherwise nonempty, unique exact ID |
 | point | `CLOCK_CONTEXT` | string | Default `default`, nonempty; an integration declaration, not proof of physical wiring |
-| point/recorder | `FIXED_BYTES` | unsigned 64-bit input, bytes/transfer | Default 0 (legal zero-byte transfers), at most 2^32−1 |
+| point/recorder | `FIXED_BYTES` | four-state 64-bit parameter, bytes/transfer | Default 0 (legal zero-byte transfers); fixed mode requires known value at most 2^32−1 |
 
 The selected protocol determines whether a transfer occurred (see below). The recorder samples control
 at the actual positive edge, creates one normalized record per edge, including
@@ -244,9 +244,8 @@ The exact snapshot is `sampled_view` (`bw_sample_t`), retained alongside
 `sampled_valid`, `sampled_ready`, `sampled_flitv`, `sampled_lcrdv`,
 `sampled_size_bytes` and `sampled_size_known`. The live input ports remain visible
 too. `protocol` and `dynamic_bytes` expose the selected convention. A credit point
-also exposes `credit_supported=1`, `credit_enabled=0`, `credit_trusted=0` until the
-credit-diagnostics ticket supplies and configures a ledger. These independent
-diagnostic states never change accounting quality.
+also exposes the independent credit capability, enable, trust and ledger states
+described below. These diagnostic states never change accounting quality.
 
 Additional contract cases:
 
@@ -261,3 +260,82 @@ Additional contract cases:
 
 All integer/quality checks remain exact; real comparisons retain the separately
 declared 1e−10 GB/s numeric assertion tolerance.
+
+## Credit ledger and diagnostic trust
+
+The `bw_debug_hints` component consumes the same `sampled_view`, `record` and
+`record_toggle` as the recorder/core path, plus live `reset_n` for no-clock reset
+notification. It never changes a normalized record or grants/blocks a transfer.
+Credit parameters pass from `bw_point_mon` to this component:
+
+| Parameter | Type / default | Meaning and rejection |
+| --- | --- | --- |
+| `CREDIT_ENABLE` | bit, 0 | Request ledger diagnostics; capability remains separate |
+| `CREDIT_CAPACITY` | four-state logic [63:0], X | Explicit known capacity required when a credit-protocol ledger is enabled; 0..2^64−1 are legal |
+| `CREDIT_INITIAL` | four-state logic [63:0], X | Explicit starting balance, used only when initial knowledge is asserted |
+| `CREDIT_INITIAL_KNOWN` | bit, 0 | Unknown initial balance stays unknown; if 1, initial value must be known and within capacity |
+| `CREDIT_RETURN_TIMING` | `bw_credit_return_t`, `BW_RETURN_NEXT_CYCLE` | Alternative `BW_RETURN_SAME_CYCLE`; unknown/unsupported timing is fatal when enabled |
+
+The package's shared `validate_point_protocol` and `validate_credit_config`
+functions run **before point registration**, and component modules reuse them.
+Invalid protocol, fixed-byte or enabled credit configuration cannot advertise
+`BW_READY`. Fixed byte configuration remains four-state until validation;
+X/Z cannot silently become a legal zero-byte amount. Disabled/unsupported credit
+configuration does not require unused ledger capacity or initial values.
+
+A trusted pre-edge balance C permits a send only if C is positive, adding this
+edge's R only in same-cycle return mode. Each definite `flitv` consumes exactly
+one credit, including a zero-byte flit; each `lcrdv` returns one credit. Updated
+balance is C+R−S and must remain within [0,capacity]. Permission arithmetic uses
+65 bits, and updated balance uses **signed 66-bit** arithmetic, representing
+−1 through 2^64 exactly. For example, C=0/S=R=1 loses trust in next-cycle mode;
+same-cycle mode permits that send and retains a trusted zero balance.
+
+Unknown send/return, unknown reset, send without credit or range violation loses
+trust. The first fault reason remains until a known reset, the numeric balance
+becomes X, and the last trusted balance is retained. Later known S/R observations
+do not repair the lost ledger. A known reset assertion interrupts diagnostics,
+advances the ledger epoch once, and restores the configured seed on release,
+including with no sampling edges. If that seed was not known, reset does not
+invent a numeric balance. Returning directly from unknown reset to reset_n=1
+also cannot prove a new seed. There is no runtime configuration update.
+
+`BW_HINT_CREDIT_ANOMALY` logs Point ID, integer time, source record sequence,
+reason, last trusted balance, raw send/return and exact attempted balance. A
+credit protocol anomaly continues simulation and preserves every definite flit
+and its known bytes; it is separate from a fatal statistics representation
+error. It is also separate from any performance conclusion or evidence of demand.
+
+Public scalar fields live directly at the observation point:
+
+| Field | Meaning |
+| --- | --- |
+| `credit_supported`, `credit_enabled`, `credit_trusted` | Capability, requested enable and current trust, separately |
+| `credit_state` | `BW_CREDIT_UNSUPPORTED`, `BW_CREDIT_DISABLED`, `BW_CREDIT_UNKNOWN`, `BW_CREDIT_KNOWN` or `BW_CREDIT_RESET` |
+| `credit_capacity`, `credit_initial`, `credit_initial_known`, `credit_return_timing` | Exact configured values and knowledge/timing |
+| `credit_balance` | Current logic [63:0] balance; X when unknown/untrusted; while known reset holds it can show configured seed but trust remains false |
+| `credit_last_trusted_balance` | Last known logic [63:0] balance; remains X if no known seed ever existed |
+| `credit_available_before` | Last checked frame's 65-bit usable credit count, including same-cycle return if selected |
+| `credit_attempted_balance` | Last checked frame's signed 66-bit C+R−S, retaining the exact out-of-range attempted value on an anomaly |
+| `credit_permission_known`, `credit_send_permitted` | Whether the last frame's permission check was possible and its result; these describe that pre-edge check, not future permission |
+| `credit_shortage_known`, `credit_shortage` | Whether the updated ledger balance can be trusted, and whether it is zero; does not prove pending demand |
+| `credit_anomaly`, `credit_reason` | First trust-loss latch and reason; cleared by known reset |
+| `credit_anomaly_count` | Unsigned 64-bit cumulative trust-loss count, preserved across resets; initial unknown state alone is not an anomaly |
+| `credit_epoch`, `credit_result_seq` | Unsigned 64-bit reset generation and monotonic diagnostic update sequence |
+| `credit_update_ticks`, `credit_record_seq` | Last diagnostic update's integer fs time and last consumed source record sequence; a reset notification does not invent a record/edge |
+
+The last-frame permission/attempt fields become unknown when a later frame cannot
+be checked. The original fault remains in its log and latched reason. Current
+shortage is qualified by trust and live reset, independently from the last frame's
+permission evidence. Duration thresholds and long-condition hints follow in the
+separate duration-hint ticket.
+
+Additional independently expected VCS cases:
+
+| Test | Contract evidence |
+| --- | --- |
+| `credit_timing` | C=0/S=R=1 both timings; disabled and unsupported states; identical 128 B window accounting with enabled/disabled/anomalous diagnostics |
+| `credit_ledger` | Literal balances 2→1→0→1→1; unknown return loses trust while definite bytes count; no-clock reset recovers seed; capacity overflow retains attempted 3; unknown send remains a genuine observation gap |
+| `credit_boundaries` | Exact 2^64 permission intermediate and attempted balance; legal zero capacity; zero-byte flits still consume one credit; exact attempted −1; unknown initial value remains unknown |
+| `credit_reset_unknown` | No-clock unknown reset breaks trust; direct return to 1 does not repair it; a subsequent known reset restores seed without inventing record sequences |
+| `credit_config_error`, `credit_initial_error`, `credit_return_error`, `fixed_unknown_config` | Missing capacity, initial balance outside capacity, invalid timing and unknown fixed bytes terminate before any `BW_READY` |

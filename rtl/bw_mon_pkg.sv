@@ -16,6 +16,30 @@ package bw_mon_pkg;
     logic [63:0] size_bytes;
     logic size_known;
   } bw_sample_t;
+  typedef enum logic [1:0] {BW_RETURN_NEXT_CYCLE, BW_RETURN_SAME_CYCLE} bw_credit_return_t;
+  typedef enum logic [2:0] {
+    BW_CREDIT_UNSUPPORTED, BW_CREDIT_DISABLED, BW_CREDIT_UNKNOWN,
+    BW_CREDIT_KNOWN, BW_CREDIT_RESET
+  } bw_credit_state_t;
+  typedef enum logic [3:0] {
+    BW_CREDIT_NO_ERROR, BW_CREDIT_INITIAL_UNKNOWN, BW_CREDIT_CONTROL_UNKNOWN,
+    BW_CREDIT_NO_CREDIT, BW_CREDIT_OVERFLOW, BW_CREDIT_UNDERFLOW,
+    BW_CREDIT_RESET_UNKNOWN
+  } bw_credit_reason_t;
+
+  function automatic string credit_reason_name(bw_credit_reason_t reason);
+    case(reason)
+      BW_CREDIT_NO_ERROR: return "NONE";
+      BW_CREDIT_INITIAL_UNKNOWN: return "INITIAL_UNKNOWN";
+      BW_CREDIT_CONTROL_UNKNOWN: return "CONTROL_UNKNOWN";
+      BW_CREDIT_NO_CREDIT: return "SEND_WITHOUT_CREDIT";
+      BW_CREDIT_OVERFLOW: return "CAPACITY_OVERFLOW";
+      BW_CREDIT_UNDERFLOW: return "CAPACITY_UNDERFLOW";
+      BW_CREDIT_RESET_UNKNOWN: return "RESET_UNKNOWN";
+      default: return "UNRECOGNIZED";
+    endcase
+  endfunction
+
   localparam bw_u64_t BW_TICKS_PER_NS = 1000000;
   localparam bw_u64_t BW_U64_MAX = 64'hffffffffffffffff;
 
@@ -53,6 +77,25 @@ package bw_mon_pkg;
   function automatic void core_error(string code, string scope_id, string detail);
     $fatal(1, "BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",
            code, scope_id, $time, detail);
+  endfunction
+
+  function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,
+                                                  logic [63:0] fixed_bytes,string id);
+    if($isunknown(protocol) || !(protocol inside {BW_VALID_ONLY,BW_VALID_READY,BW_CREDIT}))
+      core_error("PROTOCOL_CONFIG",id,"unsupported protocol");
+    if(!dynamic_bytes && ($isunknown(fixed_bytes) || fixed_bytes>64'hffffffff))
+      core_error("BYTE_CONFIG",id,"fixed byte count must be known and at most 2^32-1");
+  endfunction
+
+  function automatic void validate_credit_config(bw_protocol_t protocol,bit enable,
+      logic [63:0] capacity,logic [63:0] initial_balance,bit initial_known,
+      bw_credit_return_t return_timing,string id);
+    if(protocol!=BW_CREDIT || !enable) return;
+    if($isunknown(capacity)) core_error("CREDIT_CONFIG",id,"explicit known credit capacity required");
+    if($isunknown(return_timing) || !(return_timing inside {BW_RETURN_NEXT_CYCLE,BW_RETURN_SAME_CYCLE}))
+      core_error("CREDIT_CONFIG",id,"invalid credit return timing");
+    if(initial_known && ($isunknown(initial_balance) || initial_balance>capacity))
+      core_error("CREDIT_CONFIG",id,"known initial balance must be specified and within capacity");
   endfunction
 
   function automatic bw_u64_t checked_add(bw_u64_t a, bw_u64_t b, string scope_context);
