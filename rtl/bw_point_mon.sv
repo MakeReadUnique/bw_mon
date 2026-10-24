@@ -12,6 +12,12 @@ module bw_point_mon #(
   parameter logic [63:0] CREDIT_INITIAL = 64'bx,
   parameter bit CREDIT_INITIAL_KNOWN = 0,
   parameter bw_mon_pkg::bw_credit_return_t CREDIT_RETURN_TIMING = bw_mon_pkg::BW_RETURN_NEXT_CYCLE,
+  parameter bit BACKPRESSURE_ENABLE = 0,
+  parameter logic [1:0] BACKPRESSURE_BASIS = 2'bxx,
+  parameter logic [63:0] BACKPRESSURE_THRESHOLD = 64'bx,
+  parameter bit SHORTAGE_ENABLE = 0,
+  parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
+  parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx,
   parameter bit EPISODE_ENABLE = 0,
   parameter logic [63:0] SILENCE_THRESHOLD = 0,
   parameter bit PHASE_ENABLE = 0,
@@ -68,6 +74,55 @@ module bw_point_mon #(
   logic [63:0] credit_initial = CREDIT_INITIAL;
   bit credit_initial_known = CREDIT_INITIAL_KNOWN;
   bw_credit_return_t credit_return_timing = CREDIT_RETURN_TIMING;
+  bw_hint_result_t backpressure_result,shortage_result;
+  logic [1:0] backpressure_basis=BACKPRESSURE_BASIS,shortage_basis=SHORTAGE_BASIS;
+  logic [63:0] backpressure_threshold=BACKPRESSURE_THRESHOLD,shortage_threshold=SHORTAGE_THRESHOLD;
+  wire backpressure_supported=backpressure_result.supported;
+  wire backpressure_enabled=backpressure_result.enabled;
+  wire backpressure_trusted=backpressure_result.trusted;
+  wire backpressure_active=backpressure_result.active;
+  wire backpressure_hit=backpressure_result.hit;
+  wire backpressure_cycle_anchor_valid=backpressure_result.cycle_anchor_valid;
+  bw_hint_end_t backpressure_end_reason;
+  assign backpressure_end_reason=backpressure_result.end_reason;
+  wire [63:0] backpressure_epoch=backpressure_result.epoch;
+  wire [63:0] backpressure_interval_epoch=backpressure_result.interval_epoch;
+  wire [63:0] backpressure_interval_id=backpressure_result.interval_id;
+  wire [63:0] backpressure_result_seq=backpressure_result.result_seq;
+  wire [63:0] backpressure_start_ticks=backpressure_result.start_ticks;
+  wire [63:0] backpressure_trigger_ticks=backpressure_result.trigger_ticks;
+  wire [63:0] backpressure_end_ticks=backpressure_result.end_ticks;
+  wire [63:0] backpressure_observed_through_ticks=backpressure_result.observed_through_ticks;
+  wire [63:0] backpressure_update_ticks=backpressure_result.update_ticks;
+  wire [63:0] backpressure_duration_ticks=backpressure_result.duration_ticks;
+  wire [63:0] backpressure_start_cycle=backpressure_result.start_cycle;
+  wire [63:0] backpressure_end_cycle=backpressure_result.end_cycle;
+  wire [63:0] backpressure_duration_cycles=backpressure_result.duration_cycles;
+  wire [63:0] backpressure_hit_count=backpressure_result.hit_count;
+  wire [63:0] backpressure_interval_count=backpressure_result.interval_count;
+  wire shortage_supported=shortage_result.supported;
+  wire shortage_enabled=shortage_result.enabled;
+  wire shortage_trusted=shortage_result.trusted;
+  wire shortage_active=shortage_result.active;
+  wire shortage_hit=shortage_result.hit;
+  wire shortage_cycle_anchor_valid=shortage_result.cycle_anchor_valid;
+  bw_hint_end_t shortage_end_reason;
+  assign shortage_end_reason=shortage_result.end_reason;
+  wire [63:0] shortage_epoch=shortage_result.epoch;
+  wire [63:0] shortage_interval_epoch=shortage_result.interval_epoch;
+  wire [63:0] shortage_interval_id=shortage_result.interval_id;
+  wire [63:0] shortage_result_seq=shortage_result.result_seq;
+  wire [63:0] shortage_start_ticks=shortage_result.start_ticks;
+  wire [63:0] shortage_trigger_ticks=shortage_result.trigger_ticks;
+  wire [63:0] shortage_end_ticks=shortage_result.end_ticks;
+  wire [63:0] shortage_observed_through_ticks=shortage_result.observed_through_ticks;
+  wire [63:0] shortage_update_ticks=shortage_result.update_ticks;
+  wire [63:0] shortage_duration_ticks=shortage_result.duration_ticks;
+  wire [63:0] shortage_start_cycle=shortage_result.start_cycle;
+  wire [63:0] shortage_end_cycle=shortage_result.end_cycle;
+  wire [63:0] shortage_duration_cycles=shortage_result.duration_cycles;
+  wire [63:0] shortage_hit_count=shortage_result.hit_count;
+  wire [63:0] shortage_interval_count=shortage_result.interval_count;
   bit record_toggle, control_toggle;
   bw_u64_t accepted_record_seq;
   bw_u64_t stats_epoch,result_seq,total_bytes,total_events;
@@ -116,6 +171,10 @@ module bw_point_mon #(
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
     validate_credit_config(PROTOCOL,CREDIT_ENABLE,CREDIT_CAPACITY,CREDIT_INITIAL,
                            CREDIT_INITIAL_KNOWN,CREDIT_RETURN_TIMING,scope_id);
+    validate_hint_config(PROTOCOL==BW_VALID_READY,BACKPRESSURE_ENABLE,BACKPRESSURE_BASIS,
+                         BACKPRESSURE_THRESHOLD,scope_id,"backpressure");
+    validate_hint_config(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE,SHORTAGE_BASIS,
+                         SHORTAGE_THRESHOLD,scope_id,"credit_shortage");
     validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
     validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
@@ -132,8 +191,12 @@ module bw_point_mon #(
      .control(raw_control),.control_toggle(control_toggle));
   bw_debug_hints #(.PROTOCOL(PROTOCOL),.CREDIT_ENABLE(CREDIT_ENABLE),
     .CREDIT_CAPACITY(CREDIT_CAPACITY),.CREDIT_INITIAL(CREDIT_INITIAL),
-    .CREDIT_INITIAL_KNOWN(CREDIT_INITIAL_KNOWN),.CREDIT_RETURN_TIMING(CREDIT_RETURN_TIMING)) hints
-    (.scope_id(scope_id),.reset_n(reset_n),.sampled_view(sampled_view),.record(raw_record),
+    .CREDIT_INITIAL_KNOWN(CREDIT_INITIAL_KNOWN),.CREDIT_RETURN_TIMING(CREDIT_RETURN_TIMING),
+    .BACKPRESSURE_ENABLE(BACKPRESSURE_ENABLE),.BACKPRESSURE_BASIS(BACKPRESSURE_BASIS),
+    .BACKPRESSURE_THRESHOLD(BACKPRESSURE_THRESHOLD),.SHORTAGE_ENABLE(SHORTAGE_ENABLE),
+    .SHORTAGE_BASIS(SHORTAGE_BASIS),.SHORTAGE_THRESHOLD(SHORTAGE_THRESHOLD)) hints
+    (.scope_id(scope_id),.reset_n(reset_n),.clk(clk),.valid(valid),.ready(ready),.flitv(flitv),.lcrdv(lcrdv),
+     .sampled_view(sampled_view),.record(raw_record),
      .record_toggle(record_toggle),.credit_supported(credit_supported),.credit_enabled(credit_enabled),
      .credit_trusted(credit_trusted),.credit_anomaly(credit_anomaly),.credit_state(credit_state),
      .credit_reason(credit_reason),.credit_balance(credit_balance),
@@ -142,7 +205,7 @@ module bw_point_mon #(
      .credit_send_permitted(credit_send_permitted),.credit_shortage_known(credit_shortage_known),
      .credit_shortage(credit_shortage),.credit_anomaly_count(credit_anomaly_count),
      .credit_result_seq(credit_result_seq),.credit_epoch(credit_epoch),.credit_update_ticks(credit_update_ticks),
-     .credit_record_seq(credit_record_seq));
+     .credit_record_seq(credit_record_seq),.backpressure_result(backpressure_result),.shortage_result(shortage_result));
   bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),
                   .UPDATE_STRIDE(UPDATE_STRIDE),.EPISODE_ENABLE(EPISODE_ENABLE),
                   .SILENCE_THRESHOLD(SILENCE_THRESHOLD),

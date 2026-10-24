@@ -40,6 +40,32 @@ package bw_mon_pkg;
     endcase
   endfunction
 
+  typedef enum logic [2:0] {
+    BW_HINT_NOT_ENDED, BW_HINT_RELEASED, BW_HINT_UNKNOWN, BW_HINT_RESET, BW_HINT_TRUNCATED
+  } bw_hint_end_t;
+  typedef struct packed {
+    bit supported,enabled,trusted,active,hit,cycle_anchor_valid;
+    bw_hint_end_t end_reason;
+    bw_u64_t epoch,interval_epoch,interval_id,result_seq;
+    bw_u64_t start_ticks,trigger_ticks,end_ticks,observed_through_ticks,update_ticks;
+    bw_u64_t duration_ticks,start_cycle,end_cycle,duration_cycles;
+    bw_u64_t hit_count,interval_count;
+  } bw_hint_result_t;
+  function automatic bw_hint_result_t inactive_hint_result(bit supported,bit enabled);
+    bw_hint_result_t value;
+    value='0;value.supported=supported;value.enabled=enabled;
+    return value;
+  endfunction
+  function automatic string hint_end_name(bw_hint_end_t reason);
+    case(reason)
+      BW_HINT_RELEASED: return "RELEASED";
+      BW_HINT_UNKNOWN: return "UNKNOWN";
+      BW_HINT_RESET: return "RESET";
+      BW_HINT_TRUNCATED: return "TRUNCATED";
+      default: return "NOT_ENDED";
+    endcase
+  endfunction
+
   localparam bw_u64_t BW_TICKS_PER_NS = 1000000;
   localparam bw_u64_t BW_U64_MAX = 64'hffffffffffffffff;
   localparam bw_u64_t BW_MONITOR_LIMIT_TICKS = 64'd40000000000;
@@ -215,6 +241,16 @@ package bw_mon_pkg;
 
   function automatic bw_u64_t ns_to_ticks(bw_u64_t ns, string scope_context = "time");
     return checked_mul(ns, BW_TICKS_PER_NS, scope_context);
+  endfunction
+
+  function automatic void validate_hint_config(bit supported,bit enabled,
+      logic [1:0] basis,logic [63:0] threshold,string id,string hint_name);
+    if(!supported || !enabled) return;
+    if($isunknown(basis) || !(basis inside {2'd0,2'd1}))
+      core_error("HINT_CONFIG",id,{hint_name," requires explicit BW_NS/BW_CYCLE basis"});
+    if($isunknown(threshold) || threshold==0)
+      core_error("HINT_CONFIG",id,{hint_name," requires explicit positive threshold"});
+    if(basis==BW_NS) void'(ns_to_ticks(threshold,{id," ",hint_name}));
   endfunction
 
   function automatic void validate_episode_config(bit enable, logic [63:0] silence,

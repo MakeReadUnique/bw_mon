@@ -24,7 +24,8 @@ module tb_credit_timing;
        !$isunknown(next_credit.credit_balance))
       $fatal(1,"C=0 S=R=1 next-cycle mode must lose trust for no-credit send");
     if(!same_credit.credit_trusted || same_credit.credit_anomaly || same_credit.credit_balance!==64'd0 ||
-       same_credit.credit_send_permitted!==1 || same_credit.credit_available_before!==65'd1)
+       same_credit.credit_send_permitted!==1 || same_credit.credit_available_before!==65'd1 ||
+       !same_credit.credit_shortage_known || same_credit.credit_shortage!==0)
       $fatal(1,"C=0 S=R=1 same-cycle mode permits send and retains zero balance");
     if(!disabled.credit_supported || disabled.credit_enabled || disabled.credit_trusted ||
        disabled.credit_state!=BW_CREDIT_DISABLED || disabled.credit_anomaly_count!=0)

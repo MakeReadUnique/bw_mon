@@ -180,6 +180,74 @@
     "top": "tb_credit_reset_unknown"
   },
   {
+    "name": "hint_ns",
+    "top": "tb_hint_ns",
+    "expect_log": [
+      "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED.*duration_ticks=2500000"
+    ]
+  },
+  {
+    "name": "hint_equal",
+    "top": "tb_hint_equal"
+  },
+  {
+    "name": "hint_cycle",
+    "top": "tb_hint_cycle"
+  },
+  {
+    "name": "hint_shortage",
+    "top": "tb_hint_shortage"
+  },
+  {
+    "name": "hint_credit_cycle",
+    "top": "tb_hint_credit_cycle"
+  },
+  {
+    "name": "hint_cycle_truncation",
+    "top": "tb_hint_cycle_truncation",
+    "expect_log": [
+      "BW_HINT_END.*kind=backpressure.*reason=TRUNCATED hit=0.*duration_ticks=10000000 duration_cycles=1"
+    ]
+  },
+  {
+    "name": "hint_missing_basis",
+    "top": "tb_hint_missing_basis",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_missing_threshold",
+    "top": "tb_hint_missing_threshold",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_zero_threshold",
+    "top": "tb_hint_zero_threshold",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_bad_basis",
+    "top": "tb_hint_bad_basis",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "hint_time_overflow",
+    "top": "tb_hint_time_overflow",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=INTEGER_OVERFLOW"
+  },
+  {
+    "name": "hint_accounting",
+    "top": "tb_hint_accounting"
+  },
+  {
+    "name": "hint_reset_release",
+    "top": "tb_hint_reset_release"
+  },
+  {
+    "name": "hint_unknown_protocol",
+    "top": "tb_hint_unknown_protocol",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PROTOCOL_CONFIG"
+  },
+  {
     "name": "reset_rewarm",
     "top": "tb_reset_rewarm"
   },
@@ -248,6 +316,31 @@
   {
     "name": "reset_deassert_sample",
     "top": "tb_reset_deassert_sample"
+  },
+  {
+    "name": "hint_time_budget",
+    "top": "tb_hint_time_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT",
+    "expect_log": [
+      "CORE_FAILURE_LATCHED"
+    ]
+  },
+  {
+    "name": "hint_final_budget",
+    "top": "tb_hint_final_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_END).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "hint_same_cycle_stream",
+    "top": "tb_hint_same_cycle_stream"
+  },
+  {
+    "name": "hint_same_cycle_live",
+    "top": "tb_hint_same_cycle_live"
+  },
+  {
+    "name": "hint_same_cycle_cycle_live",
+    "top": "tb_hint_same_cycle_cycle_live"
   },
   {
     "name": "episode_boundary",
