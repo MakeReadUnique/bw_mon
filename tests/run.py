@@ -28,7 +28,7 @@ def main():
         top = case["top"]
         build = ROOT / ".build" / "tests" / top
         build.mkdir(parents=True, exist_ok=True)
-        files = sources + [ROOT / "tests" / (top + ".sv")]
+        files = sources + [ROOT / "tests" / name for name in case.get("sources", [])] + [ROOT / "tests" / (top + ".sv")]
         digest = hashlib.sha256(b"".join(path.read_bytes() for path in files)).hexdigest()
         stamp = build / "source.sha256"
         if top not in compiled:
