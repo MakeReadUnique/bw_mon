@@ -20,7 +20,7 @@ module tb_phase_delayed;
       clk=1;#1;clk=0;
       if(t==120 && (point.phase_candidate!=BW_PHASE_STEADY || point.phase_candidate_count!=1 ||
           point.phase_candidate_ticks!=120000000 || point.phase_current!=BW_PHASE_UNDETERMINED ||
-          point.phase_candidate_total_bytes!=640))
+          point.phase_candidate_total_bytes!=640 || point.phase_candidate_total_events!=1))
         $fatal(1,"the first N-point candidate starts at120ns and snapshots raw640B");
       if(t==140 && (point.phase_current!=BW_PHASE_UNDETERMINED || point.phase_candidate_count!=3))
         $fatal(1,"K4 cannot confirm the stable phase after only three candidates");
@@ -34,6 +34,7 @@ module tb_phase_delayed;
         point.phase_result.start_ticks!=120000000 || point.phase_result.end_ticks!=136000000 ||
         point.phase_result.confirmation_ticks!=150000000 || !point.phase_result.end_known ||
         point.phase_result.start_total_bytes!=640 || point.phase_result.end_total_bytes!=640 ||
+        point.phase_result.start_total_events!=1 || point.phase_result.end_total_events!=2 ||
         point.episode_result_seq!=1 || !point.episode_result.e2e_valid ||
         $abs(point.episode_result.e2e_gbps-15.609756097560975)>1e-10)
       $fatal(1,"final phase clips to actual episode tail and preserves independent complete e2e");

@@ -29,7 +29,15 @@ module tb_episode_late_metadata;
      .episode_tail_cycle(),.episode_bytes(),.episode_events(),
      .episode_duration_ticks(),.episode_first_known(),.episode_last_known(),
      .episode_bytes_complete(),.episode_events_complete(),.episode_member_reset_coverage(),
-     .episode_duration_valid(),.episode_e2e_valid(),.episode_e2e_gbps());
+     .episode_duration_valid(),.episode_e2e_valid(),.episode_e2e_gbps(),
+     .phase_current(),.phase_candidate(),.phase_active(),
+     .phase_eligible(),.phase_evidence_continuous(),.phase_evidence_sufficient(),
+     .phase_fit_valid(),.phase_id(),.phase_result_seq(),
+     .phase_window_seq(),.phase_evidence_count(),.phase_evidence_span(),
+     .phase_candidate_count(),.phase_candidate_ticks(),.phase_candidate_total_bytes(),
+     .phase_candidate_total_events(),.phase_start_ticks(),.phase_confirmation_ticks(),
+     .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
+     .phase_result());
   task automatic deliver_idle_tail();
     frame.timestamp_ticks=2000000;frame.edge_index=2;frame.record_seq=2;
     frame.event_inc=0;frame_toggle<=!frame_toggle;

@@ -681,7 +681,7 @@ below must be explicit, including zero relative coefficients.
 | Parameter | Type / unit | Required value / behavior |
 | --- | --- | --- |
 | `PHASE_ENABLE` | bit | Default 0; enabled analysis also requires `EPISODE_ENABLE=1` |
-| `PHASE_N` | known unsigned64 count | Required N>=3; automatic queue storage uses signed32 indices, so larger than2,147,483,647 is a representation error rather than an arbitrary analysis cap |
+| `PHASE_N` | known unsigned64 count | Required N>=3; automatic queue storage uses signed32 indices, so larger than 2,147,483,647 is a representation error rather than an arbitrary analysis cap |
 | `PHASE_MIN_SPAN` | known unsigned64 ns / cycles | Required positive span in the window basis; ns is converted with checked integer arithmetic |
 | `PHASE_K` | known unsigned64 count | Required positive number of consecutive equal candidates |
 | `PHASE_STEADY_ENTER_ABS`, `PHASE_STEADY_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite coefficients for steady entry |
@@ -692,7 +692,7 @@ below must be explicit, including zero relative coefficients.
 
 Coefficient defaults of -1 are deliberately invalid sentinels, not engineering
 thresholds. Each tolerance is ABS+REL*mean: REL=0.05 means five percent of the
-fit mean, unlike performance cfg keys ending `_rel_tol_pct`, where5 means five
+fit mean, unlike performance cfg keys ending `_rel_tol_pct`, where 5 means five
 percent. N full samples do not bypass `PHASE_MIN_SPAN`; an unattainable span
 remains explicitly insufficient rather than creating a phase. Bad settings are
 fatal `PHASE_CONFIG` before point registration/ready; queue representation uses
@@ -713,7 +713,7 @@ span. Fit time uses actual physical publication timestamps, with integer tick
 differences taken before real conversion, including in cycle mode after a
 frequency change. The equal-weight least-squares fit reports its mean, total
 trend delta over those N points and residual RMS. Constant values use a relative
-value origin so an exactly constant6.4 GB/s series has zero residual even with
+value origin so an exactly constant 6.4 GB/s series has zero residual even with
 zero tolerances; there is no epsilon clamp. Residual RMS is phase evidence,
 not the later performance population standard deviation.
 
@@ -762,11 +762,11 @@ after the measured episode is discarded. Unknown ends remain unknown, and an
 unconfirmed candidate never becomes a formal fragment. Own reset clears current
 phase fields/evidence while preserving old-epoch final records and lifetime IDs.
 
-For example,640 B at95 ns and a zero-byte event at135 ns with W100/S10,
+For example,640 B at 95 ns and a zero-byte event at 135 ns with W100/S10,
 N3/span20/K4 and Q60 produce steady candidate120, confirmation150 and final
 interval[120,136). Its raw start/end byte snapshots are both640; the phase's
 window fit mean is6.4 GB/s while its raw interval bytes are zero. This is an
 acceptance vector, not a product default. Tests also cover true-time fitting
-across11/12/14 ns, hysteresis/equality, changing/cancelled candidates, repeated
+across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
 ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
 insufficient span, explicit configuration failures and real arithmetic overflow.
