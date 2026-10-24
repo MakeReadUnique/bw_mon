@@ -8,7 +8,7 @@ module bw_stats_core #(
   input bit record_toggle,
   input logic stats_reset_n = 1'b1,
   input bw_mon_pkg::bw_control_t member_control = '0,
-  input bit member_control_toggle = 0,
+  input bit member_control_toggle = 1'b0,
   output bw_mon_pkg::bw_u64_t accepted_record_seq = 0,
   output bw_mon_pkg::bw_u64_t accepted_control_count = 0,
   output bw_mon_pkg::bw_u64_t stats_epoch = 0,

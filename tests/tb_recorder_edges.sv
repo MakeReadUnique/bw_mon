@@ -9,7 +9,7 @@ module tb_recorder_edges;
   bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
   bw_point_recorder #(.FIXED_BYTES(16),.PROTOCOL(BW_VALID_READY)) recorder
     (.scope_id("recorder.component"),.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.size_bytes(64'bx),.size_known(1'b0),
-     .record(record),.sampled_view(sample),.record_toggle(toggled));
+     .record(record),.sampled_view(sample),.record_toggle(toggled),.control(),.control_toggle());
   initial begin
     source_handle=register_point("recorder.component","tb_recorder_edges",BW_NS,10,1,"clk");
     wait(monitor_ready);

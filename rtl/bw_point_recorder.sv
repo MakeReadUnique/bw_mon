@@ -1,5 +1,5 @@
 module bw_point_recorder #(
-  parameter bw_mon_pkg::bw_u64_t FIXED_BYTES = 0,
+  parameter logic [63:0] FIXED_BYTES = 64'b0,
   parameter bw_mon_pkg::bw_protocol_t PROTOCOL = bw_mon_pkg::BW_VALID_ONLY,
   parameter bit DYNAMIC_BYTES = 0
 ) (
@@ -39,10 +39,7 @@ module bw_point_recorder #(
     control = '0;
     sampled_view = 'x;
     wait(scope_id.len()!=0);
-    if ($isunknown(PROTOCOL) || !(PROTOCOL inside {BW_VALID_ONLY,BW_VALID_READY,BW_CREDIT}))
-      core_error("PROTOCOL_CONFIG",scope_id,"unsupported protocol");
-    if (!DYNAMIC_BYTES && FIXED_BYTES > 64'hffffffff)
-      core_error("BYTE_CONFIG",scope_id,"single transfer exceeds 2^32-1 bytes");
+    validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
   end
 
   task automatic observe_reset();

@@ -18,7 +18,10 @@ module tb_reset_member_controls;
      .accepted_control_count(accepted_controls), .stats_epoch(group_epoch), .result_seq(group_seq),
      .total_bytes(group_total), .window_bytes(group_bytes), .window_start_ticks(group_start),
      .window_end_ticks(group_end), .bytes_complete(group_complete),
-     .member_reset_coverage(group_reset_coverage), .window_full(group_full), .bandwidth_gbps(group_gbps));
+     .member_reset_coverage(group_reset_coverage), .window_full(group_full), .bandwidth_gbps(group_gbps),
+     .total_events(),.window_start_cycle(),.window_end_cycle(),.coverage_ticks(),.coverage_cycles(),
+     .window_events(),.bytes_per_cycle(),.window_warmup(),.events_complete(),
+     .denominator_valid(),.window_valid());
   initial begin
     wait(monitor_ready);
     #250000; clk=1; #1; clk=0;

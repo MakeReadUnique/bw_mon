@@ -70,7 +70,7 @@
   {
     "name": "byte_config_error",
     "top": "tb_byte_config_error",
-    "expect_error": "BW_CORE_ERROR code=BYTE_CONFIG"
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=BYTE_CONFIG"
   },
   {
     "name": "cycle_window",
@@ -137,11 +137,47 @@
   {
     "name": "protocol_config_error",
     "top": "tb_protocol_config_error",
-    "expect_error": "BW_CORE_ERROR code=PROTOCOL_CONFIG"
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PROTOCOL_CONFIG"
   },
   {
     "name": "adapter_decode",
     "top": "tb_adapter_decode"
+  },
+  {
+    "name": "credit_timing",
+    "top": "tb_credit_timing"
+  },
+  {
+    "name": "credit_config_error",
+    "top": "tb_credit_config_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "credit_initial_error",
+    "top": "tb_credit_initial_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "credit_return_error",
+    "top": "tb_credit_return_error",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "fixed_unknown_config",
+    "top": "tb_fixed_unknown_config",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "credit_ledger",
+    "top": "tb_credit_ledger"
+  },
+  {
+    "name": "credit_boundaries",
+    "top": "tb_credit_boundaries"
+  },
+  {
+    "name": "credit_reset_unknown",
+    "top": "tb_credit_reset_unknown"
   },
   {
     "name": "reset_rewarm",
