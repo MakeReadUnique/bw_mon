@@ -677,7 +677,7 @@ packed payload sizes are 451 bits per raw frame, 225 per point control and 289 p
 transport control envelope, plus simulator representation/container overhead.
 State includes retained source backlogs, two acknowledgement positions per direct
 edge, current expected edges/collector frames, per-origin control validation, rules,
-source descriptors and a 16,384-bit recursive-point mask per group (8 MiB at4,096
+source descriptors and a 16,384-bit recursive-point mask per group (8 MiB at 4,096
 groups). Retention follows actual consumer lag and cannot be equated to the whole
 80,000-cycle scene. Statistics/phase/episode histories are additional independent
 state. Actual peak memory and the complete scale/history matrix remain later
@@ -905,3 +905,25 @@ acceptance vector, not a product default. Tests also cover true-time fitting
 across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
 ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
 insufficient span, explicit configuration failures and real arithmetic overflow.
+
+Deferred deadline checks cache their current condition and error detail in Active,
+then use a read-only fatal action in Postponed. VCS forbids setting a failure latch
+from that action. `core_failure_pending()` therefore combines the runtime
+`core_failure_seen` latch with current per-owner deferred candidates at finalization
+boundaries. A same-slot arrival cancels its candidate. Runtime record emission
+continues to use the terminal runtime latch, so a provisional deadline candidate
+cannot discard a valid result. Tests cover both a late arrival retaining normal
+final output and a real timeout suppressing sibling episode/hint final results.
+
+The compile-cache fingerprint includes ROOT, runner content/options, absolute
+compilation-unit paths/content, explicitly listed `case.sources` fixtures, the
+selected top, and all recursive RTL `.svh`/`.vh` content. This includes nested
+library headers and invalidates stale binaries after flag/fixture/header edits.
+
+Aggregation integration validation: **146/146 contract cases passed** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including all101
+previous integration cases and45 aggregation/deferred-final cases. All102 compile
+logs contain no Warning-/Error- diagnostics; source/fixture/header/runner cache
+fingerprints match the current tree. `git diff --check` passed. This remains
+single-level functional evidence; hierarchy, full group analysis, real waveform
+review and scale/history acceptance are separate tickets.
