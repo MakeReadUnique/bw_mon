@@ -14,7 +14,22 @@ module tb_episode_late_metadata;
     (.scope_id("episode.late_metadata"),.record(frame),.record_toggle(frame_toggle),
      .accepted_record_seq(accepted),.result_seq(window_seq),.episode_result_seq(final_seq),
      .episode_active(active),.episode_tail_ticks(tail_ticks),.episode_tail_known(tail_known),
-     .episode_result(result));
+     .episode_result(result),
+     .scope_kind(BW_POINT),.stats_reset_n(1'b1),.progress_watermark_ticks(BW_U64_MAX),
+     .member_control('0),.member_control_toggle(1'b0),.accepted_control_count(),
+     .stats_epoch(),.total_bytes(),.total_events(),
+     .window_start_ticks(),.window_end_ticks(),.window_start_cycle(),
+     .window_end_cycle(),.coverage_ticks(),.coverage_cycles(),
+     .window_bytes(),.window_events(),.bandwidth_gbps(),
+     .bytes_per_cycle(),.window_warmup(),.window_full(),
+     .bytes_complete(),.events_complete(),.denominator_valid(),
+     .window_valid(),.member_reset_coverage(),.episode_status(),
+     .episode_id(),.episode_first_ticks(),.episode_last_ticks(),
+     .episode_confirmation_ticks(),.episode_first_cycle(),.episode_last_cycle(),
+     .episode_tail_cycle(),.episode_bytes(),.episode_events(),
+     .episode_duration_ticks(),.episode_first_known(),.episode_last_known(),
+     .episode_bytes_complete(),.episode_events_complete(),.episode_member_reset_coverage(),
+     .episode_duration_valid(),.episode_e2e_valid(),.episode_e2e_gbps());
   task automatic deliver_idle_tail();
     frame.timestamp_ticks=2000000;frame.edge_index=2;frame.record_seq=2;
     frame.event_inc=0;frame_toggle<=!frame_toggle;
