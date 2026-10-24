@@ -10,6 +10,9 @@ module tb_startup_errors;
       "empty": unused_handle=register_point("","tb.point",BW_NS,10,1,"clk");
       "bad_width": unused_handle=register_point("p0","tb.p0",BW_NS,0,1,"clk");
       "bad_stride": unused_handle=register_point("p0","tb.p0",BW_NS,10,11,"clk");
+      "ns_width_limit": unused_handle=register_point("p0","tb.p0",BW_NS,40001,1,"clk");
+      "cycle_width_limit": unused_handle=register_point("p0","tb.p0",BW_CYCLE,80001,1,"clk");
+      "cycle_bad_stride": unused_handle=register_point("p0","tb.p0",BW_CYCLE,10,11,"clk");
       default: begin
         unused_handle=register_point("p0","tb.p0",BW_NS,10,1,"clk");
         if(which=="duplicate") unused_handle=register_point("p0","tb.p1",BW_NS,10,1,"clk");

@@ -71,5 +71,46 @@
     "name": "byte_config_error",
     "top": "tb_byte_config_error",
     "expect_error": "BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "cycle_window",
+    "top": "tb_cycle_window"
+  },
+  {
+    "name": "cycle_stride",
+    "top": "tb_cycle_stride"
+  },
+  {
+    "name": "cycle_config",
+    "top": "tb_cycle_config"
+  },
+  {
+    "name": "startup_ns_width_limit",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=ns_width_limit"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_cycle_width_limit",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=cycle_width_limit"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "startup_cycle_bad_stride",
+    "top": "tb_startup_errors",
+    "plusargs": [
+      "+CASE=cycle_bad_stride"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "cycle_edge_error",
+    "top": "tb_cycle_edge_error",
+    "expect_error": "BW_CORE_ERROR code=EDGE_SEQUENCE"
   }
 ]
