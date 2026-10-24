@@ -95,6 +95,8 @@ package bw_mon_pkg;
     logic reset_n;
   } bw_control_t;
 
+  `include "bw_mon_registry_types.svh"
+
   typedef enum logic [2:0] {
     BW_EPISODE_NONE, BW_EPISODE_ACTIVE, BW_EPISODE_COMPLETE,
     BW_EPISODE_RESET_INTERRUPTED, BW_EPISODE_TRUNCATED
@@ -164,11 +166,33 @@ package bw_mon_pkg;
     bw_u64_t width;
     bw_u64_t stride;
     string clock_context;
+    int transport_source;
   } bw_point_registration_t;
 
   bw_point_registration_t registered_points[$];
   bit monitor_configured = 0;
   bit core_failure_seen = 0;
+  bit deferred_core_failures[int];
+
+  // Candidate conditions may be cancelled by later same-slot arrivals. They
+  // are consulted only at finalization, never to suppress runtime records.
+  function automatic void set_deferred_core_failure(int owner,bit pending);
+    if(pending)deferred_core_failures[owner]=1;
+    else deferred_core_failures.delete(owner);
+  endfunction
+
+  function automatic bit core_failure_pending();
+    if(core_failure_seen)return 1;
+    foreach(deferred_core_failures[owner])
+      if(deferred_core_failures[owner])return 1;
+    return 0;
+  endfunction
+
+  // Deferred assertion actions execute in Postponed, where writes are illegal.
+  // Their current condition was already published by the Active checker.
+  function automatic void deferred_core_error(string code,string scope_id,string detail);
+    $fatal(1,"BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",code,scope_id,$time,detail);
+  endfunction
   bit monitor_ready = 0;
   int unsigned expected_point_count;
   bw_u64_t measurement_start_ticks = 0;
@@ -329,52 +353,6 @@ package bw_mon_pkg;
       core_error("WINDOW_CONFIG", id, "cycle width exceeds 80000 cycles");
   endfunction
 
-  function automatic void try_ready();
-    if (!monitor_configured || monitor_ready) return;
-    if (registered_points.size() > expected_point_count)
-      core_error("POINT_COUNT", "setup",
-                 $sformatf("expected=%0d actual=%0d",expected_point_count,registered_points.size()));
-    if (registered_points.size() != expected_point_count) return;
-    measurement_start_ticks = $time;
-    monitor_ready = 1;
-    $display("BW_READY time_ticks=%0d points=%0d",measurement_start_ticks,registered_points.size());
-  endfunction
-
-  function automatic void configure_monitor(int unsigned expected);
-    if (monitor_configured || monitor_ready)
-      core_error("CONFIG_FROZEN", "setup", "configuration may be completed only once");
-    if (expected == 0 || expected > 16384)
-      core_error("POINT_COUNT", "setup", "expected_point_count must be 1..16384");
-    expected_point_count = expected;
-    monitor_start_ticks = $time;
-    monitor_configured = 1;
-    try_ready();
-  endfunction
-
-  function automatic int register_point(string id, string monitor_path,
-                                        bw_basis_t basis, bw_u64_t width,
-                                        bw_u64_t stride, string clock_context);
-    bw_point_registration_t entry;
-    if (monitor_ready) core_error("REGISTRATION_FROZEN", id, "registration after ready");
-    if (id.len() == 0) core_error("POINT_ID", monitor_path, "empty Point ID");
-    foreach (registered_points[i])
-      if (registered_points[i].id == id)
-        core_error("DUPLICATE_POINT", id,
-                   $sformatf("first=%s second=%s",registered_points[i].monitor_path,monitor_path));
-    validate_window(basis,width,stride,id);
-    if (clock_context.len() == 0) core_error("CLOCK_CONTEXT",id,"empty clock context");
-    entry.id=id; entry.monitor_path=monitor_path; entry.basis=basis;
-    entry.width=width; entry.stride=stride; entry.clock_context=clock_context;
-    registered_points.push_back(entry);
-    registration_seq=checked_add(registration_seq,1,"registration");
-    try_ready();
-    return registered_points.size()-1;
-  endfunction
-
-  function automatic int point_handle_for_id(string id);
-    foreach (registered_points[i])
-      if (registered_points[i].id == id) return i;
-    core_error("POINT_REFERENCE", id, "unregistered point control source");
-    return -1;
-  endfunction
+  `include "bw_mon_registry.svh"
+  `include "bw_mon_transport.svh"
 endpackage

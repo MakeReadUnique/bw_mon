@@ -904,11 +904,11 @@ module bw_stats_core #(
   end
 
   final begin
-    if (EPISODE_ENABLE && monitor_ready && !core_failure_seen) begin
+    if (EPISODE_ENABLE && monitor_ready && !core_failure_pending()) begin
       if (monitor_time_supported($time)) begin
         advance_episode_time($time,last_edge_index,0);
         if (episode_active && progress_watermark_ticks<$time) interrupt_silence();
-        if (!core_failure_seen) finish_episode(BW_EPISODE_TRUNCATED,$time);
+        if (!core_failure_pending()) finish_episode(BW_EPISODE_TRUNCATED,$time);
       end else check_monitor_time($time,scope_id);
     end
   end

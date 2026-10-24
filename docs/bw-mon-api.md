@@ -548,6 +548,141 @@ known reset0 or unknown reset cannot become a transfer after NBA release; its
 Active-release case still counts. The credit-ledger stimulus now explicitly uses
 integer-fs testbench time and checks actual raw timestamps against its event table.
 
+## Single-level aggregation and startup
+
+Instantiate one `bw_group_mon` per Group ID and use the shared configuration
+entry points. Points register only their own identity/configuration; they need no
+Group ID or data wiring to a group. A grouped setup explicitly declares its total
+group count and calls `finish_configuration()` after all definitions/rules:
+
+```systemverilog
+bw_mon_setup #(.EXPECTED_POINT_COUNT(3), .EXPECTED_GROUP_COUNT(1)) setup();
+bw_group_mon #(.GROUP_ID("noc1"), .WINDOW_WIDTH(2), .UPDATE_STRIDE(1)) noc1
+  (.clk(clk), .reset_n(group_statistics_reset_n));
+initial begin
+  define_group("noc1", 2); // expected direct members after deduplication
+  add_point_member("noc1", "tb.noc1", BW_PREFIX);
+  add_point_member("noc1", "tb.noc1.p0"); // duplicate hit counts once
+  finish_configuration();
+  wait(monitor_ready);
+  // Drive traffic on a sampling edge strictly after measurement_start_ticks.
+end
+```
+
+The three points in this example must already use the common group clock/window
+configuration; the third may remain ungrouped. Point IDs and Group IDs have
+separate namespaces. `BW_EXACT` is the default match kind. `BW_PREFIX` matches a
+complete dot-delimited hierarchy prefix, including that prefix itself; `noc1`
+cannot match `noc10`. A prefix ending with a dot already supplies the delimiter.
+No matches, an empty group, or a deduplicated member-count mismatch is fatal.
+This ticket supports point members and peer-group reuse; nested group membership
+is the separate hierarchy extension.
+
+| Entry/configuration | Type / default | Contract |
+| --- | --- | --- |
+| setup `EXPECTED_POINT_COUNT` | four-state unsigned 64-bit input, required | Known 1..16,384, all unique points including ungrouped points |
+| setup `EXPECTED_GROUP_COUNT` | four-state unsigned 64-bit input, default 0 | Known 0..4,096; zero retains automatic point-only configuration completion |
+| setup `MISSING_RECORD_TIMEOUT_NS` | four-state unsigned 64-bit integer ns, default 1 | Known positive duration; exact tick conversion checked before use |
+| setup `STARTUP_TIMEOUT_NS` | four-state unsigned 64-bit integer ns, default 100 | Known positive; original setup deadline is unchanged by local resets |
+| group `GROUP_ID` | string, required | Nonempty unique group owner; equal Point ID text is legal |
+| group clock/window parameters | same basis/W/S/context as points | Every direct member must share clock context, basis, width and stride |
+| `define_group(id, expected_members)` | four-state unsigned 64-bit count | Known 1..16,384 direct members after deduplication |
+| `add_point_member(group,id,match)` | exact ID or segment prefix | May be called only before configuration is sealed |
+| `finish_configuration()` | explicit one-time action | Seals definitions/rules; still waits for required point registrations and group owners |
+
+Counts are validated before narrowing to internal bounded indices. Partial X/Z and
+values such as 2^32+1 cannot silently become a valid count of one. Registration,
+configuration, reference, owner, context, edge/fanout and member-count checks finish
+before ready. Up to 65,536 direct edges and sixteen direct parents per source are
+checked at startup; their actual maximum-scale execution is a later acceptance
+step. Missing owner/point/configuration completion reaches a bounded startup error,
+with IDs/counts in the log. Same-deadline NBA registration chains participate
+before that decision.
+
+Compile the package first, add `+incdir+rtl`, and enable VCS deferred-assertion
+support with `-assert svaext`. The registry/transport headers are part of
+`bw_mon_pkg`; they are not separate compilation units. `tests/run.py` supplies
+these options and hashes included RTL headers recursively as well as compilation
+units, so editing a header invalidates the compile cache.
+
+## Group results, consumption and deadlines
+
+A group exposes the same window identity/epoch/sequence, raw totals, endpoints,
+coverage, GB/s/B-cycle and independent quality scalars as a point, directly at
+its public scope. `scope_kind` is `BW_GROUP`. Additional fields are
+`direct_member_count`, `recursive_point_count`, `raw_record`, `raw_control`,
+`control_result_seq`, `accepted_record_seq` and `accepted_control_count`.
+`raw_record` is the current original-time group increment, independently of
+whether the group's own statistics are in reset. Its source epoch remains
+independent of statistics reset. Actual member reset coverage is summed;
+group-only reset never creates an actual point reset.
+
+The package persists one source frame before advancing its direct groups' durable
+notification counters. Each direct consumer has package-owned frame/control
+acknowledgement positions. A group reads only direct raw increments and sums
+known bytes/events with checked unsigned 64-bit arithmetic, preserving the
+original timestamp and actual edge index. Byte and event completeness propagate
+separately. No child bandwidth or cumulative statistic is an input. Before input
+acknowledgement, the group output is durable and its own core has accepted or
+explicitly handled the frame during reset. All direct consumers must acknowledge
+before a source record is released. Ungrouped sources still validate publication
+order but require no retained communication backlog.
+
+The group captures expected actual edges without blocking. Missing/duplicate/
+out-of-order/wrong-time data is distinct from known idle, zero-byte activity,
+unknown protocol/size and known reset. A pending frame or older control prefix
+holds a logical publication watermark: a window including unreceived data cannot
+appear as complete zero. Upon complete delivery, the published window retains its
+original scheduled endpoint. The collector merges controls and frames in original
+timestamp order; same-time controls precede the frame. Pending source progress is
+propagated toward direct parent groups for the hierarchy extension.
+
+Missing-frame deadlines use original expected T plus the configured physical
+interval, including when an earlier frame completed while a newer one was
+pending. Same-slot module NBA/ReNBA arrival and later same-T clock metadata settle
+before deferred failure. A stopped shared clock creates no new expected edges.
+Ns windows continue when caught up; cycle snapshots hold. Known point reset keeps
+ancestor history until natural expiry and supplies timestamped reset coverage even
+without clocks. Group statistics reset clears only its core while collection,
+publication and acknowledgements continue.
+
+The controlled package seam provides `peek_member_frame/control`,
+`acknowledge_member_frame/control`, logical retained-record counts and
+`acknowledged_frame_seq` for component tests/diagnostics. Ordinary integration
+uses none of those calls. `registered_scope_count(kind)` and
+`registered_scope_id(kind,index)` provide immutable typed identities after ready
+for reporting; accessing them before ready is an error.
+
+Core diagnostics include `GROUP_COUNT`, `GROUP_REFERENCE`, `GROUP_DEFINITION`,
+`DUPLICATE_OWNER`, `EMPTY_GROUP`, `MEMBER_COUNT`, `MEMBER_RULE`, `GROUP_CONTEXT`,
+`TOPOLOGY_LIMIT`, `CONFIG_FROZEN`, `RECORD_SEQUENCE`, `EDGE_SEQUENCE`,
+`RECORD_TIME`, `FRAME_ALIGNMENT`, `UNEXPECTED_FRAME`, `FRAME_TIMEOUT`,
+`CONTROL_SEQUENCE`, `CONTROL_ORIGIN`, `ACK_SEQUENCE` and unexpected premature
+release. Logs identify the group/source and expected/received time, edge or
+sequence as appropriate. These errors terminate; observation incompleteness
+continues with known contributions and explicit quality.
+
+Reproduction uses `python3 tests/run.py group_basic group_matching group_delayed
+transport_retention group_metadata_order group_metadata_reactive
+group_control_barrier group_cycle_quality group_reset_quality group_wide` plus
+the `group_fault_*` and `group_config_*` cases in `tests/cases.json`. The wide
+case independently checks 8,589,934,590 B per edge; its real tolerance is 1e-5
+GB/s (about 1.2e-15 relative), while integer values remain exact and small-vector
+real checks use 1e-10. These are numeric calculation tolerances, not performance
+acceptance tolerances. The tests do not claim hierarchy, FSDB/human or scale
+acceptance.
+
+Transport resource accounting is separate from scope statistics history. Logical
+packed payload sizes are 451 bits per raw frame, 225 per point control and 289 per
+transport control envelope, plus simulator representation/container overhead.
+State includes retained source backlogs, two acknowledgement positions per direct
+edge, current expected edges/collector frames, per-origin control validation, rules,
+source descriptors and a 16,384-bit recursive-point mask per group (8 MiB at 4,096
+groups). Retention follows actual consumer lag and cannot be equated to the whole
+80,000-cycle scene. Statistics/phase/episode histories are additional independent
+state. Actual peak memory and the complete scale/history matrix remain later
+acceptance work; no user queue-depth or fixed memory-cap option is introduced.
+
 Hint action producers reuse the same `check_monitor_time` and
 `check_queue_growth` guards as the recorder/core. Every queue push checks its
 representable entry count; a rejected fatal time/storage action cannot publish a
@@ -770,3 +905,25 @@ acceptance vector, not a product default. Tests also cover true-time fitting
 across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
 ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
 insufficient span, explicit configuration failures and real arithmetic overflow.
+
+Deferred deadline checks cache their current condition and error detail in Active,
+then use a read-only fatal action in Postponed. VCS forbids setting a failure latch
+from that action. `core_failure_pending()` therefore combines the runtime
+`core_failure_seen` latch with current per-owner deferred candidates at finalization
+boundaries. A same-slot arrival cancels its candidate. Runtime record emission
+continues to use the terminal runtime latch, so a provisional deadline candidate
+cannot discard a valid result. Tests cover both a late arrival retaining normal
+final output and a real timeout suppressing sibling episode/hint final results.
+
+The compile-cache fingerprint includes ROOT, runner content/options, absolute
+compilation-unit paths/content, explicitly listed `case.sources` fixtures, the
+selected top, and all recursive RTL `.svh`/`.vh` content. This includes nested
+library headers and invalidates stale binaries after flag/fixture/header edits.
+
+Aggregation integration validation: **146/146 contract cases passed** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including all101
+previous integration cases and45 aggregation/deferred-final cases. All102 compile
+logs contain no Warning-/Error- diagnostics; source/fixture/header/runner cache
+fingerprints match the current tree. `git diff --check` passed. This remains
+single-level functional evidence; hierarchy, full group analysis, real waveform
+review and scale/history acceptance are separate tickets.
