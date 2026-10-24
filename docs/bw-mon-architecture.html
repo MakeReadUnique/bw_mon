@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="bw_mon 最终架构：模块职责、分层聚合、精确滑窗、流量阶段、性能检查与实现验收。依据已关闭架构地图的最终决议。">
+  <title>bw_mon · 最终架构</title>
+  <style>
+    :root{--bg:#f7f8fa;--paper:#fff;--ink:#182b3a;--muted:#61717e;--line:#dce3e9;--blue:#345cd0;--blue-bg:#eef3ff;--teal:#087a6b;--teal-bg:#eaf7f2;--violet:#7d51a6;--violet-bg:#f6effc;--amber:#946000;--amber-bg:#fff6df;--red:#b54138;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 system-ui,-apple-system,"Noto Sans CJK SC","Microsoft YaHei",sans-serif}button,input{font:inherit}button{cursor:pointer}button,a,input{-webkit-tap-highlight-color:transparent}button:disabled{cursor:default;opacity:.45}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #5286e8;outline-offset:4px}a{color:var(--blue);text-underline-offset:3px}code,.mono{font-family:var(--mono);font-size:.91em;overflow-wrap:anywhere}h1,h2,h3,h4,p{margin:0}h1{font-size:clamp(28px,3vw,40px);line-height:1.25;letter-spacing:-1.4px}h2{font-size:23px;line-height:1.4;letter-spacing:-.4px}h3{font-size:16px;line-height:1.5}h4{font-size:14px}small{font-size:12px}button{color:inherit}.muted{color:var(--muted)}.eyebrow{font:11px/1.5 var(--mono);letter-spacing:1.8px;color:var(--muted)}.tag{font-size:11px;border-radius:5px;background:#eef1f5;color:var(--muted);padding:3px 7px;display:inline-block;white-space:nowrap}.tag.green{background:var(--teal-bg);color:var(--teal)}.tag.amber{background:var(--amber-bg);color:var(--amber)}
+    .sidebar{position:fixed;inset:0 auto 0 0;width:218px;background:#fcfcfd;border-right:1px solid var(--line);padding:29px 19px;display:flex;flex-direction:column;z-index:5}.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--ink);font:700 22px var(--mono);letter-spacing:-1px}.brand-icon{display:grid;grid-template-columns:repeat(3,4px);gap:3px;align-items:end;height:22px}.brand-icon i{background:var(--blue);height:10px;border-radius:1px}.brand-icon i:nth-child(2){height:21px}.brand-icon i:nth-child(3){height:15px}.brand-sub{font-size:11px;color:var(--muted);margin:10px 0 33px;padding-left:1px}.nav-label{padding:0 12px;margin-bottom:11px;font-size:10px;color:#83909d;letter-spacing:1.4px}.navigation{display:flex;flex-direction:column;gap:5px}.nav-button{border:0;background:none;display:flex;align-items:center;gap:12px;text-align:left;padding:11px 12px;border-radius:7px;color:var(--muted);font-size:13px;font-weight:550}.nav-button .nav-number{font:10px var(--mono);color:#8998a5}.nav-button:hover{background:#f0f3f7}.nav-button[aria-selected=true]{background:var(--blue-bg);color:var(--blue)}.nav-button[aria-selected=true] .nav-number{color:var(--blue)}.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding:20px 9px 0;font-size:11px;color:var(--muted)}.sidebar-bottom a{display:block;margin:8px 0 13px}.status-dot{width:6px;height:6px;display:inline-block;background:var(--teal);border-radius:50%;margin-right:6px}.main{margin-left:218px;padding:27px 36px 38px;max-width:1730px}.topline{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:26px;font-size:11px;color:var(--muted)}.top-actions{display:flex;gap:8px}.quiet{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--paper);padding:7px 12px;border-radius:6px;text-decoration:none;font-size:12px;color:var(--muted)}.quiet:hover{border-color:#9bafc3;color:var(--ink)}.page-title{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:23px}.page-title p{margin-top:10px;max-width:790px;color:var(--muted);line-height:1.8}.version{text-align:right;flex-shrink:0;font-size:11px;color:var(--muted)}.version .tag{margin-bottom:5px}.principles{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:10px;background:var(--paper);margin-bottom:27px}.principle{padding:13px 18px;display:flex;gap:13px;align-items:center}.principle+.principle{border-left:1px solid var(--line)}.principle b{font-size:13px;display:block}.principle span{font-size:11px;color:var(--muted)}.principle .symbol{font:500 22px var(--mono);color:var(--blue)}.view[hidden]{display:none}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:17px}.section-heading p{font-size:12px;color:var(--muted);margin-top:5px}.section-number{font:12px var(--mono);color:var(--blue);margin-right:9px}.legend{display:flex;flex-wrap:wrap;gap:15px;font-size:11px;color:var(--muted)}.legend span:before{content:"";width:7px;height:7px;border-radius:2px;background:var(--blue);display:inline-block;margin-right:6px}.legend .teal:before{background:var(--teal)}.legend .violet:before{background:var(--violet)}.panel{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:23px;margin-bottom:18px}.panel-title{margin-bottom:15px;display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-title p{font-size:12px;color:var(--muted);margin-top:4px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.thirds{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.note{padding:13px 16px;border-left:3px solid var(--blue);background:var(--blue-bg);font-size:12px;margin:16px 0}.note.teal{background:var(--teal-bg);border-color:var(--teal)}.note.amber{background:var(--amber-bg);border-color:#c19033}.note p+p{margin-top:5px}.source-note{color:var(--muted);font-size:11px;margin:16px 0 25px}.source-note a{color:var(--muted)}.facts{margin:10px 0 0;padding:0;list-style:none}.facts li{padding:8px 0;border-bottom:1px solid #edf0f3;font-size:12px}.facts li:last-child{border:0}.facts b{font-weight:650}.facts code{color:var(--blue)}.caption{font-size:11px;color:var(--muted);margin-top:11px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;text-align:left;font-size:12px}th{font-weight:600;color:var(--muted);background:#f7f9fb;white-space:nowrap}th,td{padding:12px 13px;border-bottom:1px solid #e8edf1;vertical-align:top}td code{white-space:normal}tbody tr:last-child td{border-bottom:0}.compact td,.compact th{padding:10px}.metric{font:600 29px/1.2 var(--mono);letter-spacing:-1px;color:var(--ink)}.metric small{font:11px system-ui;letter-spacing:0;color:var(--muted)}
+    .diagram-scroll{overflow:auto;background:white;border:1px solid var(--line);border-radius:11px}.architecture{padding:22px;min-width:910px;position:relative}.diagram-edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}.config-bar{border:1px dashed #bcc9db;background:#f8faff;border-radius:7px;width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:12px 16px;position:relative;z-index:3}.config-bar strong{font-size:12px}.config-bar span{font-size:11px;color:var(--muted)}.diagram-grid{display:grid;grid-template-columns:1.3fr .8fr 1fr;gap:42px;margin-top:24px;position:relative}.zone-head{margin-bottom:15px}.zone-head span{font:10px var(--mono);color:#7e91a1;letter-spacing:1px}.zone-head h3{font-size:13px;margin-top:4px}.node{width:100%;display:block;text-align:left;border:1px solid #cedbeb;background:white;border-radius:7px;padding:12px;position:relative;z-index:3;transition:border-color .15s,box-shadow .15s}.node:hover{border-color:var(--blue);box-shadow:0 0 0 3px #345cd011}.node .name{font:600 11px/1.55 var(--mono);display:block;padding-right:8px;overflow-wrap:anywhere}.node .desc{font-size:11px;color:var(--muted);display:block;margin-top:5px;line-height:1.65}.node .node-kind{font-size:9px;display:block;letter-spacing:1px;margin-bottom:4px;color:var(--muted)}.node:after{content:"↗";position:absolute;right:8px;top:6px;color:#95a5b4;font-size:10px}.node-blue{border-left:3px solid var(--blue)}.node-violet{border-color:#deceed;border-left:3px solid var(--violet);background:var(--violet-bg)}.node-teal{border-color:#bcdace;border-left:3px solid var(--teal);background:#f4fbf7}.mini-arrow{font-size:10px;color:#7e91a1;text-align:center;padding:7px 0}.point-scope{border:1px solid #d2dff0;background:#f9fbff;padding:13px;border-radius:8px}.scope-label{display:flex;align-items:center;justify-content:space-between;gap:7px;font:600 11px var(--mono);color:var(--blue);margin-bottom:11px}.scope-label small{font:10px system-ui;color:var(--muted)}.raw-view{text-align:center;border:1px dashed #c9d6e7;border-radius:5px;padding:8px 4px;color:var(--muted);font-size:10px;background:white}.parallel-label{display:flex;justify-content:space-around;font-size:9px;color:var(--muted);padding:6px 0}.point-branches{display:grid;grid-template-columns:.86fr 1.14fr;gap:10px}.point-branches .node{padding:10px 8px;min-height:113px}.point-branches .node .name{font-size:10px}.point-branches .node .desc{font-size:10px}.point-branches .core{min-height:118px;background:var(--blue-bg)}.hint-out{font-size:10px;padding:11px 7px;border:1px dashed #d9c6e8;border-radius:7px;color:var(--violet);background:white;min-height:118px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}.hint-out b{display:block;margin-bottom:7px;font-size:11px}.scope-foot{font-size:10px;text-align:center;color:var(--muted);margin-top:11px}.package-area{padding-top:153px}.package-node{padding:17px 13px;background:var(--teal-bg);border:1px solid #9ecab9}.package-node .name{font-size:14px;color:var(--teal)}.package-fields{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px}.package-fields span{font-size:9px;padding:2px 5px;background:#fff;border:1px solid #d1e6de;border-radius:3px;color:var(--teal)}.package-note{margin:13px 0 0;font-size:10px;color:var(--muted);text-align:center}.group-scope{margin-top:89px;border:1px solid #bcdace;background:#f7fbf9;border-radius:8px;padding:13px}.group-scope .scope-label{color:var(--teal)}.group-scope .node{font-size:11px}.group-output{display:grid;grid-template-columns:1fr 1fr;gap:9px}.group-output .node{padding:10px 8px;min-height:110px}.group-output .node .name{font-size:10px}.group-output .node .desc{font-size:10px}.group-frame{font-size:10px;color:var(--teal);text-align:center;padding:8px 0}.group-rule{font-size:10px;color:var(--muted);margin-top:13px}.output-strip{border-top:1px solid var(--line);margin-top:22px;padding-top:16px;display:grid;grid-template-columns:1.1fr 1fr;gap:20px;position:relative;z-index:3}.output-strip .node{display:flex;align-items:center;gap:15px;padding:11px 14px;background:#f9fafc}.output-strip .desc{margin:0}.output-strip .name{white-space:nowrap}.architecture-foot{display:flex;justify-content:space-between;gap:12px;font-size:10px;color:var(--muted);margin-top:14px}.core-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:15px}.core-part{padding:0 20px;border-left:1px solid var(--line);font-size:12px}.core-part:first-child{padding-left:0;border-left:0}.core-part:last-child{padding-right:0}.core-part h4{margin-bottom:7px}.core-part p{color:var(--muted)}.number-label{font:11px var(--mono);color:var(--blue);margin-bottom:8px;display:block}
+    .topology{display:grid;grid-template-columns:1fr 45px 1fr 45px 1fr;gap:10px;align-items:center;margin-top:21px}.topology-column{display:flex;flex-direction:column;gap:12px}.topology-card{padding:15px;border:1px solid #cedbeb;border-radius:8px;background:#f9fbff}.topology-card.group{background:#f1f9f5;border-color:#bedbce}.topology-card.top{background:#eef4ff;border-color:#c8d8f1}.topology-card.free{border-style:dashed;background:white}.topology-card b{font:600 13px var(--mono);display:block}.topology-card p{font-size:11px;color:var(--muted);margin-top:5px}.point-chips{display:flex;gap:4px;margin-top:9px;flex-wrap:wrap}.point-chips span{padding:2px 7px;border:1px solid #d7e2ef;background:white;border-radius:3px;font:10px var(--mono)}.topology-arrow{color:#91a5b7;text-align:center;font-size:23px}.topology-arrow span{display:block;font:9px system-ui;white-space:nowrap}.topology-legend{display:flex;gap:25px;flex-wrap:wrap;margin-top:18px;font-size:11px;color:var(--muted)}.scenario-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px}.choice{background:white;border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:11px;color:var(--muted)}.choice[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:white}.demo-progress{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:15px 0}.demo-progress span{font-size:10px;color:var(--muted);background:#f1f4f7;padding:8px 4px;text-align:center;border-radius:4px}.demo-progress span.done{background:var(--teal-bg);color:var(--teal)}.demo-progress span.current{background:var(--blue-bg);color:var(--blue);outline:1px solid #b8c9ec}.demo-controls{display:flex;gap:8px;align-items:center;margin-top:15px}.demo-controls .counter{margin-right:auto;color:var(--muted);font:11px var(--mono)}.primary{background:var(--blue);color:white;border:1px solid var(--blue);border-radius:6px;padding:7px 14px;font-size:12px}.live-explanation{min-height:73px;padding:13px 16px;border:1px solid #cbdced;background:#f4f8ff;border-radius:7px;font-size:12px;line-height:1.8}.quality-good{color:var(--teal)}.quality-warn{color:var(--amber)}.quality-bad{color:var(--red)}.window-svg{width:100%;height:auto;display:block}.range-row{display:flex;align-items:center;gap:16px;margin:13px 0}.range-row label{font:12px var(--mono);white-space:nowrap}.range-row input{width:100%;accent-color:var(--blue)}.formula-strip{display:flex;gap:25px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}.formula-strip p{font-size:12px;color:var(--muted);margin-top:3px}.formula-strip .equation{margin-left:auto;font:12px/1.9 var(--mono);text-align:right;color:var(--blue)}.order{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.order-button{padding:12px 9px;min-height:90px;text-align:left;background:#fafbfd;border:1px solid var(--line);border-radius:7px}.order-button b{font:18px var(--mono);color:#9aabba;display:block;margin-bottom:7px}.order-button span{font-size:11px}.order-button[aria-pressed=true]{background:var(--blue-bg);border-color:#b8cbed}.order-button[aria-pressed=true] b{color:var(--blue)}.timeline-svg{width:100%;display:block;margin:12px 0}.formula{font:13px/1.9 var(--mono);padding:15px;border-radius:7px;background:#f5f7fa;margin:12px 0;color:var(--blue);overflow-wrap:anywhere}.phase-chain{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:15px 0}.phase-chip{padding:7px 12px;border:1px solid var(--line);border-radius:6px;font-size:12px}.phase-chip.up{color:var(--blue);background:var(--blue-bg)}.phase-chip.steady{color:var(--teal);background:var(--teal-bg)}.phase-chip.down{color:var(--violet);background:var(--violet-bg)}details{margin-top:15px;border-top:1px solid var(--line);padding-top:13px}summary{cursor:pointer;font-size:12px;font-weight:600}details .facts{margin-top:6px}.check-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.check-form label{font-size:11px;color:var(--muted);display:block}.check-form input[type=number]{display:block;margin-top:6px;padding:9px 10px;border:1px solid #cdd7e0;border-radius:6px;width:100%;color:var(--ink);font-family:var(--mono);background:white}.evidence-label{display:flex;align-items:center;gap:7px;font-size:12px;margin:15px 0}.evidence-label input{accent-color:var(--blue)}.check-result{display:flex;align-items:center;gap:20px;background:#f7f9fb;border-radius:7px;padding:17px}.check-status{font:700 23px var(--mono)}.check-result p{font-size:12px;color:var(--muted)}pre{font:11px/1.85 var(--mono);margin:0;background:#f5f7fa;border-radius:7px;padding:17px;white-space:pre-wrap;overflow-wrap:anywhere}.pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.capacity-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.capacity{background:white;border:1px solid var(--line);border-radius:8px;padding:18px}.capacity .metric{margin:7px 0;font-size:29px}.capacity p{color:var(--muted);font-size:11px}.acceptance{padding:20px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:8px}.acceptance h3{margin:7px 0 10px}.acceptance p{font-size:12px;color:var(--muted)}.source-list{list-style:none;margin:0;padding:0}.source-list li{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}.source-list li:last-child{border-bottom:0}.source-list a{font-size:13px;text-decoration:none}.source-list a:hover{text-decoration:underline}.source-list small{display:block;color:var(--muted);margin-top:4px}.source-list .source-no{font:12px var(--mono);color:#91a1af;margin-right:12px}.footer{border-top:1px solid var(--line);padding-top:16px;margin-top:30px;display:flex;justify-content:space-between;gap:20px;font-size:10px;color:var(--muted)}
+    dialog{border:1px solid var(--line);border-radius:13px;width:min(720px,calc(100vw - 30px));padding:0;color:var(--ink);max-height:87vh;box-shadow:0 22px 80px #14263825}dialog::backdrop{background:#13233466;backdrop-filter:blur(3px)}.dialog-inner{padding:26px}.dialog-top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:12px}.dialog-close{border:1px solid var(--line);background:#f7f9fb;border-radius:5px;width:30px;height:30px;font-size:20px;line-height:1}.dialog-purpose{color:var(--muted);margin:12px 0 18px;font-size:13px}.dialog-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.dialog-box{background:#f7f9fb;border-radius:7px;padding:15px}.dialog-box ul{padding-left:17px;margin:8px 0 0;font-size:12px}.dialog-box li{margin-bottom:5px}.dialog-state{margin:17px 0;font-size:12px}.dialog-source{font-size:11px;padding-top:12px;border-top:1px solid var(--line)}.no-script{background:var(--amber-bg);padding:12px;font-size:12px}
+    @media(min-width:1600px){.main{padding-left:48px;padding-right:48px}.architecture{padding:28px}.diagram-grid{gap:55px}.point-branches .node .name,.group-output .node .name{font-size:11px}}
+    @media(max-width:1200px){.sidebar{width:188px;padding-left:13px;padding-right:13px}.main{margin-left:188px;padding:23px}.principle{padding:12px}.version{display:none}.capacity-grid{grid-template-columns:repeat(2,1fr)}.architecture{min-width:910px}.output-strip .node{display:block}.output-strip .desc{margin-top:4px}}
+    @media(max-width:850px){.sidebar{position:static;width:auto;padding:15px 18px 0;border-right:0;border-bottom:1px solid var(--line);display:block}.brand-sub,.nav-label,.sidebar-bottom{display:none}.brand{font-size:20px}.navigation{flex-direction:row;overflow:auto;margin-top:14px;padding:0 0 10px;gap:5px}.nav-button{white-space:nowrap;padding:8px 10px;font-size:12px}.nav-number{display:none}.main{margin:0;padding:21px 18px}.topline{margin-bottom:20px}.principles{margin-bottom:21px}.principle .symbol{display:none}.principle b{font-size:12px}.principle span{font-size:10px}.columns,.thirds{grid-template-columns:1fr}.core-breakdown{grid-template-columns:1fr;gap:15px}.core-part{padding:0 0 14px;border-left:0;border-bottom:1px solid var(--line)}.core-part:last-child{border:0;padding-bottom:0}.topology{gap:5px;grid-template-columns:1fr 21px 1fr 21px 1fr}.topology-card{padding:11px}.topology-card b{font-size:11px}.topology-arrow span{display:none}.order{gap:5px}.order-button{padding:9px 6px}.section-heading{align-items:flex-start}.section-heading .legend{display:none}.panel{padding:18px}.source-list li{gap:10px}}
+    @media(max-width:520px){h1{font-size:29px}.topline>span{font-size:10px;max-width:150px}.top-actions .quiet{font-size:10px;padding:6px 8px}.principles{grid-template-columns:1fr}.principle{padding:8px 13px;display:block}.principle b{display:inline;margin-right:8px}.principle+.principle{border-left:0;border-top:1px solid var(--line)}.page-title p{font-size:12px}.topology{grid-template-columns:1fr}.topology-column{display:grid;grid-template-columns:1fr 1fr}.topology-arrow{transform:rotate(90deg);font-size:19px;height:26px}.topology-card.free{grid-column:1/-1}.demo-progress span{font-size:9px;padding:7px 2px}.capacity-grid{gap:8px}.capacity{padding:13px}.capacity .metric{font-size:24px}.check-form{grid-template-columns:1fr}.check-form label{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:10px}.check-form input[type=number]{margin:0}.check-result{align-items:flex-start;flex-direction:column;gap:6px}.order{grid-template-columns:1fr}.order-button{min-height:0;display:flex;align-items:center;gap:12px}.order-button b{margin:0;font-size:14px}.order-button span{font-size:12px}.formula-strip .equation{margin-left:0;text-align:left}.footer{display:block}.footer span{display:block;margin-bottom:6px}.dialog-inner{padding:20px}.dialog-grid{grid-template-columns:1fr}.source-list .tag{display:none}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+    @media print{
+      @page{size:A4 landscape;margin:12mm}
+      body{background:white;font-size:12px;zoom:.78}
+      .sidebar,.topline,.page-title,.principles,.scenario-buttons,.demo-controls,.range-row,.dialog,.no-script,.footer,.legend{display:none!important}
+      .main{margin:0;padding:0;max-width:none}.view[hidden]{display:block!important}.view{break-before:page}.view:first-of-type{break-before:auto}
+      .section-heading{break-after:avoid}.panel,.diagram-scroll,.source-list li{break-inside:avoid}.diagram-scroll,.table-wrap{overflow:visible}
+      .architecture{min-width:0;padding:16px}.diagram-grid{gap:36px}.package-area{padding-top:153px}
+      .columns{grid-template-columns:1fr 1fr}.thirds,.core-breakdown{grid-template-columns:repeat(3,1fr)}.capacity-grid{grid-template-columns:repeat(4,1fr)}
+      .core-part{border-bottom:0;border-left:1px solid var(--line);padding:0 16px}.core-part:first-child{padding-left:0;border-left:0}.core-part:last-child{padding-right:0}
+      .output-strip .node{display:flex}.output-strip .desc{margin:0}.panel{padding:17px}.source-note{margin-bottom:15px}
+      .check-form{grid-template-columns:repeat(3,1fr)}a{color:inherit}h2{font-size:23px}
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#overview" aria-label="bw_mon 架构总览"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span>bw_mon</a>
+    <p class="brand-sub">SoC 仿真 · 带宽监测器</p>
+    <div class="nav-label">ARCHITECTURE / 架构导航</div>
+    <nav class="navigation" role="tablist" aria-label="架构内容" aria-orientation="vertical">
+      <button class="nav-button" id="tab-overview" role="tab" aria-controls="overview" aria-selected="true" tabindex="0" data-tab="overview"><span class="nav-number">01</span>模块与数据流</button>
+      <button class="nav-button" id="tab-hierarchy" role="tab" aria-controls="hierarchy" aria-selected="false" tabindex="-1" data-tab="hierarchy"><span class="nav-number">02</span>分层聚合</button>
+      <button class="nav-button" id="tab-timing" role="tab" aria-controls="timing" aria-selected="false" tabindex="-1" data-tab="timing"><span class="nav-number">03</span>接口、窗口与时序</button>
+      <button class="nav-button" id="tab-phases" role="tab" aria-controls="phases" aria-selected="false" tabindex="-1" data-tab="phases"><span class="nav-number">04</span>流量过程与阶段</button>
+      <button class="nav-button" id="tab-checks" role="tab" aria-controls="checks" aria-selected="false" tabindex="-1" data-tab="checks"><span class="nav-number">05</span>统计、检查与诊断</button>
+      <button class="nav-button" id="tab-acceptance" role="tab" aria-controls="acceptance" aria-selected="false" tabindex="-1" data-tab="acceptance"><span class="nav-number">06</span>规模与实现验收</button>
+      <button class="nav-button" id="tab-sources" role="tab" aria-controls="sources" aria-selected="false" tabindex="-1" data-tab="sources"><span class="nav-number">07</span>最终决议索引</button>
+    </nav>
+    <div class="sidebar-bottom"><span class="status-dot"></span>架构规划已完成<a href="https://github.com/MakeReadUnique/bw_mon/issues/1" target="_blank" rel="noopener">查看架构地图 ↗</a>依据最终决议整理<br>快照日期 · 2026.10.24</div>
+  </aside>
+  <main class="main">
+    <div class="topline"><span>ENGINEERING NOTES <span aria-hidden="true">/</span> 最终架构说明</span><div class="top-actions"><a class="quiet" href="https://github.com/MakeReadUnique/bw_mon/issues/1" target="_blank" rel="noopener">GitHub 决议 ↗</a><button class="quiet" id="print-button">打印 / 保存 PDF</button></div></div>
+    <header class="page-title"><div><h1>bw_mon 最终架构</h1><p>从接口传输到精确带宽，再到自动阶段分析与性能结论。<br>纯仿真 SystemVerilog module；支持类型 bind、单点观测与同钟分层聚合。</p></div><div class="version"><span class="tag green">11 / 11 子决策已关闭</span><br>架构已定 · 实现与验收待完成</div></header>
+    <div class="principles"><div class="principle"><span class="symbol">∥</span><div><b>记录与诊断并行</b><span>同一采样视图，各自保留质量状态</span></div></div><div class="principle"><span class="symbol">Σ</span><div><b>原始计量逐层汇总</b><span>每个范围独立计算窗口与过程</span></div></div><div class="principle"><span class="symbol">[ )</span><div><b>精确时间与区间</b><span>整数 tick、半开窗口、确定性提交</span></div></div></div>
+    <noscript><p class="no-script">JavaScript 未启用，以下显示全部架构内容；交互示例与模块详情需启用 JavaScript。</p><style>.view[hidden]{display:block}.navigation{display:none}</style></noscript>
+
+    <section class="view" id="overview" role="tabpanel" aria-labelledby="tab-overview">
+      <div class="section-heading"><div><h2><span class="section-number">01</span>模块与数据流</h2><p>点击模块，查看输入、输出、状态归属和复位边界。箭头表示数据关系。</p></div><div class="legend"><span>计量 / 统计</span><span class="teal">共享通信 / 聚合</span><span class="violet">辅助诊断</span></div></div>
+      <div class="diagram-scroll"><div class="architecture" id="architecture">
+        <svg class="diagram-edges" id="diagram-edges" aria-hidden="true"></svg>
+        <button class="config-bar" data-module="setup"><strong>统一配置 / 注册 / 启动</strong><span>预期总点数 + 组 owner 到齐 → 校验拓扑与配置 → 冻结 → ready → 开始计量 ↗</span></button>
+        <div class="diagram-grid">
+          <div>
+            <div class="zone-head"><span>LOCAL OBSERVATION</span><h3>就地观测 · 每个 DUT 实例</h3></div>
+            <button class="node" data-module="adapter"><span class="node-kind">TYPE BIND / PROTOCOL ADAPTER</span><span class="name">DUT / 协议接入包装</span><span class="desc">原始控制 + size 编码 → 本次 size_bytes 与解码已知性</span></button>
+            <div class="mini-arrow">↓ 保留原始字段，传入一致的采样视图</div>
+            <div class="point-scope"><div class="scope-label"><span>bw_point_mon</span><small>一个观测点</small></div>
+              <div class="raw-view">clk · reset · 原始协议控制 · 计量输入</div>
+              <div class="parallel-label"><span>↙ 独立诊断</span><span>数据记录 ↘</span></div>
+              <div class="point-branches">
+                <div><button class="node node-violet" data-module="hints"><span class="name">bw_debug_hints</span><span class="desc">反压持续区间<br>credit 账本<br>能力 / 启用 / 可信性</span></button><div class="mini-arrow">↓ 辅助线索</div><div class="hint-out"><b>Debug / Verdi</b>hint 可单独禁用<br>信用失信不污染<br>确定的字节计量</div></div>
+                <div><button class="node node-blue" id="node-recorder" data-module="recorder"><span class="name">bw_point_recorder</span><span class="desc">事件 + 已知字节<br>完整性 + 时间 / 序号<br>每个采样沿一份记录</span></button><div class="mini-arrow">↓ 本点直接计量</div><button class="node core node-blue" data-module="core"><span class="name">bw_stats_core</span><span class="desc">本点独立状态<br>精确窗口 · 流量过程<br>阶段识别</span></button></div>
+              </div>
+              <div class="scope-foot">POINT_ID 在公开实例作用域生成一次</div>
+            </div>
+          </div>
+          <div>
+            <div class="zone-head"><span>SHARED TRANSPORT</span><h3>跨层通信 · 全局共享</h3></div>
+            <div class="package-area"><button class="node package-node" id="node-package" data-module="package"><span class="node-kind">PERSISTENT RECORDS</span><span class="name">bw_mon_pkg</span><span class="desc">点源 / 组源记录发布一次<br>各直接消费者独立确认</span><span class="package-fields"><span>身份注册</span><span>冻结拓扑</span><span>记录存储</span><span>消费位置</span><span>控制通知</span></span></button><p class="package-note">通信缓冲与统计历史分别管理<br>全部直接消费者确认后，才释放记录</p></div>
+          </div>
+          <div>
+            <div class="zone-head"><span>HIERARCHICAL AGGREGATION</span><h3>分层统计 · 每组独立</h3></div>
+            <div class="group-scope"><div class="scope-label"><span>bw_group_mon</span><small>每层复用</small></div>
+              <button class="node node-teal" id="node-collector" data-module="group"><span class="name">本沿完整帧收集</span><span class="desc">收齐直接成员 → 校验 T / 沿序号 → 原始事件与字节求和</span></button>
+              <div class="group-frame">↓ 同一份组源记录，分送两个去向</div>
+              <div class="group-output"><button class="node node-blue" data-module="core"><span class="name">bw_stats_core</span><span class="desc">本组独立窗口<br>过程 / 阶段<br>与单点复用实现</span></button><button class="node node-teal" data-module="upstream"><span class="name">向上供数</span><span class="desc">发布回 package<br>供直接上级读取<br>保留原 T / 沿序号</span></button></div>
+              <p class="group-rule">直接成员可为观测点、下级组，或二者混合。下级统计复位时，向上供数继续。</p>
+            </div>
+          </div>
+        </div>
+        <div class="output-strip"><button class="node" data-module="report"><span class="name">bw_check_report</span><span class="desc">接收各范围结果 → 最终统计 / 场景 cfg / PASS · FAIL · WARNING</span></button><button class="node" data-module="wave"><span class="name">公开点 / 组层次 · Verdi</span><span class="desc">普通标量输出 real、整数、enum；保留各项独立质量状态</span></button></div>
+        <div class="architecture-foot"><span>单点直接路径 + package 聚合路径，共用规范化记录语义。</span><span>module 名称为建议命名；具体端口 / typedef 由实现确定。</span></div>
+      </div></div>
+      <div class="panel" style="margin-top:18px"><div class="panel-title"><div><h3>一个统计核心，三项私有职责</h3><p>每个观测点、每个聚合组拥有自己的 bw_stats_core 实例和统计状态。</p></div><span class="tag">唯一调度入口</span></div><div class="core-breakdown"><div class="core-part"><span class="number-label">MEASURE</span><h4>精确计量与滑窗</h4><p>拥有原始累计、精确窗口历史、未知标记和边界快照。正式带宽使用实际物理时长。</p></div><div class="core-part"><span class="number-label">EPISODE</span><h4>流量过程与 e2e</h4><p>追踪首末传输、尾周期与静默期限；以原始计数字节和真实过程区间计算全程平均带宽。</p></div><div class="core-part"><span class="number-label">PHASE</span><h4>自动阶段识别</h4><p>使用同一条新发布滑窗序列；维护拟合、迟滞、候选、确认和可回溯的阶段边界。</p></div></div><div class="note">这三项是职责划分，物理 SV module 数未固定。内部可用过程 / 函数或 module 实现；同刻提交顺序由同一个入口负责。</div></div>
+      <div class="thirds"><div class="panel"><span class="number-label">INTEGRATION 01</span><h3>类型 bind / 观测点接入</h3><p class="caption">一次类型 bind 覆盖多个目标实例；默认在公开 monitor 作用域用 %m 生成身份，允许显式覆盖。</p></div><div class="panel"><span class="number-label">INTEGRATION 02</span><h3>每组一个 module</h3><p class="caption">提供 GROUP_ID、共同 clk、组 reset 和成员配置。观测点无需预先知道自己属于哪些组。</p></div><div class="panel"><span class="number-label">INTEGRATION 03</span><h3>统一配置与 ready</h3><p class="caption">总点数包含未归组点；校验完成后冻结成员与配置。集成者无需手动推进 read / ack 或逐层提交。</p></div></div>
+      <p class="source-note">依据：<a href="https://github.com/MakeReadUnique/bw_mon/issues/7#issuecomment-6382679083" target="_blank" rel="noopener">模块职责、bind 接入与统计数据通路</a> · <a href="https://github.com/MakeReadUnique/bw_mon/issues/12#issuecomment-6383144791" target="_blank" rel="noopener">分层聚合的成员、数据与复位契约</a></p>
+    </section>
+
+    <section class="view" id="hierarchy" role="tabpanel" aria-labelledby="tab-hierarchy" hidden>
+      <div class="section-heading"><div><h2><span class="section-number">02</span>分层聚合：沿着成员关系传递原始计量</h2><p>采用最终确认的 12 点、4 组验收拓扑。以下为连接关系与计量演示，尚未运行 RTL。</p></div></div>
+      <div class="panel"><div class="panel-title"><h3>同一采样时钟 · 同一窗口基准、W、S</h3><span class="tag green">无环成员关系</span></div>
+        <div class="topology">
+          <div class="topology-column"><div class="topology-card"><b>p0 … p3</b><p>die 0 的 DMC 观测点</p><div class="point-chips"><span>p0</span><span>p1</span><span>p2</span><span>p3</span></div></div><div class="topology-card"><b>p4 … p7</b><p>die 1 的 DMC 观测点</p><div class="point-chips"><span>p4</span><span>p5</span><span>p6</span><span>p7</span></div></div><div class="topology-card"><b>p8 · p9</b><p>直接加入 mixed</p></div><div class="topology-card free"><b>p10 · p11</b><p>仅单点统计，仍计入总注册数</p></div></div>
+          <div class="topology-arrow" aria-hidden="true">→<span>原始记录</span></div>
+          <div class="topology-column"><div class="topology-card group"><b>die0_dmc</b><p>直接成员：p0、p1、p2、p3<br>4 个直接成员 / 4 个观测点</p><div class="point-chips"><span>→ all_dmc</span><span>→ mixed</span></div></div><div class="topology-card group"><b>die1_dmc</b><p>直接成员：p4、p5、p6、p7<br>4 个直接成员 / 4 个观测点</p><div class="point-chips"><span>→ all_dmc</span></div></div><div class="topology-card free"><b>p8 · p9 → mixed</b><p>点源可以与组源混合成为直接成员</p></div></div>
+          <div class="topology-arrow" aria-hidden="true">→<span>组源 / 点源</span></div>
+          <div class="topology-column"><div class="topology-card top"><b>all_dmc</b><p>直接成员：die0_dmc、die1_dmc<br><strong>2</strong> 个直接成员 / <strong>8</strong> 个观测点</p></div><div class="topology-card top"><b>mixed</b><p>直接成员：die0_dmc、p8、p9<br><strong>3</strong> 个直接成员 / <strong>6</strong> 个观测点</p></div></div>
+        </div>
+        <div class="note teal">die0_dmc 可同时供 all_dmc 与 mixed 使用。但若再把 all_dmc 和 mixed 放入同一上级，两条路径会重复覆盖 p0…p3，启动校验必须拒绝。</div>
+        <div class="topology-legend"><span>点成员：完整 POINT_ID / 按层次段前缀匹配</span><span>组成员：显式 GROUP_ID 引用</span><span>同源重复命中先去重，再核对直接成员数</span></div>
+      </div>
+      <div class="panel"><div class="panel-title"><div><h3>跟踪一沿：原始记录如何逐层到齐、消费和释放</h3><p>示例 T = 104 ns；每个正常点发生 1 次传输、计量 64 B。数值是本沿增量。</p></div><span class="tag amber">架构交互示例</span></div>
+        <div class="scenario-buttons" role="group" aria-label="选择本沿场景"><button class="choice" data-scenario="normal" aria-pressed="true">正常传输</button><button class="choice" data-scenario="group-reset" aria-pressed="false">die0 统计复位</button><button class="choice" data-scenario="point-reset" aria-pressed="false">p0 接口复位</button><button class="choice" data-scenario="unknown" aria-pressed="false">p0 传输 size 未知</button></div>
+        <div class="demo-progress" id="demo-progress"><span>0 等待本沿</span><span>1 点源发布</span><span>2 下级组汇总</span><span>3 all_dmc 消费</span><span>4 mixed 消费</span></div>
+        <div class="table-wrap"><table class="compact"><thead><tr><th>源 / 范围</th><th>本沿已知字节</th><th>本沿事件数</th><th>字节质量</th><th>处理状态</th></tr></thead><tbody id="demo-rows"></tbody></table></div>
+        <div class="live-explanation" id="demo-explanation" aria-live="polite"></div>
+        <div class="demo-controls"><span class="counter" id="demo-counter"></span><button class="quiet" id="demo-restart">重新演示</button><button class="quiet" id="demo-prev">上一步</button><button class="primary" id="demo-next">下一步 →</button></div>
+        <p class="caption">顺序用于说明直接消费者的独立进度，实际调度顺序不固定。各层保留 T = 104 ns 与同一采样沿，不能逐层推迟到下一个周期。</p>
+      </div>
+      <div class="columns"><div class="panel"><h3>复位边界</h3><ul class="facts"><li><b>观测点复位：</b>清本点统计；祖先保留已记入的历史直到自然过期。复位期间无新增计量，释放后直接恢复向组贡献。</li><li><b>下级组统计复位：</b>只清本组统计；collector 继续收集、汇总、向上发布并确认消费。</li><li><b>上级组统计复位：</b>只影响上级自己的统计；同样继续向它的上级供数。</li><li>局部复位不清注册表、不回退源序号、不重置其他消费者。下级组统计复位不冒充观测点复位覆盖。</li></ul></div><div class="panel"><h3>12 点基准的满窗参考值</h3><p class="caption">2 GHz、每点每沿 64 B；W=10 ns / S=1 ns。cycle 变体 W=20 / S=2。均为验收输入与预期。</p><div class="table-wrap"><table class="compact"><thead><tr><th>范围</th><th>GB/s</th><th>B/cycle</th></tr></thead><tbody><tr><td>每点（含 p10、p11）</td><td>128</td><td>64</td></tr><tr><td>die0_dmc / die1_dmc</td><td>512</td><td>256</td></tr><tr><td>all_dmc</td><td>1,024</td><td>512</td></tr><tr><td>mixed</td><td>768</td><td>384</td></tr></tbody></table></div></div></div>
+      <p class="source-note">依据：<a href="https://github.com/MakeReadUnique/bw_mon/issues/12#issuecomment-6383144791" target="_blank" rel="noopener">分层聚合的成员、数据与复位契约</a> · <a href="https://github.com/MakeReadUnique/bw_mon/issues/11#issuecomment-6385539595" target="_blank" rel="noopener">架构验收场景与实现交接约束</a></p>
+    </section>
+
+    <section class="view" id="timing" role="tabpanel" aria-labelledby="tab-timing" hidden>
+      <div class="section-heading"><div><h2><span class="section-number">03</span>接口、窗口与同刻提交</h2><p>先确定事件与计量字节，再按精确半开区间发布窗口。</p></div></div>
+      <div class="panel"><h3>三类接口，共用规范化记录</h3><div class="table-wrap" style="margin-top:14px"><table><thead><tr><th>接口</th><th>传输事件</th><th>可用诊断证据</th></tr></thead><tbody><tr><td><code>valid-only</code></td><td><code>valid == 1</code></td><td>活动与静默；静默原因未知。</td></tr><tr><td><code>valid-ready</code></td><td><code>valid &amp;&amp; ready</code></td><td><code>valid &amp;&amp; !ready</code> 表示握手反压。</td></tr><tr><td><code>flitv / lcrdv</code></td><td><code>flitv == 1</code></td><td>可信账本可判断信用不足；无法据此证明待发送需求。</td></tr></tbody></table></div><div class="columns" style="margin-top:16px"><div><h4>逐传输计量</h4><ul class="facts"><li>固定字节量，或接入包装转换后的动态 <code>size_bytes</code>；每点采用一种口径。</li><li>零字节传输仍是活动；已知无传输时，未用 size 的 X/Z 不污染计量。</li><li>传输已知而 size 未知：事件仍计数，字节标为不完整。控制未知：保留观测缺口。</li></ul></div><div><h4>信用独立于计量</h4><ul class="facts"><li>每次 flitv 消耗 1 credit，每次 lcrdv 归还 1 credit。</li><li>默认归还信用下一拍可用；可配置同拍可用。发送事件由 flitv 独立决定。</li><li>初值、容量显式配置；异常使账本失信，确定字节仍统计。诊断不支持、未知、已知分别表达。</li></ul></div></div></div>
+      <div class="panel"><div class="panel-title"><div><h3>移动窗口：左端计入，右端排除</h3><p>教学事件表，W = 10 ns、S = 1 ns；拖动发布时间 T，查看当前窗口归属。</p></div><span class="tag amber">示意计算</span></div>
+        <svg class="window-svg" id="window-svg" viewBox="0 0 850 200" role="img" aria-labelledby="window-chart-title"><title id="window-chart-title">精确滑动窗口中的事件归属</title></svg>
+        <div class="range-row"><label for="window-time">T = <output id="window-time-value">10</output> ns</label><input id="window-time" type="range" min="10" max="22" value="10" step="1" aria-label="窗口发布时间 T，单位 ns"></div>
+        <div class="formula-strip" aria-live="polite"><div><div class="metric" id="window-bytes">320 <small>B</small></div><p>窗口内计量字节</p></div><div><div class="metric" id="window-bandwidth">32 <small>GB/s</small></div><p>字节 / 实际物理时长</p></div><div class="equation" id="window-equation">[0, 10) ns<br>320 B ÷ 10 ns = 32 GB/s</div></div>
+        <p class="caption">事件可落在亚 ns 时刻；整数 ns 限制用于 W / S 配置，事件时间戳保持统一整数 tick 的精度。</p>
+      </div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>语义</th><th>ns 基准</th><th>本地 cycle 基准</th></tr></thead><tbody><tr><td>完整窗口</td><td><code>[T−W, T)</code></td><td><code>[k−W, k)</code>，当前沿事件进入后续快照</td></tr><tr><td>W / S 配置</td><td>正整数 ns，<code>0 &lt; S ≤ W</code></td><td>正整数周期，<code>0 &lt; S ≤ W</code></td></tr><tr><td>停钟</td><td>按 S 持续发布，历史过期，最终归零</td><td>保持旧快照、原时间边界与结果序号</td></tr><tr><td>输出</td><td>字节、GB/s；<code>1 B/ns = 1 GB/s</code></td><td>另有 B/cycle；GB/s 分母为 <code>t(k)−t(k−W)</code></td></tr><tr><td>预热</td><td colspan="2">按实际覆盖量给临时值；覆盖为零时带宽无效。W 不能被 S 整除时，在第一个覆盖足够的计划发布时刻满窗。</td></tr><tr><td>不完整观测</td><td colspan="2">保留已知字节并标记不完整；未知位置离开窗口后可恢复完整。满窗与字节完整性分开表达。</td></tr></tbody></table></div></div>
+      <div class="panel"><div class="panel-title"><div><h3>T 时刻：一个范围、一个提交入口</h3><p>点击各步骤查看语义。timer、完整帧和控制通知遵守同一顺序。</p></div></div>
+        <div class="order" role="group" aria-label="同刻提交顺序"><button class="order-button" data-order="0" aria-pressed="true"><b>01</b><span>本范围复位优先</span></button><button class="order-button" data-order="1" aria-pressed="false"><b>02</b><span>接收时间元数据</span></button><button class="order-button" data-order="2" aria-pressed="false"><b>03</b><span>发布 T 之前的窗口</span></button><button class="order-button" data-order="3" aria-pressed="false"><b>04</b><span>判断旧过程静默期限</span></button><button class="order-button" data-order="4" aria-pressed="false"><b>05</b><span>T 的新传输入账</span></button></div>
+        <div class="note" id="order-description" aria-live="polite"></div><p class="caption">采样视图须让控制与 size 对应同一次实际传输；不能依赖进程执行顺序、任意 #0 或队列暂空推断成员到齐。</p>
+      </div>
+      <p class="source-note">依据：<a href="https://github.com/MakeReadUnique/bw_mon/issues/2#issuecomment-6379218766" target="_blank" rel="noopener">三类接口的传输事件、字节计量与诊断契约</a> · <a href="https://github.com/MakeReadUnique/bw_mon/issues/3#issuecomment-6379311304" target="_blank" rel="noopener">ns 与本地 clk 滑窗及多观测点聚合的时间语义</a> · <a href="https://github.com/MakeReadUnique/bw_mon/issues/7#issuecomment-6382679083" target="_blank" rel="noopener">模块职责、bind 接入与统计数据通路</a></p>
+    </section>
+
+    <section class="view" id="phases" role="tabpanel" aria-labelledby="tab-phases" hidden>
+      <div class="section-heading"><div><h2><span class="section-number">04</span>流量过程与自动阶段</h2><p>传输事件决定过程活动；同一条滑窗带宽序列提供阶段证据。</p></div></div>
+      <div class="panel"><div class="panel-title"><div><h3>过程边界 ≠ 静默确认时刻</h3><p>示例：首传输 80 ns，末传输 100 ns，下一采样沿 102 ns，静默阈值 Q = 30 ns。</p></div><span class="tag amber">边界示意</span></div>
+        <svg class="timeline-svg" viewBox="0 0 920 210" role="img" aria-labelledby="episode-chart-title"><title id="episode-chart-title">过程在 102 ns 结束，132 ns 才确认；末尾确认等待不计入 e2e 时长</title>
+          <rect x="60" y="49" width="337" height="70" rx="6" fill="#eef3ff"/><rect x="397" y="49" width="455" height="70" rx="6" fill="#fff6df"/>
+          <line x1="60" y1="120" x2="870" y2="120" stroke="#b7c6d3"/><path d="M60 112 V86 H93 V74 H130 V57 H165 V67 H200 V60 H235 V72 H270 V81 H305 V99 H365 V112" fill="none" stroke="#345cd0" stroke-width="3"/>
+          <line x1="60" y1="39" x2="60" y2="133" stroke="#345cd0"/><line x1="365" y1="39" x2="365" y2="133" stroke="#8ea5cb" stroke-dasharray="4 4"/><line x1="397" y1="39" x2="397" y2="133" stroke="#345cd0"/><line x1="852" y1="39" x2="852" y2="133" stroke="#bc8831"/>
+          <g fill="#61717e" font-family="system-ui,sans-serif" font-size="12"><text x="60" y="27">首次传输</text><text x="355" y="27" text-anchor="end">末次传输</text><text x="407" y="27">尾周期终点</text><text x="852" y="27" text-anchor="end">静默确认</text><text x="60" y="153">80 ns</text><text x="365" y="153" text-anchor="end">100</text><text x="407" y="153">102</text><text x="852" y="153" text-anchor="end">132 ns</text><text x="60" y="188" fill="#345cd0">e2e 计量区间 [80, 102) · 实际持续 22 ns</text><text x="624" y="90" text-anchor="middle" fill="#946000">连续静默 Q = 30 ns</text><text x="852" y="188" text-anchor="end">示意曲线，不是实际仿真波形</text></g>
+        </svg>
+        <div class="formula">e2e = 过程内原始累计计量字节 ÷ [t(k_last+1) − t(k_first)]</div>
+        <div class="columns"><ul class="facts"><li>内部短暂停顿计入过程时长；末尾确认等待不计入。</li><li>若 132 ns 恰好出现新传输，先确认旧过程，再开启新过程。</li><li>尾周期的下一采样沿尚未出现时，时长未知，不能估算。</li></ul><ul class="facts"><li>零字节传输可启动过程、延续活动并重置静默。</li><li>控制未知打断连续静默；恢复后重新累计 Q。</li><li>本范围复位中断过程；成员复位不直接中断组过程。</li></ul></div>
+      </div>
+      <div class="panel"><h3>允许重复阶段，也允许没有稳定段</h3><div class="phase-chain"><span class="phase-chip">未确定</span><span>→</span><span class="phase-chip up">爬坡</span><span>→</span><span class="phase-chip steady">稳定</span><span>→</span><span class="phase-chip down">下降</span><span>→</span><span class="phase-chip steady">稳定</span><span>→ …</span></div><p class="caption">该顺序仅为示意；阶段不由 testbench 标签提供。低带宽甚至零带宽平台，也可能满足稳定条件。</p>
+        <div class="core-breakdown"><div class="core-part"><span class="number-label">01 / EVIDENCE</span><h4>合格的新窗口结果</h4><p>新发布、满窗、字节完整且不含其他过程传输。N ≥ 3，并达到最小跨度；停钟旧快照不增加证据。</p></div><div class="core-part"><span class="number-label">02 / FIT</span><h4>趋势 + 拟合残差</h4><p>最近 N 点按实际发布时间等权拟合直线。delta 表示拟合总变化，rms 表示相对趋势的偏差。</p></div><div class="core-part"><span class="number-label">03 / CONFIRM</span><h4>持续 K 次 + 迟滞</h4><p>候选连续满足才确认；确认后回溯到候选首次成立时刻。无效证据立即打断连续性。</p></div></div>
+        <div class="note">例如：120 ns 首次满足候选条件，150 ns 积满 K 次。阶段边界记为 120 ns，确认时刻记为 150 ns；最终区间还要按过程边界裁剪。</div>
+        <details><summary>展开：拟合、门槛与状态规则</summary><div class="formula">yᵢ = 滑窗 GB/s，tᵢ = 实际发布时间<br>ŷᵢ = a + b·tᵢ<br>delta = b·(t_last − t_first)<br>rms = √mean((yᵢ − ŷᵢ)²)</div><div class="table-wrap"><table class="compact"><thead><tr><th>候选阶段</th><th>进入条件</th></tr></thead><tbody><tr><td>稳定</td><td>|delta| ≤ 稳定进入容差，且 rms ≤ 波动进入容差</td></tr><tr><td>爬坡</td><td>delta ≥ 趋势门槛，且 rms ≤ 波动进入容差</td></tr><tr><td>下降</td><td>delta ≤ −趋势门槛，且 rms ≤ 波动进入容差</td></tr><tr><td>未确定</td><td>证据不足，或不满足可靠阶段条件</td></tr></tbody></table></div><ul class="facts"><li>容差使用“绝对项 + 相对项 × 均值”，避免除以均值。稳定退出容差较宽，趋势门槛须大于稳定退出容差。</li><li>N、K、最小跨度、进入 / 退出容差和 Q 均为启动前显式配置，无跨场景通用默认值。</li><li>跨过程残留包括零字节事件；窗口字节为零不能证明没有上一过程残留。</li><li>静默拖尾不延长过程、不强行补出下降段。边界回溯必须使用原始计数快照。</li></ul></details>
+      </div>
+      <div class="columns"><div class="panel"><h3>完整 e2e 的条件</h3><ul class="facts"><li>过程正常确认结束。</li><li>首末与尾周期边界确定，字节观测完整。</li><li>真实持续时间已知且大于零。</li><li>缺少稳定段不使完整 e2e 失效。</li></ul></div><div class="panel"><h3>质量条件分别保留</h3><div class="pill-row"><span class="tag">正常 / 中断 / 截断</span><span class="tag">边界确定性</span><span class="tag">字节完整性</span><span class="tag">阶段证据</span><span class="tag">成员复位覆盖</span></div><p class="caption">没有任何确定传输表示未形成过程，e2e 不适用；完整的零字节传输过程可具有有效的零 e2e。观察结束时未完成的过程按原因报告。</p></div></div>
+      <p class="source-note">依据：<a href="https://github.com/MakeReadUnique/bw_mon/issues/4#issuecomment-6379756742" target="_blank" rel="noopener">自动阶段识别与全程平均带宽的边界</a></p>
+    </section>
+
+    <section class="view" id="checks" role="tabpanel" aria-labelledby="tab-checks" hidden>
+      <div class="section-heading"><div><h2><span class="section-number">05</span>统计与检查：每项结论都有自己的证据</h2><p>性能预期属于具体场景。阶段判定、性能比较和辅助 hint 分别处理。</p></div></div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>统计量</th><th>来源 / 口径</th><th>检查对象</th></tr></thead><tbody><tr><td>稳定段带宽</td><td>最终阶段区间的原始字节 ÷ 实际时长</td><td>正常完成过程中，最后一个已确认稳定段</td></tr><tr><td>e2e</td><td>过程原始字节 ÷ 实际过程时长</td><td>每个满足完整条件的过程</td></tr><tr><td>爬坡 / 下降时间</td><td>每个已确认片段的最终边界之差，单位 ns</td><td>各片段独立使用该范围的同一预期</td></tr><tr><td>min / max、标准差、CV</td><td>最终区间内发布的合格新窗口结果，按结果等权</td><td>最后稳定段、整个过程；过程波动含升降与内部静默</td></tr></tbody></table></div><div class="note">原始字节用于稳定段带宽和 e2e；窗口序列用于波动。阶段拟合的残差 rms 与性能波动标准差是不同量。</div><details><summary>展开：波动样本的精确选择</summary><ul class="facts"><li>最终区间 [a,b) 按发布时间选取 a ≤ tᵢ &lt; b 的窗口结果；窗口本身可以覆盖同一过程的前一阶段。</li><li>样本须新发布、满窗、字节完整、不混有其他过程。重叠窗口不是独立统计样本。</li><li>总体标准差 σ = √mean((yᵢ−μ)²)，CV = 100 × σ / μ。min/max 至少 1 点；σ/CV 至少 2 点。</li><li>μ=0 时 CV 不适用；绝对波动仍可有效。不能填造 0，也不能剔除未知后宣称完整达标。</li></ul></details></div>
+      <div class="columns"><div class="panel"><div class="panel-title"><div><h3>试一项带宽下限检查</h3><p>仅演示性能结算公式，以下数值不是产品默认目标。</p></div></div><div class="check-form"><label for="actual-bw">实际值 · GB/s<input id="actual-bw" type="number" min="0" value="128" step="any"></label><label for="target-bw">下限 L · GB/s<input id="target-bw" type="number" min="0" value="160" step="any"></label><label for="tolerance">相对容差 · %<input id="tolerance" type="number" min="0" value="5" step="any"></label></div><label class="evidence-label"><input id="evidence-complete" type="checkbox" checked>结果已最终确定，且本指标证据完整</label><div class="check-result" aria-live="polite"><span class="check-status" id="check-status">FAIL</span><p id="check-explanation"></p></div><p class="caption">本例绝对容差 A=0。等于有效边界算 PASS；数值不达标为 FAIL；缺少可比较结果为 WARNING。两者都继续仿真。</p><details><summary>完整上下限公式</summary><div class="formula">有效下限 = L − (A + |L| × R_pct / 100)<br>有效上限 = U + (A + |U| × R_pct / 100)</div><p class="caption">支持下限、上限或区间；绝对与百分比容差相加。未配置容差时 A=0、R_pct=0。</p></details></div>
+        <div class="panel"><h3>场景性能预期 · +BW_EXPECT</h3><p class="caption" style="margin-bottom:12px">按完整 POINT_ID / GROUP_ID 匹配。下列片段仅为输入示例。</p><pre># scene_a.cfg
+[point "tb.top.master0.bw"]
+steady_bw_min_gbps = 80
+steady_bw_rel_tol_pct = 5
+e2e_bw_min_gbps = 60
+ramp_time_max_ns = 30
+steady_cv_max_pct = 5
+
+[group "memory_all"]
+steady_bw_min_gbps = 160
+episode_cv_max_pct = 10</pre><p class="caption">未指定文件时仅统计。显式指定但无法使用，或存在非法键、数值、重复项、未知 ID：WARNING，并禁用受影响规则；无法隔离时禁用该文件检查。</p></div></div>
+      <div class="thirds"><div class="panel"><h3>性能检查</h3><ul class="facts"><li><b class="quality-good">PASS</b>：有有效比较且满足允许范围。</li><li><b class="quality-bad">FAIL</b>：有效数值不达标。</li><li><b class="quality-warn">WARNING</b>：配置有误或缺少该指标所需证据。</li><li>汇总优先级 FAIL &gt; WARNING &gt; PASS；没有检查时仅统计。最终记录只结算一次。</li></ul></div><div class="panel"><h3>独立 debug hint</h3><ul class="facts"><li>反压与可信信用不足分别报告。</li><li>显式配置阈值，ns / cycle 基准独立于统计窗口。</li><li>ns 跟踪真实条件变化，停钟仍计时；cycle 随周期推进。</li><li>首次达到阈值提示一次，区间结束汇总；未知 / 复位打断连续性。hint 计数与性能汇总分开。</li></ul></div><div class="panel"><h3>核心错误</h3><ul class="facts"><li>启动失败、循环 / 重叠成员。</li><li>缺失、重复、倒序、错沿记录。</li><li>时间、计数、序号、精确中间算术或容量不足。</li><li><b class="quality-bad">明确报错并终止。</b>日志给出对象、时刻 / 期望沿及相关数值，不降级为性能 WARNING。</li></ul></div></div>
+      <div class="note teal">成员已知复位不会自动使组字节不完整；满足指标条件时继续与原组目标比较，并记录复位覆盖。目标不按活动成员数缩放，也不从下级目标相加或继承。</div>
+      <p class="source-note">依据：<a href="https://github.com/MakeReadUnique/bw_mon/issues/8#issuecomment-6383152925" target="_blank" rel="noopener">阶段统计、波动指标及 PASS/FAIL 检查规则</a></p>
+    </section>
+
+    <section class="view" id="acceptance" role="tabpanel" aria-labelledby="tab-acceptance" hidden>
+      <div class="section-heading"><div><h2><span class="section-number">06</span>规模目标与实现验收</h2><p>以下为已确认的设计与后续验收目标；当前架构规划未实现或运行监测器。</p></div><span class="tag amber">待实现验证</span></div>
+      <div class="capacity-grid"><div class="capacity"><span class="eyebrow">POINTS</span><div class="metric">16,384</div><p>最大观测点数，含未归组点</p></div><div class="capacity"><span class="eyebrow">GROUPS</span><div class="metric">4,096</div><p>全部层级合计的聚合组数</p></div><div class="capacity"><span class="eyebrow">DEPTH</span><div class="metric">8 <small>层</small></div><p>组嵌套上限</p></div><div class="capacity"><span class="eyebrow">SAMPLING</span><div class="metric">2 <small>GHz</small></div><p>最高采样频率，模拟时长 40 μs</p></div></div>
+      <div class="columns"><div class="panel"><h3>数值与拓扑边界</h3><div class="table-wrap" style="margin-top:12px"><table class="compact"><tbody><tr><th>直接成员关系总数</th><td>≤ 65,536</td></tr><tr><th>每源直接上级数</th><td>≤ 16</td></tr><tr><th>最大窗口</th><td>40,000 ns / 80,000 cycles</td></tr><tr><th>单次计量字节</th><td>≤ 2³²−1 B；组单沿增量需扩宽</td></tr><tr><th>时间 / 累计字节</th><td>无符号 64 位；时间差先整数计算</td></tr><tr><th>启动期限初始值</th><td>100 ns，可配置</td></tr><tr><th>缺失记录期限初始值</th><td>自真实预期沿 T 起 1 ns，可配置</td></tr></tbody></table></div><p class="caption">到期同刻的数据先参与到齐判断；合法停钟无新预期沿，不虚构缺帧。40 μs 预算不随局部复位重新获得。</p></div>
+        <div class="panel"><h3>资源策略</h3><ul class="facts"><li><b>内部自动管理容量：</b>预分配、增长、回收或精确无损合并由实现选择；用户无需配置历史槽数或队列深度。</li><li><b>保持精确语义：</b>通信记录、窗口历史、未知标记、证据与待裁剪状态都不能静默丢弃。</li><li><b>无固定内存验收上限：</b>提供资源估算并记录实际峰值内存。</li><li><b>不考核仿真墙钟耗时增幅：</b>已撤销旧 20% / 50% 目标；物理仿真时间的启动与缺帧期限仍有效。</li><li>常用档：1,024 点 / 256 组，两层无跨组复用；2 GHz、40 μs、W=100 ns、S=10 ns，每点每沿 64 B。</li></ul></div></div>
+      <div class="section-heading"><div><h2>三层验收证据</h2><p>测试的预期值来自原始输入与独立公式；性能 FAIL 可以是测试所期待的正确行为。</p></div></div>
+      <div class="thirds"><div class="acceptance"><span class="eyebrow">01 / UNIT TESTS</span><h3>组件 UT 与必要集成变体</h3><p>自动核对接口、注册、窗口、聚合、过程、阶段、cfg、hint 和错误路径。覆盖正常、FAIL、WARNING、核心终止行为。</p><div class="pill-row"><span class="tag">独立预期值</span><span class="tag">状态与边界</span></div></div><div class="acceptance"><span class="eyebrow">02 / END TO END</span><h3>12 点真实波形</h3><p>4 组拓扑经实际 bind 到公开结果，自动比对并生成 FSDB。人工检查稳定流量、过程变化、复位 / 未知 / 停钟 / 变频。</p><div class="pill-row"><span class="tag">真实 FSDB</span><span class="tag">人工检查记录</span></div></div><div class="acceptance"><span class="eyebrow">03 / SCALE</span><h3>大规模正确性</h3><p>证明点数、组数、层数、成员边和复用上限；覆盖短、中、全场长窗口及两种基准，记录具体参数与独立对照。</p><div class="pill-row"><span class="tag">配置与参考结果</span><span class="tag">差异报告</span></div></div></div>
+      <div class="panel" style="margin-top:18px"><h3>实现交接的六项交付物</h3><div class="core-breakdown"><div class="core-part"><h4>01 集成入口与 02 完整配置</h4><p>bind / wrapper、组实例、ready；身份与信号映射。每项配置的类型、范围、单位、默认 / 必填、非法值行为。</p></div><div class="core-part"><h4>03 性能 cfg 与 04 公开字段</h4><p>完整键表、比较方向、容差及错误隔离；固定公开层次的带宽、时间、序号、过程 / 阶段及独立质量状态。</p></div><div class="core-part"><h4>05 日志定位与 06 验收资产</h4><p>结算上下文、错误对象和时刻；契约到用例的映射、输入、参考值、FSDB、人工记录、复现命令与工具版本。</p></div></div></div>
+      <p class="source-note">依据：<a href="https://github.com/MakeReadUnique/bw_mon/issues/10#issuecomment-6383338090" target="_blank" rel="noopener">精确滑窗的历史容量与资源预算</a> · <a href="https://github.com/MakeReadUnique/bw_mon/issues/11#issuecomment-6385539595" target="_blank" rel="noopener">架构验收场景与实现交接约束</a></p>
+    </section>
+
+    <section class="view" id="sources" role="tabpanel" aria-labelledby="tab-sources" hidden>
+      <div class="section-heading"><div><h2><span class="section-number">07</span>最终决议索引</h2><p>以架构地图索引的 Resolution 为准；早期草案和候选方案不作为最终契约。</p></div></div>
+      <div class="panel"><div class="panel-title"><div><h3>通用 SoC 带宽监测器架构地图</h3><p>2026-10-24 关闭；11 张原生子票全部关闭，地图内无剩余待决事项。</p></div><a class="quiet" href="https://github.com/MakeReadUnique/bw_mon/issues/1" target="_blank" rel="noopener">打开地图 ↗</a></div><ul class="source-list">
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/2#issuecomment-6379218766" target="_blank" rel="noopener"><span class="source-no">01</span>三类接口的传输事件、字节计量与诊断契约 ↗</a><small>固定 / 动态计量、零字节、未知、credit 同拍 / 下一拍及可信性。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/3#issuecomment-6379311304" target="_blank" rel="noopener"><span class="source-no">02</span>ns 与本地 clk 滑窗及多观测点聚合的时间语义 ↗</a><small>精确窗口、预热、完整性、停钟 / 变频与成员复位。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/4#issuecomment-6379756742" target="_blank" rel="noopener"><span class="source-no">03</span>自动阶段识别与全程平均带宽的边界 ↗</a><small>流量过程、静默、N 点拟合、K 次确认、阶段回溯与 e2e。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/7#issuecomment-6382679083" target="_blank" rel="noopener"><span class="source-no">04</span>模块职责、bind 接入与统计数据通路 ↗</a><small>并行 recorder / hint、共享 package、独立统计核心、同刻顺序与公开结果。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/12#issuecomment-6383144791" target="_blank" rel="noopener"><span class="source-no">05</span>分层聚合的成员、数据与复位契约 ↗</a><small>扩展模块决议：组源、直接消费者、递归重叠校验、统计复位与供数分离。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/8#issuecomment-6383152925" target="_blank" rel="noopener"><span class="source-no">06</span>阶段统计、波动指标及 PASS/FAIL 检查规则 ↗</a><small>最后稳定段、过程波动、场景 cfg、逐指标质量及非终止式结算。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/10#issuecomment-6383338090" target="_blank" rel="noopener"><span class="source-no">07</span>精确滑窗的历史容量与资源预算 ↗</a><small>规模与数值目标、自动容量管理、启动 / 缺帧期限；已取消耗时增幅考核。</small></div><span class="tag green">最终决议</span></li>
+        <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/11#issuecomment-6385539595" target="_blank" rel="noopener"><span class="source-no">08</span>架构验收场景与实现交接约束 ↗</a><small>组件 UT、12 点真实波形、大规模正确性与六项交接要求。</small></div><span class="tag green">最终决议</span></li>
+      </ul></div>
+      <div class="panel"><h3>已完成的前置研究</h3><ul class="facts"><li><a href="https://github.com/MakeReadUnique/bw_mon/issues/5" target="_blank" rel="noopener">查证小时间窗、bind 与 Verdi 观测的技术约束 ↗</a></li><li><a href="https://github.com/MakeReadUnique/bw_mon/issues/6" target="_blank" rel="noopener">查证自动流量阶段识别与短滑窗统计的适用方法 ↗</a></li><li><a href="https://github.com/MakeReadUnique/bw_mon/issues/9" target="_blank" rel="noopener">查证 CHI Size 字段与单次传输字节计量的关系 ↗</a></li></ul></div>
+      <div class="note amber"><p><b>当前完成的是架构规划。</b>本页为离线可读的决议可视化，交互用于解释规则。SV 实现、真实 FSDB 和规模正确性仍需按验收契约交付。</p><p>范围不含可综合 IP、UVM、跨异步时钟聚合、逐笔事务匹配 / 延迟分析；不增加 pending 等外部需求提示。</p></div>
+    </section>
+    <footer class="footer"><span>bw_mon · 最终决议快照 2026-10-24 · 单文件 HTML / 无外部依赖</span><span>架构说明与示例计算 · 实际监测器与工具行为待实现验收</span></footer>
+  </main>
+  <dialog id="module-dialog" class="dialog" aria-labelledby="dialog-title"><div class="dialog-inner"><div class="dialog-top"><span class="eyebrow" id="dialog-category"></span><button class="dialog-close" id="dialog-close" aria-label="关闭模块详情">×</button></div><h2 id="dialog-title"></h2><p class="dialog-purpose" id="dialog-purpose"></p><div class="dialog-grid"><div class="dialog-box"><h4>输入</h4><ul id="dialog-inputs"></ul></div><div class="dialog-box"><h4>输出</h4><ul id="dialog-outputs"></ul></div></div><p class="dialog-state" id="dialog-state"></p><div class="note teal" id="dialog-reset"></div><div class="dialog-source" id="dialog-source"></div></div></dialog>
+  <script>
+    'use strict';
+    const sourceLinks = {
+      2:['三类接口的传输事件、字节计量与诊断契约','6379218766'],
+      3:['ns 与本地 clk 滑窗及多观测点聚合的时间语义','6379311304'],
+      4:['自动阶段识别与全程平均带宽的边界','6379756742'],
+      7:['模块职责、bind 接入与统计数据通路','6382679083'],
+      8:['阶段统计、波动指标及 PASS/FAIL 检查规则','6383152925'],
+      10:['精确滑窗的历史容量与资源预算','6383338090'],
+      11:['架构验收场景与实现交接约束','6385539595'],
+      12:['分层聚合的成员、数据与复位契约','6383144791']
+    };
+    const modules = {
+      setup:{category:'CONFIGURATION / LIFECYCLE',title:'统一配置与启动',purpose:'加载配置与自动注册 → 校验并冻结 → 发布 ready → 开始计量。集成者使用统一入口。',
+        inputs:['预期总点数 expected_point_count，包含未归组点','唯一 POINT_ID / GROUP_ID、声明组 owner、预期直接成员数','成员规则、共同采样 / 窗口上下文、阶段与 hint 配置'],
+        outputs:['冻结的成员关系与路由','公共计量起点与 ready','带对象、路径、预期 / 实际数量的启动错误'],
+        state:'校验非空组、数量、身份、时钟 / 窗口兼容、循环引用与递归重叠。观测点按完整 ID 或层次段前缀匹配；noc1 不匹配 noc10。总点数不能由重叠组人数相加得到。',
+        reset:'局部复位不重新注册、不改变身份或路由。启动期限初始值 100 ns，可配置；运行中不能改成员或统计配置。',sources:[7,12,10]},
+      adapter:{category:'DUT / PROTOCOL ADAPTER',title:'DUT / 协议接入包装',purpose:'把 DUT / 协议特有的编码映射成通用观测语义，是 size 编码转换的所在层。',
+        inputs:['目标实例原始接口控制、clk 与 reset','原始 size 编码及本次传输的计量规则','类型 bind 参数与可选显式 POINT_ID'],
+        outputs:['本次传输 size_bytes 与解码已知性','同一采样视图中的原始控制与计量输入','保留供诊断和波形追查的原始字段'],
+        state:'按 module 类型 bind 可覆盖多个目标实例。默认 POINT_ID 在公开 monitor / wrapper 固定作用域用 %m 生成一次，再传给 recorder、hint 和 core；不在 package helper 内重新取名。',
+        reset:'未知编码保留未知；不能把整笔事务的 Size 在多个 beat / flit 上重复计量。接口为 SV interface 时需选择合法所在 module 或包装，不承诺直接绑定 module。',sources:[2,7]},
+      recorder:{category:'OBSERVATION / RECORDING',title:'bw_point_recorder',purpose:'只记录本沿观测数据；原始累计和窗口历史由统计核心拥有。',
+        inputs:['一致的原始采样视图与接口类型','固定字节配置或 size_bytes / 解码已知性','固定 POINT_ID、时钟、reset'],
+        outputs:['身份、源世代、单调记录序号、采样沿序号','统一 timestamp_ticks、周期上下文','事件已知性 / 发生状态、已知字节 / 完整性、reset 状态及已知性'],
+        state:'每个采样沿都提供记录，包括无传输、未知和已知复位。同一规范化记录直接送本点核心，并按订阅关系发布到 package；不能把未收到当成零。',
+        reset:'本点统计可复位，但身份不变，源序号不回退或重用。信用诊断失信、hint 禁用不使确定事件或字节失效。',sources:[2,7]},
+      hints:{category:'LOCAL DEBUG / PARALLEL PATH',title:'bw_debug_hints',purpose:'与 recorder 并行读取同一原始采样视图，独立维护信用账本和持续反压等诊断。',
+        inputs:['原始有效、握手、flitv / lcrdv 与 reset','信用容量、可信初值、归还时序','独立的启用、阈值及 ns / cycle 基准'],
+        outputs:['是否支持、是否启用、当前可信性、是否命中','起点、触发时刻、持续长度与结束 / 中断原因','独立 hint 日志与公开波形标量'],
+        state:'可单独禁用。一次 flitv 消耗一个 credit；归还默认下一拍可用。信用异常使账本失信，直至复位或重新建立可信初值。不能夹紧余额伪造可信性。',
+        reset:'未知和复位打断持续区间；ns 跟踪真实条件变化，cycle 只随周期推进。hint 不决定发送许可，不反向修改统计，也不直接增加性能 FAIL / WARNING。',sources:[2,7,8]},
+      package:{category:'SHARED TRANSPORT / STATE OWNER',title:'bw_mon_pkg',purpose:'通过受控函数管理全局共享数据，承载跨 SV hierarchy 的通信。',
+        inputs:['点 / 组注册、成员配置、规范化源记录','持久通知序号与带时间戳控制通知','各直接消费者的消费确认'],
+        outputs:['冻结的成员关系与可查询的完整帧','唯一权威消费位置和释放条件','缺失、重复、倒序、错沿等通信诊断所需信息'],
+        state:'先写持久记录，再更新可持久检查的通知序号。所有直接消费者确认后释放；collector 只保留当前帧，不另建独立推进的权威 cursor。module 过程负责等待，package function 不阻塞。',
+        reset:'不运行统计、不自行访问 DUT 层次、不写 core 累计。局部复位不清 package 或其他消费者；通信缓冲独立于各范围统计历史。',sources:[7,12]},
+      group:{category:'AGGREGATION / DIRECT MEMBERS',title:'bw_group_mon',purpose:'按直接成员关系收齐同一采样沿，形成一份组源记录；每个组使用一个实例。',
+        inputs:['共同采样 clk、GROUP_ID、组自身 reset 和配置','package 中的点源 / 下级组源记录','时间戳控制通知及冻结成员关系'],
+        outputs:['本沿已知事件数、事件完整性、已知字节增量、字节完整性','统一原采样时刻、沿序号与周期上下文','递归观测点复位覆盖；同一组帧送本组 core 并向上发布'],
+        state:'输入是原始计量。下级滑窗带宽、累计总数、阶段或统计 valid 不充当本沿增量。每个上级直接成员的递归点集合必须互不重叠，启动即校验。',
+        reset:'本组统计复位时仍收集、汇总、供数与确认。输出持久发布且本组核心接纳或按复位处理后，才确认输入消费。缺帧期限从原公共沿 T 计，初始值 1 ns。',sources:[7,12,10]},
+      upstream:{category:'HIERARCHY / GROUP SOURCE',title:'组源向上发布',purpose:'把本沿合成记录持久发布回 package，供直接上级独立读取。',
+        inputs:['本组收齐的同沿直接成员记录','精确事件 / 字节求和与分开的质量状态'],
+        outputs:['源类型 GROUP、GROUP_ID、单调记录序号','原 T 与公共采样沿，绝不逐层推迟','供多个直接上级读取的同一份持久组源记录'],
+        state:'上级只收集直接成员。无须为每个祖先复制叶事件流；所有直接上级消费后释放该组输出。下级输入在本层完成发布与接纳后即可确认，不等待所有祖先。',
+        reset:'本组统计复位与向上供数分离；不传播成实际观测点复位。上级历史和过程继续，子组预热不阻碍确定字节向上贡献。',sources:[12]},
+      core:{category:'STATISTICS / PER-SCOPE STATE',title:'bw_stats_core',purpose:'单点与聚合范围复用同一种实现，各实例拥有独立统计状态和唯一调度入口。',
+        inputs:['规范化范围记录、事件与原始字节增量','时间 / 周期元数据、reset、timer 和控制动作','窗口、静默、N / K、跨度、门槛与迟滞配置'],
+        outputs:['精确滑窗字节、GB/s、可选 B/cycle 及质量','流量过程、原始边界快照、实际时长与 e2e','同一窗口序列上的阶段证据、候选、确认和最终片段'],
+        state:'三项私有职责：计量拥有精确历史与累计；过程拥有活动和静默；阶段拥有拟合与候选。物理 module 数未固定，不能通过独立 always 引入额外公共调度协议。',
+        reset:'本范围自身复位清自己的窗口、打断过程 / 阶段并重新预热；成员复位只作为输入。历史、边界、事件 / 字节质量独立于诊断可信性。',sources:[3,4,7]},
+      report:{category:'CHECKS / FINAL RESULTS',title:'bw_check_report',purpose:'独立进行最终统计、性能比较和报告，不反向改变原始计量或阶段识别。',
+        inputs:['窗口、过程、阶段及其独立质量状态','原始计数边界快照、最终可结算记录','场景 +BW_EXPECT 配置；独立 hint 结果'],
+        outputs:['稳定段带宽、阶段时间、e2e、min / max / 标准差 / CV','带身份 / 世代 / 过程 / 阶段、区间、实际值和允许范围的日志','一次性 PASS / FAIL / WARNING 计数与最终汇总'],
+        state:'稳定段代表值选正常完成过程中最后一个已确认稳定段。波动按发布时间选择合格窗口样本，使用等权总体标准差。所有原始字节仅计一次。',
+        reset:'后续未知、复位或截断不抹掉先前已完整确定的阶段。逐指标判断证据；性能 FAIL / WARNING 继续仿真，核心错误仍终止。hint 与性能汇总分开。',sources:[8]},
+      wave:{category:'PUBLIC OBSERVABILITY / VERDI',title:'公开点 / 组层次的稳定输出',purpose:'在公开 module 固定层次提供普通标量；Verdi 展示 monitor 已计算的 real 带宽。',
+        inputs:['各点 / 组的窗口、过程、阶段结果','原始协议输入与本地 hint 状态'],
+        outputs:['范围身份、统计世代、新结果序号','时间 / 周期边界、覆盖量、字节 / 事件、real GB/s / B/cycle','预热、字节完整性、边界确定性、成员复位覆盖、诊断可信性等独立状态'],
+        state:'动态 package 存储不是唯一波形入口；正式观测面不依赖私有 u_measure / u_episode / u_phase 是否存在。停钟旧快照保留原区间和序号。',
+        reset:'公开语义跨内部重构保持稳定；便利 valid 可以派生，但原始质量条件仍须保留。实际 FSDB、工具选项与人工波形检查由实现验收提供。',sources:[7,11]}
+    };
+    const byId = id => document.getElementById(id);
+    const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+    function selectTab(id, updateHash) {
+      if (!tabs.some(button => button.dataset.tab === id)) id = 'overview';
+      tabs.forEach(button => {
+        const active = button.dataset.tab === id;
+        button.setAttribute('aria-selected', String(active));
+        button.tabIndex = active ? 0 : -1;
+        byId(button.dataset.tab).hidden = !active;
+      });
+      if (updateHash) history.replaceState(null, '', '#' + id);
+      requestAnimationFrame(drawEdges);
+    }
+    tabs.forEach(button => {
+      button.addEventListener('click', () => selectTab(button.dataset.tab, true));
+      button.addEventListener('keydown', event => {
+        const index = tabs.indexOf(button);
+        let next = null;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabs.length - 1;
+        if (next !== null) {event.preventDefault();tabs[next].focus();selectTab(tabs[next].dataset.tab, true);}
+      });
+    });
+    window.addEventListener('hashchange', () => selectTab(location.hash.slice(1), false));
+    const dialog = byId('module-dialog');
+    document.querySelectorAll('[data-module]').forEach(button => button.addEventListener('click', () => {
+      const item = modules[button.dataset.module];
+      byId('dialog-title').textContent = item.title;
+      byId('dialog-category').textContent = item.category;
+      byId('dialog-purpose').textContent = item.purpose;
+      ['inputs','outputs'].forEach(key => {
+        byId('dialog-' + key).replaceChildren(...item[key].map(text => {const li = document.createElement('li');li.textContent = text;return li;}));
+      });
+      byId('dialog-state').textContent = '状态与边界：' + item.state;
+      byId('dialog-reset').textContent = item.reset;
+      const links = byId('dialog-source');
+      links.replaceChildren(document.createTextNode('最终决议：'));
+      item.sources.forEach((number, index) => {
+        if(index) links.append(document.createTextNode(' · '));
+        const link = document.createElement('a');
+        link.href = 'https://github.com/MakeReadUnique/bw_mon/issues/' + number + '#issuecomment-' + sourceLinks[number][1];
+        link.textContent = sourceLinks[number][0];link.target = '_blank';link.rel = 'noopener';links.append(link);
+      });
+      dialog.showModal();
+    }));
+    byId('dialog-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => {if(event.target === dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
+    function drawEdges() {
+      if(getComputedStyle(byId('overview')).display === 'none') return;
+      const base = byId('architecture').getBoundingClientRect();
+      const svg = byId('diagram-edges');
+      svg.setAttribute('viewBox', '0 0 ' + base.width + ' ' + base.height);
+      let markup = '<defs><marker id="edge-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#83a7ba"/></marker></defs>';
+      [['node-recorder','node-package'],['node-package','node-collector']].forEach(pair => {
+        const from = byId(pair[0]).getBoundingClientRect(), to = byId(pair[1]).getBoundingClientRect();
+        const x1=from.right-base.left+2,y1=from.top-base.top+from.height/2,x2=to.left-base.left-5,y2=to.top-base.top+to.height/2;
+        const middle=(x1+x2)/2;
+        markup += '<path d="M'+x1+' '+y1+' C'+middle+' '+y1+' '+middle+' '+y2+' '+x2+' '+y2+'" stroke="#83a7ba" stroke-width="1.5" fill="none" marker-end="url(#edge-arrow)"/>';
+      });
+      svg.innerHTML = markup;
+    }
+    window.addEventListener('resize', () => {
+      document.querySelector('.navigation').setAttribute('aria-orientation', innerWidth <= 850 ? 'horizontal' : 'vertical');
+      requestAnimationFrame(drawEdges);
+    });
+    let demoStage=0, demoScenario='normal';
+    function renderDemo() {
+      const resetPoint=demoScenario==='point-reset', unknown=demoScenario==='unknown', resetGroup=demoScenario==='group-reset';
+      const bytes0=resetPoint||unknown?192:256;
+      const events0=resetPoint?3:4;
+      const rows=[
+        ['p0…p3',bytes0,events0,1,unknown,'点源记录'],
+        ['p4…p7',256,4,1,false,'点源记录'],
+        ['p8 · p9',128,2,1,false,'点源记录'],
+        ['p10 · p11',128,2,1,false,'仅本点统计'],
+        ['die0_dmc',bytes0,events0,2,unknown,resetGroup?'统计复位；供数继续':'组源已持久发布'],
+        ['die1_dmc',256,4,2,false,'组源已持久发布'],
+        ['all_dmc',bytes0+256,events0+4,3,unknown,'本沿完整成员帧已接纳'],
+        ['mixed',bytes0+128,events0+2,4,unknown,'本沿完整成员帧已接纳']
+      ];
+      byId('demo-rows').innerHTML=rows.map(row=>{
+        const done=demoStage>=row[3];
+        const quality=row[4]?'不完整（已知部分）':resetPoint && ['p0…p3','die0_dmc','all_dmc','mixed'].includes(row[0])?'完整 · 点复位覆盖':'完整';
+        return '<tr><td class="mono">'+row[0]+'</td><td>'+(done?row[1]+' B':'—')+'</td><td>'+(done?row[2]:'—')+'</td><td class="'+(row[4]?'quality-warn':'quality-good')+'">'+(done?quality:'待记录')+'</td><td>'+(done?row[5]:'等待本沿输入')+'</td></tr>';
+      }).join('');
+      const scenarioNote=unknown?'p0 确定传输，但 size 未知：事件计数保留，字节只显示已知部分，所有覆盖它的组传播不完整性。':resetPoint?'p0 已知复位：本沿不增加事件 / 字节。祖先的旧窗口历史保留到自然过期，完整性与复位覆盖分别表达。':resetGroup?'die0_dmc 自身统计处于复位，但本沿 '+bytes0+' B 组源记录仍向上提供；此复位不产生实际观测点复位覆盖。':'所有观测点本沿事件与字节完整；各层只计算一次本沿原始增量。';
+      const stageNotes=[
+        '尚未发布本沿记录。缺记录不能当成零流量，所有结果保持待收集。',
+        '点源已发布。p0…p7 等待各自下级组；p8、p9 等待 mixed。p10、p11 走单点直接路径，无组消费者。',
+        'die0_dmc 与 die1_dmc 已收齐本沿并形成持久组源记录，本组核心已接纳或按复位处理。p0…p7 的输入可释放；die0 组源仍等待 all_dmc 与 mixed。',
+        'all_dmc 已接纳 '+(bytes0+256)+' B 已知增量并确认。die1 组源可释放；die0 组源仍须保留给 mixed，p8、p9 也仍待 mixed。',
+        'mixed 已接纳 '+(bytes0+128)+' B 已知增量并确认。die0 组源、p8 / p9 已被全部直接消费者确认，可以释放。各范围自己的统计历史继续保留。'
+      ];
+      byId('demo-explanation').textContent=stageNotes[demoStage]+' '+scenarioNote;
+      Array.from(byId('demo-progress').children).forEach((element,index)=>{element.className=index===demoStage?'current':index<demoStage?'done':'';});
+      byId('demo-counter').textContent='STEP '+demoStage+' / 4 · T = 104 ns';
+      byId('demo-prev').disabled=demoStage===0;byId('demo-next').disabled=demoStage===4;
+      document.querySelectorAll('[data-scenario]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scenario===demoScenario)));
+    }
+    document.querySelectorAll('[data-scenario]').forEach(button=>button.addEventListener('click',()=>{demoScenario=button.dataset.scenario;demoStage=0;renderDemo();}));
+    byId('demo-next').addEventListener('click',()=>{demoStage=Math.min(4,demoStage+1);renderDemo();});
+    byId('demo-prev').addEventListener('click',()=>{demoStage=Math.max(0,demoStage-1);renderDemo();});
+    byId('demo-restart').addEventListener('click',()=>{demoStage=0;renderDemo();});
+    const windowEvents=[{t:0,b:64},{t:2,b:64},{t:4,b:128},{t:7.5,b:64},{t:10,b:128},{t:12,b:64},{t:16,b:64},{t:20,b:128}];
+    function renderWindow() {
+      const t=Number(byId('window-time').value),left=t-10;
+      const x=time=>48+time*33;
+      const bytes=windowEvents.filter(e=>e.t>=left&&e.t<t).reduce((sum,e)=>sum+e.b,0);
+      let svg='<title id="window-chart-title">窗口 ['+left+', '+t+') ns，计量 '+bytes+' 字节</title><rect x="'+x(left)+'" y="27" width="330" height="115" rx="4" fill="#eef3ff"/>';
+      for(let time=0;time<=22;time+=2)svg+='<line x1="'+x(time)+'" y1="142" x2="'+x(time)+'" y2="147" stroke="#b6c5d2"/><text x="'+x(time)+'" y="166" text-anchor="middle" fill="#61717e" font-size="11" font-family="system-ui">'+time+'</text>';
+      svg+='<line x1="37" y1="142" x2="806" y2="142" stroke="#b6c5d2"/>';
+      windowEvents.forEach(e=>{const active=e.t>=left&&e.t<t;const h=e.b*.56;svg+='<rect x="'+(x(e.t)-6)+'" y="'+(142-h)+'" width="12" height="'+h+'" rx="3" fill="'+(active?'#345cd0':'#d9e1e9')+'"/><text x="'+x(e.t)+'" y="'+(133-h)+'" text-anchor="middle" fill="'+(active?'#345cd0':'#8899a8')+'" font-size="10" font-family="system-ui">'+e.b+'B</text>';if(e.t===7.5)svg+='<text x="'+x(e.t)+'" y="180" text-anchor="middle" font-size="10" fill="#61717e">7.5</text>';});
+      svg+='<line x1="'+x(left)+'" y1="24" x2="'+x(left)+'" y2="147" stroke="#345cd0"/><line x1="'+x(t)+'" y1="24" x2="'+x(t)+'" y2="147" stroke="#345cd0" stroke-dasharray="4 4"/><text x="'+(x(left)+7)+'" y="18" fill="#345cd0" font-size="11" font-family="system-ui">左端计入</text><text x="'+(x(t)-7)+'" y="18" text-anchor="end" fill="#345cd0" font-size="11" font-family="system-ui">T = '+t+' · 右端排除</text><text x="807" y="181" fill="#61717e" font-size="11" font-family="system-ui">ns</text>';
+      byId('window-svg').innerHTML=svg;
+      byId('window-time-value').value=t;byId('window-bytes').innerHTML=bytes+' <small>B</small>';byId('window-bandwidth').innerHTML=(bytes/10)+' <small>GB/s</small>';
+      byId('window-equation').innerHTML='['+left+', '+t+') ns<br>'+bytes+' B ÷ 10 ns = '+(bytes/10)+' GB/s';
+    }
+    byId('window-time').addEventListener('input',renderWindow);
+    const orderText=[
+      '本范围自身复位优先：清本范围统计、打断过程 / 阶段，并按复位契约处理该时刻。成员复位只作为成员输入，不重置组。即使组统计复位，collector 向上供数与消费确认仍继续。',
+      '若 T 确有采样沿，先接收时间元数据，补全此前传输的尾周期终点。无采样沿的控制通知不虚构周期索引；尾周期未知时保持未知。',
+      '基于严格早于 T 的原始历史，发布计划窗口 [T−W,T)，或 [k−W,k)。阶段识别只消费这一新结果一次；T 的新事件尚不计入。',
+      '检查旧过程已知的连续静默是否达到 Q。若达到，按真实尾周期终点完成旧过程并裁剪阶段；同 T 的新传输不能合回已结束过程。',
+      '最后把 T 的新事件归入仍活动的过程或一个新过程，并更新原始累计与边界快照。timer 不能以“已经推进到 T”为由忽略后来同 T 帧提供的元数据。'
+    ];
+    document.querySelectorAll('[data-order]').forEach(button=>button.addEventListener('click',()=>{
+      document.querySelectorAll('[data-order]').forEach(other=>other.setAttribute('aria-pressed',String(other===button)));
+      byId('order-description').textContent=orderText[Number(button.dataset.order)];
+    }));
+    function renderCheck() {
+      const actual=byId('actual-bw').valueAsNumber,target=byId('target-bw').valueAsNumber,tolerance=byId('tolerance').valueAsNumber;
+      let status,reason;
+      if(![actual,target,tolerance].every(v=>Number.isFinite(v)&&v>=0)){status='WARNING';reason='请输入非负有限数；本项无法进行有效比较。';}
+      else if(!byId('evidence-complete').checked){status='WARNING';reason='缺少本指标所需的最终结果或完整证据，保留原因并继续仿真；不填造零值比较。';}
+      else{
+        const allowed=target-(Math.abs(target)*tolerance/100);
+        status=actual>=allowed?'PASS':'FAIL';
+        reason='有效下限 '+Number(allowed.toFixed(8))+' GB/s = '+target+' − '+tolerance+'% × '+target+'；实际 '+actual+' GB/s '+(status==='PASS'?'达到允许边界。':'低于允许边界，继续仿真。');
+      }
+      byId('check-status').textContent=status;byId('check-status').className='check-status '+(status==='PASS'?'quality-good':status==='FAIL'?'quality-bad':'quality-warn');
+      byId('check-explanation').textContent=reason;
+    }
+    ['actual-bw','target-bw','tolerance','evidence-complete'].forEach(id=>byId(id).addEventListener('input',renderCheck));
+    byId('print-button').addEventListener('click',()=>window.print());
+    let detailsBeforePrint=[];
+    window.addEventListener('beforeprint',()=>{detailsBeforePrint=Array.from(document.querySelectorAll('details')).map(d=>d.open);document.querySelectorAll('details').forEach(d=>d.open=true);drawEdges();});
+    window.matchMedia('print').addEventListener('change',event=>{if(event.matches)drawEdges();});
+    window.addEventListener('afterprint',()=>{document.querySelectorAll('details').forEach((d,i)=>d.open=detailsBeforePrint[i]);requestAnimationFrame(drawEdges);});
+    selectTab(location.hash.slice(1),false);
+    document.querySelector('.navigation').setAttribute('aria-orientation', innerWidth<=850?'horizontal':'vertical');
+    renderDemo();renderWindow();renderCheck();byId('order-description').textContent=orderText[0];
+    if(document.fonts)document.fonts.ready.then(drawEdges);
+  </script>
+</body>
+</html>
