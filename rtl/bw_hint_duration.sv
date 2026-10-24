@@ -23,7 +23,14 @@ module bw_hint_duration #(
   bw_u64_t requested_actions=0,consumed_actions=0;
   bw_u64_t timer_requests=0,timer_receipts=0,timer_schedule_seq=0;
   bw_u64_t edge_sequence=0,last_edge_ticks=0,last_edge_index=0,threshold_ticks=0;
-  bit configured=0,reset_held=0,edge_seen=0;
+  bit configured=0,reset_held=0,edge_seen=0,accepting_action=0;
+
+  function automatic void begin_action(int current_size,string queue_kind);
+    // A rejected time/storage action has no final valid interval to publish.
+    accepting_action=1;
+    check_monitor_time($time,{scope_id," ",HINT_NAME});
+    check_queue_growth(current_size,{scope_id," ",HINT_NAME," ",queue_kind});
+  endfunction
 
   function automatic void touch(bw_u64_t at_ticks);
     result.update_ticks=at_ticks;
@@ -43,6 +50,8 @@ module bw_hint_duration #(
   endfunction
   function automatic void advance_interval(bw_u64_t at_ticks);
     if(!result.active) return;
+    if(at_ticks<result.start_ticks)
+      core_error("HINT_TIME",scope_id,$sformatf("start_ticks=%0d received_ticks=%0d",result.start_ticks,at_ticks));
     result.observed_through_ticks=at_ticks;
     result.duration_ticks=at_ticks-result.start_ticks;
     if((BASIS==BW_NS && result.duration_ticks>=threshold_ticks) ||
@@ -105,8 +114,10 @@ module bw_hint_duration #(
   function automatic void enqueue_status();
     status_action_t action;
     if(!configured || !monitor_ready || !SUPPORTED || !ENABLED) return;
+    begin_action(pending_status.size(),"status");
     action.at_ticks=$time;action.condition_value=raw_condition;action.reset_value=reset_n;
     pending_status.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
+    accepting_action=0;
   endfunction
   function automatic void drain_actions();
     edge_action_t edge_action;
@@ -139,9 +150,11 @@ module bw_hint_duration #(
   always @(posedge clk) begin
     edge_action_t action;
     if(configured && monitor_ready && $time>measurement_start_ticks && SUPPORTED && ENABLED) begin
+      begin_action(pending_edges.size(),"edges");
       edge_sequence=checked_add(edge_sequence,1,scope_id);
       action.at_ticks=$time;action.index=edge_sequence;
       pending_edges.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
+      accepting_action=0;
     end
   end
   bw_hint_duration_scheduler scheduler();
@@ -161,16 +174,26 @@ module bw_hint_duration #(
           disable wait_for_hint;
         end
         if(timer_schedule_seq==schedule && result.active && !result.hit && $time>=due_ticks) begin
+          begin_action(pending_timers.size(),"timers");
           action.at_ticks=due_ticks;action.generation=schedule;pending_timers.push_back(action);
           timer_requests=checked_add(timer_requests,1,scope_id);request=timer_requests;
           requested_actions=checked_add(requested_actions,1,scope_id);
+          accepting_action=0;
           wait(timer_receipts>=request);
         end
       end
     end
   end
   final begin
-    if(configured) begin drain_actions();close_interval($time,BW_HINT_TRUNCATED);end
+    if(configured && !accepting_action) begin
+      drain_actions();
+      if(result.active) begin
+        accepting_action=1;
+        check_monitor_time($time,{scope_id," ",HINT_NAME," final"});
+        accepting_action=0;
+        close_interval($time,BW_HINT_TRUNCATED);
+      end
+    end
   end
 endmodule
 

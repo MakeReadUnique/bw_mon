@@ -518,6 +518,7 @@ Additional independent tests:
 | `hint_cycle_truncation` | Observation-end summary retains one completed cycle over a long stopped clock and cannot fake a hit from physical time |
 | `hint_accounting` | Enabled ns hint fires before any cycle-window sample, then both enabled/disabled points count the same 24 B/three events and 8 GB/s full cycle window |
 | `hint_reset_release` | A frame sampled while reset was held cannot debit credit when reset releases later at the same T; the first real send and subsequent return create exactly one complete shortage cycle |
+| `hint_time_budget`, `hint_final_budget` | With a stopped clock and cycle windows, both a future ns timer and final settlement still enforce the immutable 40 us budget; rejected actions cannot publish a new hint interval |
 | `hint_missing_basis`, `hint_missing_threshold`, `hint_zero_threshold`, `hint_bad_basis`, `hint_time_overflow`, `hint_unknown_protocol` | Invalid enabled configuration fails before `BW_READY`, including unknown defaults and exact tick overflow |
 
 The runner's optional `required_output` patterns test final hint logs through the
@@ -531,3 +532,8 @@ reset/control cases. The DUT-like NBA-deassert fixture verifies that a sampled
 known reset0 or unknown reset cannot become a transfer after NBA release; its
 Active-release case still counts. The credit-ledger stimulus now explicitly uses
 integer-fs testbench time and checks actual raw timestamps against its event table.
+
+Hint action producers reuse the same `check_monitor_time` and
+`check_queue_growth` guards as the recorder/core. Every queue push checks its
+representable entry count; a rejected fatal time/storage action cannot publish a
+final hint interval. No user queue-depth or history-capacity setting is added.

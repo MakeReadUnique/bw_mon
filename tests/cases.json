@@ -316,5 +316,15 @@
   {
     "name": "reset_deassert_sample",
     "top": "tb_reset_deassert_sample"
+  },
+  {
+    "name": "hint_time_budget",
+    "top": "tb_hint_time_budget",
+    "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "hint_final_budget",
+    "top": "tb_hint_final_budget",
+    "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
   }
 ]
