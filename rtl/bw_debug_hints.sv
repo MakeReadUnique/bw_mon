@@ -4,10 +4,21 @@ module bw_debug_hints #(
   parameter logic [63:0] CREDIT_CAPACITY = 64'bx,
   parameter logic [63:0] CREDIT_INITIAL = 64'bx,
   parameter bit CREDIT_INITIAL_KNOWN = 0,
-  parameter bw_mon_pkg::bw_credit_return_t CREDIT_RETURN_TIMING = bw_mon_pkg::BW_RETURN_NEXT_CYCLE
+  parameter bw_mon_pkg::bw_credit_return_t CREDIT_RETURN_TIMING = bw_mon_pkg::BW_RETURN_NEXT_CYCLE,
+  parameter bit BACKPRESSURE_ENABLE = 0,
+  parameter logic [1:0] BACKPRESSURE_BASIS = 2'bxx,
+  parameter logic [63:0] BACKPRESSURE_THRESHOLD = 64'bx,
+  parameter bit SHORTAGE_ENABLE = 0,
+  parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
+  parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx
 ) (
   input string scope_id,
   input logic reset_n,
+  input logic clk,
+  input logic valid = 1'b0,
+  input logic ready = 1'b0,
+  input logic flitv = 1'b0,
+  input logic lcrdv = 1'b0,
   input bw_mon_pkg::bw_sample_t sampled_view,
   input bw_mon_pkg::bw_record_t record,
   input bit record_toggle,
@@ -29,7 +40,9 @@ module bw_debug_hints #(
   output bw_mon_pkg::bw_u64_t credit_result_seq = 0,
   output bw_mon_pkg::bw_u64_t credit_epoch = 0,
   output bw_mon_pkg::bw_u64_t credit_update_ticks = 0,
-  output bw_mon_pkg::bw_u64_t credit_record_seq = 0
+  output bw_mon_pkg::bw_u64_t credit_record_seq = 0,
+  output bw_mon_pkg::bw_hint_result_t backpressure_result,
+  output bw_mon_pkg::bw_hint_result_t shortage_result
 );
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
@@ -130,6 +143,21 @@ module bw_debug_hints #(
     end
     credit_balance=candidate[63:0];credit_last_trusted_balance=candidate[63:0];
   endtask
+
+  wire backpressure_condition=valid & ~ready;
+  // Live unknown control interrupts ns evidence immediately, including while
+  // clocks stop; the sampled ledger itself only changes on actual records.
+  wire shortage_condition=(credit_shortage_known && !$isunknown({flitv,lcrdv})) ? credit_shortage : 1'bx;
+  if((PROTOCOL===BW_VALID_READY) && BACKPRESSURE_ENABLE) begin : backpressure_hint
+    bw_hint_duration #(.HINT_NAME("backpressure"),.SUPPORTED(1),.ENABLED(1),
+      .BASIS(BACKPRESSURE_BASIS),.THRESHOLD(BACKPRESSURE_THRESHOLD)) duration
+      (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.raw_condition(backpressure_condition),.result(backpressure_result));
+  end else assign backpressure_result=inactive_hint_result(PROTOCOL==BW_VALID_READY,BACKPRESSURE_ENABLE);
+  if((PROTOCOL===BW_CREDIT) && SHORTAGE_ENABLE) begin : credit_shortage_hint
+    bw_hint_duration #(.HINT_NAME("credit_shortage"),.SUPPORTED(1),.ENABLED(1),
+      .BASIS(SHORTAGE_BASIS),.THRESHOLD(SHORTAGE_THRESHOLD)) duration
+      (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.raw_condition(shortage_condition),.result(shortage_result));
+  end else assign shortage_result=inactive_hint_result(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE);
 
   initial begin
     wait(scope_id.len()!=0);

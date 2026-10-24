@@ -327,8 +327,7 @@ Public scalar fields live directly at the observation point:
 The last-frame permission/attempt fields become unknown when a later frame cannot
 be checked. The original fault remains in its log and latched reason. Current
 shortage is qualified by trust and live reset, independently from the last frame's
-permission evidence. Duration thresholds and long-condition hints follow in the
-separate duration-hint ticket.
+permission evidence. Duration thresholds and long-condition hints are configured independently below.
 
 Additional independently expected VCS cases:
 
@@ -339,3 +338,103 @@ Additional independently expected VCS cases:
 | `credit_boundaries` | Exact 2^64 permission intermediate and attempted balance; legal zero capacity; zero-byte flits still consume one credit; exact attempted −1; unknown initial value remains unknown |
 | `credit_reset_unknown` | No-clock unknown reset breaks trust; direct return to 1 does not repair it; a subsequent known reset restores seed without inventing record sequences |
 | `credit_config_error`, `credit_initial_error`, `credit_return_error`, `fixed_unknown_config` | Missing capacity, initial balance outside capacity, invalid timing and unknown fixed bytes terminate before any `BW_READY` |
+
+## Sustained backpressure and credit-shortage hints
+
+Each hint has its own explicit configuration, independent of window basis/W/S:
+
+| Point/debug-hints parameter | Type / default | Meaning |
+| --- | --- | --- |
+| `BACKPRESSURE_ENABLE` | bit, 0 | Request sustained valid-ready backpressure hints |
+| `BACKPRESSURE_BASIS` | four-state logic [1:0], X | Required `BW_NS` or `BW_CYCLE` when enabled and supported |
+| `BACKPRESSURE_THRESHOLD` | four-state logic [63:0], X | Required positive integer ns or complete local cycles |
+| `SHORTAGE_ENABLE` | bit, 0 | Request sustained trusted-credit-shortage hints |
+| `SHORTAGE_BASIS` | four-state logic [1:0], X | Required `BW_NS` or `BW_CYCLE` when enabled and supported |
+| `SHORTAGE_THRESHOLD` | four-state logic [63:0], X | Required positive integer ns or complete local cycles |
+
+`validate_hint_config` runs before point registration. Missing, unknown, zero or
+invalid settings terminate with `HINT_CONFIG`; ns thresholds whose tick count
+cannot be represented terminate with checked `INTEGER_OVERFLOW`. No threshold or
+basis is guessed from window configuration. Disabled/unsupported hints need no
+unused threshold and create no duration scheduler. A supported enabled shortage
+hint with an unavailable/disabled ledger remains untrusted; it cannot invent a
+shortage interval.
+
+Backpressure uses the live four-state `valid & ~ready` condition. For example,
+valid=0 proves no backpressure even if ready is unknown. Credit shortage uses the
+updated trusted ledger's zero-balance condition; live unknown flitv/lcrdv also
+interrupts duration evidence immediately. If that uncertainty happens with no
+sampling edge, the ledger balance itself need not be lost: the duration hint
+separately records the unknown observation. A later sampled unknown control does
+lose the ledger as documented above. Neither condition proves pending demand or
+establishes a performance failure.
+
+For ns mode, a raw condition becoming known true starts an interval at its actual
+integer time. A dedicated threshold timer still triggers with no sampling clocks.
+Release, unknown and reset changes close or interrupt the interval at the live
+change time. Cycle mode counts only complete intervals between actual local clock
+edges during which the raw condition continuously remained known true. A
+mid-cycle assertion waits for the next edge anchor; the following edge completes
+its first counted cycle. Stopped clocks add no cycles or new cycle results.
+Resuming after a long stop closes the one actual local cycle ending at that edge.
+
+At a same-time edge and release/unknown/reset, the complete prior cycle is settled
+before closure. At a threshold-equal change, the preceding half-open trusted
+interval retains its hit. Raw changes at T contribute no later unknown/reset time
+to that interval. The implementation keeps durable action counts, captures actual
+clock metadata before recorder ReNBA publication, and uses a private Reactive
+coordinator. A credit-shortage condition starting after a finalized same-time
+ledger frame can attach to the already observed clock boundary, without an extra
+cycle of hint latency. Users do not advance this machinery.
+
+The first threshold crossing emits one `BW_HINT_HIT`; ending an interval emits
+one `BW_HINT_END`, including intervals shorter than threshold. End reasons are
+`RELEASED`, `UNKNOWN`, `RESET` and `TRUNCATED` (observation ended while active).
+Unknown/reset splits intervals, so evidence cannot join across the gap. An active
+interval is settled once at simulation end, preserving only cycles already
+completed. Logs include scope, hint kind, interval epoch/ID, result sequence,
+start/trigger/end times and exact observed tick/cycle durations. Hint counters and
+logs remain separate from all performance conclusions.
+
+Fields below exist directly at `bw_point_mon`, with either `backpressure_` or
+`shortage_` prefix. Their packed `backpressure_result`/`shortage_result` values are
+also available, but scalar aliases are the stable waveform surface.
+
+| Suffix | Meaning |
+| --- | --- |
+| `supported`, `enabled`, `trusted` | Interface capability, requested enable and current known condition/reset |
+| `active`, `hit` | Current interval active; current or most recently ended interval reached threshold |
+| `basis`, `threshold` | Exact independently configured basis and threshold |
+| `epoch`, `interval_epoch`, `interval_id` | Current known-reset generation, this result's original generation, and monotonic interval identity |
+| `result_seq`, `update_ticks` | Monotonic newly processed hint result and its integer fs update time |
+| `start_ticks`, `trigger_ticks`, `end_ticks` | Actual condition start, first threshold crossing and final half-open endpoint; zero trigger means no hit |
+| `duration_ticks`, `observed_through_ticks` | Exact physical duration as of the indicated observation boundary |
+| `cycle_anchor_valid`, `start_cycle`, `end_cycle`, `duration_cycles` | Complete-cycle anchor, actual local edge indices and completed-cycle duration |
+| `end_reason` | `BW_HINT_NOT_ENDED`, `BW_HINT_RELEASED`, `BW_HINT_UNKNOWN`, `BW_HINT_RESET`, `BW_HINT_TRUNCATED` |
+| `hit_count`, `interval_count` | Unsigned 64-bit lifetime count of first hits and closed intervals, never mixed with byte/event or performance counters |
+
+An active duration snapshot updates at raw changes, actual edges and threshold
+publication. After a hit with no further events, its sequence and
+`observed_through_ticks` identify the held snapshot; final closure calculates the
+entire actual interval. Holding that snapshot does not repeat a hit or turn it
+into new evidence. The current reset generation may advance after a summary;
+`interval_epoch` keeps that summary's original identity.
+
+Additional independent tests:
+
+| Test | Evidence |
+| --- | --- |
+| `hint_ns` | No-clock start/hit/release, unknown/reset gaps, no joined evidence, exact final 2.5 ns truncated interval |
+| `hint_equal` | Separate threshold-equal release, unknown and reset retain one hit and exactly 2 ns of prior trusted duration |
+| `hint_cycle` | First edge anchors; stopped clock holds sequence/count; same-edge release closes two completed cycles; mid-cycle/unknown/reset split; capability and enable separate |
+| `hint_shortage` | Live unknown return/send breaks stopped-clock ns evidence, a finalized credit return ends shortage, ledger anomaly stops hints while known bytes match disabled point |
+| `hint_credit_cycle` | Same-edge return closes a completed shortage cycle; late finalized ledger start reuses current actual edge anchor without extra-cycle delay |
+| `hint_cycle_truncation` | Observation-end summary retains one completed cycle over a long stopped clock and cannot fake a hit from physical time |
+| `hint_accounting` | Enabled ns hint fires before any cycle-window sample, then both enabled/disabled points count the same 24 B/three events and 8 GB/s full cycle window |
+| `hint_reset_release` | A frame sampled while reset was held cannot debit credit when reset releases later at the same T; the first real send and subsequent return create exactly one complete shortage cycle |
+| `hint_missing_basis`, `hint_missing_threshold`, `hint_zero_threshold`, `hint_bad_basis`, `hint_time_overflow`, `hint_unknown_protocol` | Invalid enabled configuration fails before `BW_READY`, including unknown defaults and exact tick overflow |
+
+The runner's optional `required_output` patterns test final hint logs through the
+public logging boundary after `$finish`; success still requires `TB_PASS` and no
+fatal diagnostic. All interval, state, sequence and numeric duration comparisons
+are exact integers/four-state values.
