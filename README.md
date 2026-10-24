@@ -2,7 +2,7 @@
 
 用于 SoC 仿真验证的通用带宽监测器（bandwidth monitor）。目标是提供可复用的 SystemVerilog `module`，观察 master、memory 接口与 NoC 链路，统计带宽并辅助定位传输间隙和长时间反压。
 
-仓库包含已确认架构及正在实现的纯仿真 SystemVerilog 监测器。当前可运行路径支持类型 bind、显式注册启动、valid-only 固定逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频）。其余能力按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/13)的关联 ticket 交付；规划需求不表示已通过全部验收。
+仓库包含已确认架构及正在实现的纯仿真 SystemVerilog 监测器。当前可运行路径支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频）。其余能力按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/13)的关联 ticket 交付；规划需求不表示已通过全部验收。
 
 运行 `make test`，使用 VCS 编译执行组件与公开入口测试。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 

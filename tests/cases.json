@@ -112,5 +112,35 @@
     "name": "cycle_edge_error",
     "top": "tb_cycle_edge_error",
     "expect_error": "BW_CORE_ERROR code=EDGE_SEQUENCE"
+  },
+  {
+    "name": "protocol_recording",
+    "top": "tb_protocol_recording"
+  },
+  {
+    "name": "subns_vectors",
+    "top": "tb_subns_vectors"
+  },
+  {
+    "name": "sample_view",
+    "top": "tb_sample_view"
+  },
+  {
+    "name": "recorder_edges",
+    "top": "tb_recorder_edges"
+  },
+  {
+    "name": "dynamic_size_error",
+    "top": "tb_dynamic_size_error",
+    "expect_error": "BW_CORE_ERROR code=TRANSFER_BYTES"
+  },
+  {
+    "name": "protocol_config_error",
+    "top": "tb_protocol_config_error",
+    "expect_error": "BW_CORE_ERROR code=PROTOCOL_CONFIG"
+  },
+  {
+    "name": "adapter_decode",
+    "top": "tb_adapter_decode"
   }
 ]
