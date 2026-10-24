@@ -326,5 +326,145 @@
     "expect_log": [
       "BW_EPISODE scope_kind=1 scope=episode.pending .*status=4 .*bytes=8 events=1 duration_ticks=0 .*last_known=0 .*bytes_complete=0 events_complete=0 .*e2e_valid=0"
     ]
+  },
+  {
+    "name": "phase_delayed",
+    "top": "tb_phase_delayed"
+  },
+  {
+    "name": "phase_hysteresis",
+    "top": "tb_phase_hysteresis"
+  },
+  {
+    "name": "phase_actual_time",
+    "top": "tb_phase_actual_time"
+  },
+  {
+    "name": "phase_episode_residue",
+    "top": "tb_phase_episode_residue"
+  },
+  {
+    "name": "phase_reset",
+    "top": "tb_phase_reset"
+  },
+  {
+    "name": "phase_repeated",
+    "top": "tb_phase_repeated"
+  },
+  {
+    "name": "phase_zero",
+    "top": "tb_phase_zero"
+  },
+  {
+    "name": "phase_fit_error",
+    "top": "tb_phase_fit_error",
+    "expect_error": "(?s)^(?!.*BW_PHASE)(?!.*BW_EPISODE).*BW_CORE_ERROR code=PHASE_FIT"
+  },
+  {
+    "name": "phase_config_valid",
+    "top": "tb_phase_config_valid",
+    "sources": [
+      "phase_config_fixture.sv"
+    ]
+  },
+  {
+    "name": "phase_config_n",
+    "top": "tb_phase_config_n",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_span",
+    "top": "tb_phase_config_span",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_k",
+    "top": "tb_phase_config_k",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_negative",
+    "top": "tb_phase_config_negative",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_exit",
+    "top": "tb_phase_config_exit",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_overlap",
+    "top": "tb_phase_config_overlap",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_nan",
+    "top": "tb_phase_config_nan",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_storage",
+    "top": "tb_phase_config_storage",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STORAGE_RANGE"
+  },
+  {
+    "name": "phase_config_episode",
+    "top": "tb_phase_config_episode",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_missing",
+    "top": "tb_phase_config_missing",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_unknown",
+    "top": "tb_phase_config_unknown",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_config_infinite",
+    "top": "tb_phase_config_infinite",
+    "sources": [
+      "phase_config_fixture.sv"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "phase_candidate_change",
+    "top": "tb_phase_candidate_change"
   }
 ]

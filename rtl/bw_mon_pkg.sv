@@ -99,6 +99,24 @@ package bw_mon_pkg;
     real e2e_gbps;
   } bw_episode_result_t;
 
+  typedef enum logic [1:0] {
+    BW_PHASE_UNDETERMINED, BW_PHASE_RAMP, BW_PHASE_STEADY, BW_PHASE_FALL
+  } bw_phase_t;
+  typedef enum logic [2:0] {
+    BW_PHASE_CHANGE, BW_PHASE_EVIDENCE_GAP, BW_PHASE_EPISODE_END
+  } bw_phase_end_t;
+  typedef struct {
+    bw_scope_t scope_kind;
+    bw_u64_t stats_epoch,episode_id,phase_id,result_seq;
+    bw_phase_t phase_kind;
+    bw_phase_end_t end_reason;
+    bw_episode_status_t episode_status;
+    bw_u64_t start_ticks,end_ticks,confirmation_ticks;
+    bw_u64_t start_total_bytes,end_total_bytes,start_total_events,end_total_events;
+    bit start_known,end_known;
+    real confirmation_delta,confirmation_rms;
+  } bw_phase_result_t;
+
   function automatic string episode_reason_name(bw_episode_reason_t reason);
     case (reason)
       BW_EPISODE_REASON_NONE: return "NONE";
@@ -151,6 +169,15 @@ package bw_mon_pkg;
       result.e2e_valid,result.e2e_gbps,episode_reason_name(result.reason));
   endfunction
 
+  function automatic void emit_phase_result(string scope_id, bw_phase_result_t result);
+    if(core_failure_seen)return;
+    $display("BW_PHASE scope_kind=%0d scope=%s epoch=%0d episode=%0d phase=%0d result_seq=%0d kind=%0d start_ticks=%0d end_ticks=%0d confirm_ticks=%0d start_known=%0b end_known=%0b start_bytes=%0d end_bytes=%0d start_events=%0d end_events=%0d delta=%0.17g rms=%0.17g reason=%0d",
+      result.scope_kind,scope_id,result.stats_epoch,result.episode_id,result.phase_id,result.result_seq,
+      result.phase_kind,result.start_ticks,result.end_ticks,result.confirmation_ticks,
+      result.start_known,result.end_known,result.start_total_bytes,result.end_total_bytes,
+      result.start_total_events,result.end_total_events,result.confirmation_delta,result.confirmation_rms,result.end_reason);
+  endfunction
+
   function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,
                                                   logic [63:0] fixed_bytes,string id);
     if($isunknown(protocol) || !(protocol inside {BW_VALID_ONLY,BW_VALID_READY,BW_CREDIT}))
@@ -196,6 +223,37 @@ package bw_mon_pkg;
     if ($isunknown(silence) || silence==0)
       core_error("EPISODE_CONFIG",id,"enabled episode analysis requires explicit positive Q");
     if (basis==BW_NS) void'(ns_to_ticks(silence,id));
+  endfunction
+
+  function automatic bit finite_nonnegative_real(real value);
+    bit [63:0] representation;
+    representation=$realtobits(value);
+    return representation[62:52]!=11'h7ff && value>=0.0;
+  endfunction
+
+  function automatic void validate_phase_config(bit enable,bit episode_enable,bw_basis_t basis,
+    logic [63:0] n,logic [63:0] span,logic [63:0] k,
+    real steady_enter_abs,real steady_enter_rel,real steady_exit_abs,real steady_exit_rel,
+    real rms_enter_abs,real rms_enter_rel,real rms_exit_abs,real rms_exit_rel,
+    real trend_abs,real trend_rel,string id);
+    if(!enable)return;
+    if(!episode_enable)core_error("PHASE_CONFIG",id,"phase analysis requires episode analysis");
+    if($isunknown({n,span,k}) || n<3 || span==0 || k==0)
+      core_error("PHASE_CONFIG",id,"require explicit N>=3, positive minimum span and K");
+    if(n>64'd2147483647)core_error("STORAGE_RANGE",id,
+      $sformatf("N=%0d exceeds SV queue-index representation max=2147483647",n));
+    if(basis==BW_NS)void'(ns_to_ticks(span,id));
+    if(!finite_nonnegative_real(steady_enter_abs) || !finite_nonnegative_real(steady_enter_rel) ||
+       !finite_nonnegative_real(steady_exit_abs) || !finite_nonnegative_real(steady_exit_rel) ||
+       !finite_nonnegative_real(rms_enter_abs) || !finite_nonnegative_real(rms_enter_rel) ||
+       !finite_nonnegative_real(rms_exit_abs) || !finite_nonnegative_real(rms_exit_rel) ||
+       !finite_nonnegative_real(trend_abs) || !finite_nonnegative_real(trend_rel))
+      core_error("PHASE_CONFIG",id,"all phase coefficients must be explicit nonnegative finite reals");
+    if(steady_exit_abs<steady_enter_abs || steady_exit_rel<steady_enter_rel ||
+       rms_exit_abs<rms_enter_abs || rms_exit_rel<rms_enter_rel)
+      core_error("PHASE_CONFIG",id,"exit tolerances must be no stricter than entry tolerances");
+    if(trend_abs<=steady_exit_abs || trend_rel<steady_exit_rel)
+      core_error("PHASE_CONFIG",id,"trend must exceed steady exit tolerance for every nonnegative mean");
   endfunction
 
   function automatic bit monitor_time_supported(bw_u64_t at_ticks);
