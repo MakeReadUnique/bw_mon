@@ -142,5 +142,63 @@
   {
     "name": "adapter_decode",
     "top": "tb_adapter_decode"
+  },
+  {
+    "name": "reset_rewarm",
+    "top": "tb_reset_rewarm"
+  },
+  {
+    "name": "reset_same_time_0",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "reset_same_time_1",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "reset_same_time_2",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=2"
+    ]
+  },
+  {
+    "name": "reset_same_time_3",
+    "top": "tb_reset_same_time",
+    "plusargs": [
+      "+MODE=3"
+    ]
+  },
+  {
+    "name": "reset_unknown",
+    "top": "tb_reset_unknown"
+  },
+  {
+    "name": "reset_time_budget",
+    "top": "tb_reset_time_budget",
+    "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "reset_member_controls",
+    "top": "tb_reset_member_controls"
+  },
+  {
+    "name": "reset_cycle_unknown",
+    "top": "tb_reset_cycle_unknown"
+  },
+  {
+    "name": "reset_initial",
+    "top": "tb_reset_initial"
+  },
+  {
+    "name": "member_control_error",
+    "top": "tb_member_control_error",
+    "expect_error": "BW_CORE_ERROR code=CONTROL_SEQUENCE"
   }
 ]

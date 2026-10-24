@@ -34,6 +34,16 @@ package bw_mon_pkg;
     logic reset_n;
   } bw_record_t;
 
+  // Actual point-reset controls are not sampling frames: no edge is invented.
+  // point_handle identifies the registered Point ID without copying strings.
+  typedef struct packed {
+    bw_u64_t timestamp_ticks;
+    bw_u64_t control_seq;
+    bw_u64_t source_epoch;
+    int unsigned point_handle;
+    logic reset_n;
+  } bw_control_t;
+
   typedef struct {
     string id;
     string monitor_path;
@@ -48,6 +58,7 @@ package bw_mon_pkg;
   bit monitor_ready = 0;
   int unsigned expected_point_count;
   bw_u64_t measurement_start_ticks = 0;
+  bw_u64_t monitor_start_ticks = 0;
   bw_u64_t registration_seq = 0;
 
   function automatic void core_error(string code, string scope_id, string detail);
@@ -73,6 +84,24 @@ package bw_mon_pkg;
 
   function automatic bw_u64_t ns_to_ticks(bw_u64_t ns, string scope_context = "time");
     return checked_mul(ns, BW_TICKS_PER_NS, scope_context);
+  endfunction
+
+  function automatic void check_monitor_time(bw_u64_t at_ticks, string scope_context);
+    if (!monitor_configured) return;
+    if (at_ticks<monitor_start_ticks)
+      core_error("SIM_TIME_LIMIT",scope_context,
+        $sformatf("system_start_ticks=%0d received_ticks=%0d precedes monitoring start",
+                  monitor_start_ticks,at_ticks));
+    else if (at_ticks-monitor_start_ticks>64'd40000000000)
+      core_error("SIM_TIME_LIMIT",scope_context,
+        $sformatf("system_start_ticks=%0d received_ticks=%0d supported_duration_ticks=%0d",
+                  monitor_start_ticks,at_ticks,64'd40000000000));
+  endfunction
+
+  function automatic void check_queue_growth(int current_size, string scope_context);
+    if (current_size<0 || current_size==32'sh7fffffff)
+      core_error("STORAGE_RANGE",scope_context,
+        $sformatf("queue_entries=%0d next entry cannot be represented",current_size));
   endfunction
 
   function automatic void validate_window(bw_basis_t basis, bw_u64_t width,
@@ -106,6 +135,7 @@ package bw_mon_pkg;
     if (expected == 0 || expected > 16384)
       core_error("POINT_COUNT", "setup", "expected_point_count must be 1..16384");
     expected_point_count = expected;
+    monitor_start_ticks = $time;
     monitor_configured = 1;
     try_ready();
   endfunction
@@ -128,5 +158,12 @@ package bw_mon_pkg;
     registration_seq=checked_add(registration_seq,1,"registration");
     try_ready();
     return registered_points.size()-1;
+  endfunction
+
+  function automatic int point_handle_for_id(string id);
+    foreach (registered_points[i])
+      if (registered_points[i].id == id) return i;
+    core_error("POINT_REFERENCE", id, "unregistered point control source");
+    return -1;
   endfunction
 endpackage
