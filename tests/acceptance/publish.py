@@ -2,23 +2,21 @@
 """Validate and package durable acceptance assets, never manufacturing review."""
 import argparse,csv,hashlib,io,json,platform,re,shutil,subprocess,tarfile
 from pathlib import Path
-from evidence import runtime_evidence,scene_runtime_evidence
+from evidence import runtime_evidence,scene_runtime_evidence,dependency_bytes,runtime_sources,canonical_sha
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/acceptance'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pack',action='store_true');args=p.parse_args();scenes=[];totals={};analysis={};pictures=[];revisions=set()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pack',action='store_true');args=p.parse_args();scenes=[];totals={};analysis={};pictures=[];revisions=set();runtimes={}
  runtime=runtime_evidence(ROOT,OUT)
  for directory in sorted(OUT.iterdir()):
   if not (directory/'commands.json').exists():continue
   manifest=json.loads((directory/'commands.json').read_text());comparison=json.loads((directory/'comparison.json').read_text());assert comparison['status']=='PASS' and comparison['human_review']=='PENDING'
-  scene_runtime_evidence(ROOT,OUT,directory,manifest,runtime)
+  consumed=scene_runtime_evidence(ROOT,OUT,directory,manifest,runtime)
+  runtimes[consumed['head']+':'+canonical_sha(consumed['rtl_sha256'])]=consumed
   revisions.add(manifest['base_revision'])
   for name,digest in manifest['dependency_sha256'].items():
-   path=ROOT/name
-   if not path.exists() and name.endswith('/stimulus.txt'):
-    with tarfile.open(str(directory/'trace.tar.gz')) as t:actual=hashlib.sha256(t.extractfile('stimulus.txt').read()).hexdigest()
-   else:actual=sha(path)
+   actual=hashlib.sha256(dependency_bytes(ROOT,OUT,directory,manifest,name)).hexdigest()
    assert actual==digest,('stale simulation/reference source',directory.name,name)
   paths=set()
   for file in directory.glob('signals-*.json'):paths.update(json.loads(file.read_text())['public_paths'])
@@ -45,7 +43,7 @@ def main():
    captured.append(image.name);pictures.append(str(image.relative_to(OUT)))
   for key,value in comparison['counts'].items():totals[key]=totals.get(key,0)+value
   for key,value in comparison['analysis_counts'].items():analysis[key]=analysis.get(key,0)+value
-  scenes.append({'scene':directory.name,'configuration':manifest['configuration'],'counts':comparison['counts'],'analysis_counts':comparison['analysis_counts'],'performance':comparison['report_reference'],'images':captured,'fsdb_sha256':sha(directory/'waves.fsdb'),'human_review_at_generation':comparison['human_review']})
+  scenes.append({'scene':directory.name,'runtime_source_head':consumed['head'],'configuration':manifest['configuration'],'counts':comparison['counts'],'analysis_counts':comparison['analysis_counts'],'performance':comparison['report_reference'],'images':captured,'fsdb_sha256':sha(directory/'waves.fsdb'),'human_review_at_generation':comparison['human_review']})
   if args.pack:
    files=list(directory.glob('p*.csv'))+[directory/(n+'.csv') for n in ['die0','die1','all_dmc','mixed']]
    files +=[directory/n for n in ['stimulus.txt','compile.log','run.log','fsdb-values.csv','fsdbreport.log','capture.log','capture.tcl','signals.json','capture-manifest.json','capture.ready']]
@@ -85,11 +83,11 @@ def main():
  review['asset_fingerprint']=fingerprint
  (OUT/'review.json').write_text(json.dumps(review,indent=2)+'\n')
  human_status=review['human']['status']
- (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':runtime['head'],'harness_revisions':sorted(revisions),'runtime_source_manifest':'runtime-source.json','runtime_source_unchanged':True,'current_component_proof':'current-component-proof/verification.json','historical_component_proof':'component-proof/verification.json','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':human_status,'human_review_scope':'Only named objects and intervals in review.json; no per-scene approval inferred','python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
+ (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':next(iter(runtimes.values()))['head'] if len(runtimes)==1 else None,'production_sources':list(runtimes.values()),'harness_revisions':sorted(revisions),'runtime_source_manifest':'runtime-source.json','runtime_source_unchanged':all(record['rtl_sha256']==runtime_sources(ROOT) for record in runtimes.values()),'current_component_proof':'current-component-proof/verification.json','historical_component_proof':'component-proof/verification.json','component_proof_source_head':runtime['head'],'scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':human_status,'human_review_scope':'Only named objects and intervals in review.json; no per-scene approval inferred','python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
  index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **human T6 ledger status: '+human_status+'**. Agent image inspection is separate.\n\n'
  index+='Human status covers only the ledger\'s named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.\n\n'
  index+='Independent totals: '+str(totals)+'; analysis: '+str(analysis)+'. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).\n\n'
- index+='This campaign consumes the [frozen runtime and native dependency hashes](runtime-source.json), with [current 424-case /167-top /3 minimum-option component proof](current-component-proof/verification.json). Its [portable archives and verifier](current-component-proof/README.md) are retained here. The unchanged [historical 408-case component proof](component-proof/verification.json) and [historical log/config archive](component-proof/final-408-proof.tar.gz) describe their original source, not the current runtime. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|\n|---|---|---|---|---|\n'
+ index+='Each scene records its actual consumed runtime and compiler dependencies; see production_sources in [machine proof](verification.json). The [frozen runtime/native receipts](runtime-source.json), [historical source snapshot](historical-source-8e81839.tar.gz) and [424-case /167-top /3 minimum-option proof](current-component-proof/verification.json) describe runtime8e81839. New source is not qualified by that proof. The unchanged [408-case proof](component-proof/verification.json) retains its own earlier source scope. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|\n|---|---|---|---|---|\n'
  for s in scenes:
   name=s['scene'];c=s['configuration'];imgs=' '.join('['+i+']('+name+'/'+i+')' for i in s['images']) or 'Portable public views; FSDB directly available'
   index+='|%s|%s %s/%s/%s|[FSDB](%s/waves.fsdb) · [expected/actual](%s/expected-actual.md) · [reference](%s/reference.json) · [cfg](%s/expect.cfg) · [open](%s/open.sh)|%s|%s %s|\n'%(name,c['basis'],c['W'],c['S'],c['Q'],name,name,name,name,name,imgs,s['performance']['summary_status'],s['performance']['expected'])
