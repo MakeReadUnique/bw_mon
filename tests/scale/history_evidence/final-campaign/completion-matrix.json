@@ -1,0 +1,1813 @@
+{
+  "completed_profile_count": 2,
+  "completed_profiles": [
+    "history-common-cycle-short-dense",
+    "history-common-ns-short-dense"
+  ],
+  "external_common29_reuse": {
+    "contributes_to_twelve_new_profile_count": false,
+    "path": "tests/scale/evidence/final-runtime-467b722/results.json",
+    "production_source_matches": true,
+    "profiles": [
+      "common-cycle",
+      "common-ns",
+      "common-ns-reset",
+      "common-ns-unknown"
+    ],
+    "sha256": "4690c281d728ebd768b3ef65276bb108d002ee9b9bbcdb58c9a83cc4e7c76e71"
+  },
+  "external_max30_reuse": {
+    "contributes_to_twelve_new_profile_count": false,
+    "profiles": [
+      "max-ns",
+      "max-cycle",
+      "max-ns-short-unknown",
+      "max-cycle-short-reset"
+    ],
+    "state": "RUNNING_NOT_YET_ACCEPTED"
+  },
+  "nominal_acceptance_passed": false,
+  "pending_profiles": [
+    "history-common-cycle-control-clock",
+    "history-common-cycle-long-dense",
+    "history-common-ns-control-clock",
+    "history-common-ns-long-dense",
+    "history-max-cycle-control-clock",
+    "history-max-cycle-long-dense",
+    "history-max-cycle-short-dense",
+    "history-max-ns-control-clock",
+    "history-max-ns-long-dense",
+    "history-max-ns-short-dense"
+  ],
+  "profiles": {
+    "history-common-cycle-control-clock": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 1281,
+        "expected_metric_conclusions_for_these_inputs": 15372,
+        "final_scope_rows": 1280,
+        "new_window_publications_checked": 34068478,
+        "per_scope_default_window_publications": 26616,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 102208000,
+        "summary_records": 1,
+        "summary_scopes_done": 1280
+      },
+      "input": {
+        "S": 3,
+        "W": 7,
+        "actual_input_edges_per_scope": 79850,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            1000
+          ],
+          [
+            500250000,
+            1000000,
+            50
+          ],
+          [
+            600250000,
+            500000,
+            78800
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [
+          {
+            "edge_index": 201,
+            "kind": "point-size-unknown",
+            "known_bytes_lost": 64,
+            "known_event": true,
+            "point_index": 0,
+            "sticky_old_episode_bytes_incomplete": true,
+            "tick": 100250000
+          },
+          {
+            "ancestor_statistics_continue": true,
+            "assert_ticks": 300100000,
+            "group_index": 0,
+            "group_source_epoch": 0,
+            "kind": "group-own-statistics-reset",
+            "local_stats_epoch": 1,
+            "no_physical_point_reset_coverage": true,
+            "raw_frames_during_reset_still_forwarded": true,
+            "release_ticks": 301100000
+          },
+          {
+            "first_segment_hz": 2000000000,
+            "kind": "clock-change-and-stop",
+            "last_segment_hz": 2000000000,
+            "middle_segment_hz": 1000000000,
+            "segments_first_period_count_fs": [
+              [
+                250000,
+                500000,
+                1000
+              ],
+              [
+                500250000,
+                1000000,
+                50
+              ],
+              [
+                600250000,
+                500000,
+                78800
+              ]
+            ],
+            "stop_gap_boundary_ticks": [
+              549250000,
+              600250000
+            ],
+            "stop_gap_is_one_actual_cycle_not_102_invented_cycles": true
+          }
+        ],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 1280,
+        "topology": {
+          "depth": 2,
+          "direct_edges": 1248,
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "groups": 256,
+          "max_direct_parents": 1,
+          "points": 1024,
+          "recursive_cardinality_histogram": {
+            "32": 32,
+            "4": 96,
+            "5": 128
+          },
+          "ungrouped_points": []
+        },
+        "topology_input": {
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+          "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+        },
+        "variant": "group-clock",
+        "window_basis": "cycle"
+      },
+      "original_manifest": null,
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 60,
+          "episode_enable": 1,
+          "min_span": 6,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "cycle",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 8
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 341,
+          "valid_only": 342,
+          "valid_ready": 341
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 512,
+          "fixed_64B": 512
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "PREPARED_NOT_LAUNCHED",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-common-cycle-long-dense": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 1280,
+        "expected_metric_conclusions_for_these_inputs": 15360,
+        "final_scope_rows": 1280,
+        "new_window_publications_checked": 102398720,
+        "per_scope_default_window_publications": 79999,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 102400000,
+        "summary_records": 1,
+        "summary_scopes_done": 1280
+      },
+      "input": {
+        "S": 1,
+        "W": 80000,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 1280,
+        "topology": {
+          "depth": 2,
+          "direct_edges": 1248,
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "groups": 256,
+          "max_direct_parents": 1,
+          "points": 1024,
+          "recursive_cardinality_histogram": {
+            "32": 32,
+            "4": 96,
+            "5": 128
+          },
+          "ungrouped_points": []
+        },
+        "topology_input": {
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+          "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+        },
+        "variant": "baseline",
+        "window_basis": "cycle"
+      },
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-long-dense-a47955bebc7cd9bf05d2/runs/history-common-cycle-long-dense/20261025T171143-3948927/manifest.json",
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 60,
+          "episode_enable": 1,
+          "min_span": 2,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "cycle",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 8
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 341,
+          "valid_only": 342,
+          "valid_ready": 341
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 512,
+          "fixed_64B": 512
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "SIMULATION_RUNNING",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-common-cycle-short-dense": {
+      "actual_verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 51198720,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 51198720,
+        "observed_scopes": 1280,
+        "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      },
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 1280,
+        "expected_metric_conclusions_for_these_inputs": 15360,
+        "final_scope_rows": 1280,
+        "new_window_publications_checked": 51198720,
+        "per_scope_default_window_publications": 39999,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 102400000,
+        "summary_records": 1,
+        "summary_scopes_done": 1280
+      },
+      "input": {
+        "S": 2,
+        "W": 20,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 1280,
+        "topology": {
+          "depth": 2,
+          "direct_edges": 1248,
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "groups": 256,
+          "max_direct_parents": 1,
+          "points": 1024,
+          "recursive_cardinality_histogram": {
+            "32": 32,
+            "4": 96,
+            "5": 128
+          },
+          "ungrouped_points": []
+        },
+        "topology_input": {
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+          "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+        },
+        "variant": "baseline",
+        "window_basis": "cycle"
+      },
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-short-dense-34ed4195e842731bb72c/runs/history-common-cycle-short-dense/20261025T161804-3902834/manifest.json",
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 60,
+          "episode_enable": 1,
+          "min_span": 4,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "cycle",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 8
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 341,
+          "valid_only": 342,
+          "valid_ready": 341
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 512,
+          "fixed_64B": 512
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "simulation_peak_kib": 280856,
+      "state": "VERIFIED_AUDITED",
+      "verified": true,
+      "verified_bundle": "history-common-cycle-short-dense/bundle.json"
+    },
+    "history-common-ns-control-clock": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 1281,
+        "expected_metric_conclusions_for_these_inputs": 15372,
+        "final_scope_rows": 1280,
+        "new_window_publications_checked": 17066239,
+        "per_scope_default_window_publications": 13333,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 102208000,
+        "summary_records": 1,
+        "summary_scopes_done": 1280
+      },
+      "input": {
+        "S": 3,
+        "W": 7,
+        "actual_input_edges_per_scope": 79850,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            1000
+          ],
+          [
+            500250000,
+            1000000,
+            50
+          ],
+          [
+            600250000,
+            500000,
+            78800
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [
+          {
+            "edge_index": 201,
+            "kind": "point-size-unknown",
+            "known_bytes_lost": 64,
+            "known_event": true,
+            "point_index": 0,
+            "sticky_old_episode_bytes_incomplete": true,
+            "tick": 100250000
+          },
+          {
+            "ancestor_statistics_continue": true,
+            "assert_ticks": 300100000,
+            "group_index": 0,
+            "group_source_epoch": 0,
+            "kind": "group-own-statistics-reset",
+            "local_stats_epoch": 1,
+            "no_physical_point_reset_coverage": true,
+            "raw_frames_during_reset_still_forwarded": true,
+            "release_ticks": 301100000
+          },
+          {
+            "first_segment_hz": 2000000000,
+            "kind": "clock-change-and-stop",
+            "last_segment_hz": 2000000000,
+            "middle_segment_hz": 1000000000,
+            "segments_first_period_count_fs": [
+              [
+                250000,
+                500000,
+                1000
+              ],
+              [
+                500250000,
+                1000000,
+                50
+              ],
+              [
+                600250000,
+                500000,
+                78800
+              ]
+            ],
+            "stop_gap_boundary_ticks": [
+              549250000,
+              600250000
+            ],
+            "stop_gap_is_one_actual_cycle_not_102_invented_cycles": true
+          }
+        ],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 1280,
+        "topology": {
+          "depth": 2,
+          "direct_edges": 1248,
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "groups": 256,
+          "max_direct_parents": 1,
+          "points": 1024,
+          "recursive_cardinality_histogram": {
+            "32": 32,
+            "4": 96,
+            "5": 128
+          },
+          "ungrouped_points": []
+        },
+        "topology_input": {
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+          "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+        },
+        "variant": "group-clock",
+        "window_basis": "ns"
+      },
+      "original_manifest": null,
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 30,
+          "episode_enable": 1,
+          "min_span": 6,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "ns",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 4
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 341,
+          "valid_only": 342,
+          "valid_ready": 341
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 512,
+          "fixed_64B": 512
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "PREPARED_NOT_LAUNCHED",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-common-ns-long-dense": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 1280,
+        "expected_metric_conclusions_for_these_inputs": 15360,
+        "final_scope_rows": 1280,
+        "new_window_publications_checked": 51200000,
+        "per_scope_default_window_publications": 40000,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 102400000,
+        "summary_records": 1,
+        "summary_scopes_done": 1280
+      },
+      "input": {
+        "S": 1,
+        "W": 40000,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 1280,
+        "topology": {
+          "depth": 2,
+          "direct_edges": 1248,
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "groups": 256,
+          "max_direct_parents": 1,
+          "points": 1024,
+          "recursive_cardinality_histogram": {
+            "32": 32,
+            "4": 96,
+            "5": 128
+          },
+          "ungrouped_points": []
+        },
+        "topology_input": {
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+          "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+        },
+        "variant": "baseline",
+        "window_basis": "ns"
+      },
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-long-dense-a817d8b7df44d6147256/runs/history-common-ns-long-dense/20261025T170740-3946542/manifest.json",
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 30,
+          "episode_enable": 1,
+          "min_span": 2,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "ns",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 4
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 341,
+          "valid_only": 342,
+          "valid_ready": 341
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 512,
+          "fixed_64B": 512
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "SIMULATION_RUNNING",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-common-ns-short-dense": {
+      "actual_verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 51200000,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 51200000,
+        "observed_scopes": 1280,
+        "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      },
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 1280,
+        "expected_metric_conclusions_for_these_inputs": 15360,
+        "final_scope_rows": 1280,
+        "new_window_publications_checked": 51200000,
+        "per_scope_default_window_publications": 40000,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 102400000,
+        "summary_records": 1,
+        "summary_scopes_done": 1280
+      },
+      "input": {
+        "S": 1,
+        "W": 10,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 1280,
+        "topology": {
+          "depth": 2,
+          "direct_edges": 1248,
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "groups": 256,
+          "max_direct_parents": 1,
+          "points": 1024,
+          "recursive_cardinality_histogram": {
+            "32": 32,
+            "4": 96,
+            "5": 128
+          },
+          "ungrouped_points": []
+        },
+        "topology_input": {
+          "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+          "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+          "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+        },
+        "variant": "baseline",
+        "window_basis": "ns"
+      },
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/manifest.json",
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 30,
+          "episode_enable": 1,
+          "min_span": 2,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "ns",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 4
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 341,
+          "valid_only": 342,
+          "valid_ready": 341
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 512,
+          "fixed_64B": 512
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "simulation_peak_kib": 284984,
+      "state": "VERIFIED_AUDITED",
+      "verified": true,
+      "verified_bundle": "history-common-ns-short-dense/bundle.json"
+    },
+    "history-max-cycle-control-clock": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 20481,
+        "expected_metric_conclusions_for_these_inputs": 245772,
+        "final_scope_rows": 20480,
+        "new_window_publications_checked": 545095678,
+        "per_scope_default_window_publications": 26616,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 1635328000,
+        "summary_records": 1,
+        "summary_scopes_done": 20480
+      },
+      "input": {
+        "S": 3,
+        "W": 7,
+        "actual_input_edges_per_scope": 79850,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            1000
+          ],
+          [
+            500250000,
+            1000000,
+            50
+          ],
+          [
+            600250000,
+            500000,
+            78800
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [
+          {
+            "edge_index": 201,
+            "kind": "point-size-unknown",
+            "known_bytes_lost": 64,
+            "known_event": true,
+            "point_index": 0,
+            "sticky_old_episode_bytes_incomplete": true,
+            "tick": 100250000
+          },
+          {
+            "ancestor_statistics_continue": true,
+            "assert_ticks": 300100000,
+            "group_index": 0,
+            "group_source_epoch": 0,
+            "kind": "group-own-statistics-reset",
+            "local_stats_epoch": 1,
+            "no_physical_point_reset_coverage": true,
+            "raw_frames_during_reset_still_forwarded": true,
+            "release_ticks": 301100000
+          },
+          {
+            "first_segment_hz": 2000000000,
+            "kind": "clock-change-and-stop",
+            "last_segment_hz": 2000000000,
+            "middle_segment_hz": 1000000000,
+            "segments_first_period_count_fs": [
+              [
+                250000,
+                500000,
+                1000
+              ],
+              [
+                500250000,
+                1000000,
+                50
+              ],
+              [
+                600250000,
+                500000,
+                78800
+              ]
+            ],
+            "stop_gap_boundary_ticks": [
+              549250000,
+              600250000
+            ],
+            "stop_gap_is_one_actual_cycle_not_102_invented_cycles": true
+          }
+        ],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 20480,
+        "topology": {
+          "depth": 8,
+          "direct_edges": 65536,
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "groups": 4096,
+          "max_direct_parents": 16,
+          "points": 16384,
+          "recursive_cardinality_histogram": {
+            "106": 1,
+            "121": 1,
+            "16": 4089,
+            "31": 1,
+            "46": 1,
+            "61": 1,
+            "76": 1,
+            "91": 1
+          },
+          "ungrouped_points": [
+            16383
+          ]
+        },
+        "topology_input": {
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "path": "/tmp/bw-mon-spec13/nominal20-max-topology-input.json",
+          "sha256": "12d8bea19ba795881623d8b7f1f79090d28a5e1187a0bf812193c0a8742b0ff7"
+        },
+        "variant": "group-clock",
+        "window_basis": "cycle"
+      },
+      "original_manifest": null,
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 60,
+          "episode_enable": 1,
+          "min_span": 6,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "cycle",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 8
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 5461,
+          "valid_only": 5462,
+          "valid_ready": 5461
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 8192,
+          "fixed_64B": 8192
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "PREPARED_NOT_LAUNCHED",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-max-cycle-long-dense": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 20480,
+        "expected_metric_conclusions_for_these_inputs": 245760,
+        "final_scope_rows": 20480,
+        "new_window_publications_checked": 1638379520,
+        "per_scope_default_window_publications": 79999,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 1638400000,
+        "summary_records": 1,
+        "summary_scopes_done": 20480
+      },
+      "input": {
+        "S": 1,
+        "W": 80000,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 20480,
+        "topology": {
+          "depth": 8,
+          "direct_edges": 65536,
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "groups": 4096,
+          "max_direct_parents": 16,
+          "points": 16384,
+          "recursive_cardinality_histogram": {
+            "106": 1,
+            "121": 1,
+            "16": 4089,
+            "31": 1,
+            "46": 1,
+            "61": 1,
+            "76": 1,
+            "91": 1
+          },
+          "ungrouped_points": [
+            16383
+          ]
+        },
+        "topology_input": {
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "path": "/tmp/bw-mon-spec13/nominal20-max-topology-input.json",
+          "sha256": "12d8bea19ba795881623d8b7f1f79090d28a5e1187a0bf812193c0a8742b0ff7"
+        },
+        "variant": "baseline",
+        "window_basis": "cycle"
+      },
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-max-cycle-long-dense-1ac4aef8078e1c499a4d/runs/history-max-cycle-long-dense/20261025T162935-3918443/manifest.json",
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 60,
+          "episode_enable": 1,
+          "min_span": 2,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "cycle",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 8
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 5461,
+          "valid_only": 5462,
+          "valid_ready": 5461
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 8192,
+          "fixed_64B": 8192
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "SIMULATION_RUNNING",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-max-cycle-short-dense": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 20480,
+        "expected_metric_conclusions_for_these_inputs": 245760,
+        "final_scope_rows": 20480,
+        "new_window_publications_checked": 819179520,
+        "per_scope_default_window_publications": 39999,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 1638400000,
+        "summary_records": 1,
+        "summary_scopes_done": 20480
+      },
+      "input": {
+        "S": 2,
+        "W": 20,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 20480,
+        "topology": {
+          "depth": 8,
+          "direct_edges": 65536,
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "groups": 4096,
+          "max_direct_parents": 16,
+          "points": 16384,
+          "recursive_cardinality_histogram": {
+            "106": 1,
+            "121": 1,
+            "16": 4089,
+            "31": 1,
+            "46": 1,
+            "61": 1,
+            "76": 1,
+            "91": 1
+          },
+          "ungrouped_points": [
+            16383
+          ]
+        },
+        "topology_input": {
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "path": "/tmp/bw-mon-spec13/nominal20-max-topology-input.json",
+          "sha256": "12d8bea19ba795881623d8b7f1f79090d28a5e1187a0bf812193c0a8742b0ff7"
+        },
+        "variant": "baseline",
+        "window_basis": "cycle"
+      },
+      "original_manifest": null,
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 60,
+          "episode_enable": 1,
+          "min_span": 4,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "cycle",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 8
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 5461,
+          "valid_only": 5462,
+          "valid_ready": 5461
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 8192,
+          "fixed_64B": 8192
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "PREPARED_NOT_LAUNCHED",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-max-ns-control-clock": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 20481,
+        "expected_metric_conclusions_for_these_inputs": 245772,
+        "final_scope_rows": 20480,
+        "new_window_publications_checked": 273059839,
+        "per_scope_default_window_publications": 13333,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 1635328000,
+        "summary_records": 1,
+        "summary_scopes_done": 20480
+      },
+      "input": {
+        "S": 3,
+        "W": 7,
+        "actual_input_edges_per_scope": 79850,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            1000
+          ],
+          [
+            500250000,
+            1000000,
+            50
+          ],
+          [
+            600250000,
+            500000,
+            78800
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [
+          {
+            "edge_index": 201,
+            "kind": "point-size-unknown",
+            "known_bytes_lost": 64,
+            "known_event": true,
+            "point_index": 0,
+            "sticky_old_episode_bytes_incomplete": true,
+            "tick": 100250000
+          },
+          {
+            "ancestor_statistics_continue": true,
+            "assert_ticks": 300100000,
+            "group_index": 0,
+            "group_source_epoch": 0,
+            "kind": "group-own-statistics-reset",
+            "local_stats_epoch": 1,
+            "no_physical_point_reset_coverage": true,
+            "raw_frames_during_reset_still_forwarded": true,
+            "release_ticks": 301100000
+          },
+          {
+            "first_segment_hz": 2000000000,
+            "kind": "clock-change-and-stop",
+            "last_segment_hz": 2000000000,
+            "middle_segment_hz": 1000000000,
+            "segments_first_period_count_fs": [
+              [
+                250000,
+                500000,
+                1000
+              ],
+              [
+                500250000,
+                1000000,
+                50
+              ],
+              [
+                600250000,
+                500000,
+                78800
+              ]
+            ],
+            "stop_gap_boundary_ticks": [
+              549250000,
+              600250000
+            ],
+            "stop_gap_is_one_actual_cycle_not_102_invented_cycles": true
+          }
+        ],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 20480,
+        "topology": {
+          "depth": 8,
+          "direct_edges": 65536,
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "groups": 4096,
+          "max_direct_parents": 16,
+          "points": 16384,
+          "recursive_cardinality_histogram": {
+            "106": 1,
+            "121": 1,
+            "16": 4089,
+            "31": 1,
+            "46": 1,
+            "61": 1,
+            "76": 1,
+            "91": 1
+          },
+          "ungrouped_points": [
+            16383
+          ]
+        },
+        "topology_input": {
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "path": "/tmp/bw-mon-spec13/nominal20-max-topology-input.json",
+          "sha256": "12d8bea19ba795881623d8b7f1f79090d28a5e1187a0bf812193c0a8742b0ff7"
+        },
+        "variant": "group-clock",
+        "window_basis": "ns"
+      },
+      "original_manifest": null,
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 30,
+          "episode_enable": 1,
+          "min_span": 6,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "ns",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 4
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 5461,
+          "valid_only": 5462,
+          "valid_ready": 5461
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 8192,
+          "fixed_64B": 8192
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "PREPARED_NOT_LAUNCHED",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-max-ns-long-dense": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 20480,
+        "expected_metric_conclusions_for_these_inputs": 245760,
+        "final_scope_rows": 20480,
+        "new_window_publications_checked": 819200000,
+        "per_scope_default_window_publications": 40000,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 1638400000,
+        "summary_records": 1,
+        "summary_scopes_done": 20480
+      },
+      "input": {
+        "S": 1,
+        "W": 40000,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 20480,
+        "topology": {
+          "depth": 8,
+          "direct_edges": 65536,
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "groups": 4096,
+          "max_direct_parents": 16,
+          "points": 16384,
+          "recursive_cardinality_histogram": {
+            "106": 1,
+            "121": 1,
+            "16": 4089,
+            "31": 1,
+            "46": 1,
+            "61": 1,
+            "76": 1,
+            "91": 1
+          },
+          "ungrouped_points": [
+            16383
+          ]
+        },
+        "topology_input": {
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "path": "/tmp/bw-mon-spec13/nominal20-max-topology-input.json",
+          "sha256": "12d8bea19ba795881623d8b7f1f79090d28a5e1187a0bf812193c0a8742b0ff7"
+        },
+        "variant": "baseline",
+        "window_basis": "ns"
+      },
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-max-ns-long-dense-351847286c8587999347/runs/history-max-ns-long-dense/20261025T162303-3912471/manifest.json",
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 30,
+          "episode_enable": 1,
+          "min_span": 2,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "ns",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 4
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 5461,
+          "valid_only": 5462,
+          "valid_ready": 5461
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 8192,
+          "fixed_64B": 8192
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "SIMULATION_RUNNING",
+      "verified": false,
+      "verified_bundle": null
+    },
+    "history-max-ns-short-dense": {
+      "actual_verification": null,
+      "expected_counts": {
+        "configured_metrics_per_scope": 12,
+        "episode_final_records": 20480,
+        "expected_metric_conclusions_for_these_inputs": 245760,
+        "final_scope_rows": 20480,
+        "new_window_publications_checked": 819200000,
+        "per_scope_default_window_publications": 40000,
+        "performance_pass_not_required": true,
+        "raw_receipts_checked": 1638400000,
+        "summary_records": 1,
+        "summary_scopes_done": 20480
+      },
+      "input": {
+        "S": 1,
+        "W": 10,
+        "actual_input_edges_per_scope": 80000,
+        "bytes_per_transfer": 64,
+        "clock_segments_fs": [
+          [
+            250000,
+            500000,
+            80000
+          ]
+        ],
+        "duration_ns": 40000,
+        "end_ticks": 40000000000,
+        "first_edge_ticks": 250000,
+        "interventions": [],
+        "last_edge_ticks": 39999750000,
+        "ordinary_baseline_max_frequency_hz": 2000000000,
+        "scopes": 20480,
+        "topology": {
+          "depth": 8,
+          "direct_edges": 65536,
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "groups": 4096,
+          "max_direct_parents": 16,
+          "points": 16384,
+          "recursive_cardinality_histogram": {
+            "106": 1,
+            "121": 1,
+            "16": 4089,
+            "31": 1,
+            "46": 1,
+            "61": 1,
+            "76": 1,
+            "91": 1
+          },
+          "ungrouped_points": [
+            16383
+          ]
+        },
+        "topology_input": {
+          "graph_sha256": "736a6660a63a4596fe2d41e45e241c4024c98c05957c13f297b31f0b67a7f2a3",
+          "path": "/tmp/bw-mon-spec13/nominal20-max-topology-input.json",
+          "sha256": "12d8bea19ba795881623d8b7f1f79090d28a5e1187a0bf812193c0a8742b0ff7"
+        },
+        "variant": "baseline",
+        "window_basis": "ns"
+      },
+      "original_manifest": null,
+      "required_enabled_features": {
+        "analysis": {
+          "K": 4,
+          "N": 3,
+          "Q": 30,
+          "episode_enable": 1,
+          "min_span": 2,
+          "phase_enable": 1,
+          "rms_enter_abs": 1e-06,
+          "rms_enter_rel": 0,
+          "rms_exit_abs": 1e-06,
+          "rms_exit_rel": 0,
+          "steady_enter_abs": 0,
+          "steady_enter_rel": 0,
+          "steady_exit_abs": 0,
+          "steady_exit_rel": 0,
+          "trend_abs": 1,
+          "trend_rel": 0
+        },
+        "credit": {
+          "capacity": 16,
+          "enable": "credit points",
+          "initial": 16,
+          "initial_known": 1,
+          "return_every_edge": 1,
+          "return_timing": "NEXT_CYCLE",
+          "send": 1
+        },
+        "dynamic_by_point": "even indexes dynamic; odd fixed64B",
+        "hints": {
+          "backpressure_enable": "valid-ready points",
+          "basis": "ns",
+          "expected_hits": 0,
+          "shortage_enable": "credit points",
+          "threshold": 4
+        },
+        "numeric_tolerance": {
+          "absolute": 1e-09,
+          "relative": 1e-12
+        },
+        "performance_cfg_keys_policy": "All12 fixed_performance_cfg_keys above instantiated for every typed scope, including ungrouped points; no performance bounds changed to force PASS.",
+        "point_protocol_counts": {
+          "credit": 5461,
+          "valid_only": 5462,
+          "valid_ready": 5461
+        },
+        "point_size_mode_counts": {
+          "dynamic_64B": 8192,
+          "fixed_64B": 8192
+        },
+        "protocol_by_point": "index % 3: valid-only,valid-ready,credit",
+        "report": {
+          "enabled": true,
+          "metrics": 12,
+          "targets": "explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS"
+        },
+        "timeprecision": "1fs",
+        "timeunit": "1fs",
+        "waveform": false
+      },
+      "state": "PREPARED_NOT_LAUNCHED",
+      "verified": false,
+      "verified_bundle": null
+    }
+  },
+  "required_profile_count": 12,
+  "snapshot_utc": "2026-10-25T17:19:55.878185Z",
+  "status": "PARTIAL_NOMINAL_CAMPAIGN"
+}

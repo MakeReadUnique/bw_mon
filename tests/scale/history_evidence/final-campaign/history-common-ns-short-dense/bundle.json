@@ -1,0 +1,137 @@
+{
+  "files": {
+    "actual.csv": {
+      "gzip_bytes": 8184,
+      "gzip_file": "actual.csv.gz",
+      "gzip_sha256": "890f749ebc3029c39fdb76d6479bfc8c7127a622c58d10d145e8185def75876f",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/actual.csv",
+      "uncompressed_bytes": 237620,
+      "uncompressed_sha256": "c4c25024c58103608ba6df6189a133f601ab18d7df55d0a5dbd6a1c9c5e8869d"
+    },
+    "checker.sv": {
+      "gzip_bytes": 1635,
+      "gzip_file": "checker.sv.gz",
+      "gzip_sha256": "f401e25be4ece94aa768e240554323fd266eea20e7f6210920139754a43b7308",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/checker.sv",
+      "uncompressed_bytes": 6924,
+      "uncompressed_sha256": "235ee2ee59357eedf062d8231ee55aee0445fb5983295a996e2674c2f8b093bb"
+    },
+    "compile-success.json": {
+      "gzip_bytes": 770,
+      "gzip_file": "compile-success.json.gz",
+      "gzip_sha256": "4e7b7dfac40f9fe79769ae2e41e84d5cb0a8f949229c93df1cc3c669b6042b86",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/builds/6027f19d27c93b92caa98ee157c642f96d9f2cdf8426a976bab7ea4b5407d8ff/compile-success.json",
+      "uncompressed_bytes": 4765,
+      "uncompressed_sha256": "7e910006c6322454eac7118e3598ae103afaa88bfb5a27064c83dc258064e03d"
+    },
+    "compile.log": {
+      "gzip_bytes": 1708,
+      "gzip_file": "compile.log.gz",
+      "gzip_sha256": "e0ea478bae0c4075356c06c7c29a1bacf4942f70489bceaf43d0d5b354335ec4",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/builds/6027f19d27c93b92caa98ee157c642f96d9f2cdf8426a976bab7ea4b5407d8ff/compile-attempt-1/compile.log",
+      "uncompressed_bytes": 13027,
+      "uncompressed_sha256": "3da85a766e6f7ba6e96b1ff9afd91a19a3d7b2d802f637135f6b33fe5132af3a"
+    },
+    "compile.time-v.txt": {
+      "gzip_bytes": 764,
+      "gzip_file": "compile.time-v.txt.gz",
+      "gzip_sha256": "ec0bdb963a380d3f9f7a179fede657d3303b7e4927839d78157e61a9e4436b1d",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/builds/6027f19d27c93b92caa98ee157c642f96d9f2cdf8426a976bab7ea4b5407d8ff/compile-attempt-1/time-v.txt",
+      "uncompressed_bytes": 3840,
+      "uncompressed_sha256": "b6a4d1ce5b8580b53ca762a235ca6b60a5e882bafb39a92abf438e0bc8d07f25"
+    },
+    "diffs.json": {
+      "gzip_bytes": 23,
+      "gzip_file": "diffs.json.gz",
+      "gzip_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/diffs.json",
+      "uncompressed_bytes": 3,
+      "uncompressed_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "expect.cfg": {
+      "gzip_bytes": 5104,
+      "gzip_file": "expect.cfg.gz",
+      "gzip_sha256": "0531ebe46dc9c458130e5107e8b3092588ce03565ca237184e83eac57da05c34",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/expect.cfg",
+      "uncompressed_bytes": 441083,
+      "uncompressed_sha256": "1b2ea20d99846499fe7a10bdeb3266284a25e03e227a89b3533c9485e872337f"
+    },
+    "expected.csv": {
+      "gzip_bytes": 8440,
+      "gzip_file": "expected.csv.gz",
+      "gzip_sha256": "13cd46ce41c04878ea1bf5cd2648a1a4929188d5ba74c54fd0fa8def73b576bc",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/expected.csv",
+      "uncompressed_bytes": 238901,
+      "uncompressed_sha256": "718b2613dacb3376d7328fb8bf1296d14fe837d29fcaf5ccc55ee38f69421ac7"
+    },
+    "input.json": {
+      "gzip_bytes": 10080,
+      "gzip_file": "input.json.gz",
+      "gzip_sha256": "c7d1e851d91ed735056655a77c0b3e364cf52bf240af16ed1b962ae6abd0540f",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/input.json",
+      "uncompressed_bytes": 91295,
+      "uncompressed_sha256": "6ba0e944a43af7586b18d2339b764daa2664dbc4fb7323774b40b516e71e2957"
+    },
+    "input_pkg.sv": {
+      "gzip_bytes": 2725,
+      "gzip_file": "input_pkg.sv.gz",
+      "gzip_sha256": "26c98bb74339dd3118fa3ec6692a52ddf6ef5b59e7b2a10123f472adce3b7a99",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/input_pkg.sv",
+      "uncompressed_bytes": 15873,
+      "uncompressed_sha256": "85ee88e035b083912db2363972736c84b9cdb53674d9b939007dcca74910d70c"
+    },
+    "manifest.json": {
+      "gzip_bytes": 14935,
+      "gzip_file": "manifest.json.gz",
+      "gzip_sha256": "473ef1121a93e74bc18945a3d2d62ed1953cabb33d38278eb6a0a75c05ebc7b6",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/manifest.json",
+      "uncompressed_bytes": 120751,
+      "uncompressed_sha256": "55d48b33ddca4fe2cdff396682c0af6b4e45d2be0f50fc45f46ab21a80552c6b"
+    },
+    "native-dependencies.d": {
+      "gzip_bytes": 244,
+      "gzip_file": "native-dependencies.d.gz",
+      "gzip_sha256": "662e7112d46dad7fed5b0220c76fbba8b6177f476f5b5997bc6cbd61d7f0476a",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/builds/6027f19d27c93b92caa98ee157c642f96d9f2cdf8426a976bab7ea4b5407d8ff/csrc/bw_slot_settlement.d",
+      "uncompressed_bytes": 354,
+      "uncompressed_sha256": "49793f0240a775baac11a655f45db6dc7b33214fc30bc6346d38629fe804e1e5"
+    },
+    "simulation.log": {
+      "gzip_bytes": 231233,
+      "gzip_file": "simulation.log.gz",
+      "gzip_sha256": "cfe96cb0bba2f759a8d591629c4d63409844fa0d495dcd52bb4363acd5160d76",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/simulation.log",
+      "uncompressed_bytes": 20889436,
+      "uncompressed_sha256": "a7beab3f6a81ef14e4c2de2f831dce61564957fbe80cd682f627600648de44f8"
+    },
+    "simulation.time-v.txt": {
+      "gzip_bytes": 612,
+      "gzip_file": "simulation.time-v.txt.gz",
+      "gzip_sha256": "d1db2078830b1863509ff71f16f98fba9a922baa0c51dbadc12f45251215ab49",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/simulation.time-v.txt",
+      "uncompressed_bytes": 1303,
+      "uncompressed_sha256": "063699d8384acdaa1862f1eab400f8e58bd2942f693ea5d02bb70c5cd2426cbb"
+    },
+    "tb_bw_scale.sv": {
+      "gzip_bytes": 8530,
+      "gzip_file": "tb_bw_scale.sv.gz",
+      "gzip_sha256": "e2dea5c52f3d43684adaa590848d6bc98dff529c27dca196980dd111b0469f82",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/tb_bw_scale.sv",
+      "uncompressed_bytes": 100607,
+      "uncompressed_sha256": "3bb75244cd13026862dd9309508be02f54cfc33287ef85bfd0e30f0749bf25cb"
+    },
+    "verification.json": {
+      "gzip_bytes": 241,
+      "gzip_file": "verification.json.gz",
+      "gzip_sha256": "ce79dffd169d1e95f380a77b9e6587495117457097f0647b5425c5ec51e44495",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/verification.json",
+      "uncompressed_bytes": 490,
+      "uncompressed_sha256": "7ce13fcccd89be1e21010044754b276e20aa6b07eb631f38ed58230940a649e8"
+    }
+  },
+  "original_checked_pass": true,
+  "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/manifest.json",
+  "scenario": "history-common-ns-short-dense",
+  "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+  "source_tree": "d17f768abf30967d8c1ee8d1ec986d2ed5bdc174"
+}

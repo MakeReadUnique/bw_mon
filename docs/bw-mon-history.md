@@ -11,8 +11,10 @@ all six serial public history tracers pass:112800 raw receipts and57078 new
 windows, zero differences. The [portable preparation archive](../tests/scale/history_evidence/final-preparation/README.md)
 contains actual inputs/configs, expected/actual/differences, source/native/tool/link
 fingerprints and measured small-run RSS. Its recorded-data verifier works without
-VCS or former temporary worktrees. Every nominal history cell still awaits a
-fresh actual run from this builder; small preparation is not nominal acceptance.
+VCS or former temporary worktrees. The [current nominal checkpoint](../tests/scale/history_evidence/final-campaign/README.md)
+records two completed/audited COMMON short-dense profiles and ten still-pending
+new rows. Small preparation and this partial checkpoint are not full nominal
+acceptance.
 Earlier completed runs, interrupted attempts and dated matrix files retain their
 historical source qualification and never qualify a final-source cell.
 
@@ -111,11 +113,25 @@ The prepared twelve-profile receipts preserve the original common/max sizes,
 clock/control inputs, W/S, exact40000000000fs observation endpoint and independent
 counts. Four original common29 profiles regenerate byte-identical input/cfg/
 reference/generated SV after composing the history extensions with the final
-integration source. No full history profile has been launched from this frozen
-builder. COMMON history admission is gated on independently qualifying and
-closing current-source common29 plus explicit coordinator admission; the prepared
-queue allows at most two COMMON jobs and no MAX history jobs. MAX history requires
-separate resource admission. Neither a prepared receipt nor a queued row is a pass.
+integration source. The initial full COMMON history admission followed independently
+qualifying and closing current-source common29 plus explicit coordinator admission.
+Later resource admission permits at most two COMMON and two MAX history jobs,
+alongside four MAX30 jobs, with no automatic cap increase. Neither a prepared
+receipt nor a queued/running row is a pass.
+
+At2026-10-25 17:19:55UTC, both complete40us COMMON short-dense rows are verified
+and independently audited: NS W10/S1 checks102400000 raw receipts/51200000 new
+windows at284984KiB simulator peak; cycle W20/S2 checks102400000 raw/51198720
+windows at280856KiB peak. All1280 scopes per row match exactly, with zero
+differences. The expected final tail is unknown, so all15360 configured metric
+conclusions per row are legitimate WARNINGs rather than invented valid e2e.
+The [portable nominal evidence](../tests/scale/history_evidence/final-campaign/README.md)
+retains original inputs, commands, source/native/tool/link hashes, expected/actual/
+differences, final streams and measured RSS. Its matrix records all twelve fixed
+new targets; only these two actual completed/audited rows are accepted. COMMON
+and MAX long rows remain running and the remaining six rows prepared at that
+dated snapshot. Existing common29 middle-window evidence is version-qualified;
+the still-running MAX30 rows cannot yet supply accepted middle-window reuse.
 
 The prior runtime8e history queue and two actual partial COMMON runs were stopped
 when the Spec review found the final-steady validity defect. The original natural

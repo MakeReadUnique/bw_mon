@@ -1,0 +1,43 @@
+{
+  "active_profiles": [
+    "history-common-ns-long-dense",
+    "history-common-cycle-long-dense"
+  ],
+  "audited_profiles": [
+    "history-common-cycle-short-dense",
+    "history-common-ns-short-dense"
+  ],
+  "concurrency_cap": 2,
+  "failures": {},
+  "maximum_history_concurrency": 0,
+  "profiles": {
+    "history-common-cycle-control-clock": {
+      "state": "QUEUED"
+    },
+    "history-common-cycle-long-dense": {
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-long-dense-a47955bebc7cd9bf05d2/runs/history-common-cycle-long-dense/20261025T171143-3948927/manifest.json",
+      "runner_pid": 3948927,
+      "state": "SIMULATION_RUNNING"
+    },
+    "history-common-cycle-short-dense": {
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-short-dense-34ed4195e842731bb72c/runs/history-common-cycle-short-dense/20261025T161804-3902834/manifest.json",
+      "runner_pid": 3902834,
+      "state": "VERIFIED"
+    },
+    "history-common-ns-control-clock": {
+      "state": "QUEUED"
+    },
+    "history-common-ns-long-dense": {
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-long-dense-a817d8b7df44d6147256/runs/history-common-ns-long-dense/20261025T170740-3946542/manifest.json",
+      "runner_pid": 3946542,
+      "state": "SIMULATION_RUNNING"
+    },
+    "history-common-ns-short-dense": {
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-short-dense-47d5a0dcbc5f648782eb/runs/history-common-ns-short-dense/20261025T161803-3902497/manifest.json",
+      "runner_pid": 3902497,
+      "state": "VERIFIED"
+    }
+  },
+  "state": "RUNNING",
+  "updated_utc": "2026-10-25T17:19:44.279665Z"
+}
