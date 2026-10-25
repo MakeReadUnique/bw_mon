@@ -1,9 +1,9 @@
 {
   "archive": {
-    "bytes": 346587,
+    "bytes": 374653,
     "file": "components-467b722.tar.gz",
     "files": {
-      "campaign/archive-and-audit.py": "95b626c442e8d0e84a7fec0c2aecafb7e051faa7c73563024d6a942425346ad0",
+      "campaign/archive-and-audit.py": "1a0cdc1e6ee1eaf6f28c92cca1ee95cfd1a7314dc15718690b601874c551fa20",
       "campaign/commands-audit.json": "ced658409ff8d2f8e3e4b7063c1a8087b7c561f070e75719e6f53d4bbc391a8c",
       "campaign/shard-0.log": "8285a73ab45777792d36b8cebaacdca905455faf860240db673fa9845f4ea3df",
       "campaign/shard-1.log": "7a445a67b9e9148dae3cbcbe4ffa7e2a03f1fd067ea5898f69362055aad597d9",
@@ -13,6 +13,7 @@
       "campaign/source-after.json": "273af9f0b4d23ec67e0555e1a2226e985739fac7eabc0c47a1d7b1725e960153",
       "campaign/source-before.json": "273af9f0b4d23ec67e0555e1a2226e985739fac7eabc0c47a1d7b1725e960153",
       "campaign/state.json": "71f99d9338c88e3a99b157407622c5b6b5a22e083571e4edcd227910d5344461",
+      "campaign/supplement-native-inventory.py": "36b956b7b3276002b68be63c0fca36bf8bca38b7b47c1321e7433d6c16e5bd95",
       "compile/tb_adapter_decode.log": "df15477c6bffcc63fc84c56b89d626074cb48a3869a200aad424ce3297ebf566",
       "compile/tb_byte_config_error.log": "2bd2b13c787e092cc7f04ad0df6383ec76878d710693c5e591da4d636cf441ac",
       "compile/tb_credit_boundaries.log": "1fe39dca045eeb94c393fa3fc19c6446dff0a16e86a73c73287ef8d1fa9cc427",
@@ -182,6 +183,10 @@
       "compile/tb_transport_retention.log": "58f193f76cbea093a98ded7525481630dcdf5c6917f58ac932f5e7d38d8d940b",
       "compile/tb_variation_pending_retention.log": "e1f9e964a5bf0adffbf6aa3883022f7397cb518515550fea1cc402938479f3b1",
       "freeze.json": "d107e606688e8ec8cb492f15dc8ee423f0ed07f8cd039caf820a34dcd737636a",
+      "native/postrun-supplement/actual-native-group-0.full-M.d": "7c900ffed5fe6bf9c6564d99d8309efa6b04bbb2a4a352b26df88e0864a57ef9",
+      "native/postrun-supplement/actual-native-group-1.full-M.d": "7c900ffed5fe6bf9c6564d99d8309efa6b04bbb2a4a352b26df88e0864a57ef9",
+      "native/postrun-supplement/native-full-flags-supplement.json": "cbc693b74f8131bbee411ee729b8ae087eddcdfdd3f1a765567ba3b1b9f52b3a",
+      "native/postrun-supplement/original-evidence-preservation.json": "76b37cc805b3c48317805bed95afca97ae38be52a6a0cd9201b21e13ddfa8abc",
       "native/tb_adapter_decode.d": "566ec4d11adad9ab571e4d75a6eef454b805ab6ec9fd6d65bf265b246dc7e516",
       "native/tb_byte_config_error.d": "566ec4d11adad9ab571e4d75a6eef454b805ab6ec9fd6d65bf265b246dc7e516",
       "native/tb_credit_boundaries.d": "566ec4d11adad9ab571e4d75a6eef454b805ab6ec9fd6d65bf265b246dc7e516",
@@ -1214,9 +1219,9 @@
       "targeted/production-milestone.log": "437c5f347967843db489180c41fe6128976080b4d459da8ad7b7da6a9009e05c",
       "targeted/source-context.json": "3be37894e45216e3383c384b2839895f833ede6b08a32fec875e430d1bc36acc"
     },
-    "sha256": "df5ab5bfbe5c2b1f5eabd63156d602919f7db3bc646d144bdac5d007cfc13bef"
+    "sha256": "f6cc3b355c957164ae89b78a69e4ab95c9327011a58dc01837f4fa26070fb4b5"
   },
-  "archiver_sha256": "95b626c442e8d0e84a7fec0c2aecafb7e051faa7c73563024d6a942425346ad0",
+  "archiver_sha256": "1a0cdc1e6ee1eaf6f28c92cca1ee95cfd1a7314dc15718690b601874c551fa20",
   "cache_stamps_verified": 168,
   "cases": 427,
   "compiler_diagnostics": 0,
@@ -1226,8 +1231,11 @@
     "reason": "intentional absent cfg"
   },
   "independent_targeted_cases": 8,
+  "native_actual_flags_header_hashes_verified": 50,
   "native_build_records_verified": 168,
-  "native_transitive_header_hashes_verified": 49,
+  "native_inventory_timing": "Original plain-gcc-M49 pre-run freeze preserved; actualgccflags50 inventory supplied post-run with recorded command and file-stability evidence",
+  "native_original_plain_preprocessor_header_hashes_verified": 49,
+  "original_actual_evidence_members_preserved": 1209,
   "production_milestone": "56127495f597d215003000356ac3b5387cc809a1",
   "proprietary_header_or_binary_contents_copied": false,
   "runtime_contracts_verified": 427,
@@ -1237,5 +1245,5 @@
   "source_tree": "9ff5722b7d9a3df13f112ba3c8d4deb2c219a2ed",
   "source_unchanged": true,
   "top_groups": 168,
-  "verified_utc": "2026-10-25T15:46:51.587497Z"
+  "verified_utc": "2026-10-25T15:52:43.541670Z"
 }
