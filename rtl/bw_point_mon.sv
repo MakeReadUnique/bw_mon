@@ -165,6 +165,24 @@ module bw_point_mon #(
   real phase_fit_rms;
   bw_phase_result_t phase_result;
 
+  // Final identities remain distinct from live epoch/episode/phase fields.
+  wire [63:0] episode_result_stats_epoch=episode_result.stats_epoch;
+  wire [63:0] episode_result_episode_id=episode_result.episode_id;
+  wire [63:0] phase_result_stats_epoch=phase_result.stats_epoch;
+  wire [63:0] phase_result_episode_id=phase_result.episode_id;
+  wire [63:0] phase_result_phase_id=phase_result.phase_id;
+  wire [63:0] phase_result_start_ticks=phase_result.start_ticks;
+  wire [63:0] phase_result_end_ticks=phase_result.end_ticks;
+  wire [63:0] phase_result_start_total_bytes=phase_result.start_total_bytes;
+  wire [63:0] phase_result_end_total_bytes=phase_result.end_total_bytes;
+  wire [63:0] phase_result_start_total_events=phase_result.start_total_events;
+  wire [63:0] phase_result_end_total_events=phase_result.end_total_events;
+  wire [63:0] episode_last_steady_stats_epoch=episode_result.last_steady.stats_epoch;
+  wire [63:0] episode_last_steady_episode_id=episode_result.last_steady.episode_id;
+  wire [63:0] episode_last_steady_result_seq=episode_result.last_steady.result_seq;
+  wire phase_result_start_known=phase_result.start_known;
+  wire phase_result_end_known=phase_result.end_known;
+
   // Final immutable metrics are flattened here for ordinary waveform views.
   wire [63:0] phase_duration_ticks=phase_result.duration_ticks;
   wire [63:0] phase_byte_count=phase_result.byte_count;

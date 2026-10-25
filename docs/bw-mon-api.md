@@ -1011,7 +1011,13 @@ The selected representative has `episode_last_steady_found`,
 `episode_last_steady_phase_id`, `episode_last_steady_start_ticks`,
 `episode_last_steady_end_ticks`, `episode_last_steady_bandwidth_gbps`,
 `episode_last_steady_bandwidth_valid` and `episode_last_steady_variation_*`.
-The immutable record's sequence identifies when these aliases change. Existing
+Immutable identities are also flattened as `episode_result_stats_epoch`,
+`episode_result_episode_id`, `phase_result_{stats_epoch,episode_id,phase_id}`,
+`phase_result_{start,end}_ticks`, `phase_result_{start,end}_known`,
+`phase_result_{start,end}_total_{bytes,events}`, and
+`episode_last_steady_{stats_epoch,episode_id,result_seq}`. They keep latest-final
+context separate from the currently active epoch/episode/phase. The immutable
+record's sequence identifies when these aliases change. Existing
 window/evidence/current phase scalars keep their original meanings.
 
 `BW_PHASE_METRICS` logs raw count/time/bandwidth and quality prefixes.
