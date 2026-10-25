@@ -70,6 +70,7 @@ def main():
   review_objects +=[f for f in directory.iterdir() if f.is_file() and (f.suffix in ['.fsdb','.png','.sav','.cfg'] or f.name in ['expected-actual.md','reference.json','commands.json'] or f.name.startswith('signals-'))]
  fingerprint=hashlib.sha256(json.dumps([(str(f.relative_to(OUT)),sha(f)) for f in sorted(review_objects)],sort_keys=True).encode()).hexdigest()
  review={'human':{'status':'PENDING','reviewer':None,'date':None,'objects_intervals_conclusion':None},'agent':{'status':'SEE IMAGE-SPECIFIC ENTRIES','note':'Agent inspection is not human attestation'},'actual_images':pictures,'instructions':'Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.'}
+ if 'previous_human_record' in previous_review:review['previous_human_record']=previous_review['previous_human_record']
  if previous_review.get('human',{}).get('status','PENDING')!='PENDING':
   if previous_review.get('asset_fingerprint')==fingerprint:review['human']=previous_review['human']
   else:review['previous_human_record']=previous_review['human'];review['human']['reason']='Assets changed; prior attestation does not cover new assets'

@@ -148,7 +148,9 @@ After a genuine named ledger entry is recorded, `python3 tests/acceptance/publis
 revalidates the existing assets and renders the current global human status in
 `verification.json` and INDEX. It retains the entry only for the same asset
 fingerprint; changed assets return the current status to PENDING. This command
-does not create an attestation. Scene rows describe automated results, and
+retains the archived previous record on later pending republication without
+adding duplicate archives, and does not create an attestation. Scene rows describe
+automated results, and
 `human_review_at_generation` records their original generation-time state; neither
 implies separate human approval of every scene. Original comparison/capture
 manifests and expected/actual tables retain their historical PENDING text and

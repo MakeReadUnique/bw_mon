@@ -111,6 +111,32 @@ class PublishReviewCLI(unittest.TestCase):
         self.assertEqual(self.snapshot_evidence(), evidence,
                          'Resetting review must not rewrite original evidence')
 
+    def test_third_publication_retains_one_archived_review_while_current_is_pending(self):
+        self.seed_synthetic_review()
+        self.publish()  # First: preserve the same-fingerprint synthetic record.
+        view = self.out / 'steady_ns/overview.sav'
+        view.write_bytes(view.read_bytes() + b'\n# SYNTHETIC TEST ASSET CHANGE\n')
+        evidence = self.snapshot_evidence()
+        self.publish()  # Second: invalidate current review and archive it once.
+        invalidated = self.read('review.json')
+        self.assertEqual(invalidated['previous_human_record'], self.synthetic)
+        self.publish()  # Third: same changed assets, current review still pending.
+        ledger = self.read('review.json')
+        self.assertTrue('previous_human_record' in ledger,
+                        'Third publication lost the archived SYNTHETIC record')
+        self.assertEqual(ledger['previous_human_record'], self.synthetic)
+        self.assertEqual((self.out / 'review.json').read_text().count(SYNTHETIC_STATUS), 1)
+        self.assertEqual(ledger['asset_fingerprint'], invalidated['asset_fingerprint'])
+        self.assertEqual(ledger['human']['status'], 'PENDING')
+        for field in ['reviewer', 'date', 'objects_intervals_conclusion']:
+            self.assertIsNone(ledger['human'][field])
+        self.assertEqual(self.read('verification.json')['human_review'], 'PENDING')
+        index = (self.out / 'INDEX.md').read_text()
+        self.assertIn('human T6 ledger status: PENDING', index)
+        self.assertNotIn(SYNTHETIC_STATUS, index)
+        self.assertEqual(self.snapshot_evidence(), evidence,
+                         'Repeated pending publication must preserve evidence bytes')
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
