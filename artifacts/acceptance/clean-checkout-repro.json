@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "command": "python3 tests/acceptance/run.py --scene no_episode --basis ns",
+  "detached_revision": "db7fa7128ad20a3b4d704499890b00f369166b63",
+  "actual_separate_checkout": "/tmp/bw-mon-spec13/repro28-smoke",
+  "original_worktree_build_not_used": true,
+  "all_declared_dependencies_hashed": true,
+  "counts": {
+    "raw": 1904,
+    "windows": 960,
+    "receipts": 1904
+  },
+  "analysis_counts": {
+    "episodes": 0,
+    "phases": 0,
+    "variations": 0
+  },
+  "performance": {
+    "expected": {
+      "PASS": 0,
+      "FAIL": 0,
+      "WARNING": 2
+    },
+    "summary_status": "WARNING"
+  },
+  "runtime_log_sha256": "3c681b0dcef51d17b90dc27a9840caebeca8de8f72b8fb99f0b3cd53e3138bf3",
+  "compiler_log_sha256": "7be953c653a77279068c4789f03428061f389065224f6236f2a82b4523a6eed4",
+  "human_review": "PENDING"
+}

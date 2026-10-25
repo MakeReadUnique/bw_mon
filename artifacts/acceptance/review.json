@@ -1,0 +1,134 @@
+{
+  "human": {
+    "status": "PENDING",
+    "reviewer": null,
+    "date": null,
+    "objects_intervals_conclusion": null
+  },
+  "agent": {
+    "status": "REPRESENTATIVE_IMAGES_INSPECTED",
+    "reviewer": "Codex agent",
+    "reviewer_type": "AGENT, NOT HUMAN",
+    "date_utc": "2026-10-25T08:00:02.842712Z",
+    "entries": [
+      {
+        "image": "steady_cycle/overview.png",
+        "sha256": "606901ec9f5e2e19d7e4e8ee19805526115e6cc8388c3ec7e234db478d01769b",
+        "observations": "Full known[92.5,102.5)ns: point128,die512,all1024,mixed768; exact10240B/10ns; freep10/p11independent."
+      },
+      {
+        "image": "start_stop_ns/overview.png",
+        "sha256": "e2fe31e0cad7eaab2bc21b842fab5b21f028b3cb9a5b1115ae0e82dbddbbcedf",
+        "observations": "valid falls60ns;61ns publicwindow1152B/18events=115.2GBps, group rates scaleunique membership; history laterzero."
+      },
+      {
+        "image": "e2_ns/overview.png",
+        "sha256": "6c4d113f7f134dad1b4318b1418458ca11c640c24dfc318775520e99db9ce4a1",
+        "observations": "Cursor11ns window[1,11)320B/4events=32GBps excludescurrent128B transfer; later384/256 rows visible."
+      },
+      {
+        "image": "no_episode_ns/episode.png",
+        "sha256": "8fb56f7e71e721939fad4b4271beec8837d235220d4b49b42aadc004b3685037",
+        "observations": "Live/immutableepisode IDs0, no tail/e2e validity; numeric backing0 is not a completed process."
+      },
+      {
+        "image": "point_reset_ns/quality.png",
+        "sha256": "6aae68fe4012cb975a75a2a257318253e9f1529d9694e10ebd8cf4d5e22ddd0f",
+        "observations": "Point epoch1/rewarmup while all_dmc keeps original fullhistory10176B, known byte/event quality and actualmemberresetcoverage."
+      },
+      {
+        "image": "child_reset_ns/quality.png",
+        "sha256": "39854b5d60142e914efa31d0cb3dc90d9c150eb89754416bc9f990fec61c8493",
+        "observations": "Child epoch1/rewarmup while point0 and all_dmc remainepoch0/full/1024, no memberresetcoverage."
+      },
+      {
+        "image": "upper_reset_ns/quality.png",
+        "sha256": "4a8decd5e0a4f24d45132e6d04f0dd6c949e22997260d1c8c78b488332382bba",
+        "observations": "Upper epoch1/rewarmup while leaf/child continueepoch0, no actualpointresetcoverage."
+      },
+      {
+        "image": "reset_unknown_ns/quality.png",
+        "sha256": "3e1987775a2f54669b6ebd30e6e872a1e76f57337b345e7d2dccdbbb218c0298",
+        "observations": "ResetX is visible; epoch stays0, fullwindowBC/ECfalse and knownsubtotal retained; no knownresetcoverage."
+      },
+      {
+        "image": "varying_ns/phase.png",
+        "sha256": "28f8d8320ae3365e189fa4d6c53803dd554962223c28564ccd34b80afbe0bb18",
+        "observations": "Repeated RAMP/STEADY/FALL sequence, lateststeady[136,140)raw128/windowmean128/sigma0; wholeCV43.568%valid, distinctfinal identities."
+      },
+      {
+        "image": "frequency_cycle/clock.png",
+        "sha256": "d91ed7bd99664d88239f2e6fef288bb01816a80323e598459141a19e51eb4565",
+        "observations": "Actualslowclock:20cycles span20ns with1280B gives64GBps and64B/cycle; all10240B/20ns512GBps/512Bcycle."
+      },
+      {
+        "image": "zero_ns/episode.png",
+        "sha256": "7e529cc1ea7d5f0969812653d14aaa4a97aa5defa648fb3e98f50624aacf5eff",
+        "observations": "40zero-byteevents form complete[20,40), actuale2e0valid; sigma0 and CVunavailable remain distinct."
+      },
+      {
+        "image": "e3_delayed_ns/phase.png",
+        "sha256": "a6f263dcba2725272f4056288b31b9288b48bcd36d8cff2748e37bb64155721c",
+        "observations": "Candidate120, evidenceN3/span20, consecutivecounts1/2/3 thenconfirmed150; finalrecordseq0beforeEOS explicitly pending."
+      },
+      {
+        "image": "e3_delayed_ns/episode.png",
+        "sha256": "65c2f255a46f3ae12e4362e16d0d2c1e8476efc28ee4e64ff08e24d20e7b4444",
+        "observations": "At196 complete95..136/640B/2events/41ns; selected120..136 raw0 differswindowmean6.4/sigma0."
+      },
+      {
+        "image": "hints_cycle/hints.png",
+        "sha256": "3cc5bc9ce6f138bac9f166f1975ae1294905a74b1364352e1089fe441216425c",
+        "observations": "Stoppedclock/cyclewindowseq79 holds whileNSbackpressurestarts85/hits87/releases95, independentcounters."
+      },
+      {
+        "image": "clock_stop_cycle/clock.png",
+        "sha256": "b8dc5ab1878096bee0b43e29b87ac1da51de2dcad2e0e2e9e60189ae4cdf4ecb",
+        "observations": "Resume101ns window[70.5,101)30.5ns,1280B/20cycles =>41.9672GBps with64B/cycle; heldold snapshotduringstop."
+      },
+      {
+        "image": "steady_cycle/clock.png",
+        "sha256": "4d1774deeba1bfeec85836537a8a634c6601549b7d30479161ce9947936100e3",
+        "observations": "At102.5ns:20cycles,1280B point64B/cycle; die0/die1256, all512,mixed384; physical10ns bandwidth128/512/1024/768. Actual fresh supplementary capture after license restoration."
+      }
+    ],
+    "limitations": "Other captures are automation-validated and available for actual humanreview; this ledger never supplies humanattestation."
+  },
+  "actual_images": [
+    "child_reset_ns/quality.png",
+    "clock_stop_cycle/clock.png",
+    "clock_stop_ns/clock.png",
+    "e2_ns/overview.png",
+    "e3_boundary_ns/episode.png",
+    "e3_delayed_ns/phase.png",
+    "e3_delayed_ns/episode.png",
+    "e4_below_ns/episode.png",
+    "e4_boundary_ns/episode.png",
+    "e4_low_ns/episode.png",
+    "e5_ns/episode.png",
+    "frequency_cycle/clock.png",
+    "frequency_ns/clock.png",
+    "hints_cycle/hints.png",
+    "isolated_ns/overview.png",
+    "no_episode_ns/episode.png",
+    "point_reset_ns/quality.png",
+    "protocols_ns/protocols.png",
+    "reset_unknown_ns/quality.png",
+    "size_unknown_ns/quality.png",
+    "size_unknown_ns/episode.png",
+    "start_stop_cycle/overview.png",
+    "start_stop_ns/overview.png",
+    "steady_cycle/overview.png",
+    "steady_cycle/clock.png",
+    "steady_ns/overview.png",
+    "truncated_cycle/episode.png",
+    "upper_reset_ns/quality.png",
+    "valid_unknown_ns/quality.png",
+    "varying_cycle/phase.png",
+    "varying_ns/phase.png",
+    "varying_ns/episode.png",
+    "zero_ns/episode.png"
+  ],
+  "instructions": "Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.",
+  "asset_fingerprint": "7d5ec87e4779cdf54fcde49d1d9c516a4afa6d752ceaab30eb2debc5ee27884c"
+}

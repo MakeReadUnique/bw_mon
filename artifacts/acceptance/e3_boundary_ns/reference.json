@@ -1,0 +1,486 @@
+{
+  "episodes": {
+    "p0": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 80000000,
+        "last": 100000000,
+        "tail": 102000000,
+        "confirm": 132000000,
+        "status": 2,
+        "bytes": 256,
+        "events": 3,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 22000000,
+        "valid": true,
+        "e2e": 11.636363636363637
+      },
+      {
+        "epoch": 0,
+        "id": 2,
+        "first": 132000000,
+        "last": 132000000,
+        "tail": 134000000,
+        "confirm": 164000000,
+        "status": 2,
+        "bytes": 128,
+        "events": 1,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 2000000,
+        "valid": true,
+        "e2e": 64.0
+      }
+    ],
+    "p1": [],
+    "p2": [],
+    "p3": [],
+    "p4": [],
+    "p5": [],
+    "p6": [],
+    "p7": [],
+    "p8": [],
+    "p9": [],
+    "p10": [],
+    "p11": [],
+    "die0": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 80000000,
+        "last": 100000000,
+        "tail": 102000000,
+        "confirm": 132000000,
+        "status": 2,
+        "bytes": 256,
+        "events": 3,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 22000000,
+        "valid": true,
+        "e2e": 11.636363636363637
+      },
+      {
+        "epoch": 0,
+        "id": 2,
+        "first": 132000000,
+        "last": 132000000,
+        "tail": 134000000,
+        "confirm": 164000000,
+        "status": 2,
+        "bytes": 128,
+        "events": 1,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 2000000,
+        "valid": true,
+        "e2e": 64.0
+      }
+    ],
+    "die1": [],
+    "all_dmc": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 80000000,
+        "last": 100000000,
+        "tail": 102000000,
+        "confirm": 132000000,
+        "status": 2,
+        "bytes": 256,
+        "events": 3,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 22000000,
+        "valid": true,
+        "e2e": 11.636363636363637
+      },
+      {
+        "epoch": 0,
+        "id": 2,
+        "first": 132000000,
+        "last": 132000000,
+        "tail": 134000000,
+        "confirm": 164000000,
+        "status": 2,
+        "bytes": 128,
+        "events": 1,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 2000000,
+        "valid": true,
+        "e2e": 64.0
+      }
+    ],
+    "mixed": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 80000000,
+        "last": 100000000,
+        "tail": 102000000,
+        "confirm": 132000000,
+        "status": 2,
+        "bytes": 256,
+        "events": 3,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 22000000,
+        "valid": true,
+        "e2e": 11.636363636363637
+      },
+      {
+        "epoch": 0,
+        "id": 2,
+        "first": 132000000,
+        "last": 132000000,
+        "tail": 134000000,
+        "confirm": 164000000,
+        "status": 2,
+        "bytes": 128,
+        "events": 1,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 2000000,
+        "valid": true,
+        "e2e": 64.0
+      }
+    ]
+  },
+  "phases": {
+    "p0": [
+      {
+        "kind": 2,
+        "start": 83000000,
+        "end": 85000000,
+        "confirm": 84000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 128,
+        "raw_bw": 64.0,
+        "variation": {
+          "n": 2,
+          "mean": 6.4,
+          "min": 6.4,
+          "max": 6.4,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 87000000,
+        "end": 91000000,
+        "confirm": 88000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 4,
+          "mean": 19.2,
+          "min": 19.2,
+          "max": 19.2,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 93000000,
+        "end": 95000000,
+        "confirm": 94000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 2,
+          "mean": 12.8,
+          "min": 12.8,
+          "max": 12.8,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 97000000,
+        "end": 101000000,
+        "confirm": 98000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 64,
+        "raw_bw": 16.0,
+        "variation": {
+          "n": 4,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sigma": 0.0,
+          "cv": null
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p1": [],
+    "p2": [],
+    "p3": [],
+    "p4": [],
+    "p5": [],
+    "p6": [],
+    "p7": [],
+    "p8": [],
+    "p9": [],
+    "p10": [],
+    "p11": [],
+    "die0": [
+      {
+        "kind": 2,
+        "start": 83000000,
+        "end": 85000000,
+        "confirm": 84000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 128,
+        "raw_bw": 64.0,
+        "variation": {
+          "n": 2,
+          "mean": 6.4,
+          "min": 6.4,
+          "max": 6.4,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 87000000,
+        "end": 91000000,
+        "confirm": 88000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 4,
+          "mean": 19.2,
+          "min": 19.2,
+          "max": 19.2,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 93000000,
+        "end": 95000000,
+        "confirm": 94000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 2,
+          "mean": 12.8,
+          "min": 12.8,
+          "max": 12.8,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 97000000,
+        "end": 101000000,
+        "confirm": 98000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 64,
+        "raw_bw": 16.0,
+        "variation": {
+          "n": 4,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sigma": 0.0,
+          "cv": null
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "die1": [],
+    "all_dmc": [
+      {
+        "kind": 2,
+        "start": 83000000,
+        "end": 85000000,
+        "confirm": 84000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 128,
+        "raw_bw": 64.0,
+        "variation": {
+          "n": 2,
+          "mean": 6.4,
+          "min": 6.4,
+          "max": 6.4,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 87000000,
+        "end": 91000000,
+        "confirm": 88000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 4,
+          "mean": 19.2,
+          "min": 19.2,
+          "max": 19.2,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 93000000,
+        "end": 95000000,
+        "confirm": 94000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 2,
+          "mean": 12.8,
+          "min": 12.8,
+          "max": 12.8,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 97000000,
+        "end": 101000000,
+        "confirm": 98000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 64,
+        "raw_bw": 16.0,
+        "variation": {
+          "n": 4,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sigma": 0.0,
+          "cv": null
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "mixed": [
+      {
+        "kind": 2,
+        "start": 83000000,
+        "end": 85000000,
+        "confirm": 84000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 128,
+        "raw_bw": 64.0,
+        "variation": {
+          "n": 2,
+          "mean": 6.4,
+          "min": 6.4,
+          "max": 6.4,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 87000000,
+        "end": 91000000,
+        "confirm": 88000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 4,
+          "mean": 19.2,
+          "min": 19.2,
+          "max": 19.2,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 93000000,
+        "end": 95000000,
+        "confirm": 94000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 0,
+        "raw_bw": 0.0,
+        "variation": {
+          "n": 2,
+          "mean": 12.8,
+          "min": 12.8,
+          "max": 12.8,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 97000000,
+        "end": 101000000,
+        "confirm": 98000000,
+        "known": true,
+        "episode": 1,
+        "bytes": 64,
+        "raw_bw": 16.0,
+        "variation": {
+          "n": 4,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sigma": 0.0,
+          "cv": null
+        },
+        "unknown_samples": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "public_paths": [
+    "/tb_acceptance_ns/scene/ports[0]/dut/clk",
+    "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/result_seq",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/accepted_record_seq",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_start_ticks",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_end_ticks",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/coverage_ticks",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_start_cycle",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_end_cycle",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/coverage_cycles",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_bytes",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_events",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_per_cycle",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+    "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+    "/tb_acceptance_ns/scene/all_dmc/result_seq",
+    "/tb_acceptance_ns/scene/all_dmc/window_start_ticks",
+    "/tb_acceptance_ns/scene/all_dmc/window_end_ticks",
+    "/tb_acceptance_ns/scene/all_dmc/coverage_ticks",
+    "/tb_acceptance_ns/scene/all_dmc/coverage_cycles",
+    "/tb_acceptance_ns/scene/all_dmc/window_bytes",
+    "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+    "/tb_acceptance_ns/scene/all_dmc/bytes_per_cycle",
+    "/tb_acceptance_ns/scene/all_dmc/window_full",
+    "/tb_acceptance_ns/scene/all_dmc/bytes_complete"
+  ]
+}

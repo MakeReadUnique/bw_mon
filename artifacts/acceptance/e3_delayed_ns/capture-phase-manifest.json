@@ -1,0 +1,24 @@
+{
+  "command": [
+    "verdi",
+    "-nWave",
+    "-ssf",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/e3_delayed_ns/waves.fsdb",
+    "-play",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/e3_delayed_ns/capture-phase.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-fzbtvj0d",
+  "display": ":87",
+  "fresh": true,
+  "pixels": [
+    1500,
+    850
+  ],
+  "fsdb_sha256": "80822459424c01804a65f70108c702e2fb860b129821b103fd4477b7bdfb1443",
+  "png_sha256": "a6f263dcba2725272f4056288b31b9288b48bcd36d8cff2748e37bb64155721c",
+  "agent_visual_review": "PENDING",
+  "human_review": "PENDING",
+  "actual_tcl_sha256": "d3363660e91eab71dd3d28f7fd4d3682103335d01e69818f7df0a1f5f53ea82b",
+  "portable_sav_sha256": "08b853d0bf57b7878920fee51ac92df3ac5cbf75b1a86c5b0b0aee751f23590c",
+  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+}

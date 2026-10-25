@@ -54,11 +54,11 @@ decision. An edge at the common start itself is excluded.
 
 | Object | Parameter | Type / unit | Requirement and illegal behavior |
 | --- | --- | --- | --- |
-| setup | `EXPECTED_POINT_COUNT` | unsigned 32-bit count | Required, 1..16,384; zero or excess is fatal |
-| setup | `STARTUP_TIMEOUT_NS` | unsigned 64-bit integer ns | Default 100, positive; missing points at deadline are fatal |
-| point/core | `WINDOW_BASIS` | `bw_basis_t` | `BW_NS` (default) or `BW_CYCLE`; fixed before startup |
-| point/core | `WINDOW_WIDTH` | unsigned 64-bit integer ns or cycles | Required, 1..40,000 ns or 1..80,000 cycles according to basis |
-| point/core | `UPDATE_STRIDE` | unsigned 64-bit integer ns or cycles | Required, `0<S<=W`; uses the same basis as W |
+| setup | `EXPECTED_POINT_COUNT` | four-state unsigned logic [63:0] count | Required, 1..16,384; zero or excess is fatal |
+| setup | `STARTUP_TIMEOUT_NS` | four-state unsigned logic [63:0] integer ns | Default 100, positive; missing points at deadline are fatal |
+| point/group/core | `WINDOW_BASIS` | raw logic [1:0], validated before enum conversion | `BW_NS` (default) or `BW_CYCLE`; fixed before startup |
+| point/group/core | `WINDOW_WIDTH` | raw unsigned logic [63:0] integer ns or cycles | Required, 1..40,000 ns or 1..80,000 cycles according to basis |
+| point/group/core | `UPDATE_STRIDE` | raw unsigned logic [63:0] integer ns or cycles | Required, `0<S<=W`; uses the same basis as W |
 | point | `POINT_ID` | string | Default `__BW_AUTO__`; otherwise nonempty, unique exact ID |
 | point | `CLOCK_CONTEXT` | string | Default `default`, nonempty; an integration declaration, not proof of physical wiring |
 | point/recorder | `FIXED_BYTES` | four-state 64-bit parameter, bytes/transfer | Default 0 (legal zero-byte transfers); fixed mode requires known value at most 2^32−1 |
@@ -176,7 +176,7 @@ reject a test-continuation marker. Success cases require `TB_PASS`.
 The real-number assertion tolerance is 1e−10 GB/s for the small hand-calculated
 vectors, only to cover binary floating-point evaluation. All bytes, events,
 identities, integer times, sequence values and quality flags compare exactly.
-This numerical tolerance is separate from any future performance tolerance.
+This numerical tolerance is separate from the cfg performance tolerance.
 
 | Test | Independent expectation / contract |
 | --- | --- |
@@ -206,7 +206,7 @@ Select the accounting convention once per point:
 | Point/recorder parameter | Type | Meaning |
 | --- | --- | --- |
 | `PROTOCOL` | `bw_protocol_t` | Default `BW_VALID_ONLY`; also `BW_VALID_READY` and `BW_CREDIT`; unsupported/unknown value is fatal |
-| `DYNAMIC_BYTES` | bit | Default 0: count `FIXED_BYTES` on each transfer. Set 1: use that transfer's decoded `size_bytes` and `size_known` |
+| `DYNAMIC_BYTES` | raw logic [1:0], known0/1 | Default 0: count `FIXED_BYTES` on each transfer. Set 1: use that transfer's decoded `size_bytes` and `size_known` |
 
 | Raw input | Type / default | Role |
 | --- | --- | --- |
@@ -362,10 +362,10 @@ Credit parameters pass from `bw_point_mon` to this component:
 
 | Parameter | Type / default | Meaning and rejection |
 | --- | --- | --- |
-| `CREDIT_ENABLE` | bit, 0 | Request ledger diagnostics; capability remains separate |
+| `CREDIT_ENABLE` | raw logic [1:0], default0, known0/1 | Request ledger diagnostics; capability remains separate |
 | `CREDIT_CAPACITY` | four-state logic [63:0], X | Explicit known capacity required when a credit-protocol ledger is enabled; 0..2^64−1 are legal |
 | `CREDIT_INITIAL` | four-state logic [63:0], X | Explicit starting balance, used only when initial knowledge is asserted |
-| `CREDIT_INITIAL_KNOWN` | bit, 0 | Unknown initial balance stays unknown; if 1, initial value must be known and within capacity |
+| `CREDIT_INITIAL_KNOWN` | raw logic [1:0], default0, known0/1 | Unknown initial balance stays unknown; if 1, initial value must be known and within capacity |
 | `CREDIT_RETURN_TIMING` | `bw_credit_return_t`, `BW_RETURN_NEXT_CYCLE` | Alternative `BW_RETURN_SAME_CYCLE`; unknown/unsupported timing is fatal when enabled |
 
 The package's shared `validate_point_protocol` and `validate_credit_config`
@@ -438,10 +438,10 @@ Each hint has its own explicit configuration, independent of window basis/W/S:
 
 | Point/debug-hints parameter | Type / default | Meaning |
 | --- | --- | --- |
-| `BACKPRESSURE_ENABLE` | bit, 0 | Request sustained valid-ready backpressure hints |
+| `BACKPRESSURE_ENABLE` | raw logic [1:0], default0, known0/1 | Request sustained valid-ready backpressure hints |
 | `BACKPRESSURE_BASIS` | four-state logic [1:0], X | Required `BW_NS` or `BW_CYCLE` when enabled and supported |
 | `BACKPRESSURE_THRESHOLD` | four-state logic [63:0], X | Required positive integer ns or complete local cycles |
-| `SHORTAGE_ENABLE` | bit, 0 | Request sustained trusted-credit-shortage hints |
+| `SHORTAGE_ENABLE` | raw logic [1:0], default0, known0/1 | Request sustained trusted-credit-shortage hints |
 | `SHORTAGE_BASIS` | four-state logic [1:0], X | Required `BW_NS` or `BW_CYCLE` when enabled and supported |
 | `SHORTAGE_THRESHOLD` | four-state logic [63:0], X | Required positive integer ns or complete local cycles |
 
@@ -719,8 +719,8 @@ blocks before they emit results.
 
 ## Traffic episodes and e2e results
 
-Episode analysis uses the shared `bw_stats_core` behind the point's ordinary
-raw-interface ports. Set `EPISODE_ENABLE=1` and explicitly configure
+Episode analysis uses the shared `bw_stats_core` behind ordinary point/group
+input paths. The raw logic [1:0] `EPISODE_ENABLE` policy accepts known0/1. Set `EPISODE_ENABLE=1` and explicitly configure
 `SILENCE_THRESHOLD=Q`. Q is a positive known unsigned 64-bit integer in the
 selected `WINDOW_BASIS` (ns or local cycles). There is no cross-interface Q
 default. `EPISODE_ENABLE=0` is the default window-only mode; Q is then unused.
@@ -829,13 +829,13 @@ point. There is no second bandwidth window, external phase label, performance
 target input or Verdi-side calculation. Repeated or missing ramp, steady and
 fall phases are allowed; a zero-bandwidth plateau can be steady.
 
-The following parameters are shared by point and core. All settings are fixed
+The following parameters are shared by point, group and core. All settings are fixed
 before ready. Disabled phase analysis is the default; when enabled every entry
 below must be explicit, including zero relative coefficients.
 
 | Parameter | Type / unit | Required value / behavior |
 | --- | --- | --- |
-| `PHASE_ENABLE` | bit | Default 0; enabled analysis also requires `EPISODE_ENABLE=1` |
+| `PHASE_ENABLE` | raw logic [1:0], known0/1 | Default 0; enabled analysis also requires `EPISODE_ENABLE=1` |
 | `PHASE_N` | known unsigned64 count | Required N>=3; automatic queue storage uses signed32 indices, so larger than 2,147,483,647 is a representation error rather than an arbitrary analysis cap |
 | `PHASE_MIN_SPAN` | known unsigned64 ns / cycles | Required positive span in the window basis; ns is converted with checked integer arithmetic |
 | `PHASE_K` | known unsigned64 count | Required positive number of consecutive equal candidates |
@@ -1028,8 +1028,7 @@ Fixed point scope flattens the immutable records into ordinary scalar aliases:
 `phase_duration_ticks`, `phase_byte_count`, `phase_event_count`,
 `phase_duration_valid`, `phase_bandwidth_valid`, `phase_bytes_complete`,
 `phase_events_complete`, `phase_member_reset_coverage`, `phase_bandwidth_gbps`,
-`phase_duration_reason`, `phase_bandwidth_reason`; all variation fields other than
-window configuration have `phase_variation_` or `episode_variation_` prefixes.
+`phase_duration_reason`, `phase_bandwidth_reason`; variation fields, including window basis/W/S, have `phase_variation_` or `episode_variation_` prefixes.
 The selected representative has `episode_last_steady_found`,
 `episode_last_steady_selection_valid`, `episode_last_steady_reason`,
 `episode_last_steady_phase_id`, `episode_last_steady_start_ticks`,
@@ -1250,3 +1249,18 @@ configuration and metadata validation, checked unsigned arithmetic, exact event/
 clock/publication runs, independent source ACK retention, contextual test-only
 allocation rejection and reproducible resource evidence. Public names and numeric
 widths remain stable; malformed policies cannot become known-zero accounting.
+
+## Reproducible end-to-end scenes
+
+The [acceptance handoff](bw-mon-acceptance.md) is the current integration/config,
+D/T-to-evidence and human-review index. `make acceptance` runs the real twelve-
+point/four-group scenes through one module-type bind and public setup/group APIs.
+The standalone reference uses original input rows and Fraction arithmetic; it
+never reads monitor code as a golden model. See the checked-in source
+[`scene.sv`](../tests/acceptance/scene.sv), configurations, original FSDBs, portable
+public views and expected/actual tables under `artifacts/acceptance`.
+
+The earlier per-ticket run counts above are historical, explicitly scoped proof.
+The durable408-case numeric/component proof and separate new scene evidence are
+indexed by the acceptance handoff. Actual human review remains separate from
+agent image inspection; maximum-scale evidence is owned by its scale tickets.

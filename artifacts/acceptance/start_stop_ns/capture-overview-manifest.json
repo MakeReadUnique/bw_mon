@@ -1,0 +1,24 @@
+{
+  "command": [
+    "verdi",
+    "-nWave",
+    "-ssf",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/start_stop_ns/waves.fsdb",
+    "-play",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/start_stop_ns/capture-overview.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-gjwr_pbx",
+  "display": ":87",
+  "fresh": true,
+  "pixels": [
+    1500,
+    850
+  ],
+  "fsdb_sha256": "3647bf9e22d43c247863372b23d7471a20945f2df62436b950198e1662b76836",
+  "png_sha256": "e2fe31e0cad7eaab2bc21b842fab5b21f028b3cb9a5b1115ae0e82dbddbbcedf",
+  "agent_visual_review": "PENDING",
+  "human_review": "PENDING",
+  "actual_tcl_sha256": "0d3f25ffce7c766fcca9647d392e4847ad70e33aa108121374945039a1f88fe5",
+  "portable_sav_sha256": "39d1820e2319cdfbdac08a60965e2f904c5474e605d147e08c13ed2581733c99",
+  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+}

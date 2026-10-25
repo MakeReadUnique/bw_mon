@@ -1,0 +1,24 @@
+{
+  "command": [
+    "verdi",
+    "-nWave",
+    "-ssf",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/frequency_cycle/waves.fsdb",
+    "-play",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/frequency_cycle/capture-clock.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-iehc0ye1",
+  "display": ":87",
+  "fresh": true,
+  "pixels": [
+    1500,
+    850
+  ],
+  "fsdb_sha256": "a61336845cadd57b439e5ddf03f806db6c9d48705dbc86fda7c9f5c62b1bcab4",
+  "png_sha256": "d91ed7bd99664d88239f2e6fef288bb01816a80323e598459141a19e51eb4565",
+  "agent_visual_review": "PENDING",
+  "human_review": "PENDING",
+  "actual_tcl_sha256": "d2a2d68673080cb5641d93fab06b823fe474144ec860c3fd685a2cdcbd730ebc",
+  "portable_sav_sha256": "1920801905d973a3ba1189f9055dc9ed60d84ee2cc7451566f28a982d5fc0a4c",
+  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+}
