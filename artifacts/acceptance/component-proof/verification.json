@@ -1,0 +1,2620 @@
+{
+  "cases": 408,
+  "tops": 160,
+  "runtime_predicates": "all passed including expect_log/expect_counts",
+  "compiler_diagnostics": [],
+  "source_stamps": "all current",
+  "runtime_compilation_order": "all logs newer than current compile stamps",
+  "branch": "implement/ticket-27",
+  "head": "7cadf21f9e8a2d026846a56f27efe208328680a5",
+  "tree": "639888b7009ea180967fcea5172b5407f8b9e0d1",
+  "integration_tip": "ae5edb51a2d588302d8d631b465c8363dde0a207",
+  "hierarchy_cases": 42,
+  "commands": [
+    "python3 tests/run.py"
+  ],
+  "infrastructure_retries": {
+    "cases": [],
+    "tops": [],
+    "reason": "none"
+  },
+  "python_version": "Python 3.6.8",
+  "compilations": {
+    "tb_ns_bind": {
+      "digest": "a48cf07c3938a9cfeb13ce927e22ddbb5818d62d9b05cfb2fa28506dad884e60",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_ns_bind.sv"
+      ],
+      "defines": []
+    },
+    "tb_ns_stride": {
+      "digest": "8e3859d4564c64357d8a69e5909dce5b52d7e7a5ef507dd691c74366df9192d4",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_ns_stride.sv"
+      ],
+      "defines": []
+    },
+    "tb_startup_errors": {
+      "digest": "83209d2d21f6cf07caa559cd6338421e809ead2074a9c3fd9fa8cb2f0f7f3f28",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_startup_errors.sv"
+      ],
+      "defines": []
+    },
+    "tb_startup_deadline": {
+      "digest": "e4ede64e341d8615cf3501662c94054d5cf76d85ea146a676d6d4bf25e0f87f7",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_startup_deadline.sv"
+      ],
+      "defines": []
+    },
+    "tb_byte_config_error": {
+      "digest": "32ac629c6f1509b5b4ace1dc6cfaa87eb1416014e331965f73132865ed1aca02",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_byte_config_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_cycle_window": {
+      "digest": "d52013b48a69901092016966a2d6eaf0db727814cb28f1cea384e47476fc1fc8",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_cycle_window.sv"
+      ],
+      "defines": []
+    },
+    "tb_cycle_stride": {
+      "digest": "8af498f69133f86a0054d278064aa58d00cd87d333b71008b59daf3c412b2a1b",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_cycle_stride.sv"
+      ],
+      "defines": []
+    },
+    "tb_cycle_config": {
+      "digest": "c9c2b1c3a19af2e8d9273b709bd7f3aa89e3dc9dd58a9e0f81fd7179d5666fe6",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_cycle_config.sv"
+      ],
+      "defines": []
+    },
+    "tb_cycle_edge_error": {
+      "digest": "4605aa67c23490c2b2d8b52cb03407879099ba4aeede17433cacc878a4b7088a",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_cycle_edge_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_protocol_recording": {
+      "digest": "61ea7917c59bae403dd596bae39564c338d5d4c542185c742aa9a6bbdaa6e641",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_protocol_recording.sv"
+      ],
+      "defines": []
+    },
+    "tb_subns_vectors": {
+      "digest": "63e0213a5df95d6ff99ebde0bc83ca1cc6baae022a152db33fa5fd5b31786422",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_subns_vectors.sv"
+      ],
+      "defines": []
+    },
+    "tb_sample_view": {
+      "digest": "ba8bf3a9e138a2dbcc2aa802e7300a05fbb616f49a58e5da2e38ca7bf1bab33f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_sample_view.sv"
+      ],
+      "defines": []
+    },
+    "tb_recorder_edges": {
+      "digest": "a25bd1079805f91d66a6c51ab9d1b802171ab728c299357cf5e5afbbd3b7e586",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_recorder_edges.sv"
+      ],
+      "defines": []
+    },
+    "tb_dynamic_size_error": {
+      "digest": "8caa90b691f656a8d672cff8e0ff3dec82c5fa1644055ff48415a2f49aa414db",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_dynamic_size_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_protocol_config_error": {
+      "digest": "b811c13e9832e0a6dca7034afe30bd9a6242dc45dbf1b6d5390f4b907f4dae9f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_protocol_config_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_adapter_decode": {
+      "digest": "0525b2ac78dc05dccc8464f69d74fdfc56ce73e02b59454f28656bab4efda369",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_adapter_decode.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_timing": {
+      "digest": "963a25a148de76e62b1337a38def1f192a27121e49fc257c142fa0b5bcf7d586",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_timing.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_config_error": {
+      "digest": "a3b29a565de2ad3dbe2773971eb1adedad4296fb74ebc24af341e9adcbcc857f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_config_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_initial_error": {
+      "digest": "39eddcb85397eb72667ee850535b7aeca36e6c5a6906b6a07da782114fdb25b9",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_initial_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_return_error": {
+      "digest": "15bc201c500f1d9a098dc901c5432ad9ea0a01829f2dfee71b2543b6bdf8d229",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_return_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_fixed_unknown_config": {
+      "digest": "5fa269fdbc2781274c293287c59cf9d9fefbd036883ce94c874809103de690a1",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_fixed_unknown_config.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_ledger": {
+      "digest": "0a8795f3e08b5897e7a89ba1aa77cb26ce09958ae333eb264d1a06a52d2f14d1",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_ledger.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_boundaries": {
+      "digest": "d179023c90e49ec9ac610978c7a4a9d147944e16610efceba6c7ee6db728af11",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_boundaries.sv"
+      ],
+      "defines": []
+    },
+    "tb_credit_reset_unknown": {
+      "digest": "436143e2122035a1176b4506747afae70dfc8f73e4990d9a31444dcc407b52af",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_credit_reset_unknown.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_ns": {
+      "digest": "5793ba3acfefb20e43e678acca230835459ee8959ee3acfcb650195e7c28b43d",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_ns.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_equal": {
+      "digest": "ebd25da0f5b6730a898b5c041b73c9c4d3db787a200814d6de4193ea98aa0610",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_equal.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_cycle": {
+      "digest": "bcecd621761f0633bc16244fd95cd5cdd582702e3559a0865ed6b1fdc83b739e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_cycle.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_shortage": {
+      "digest": "68b52d890863c1c150fedb99e017f3f2f7a6c280d7b882e0bd3747de065d965e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_shortage.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_credit_cycle": {
+      "digest": "d1c00c78eccff204742fe4ec6403ffe848ecea6eac98766f9aee201a398f1522",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_credit_cycle.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_cycle_truncation": {
+      "digest": "2a1939d4ec3a036d5400c2c072f003086e069fb0fb3cde65cbcd64a01a287dc8",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_cycle_truncation.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_missing_basis": {
+      "digest": "815091f1b5a442bc15e13b8e224cb82eb8709f5519561d725844b19d913d9eb6",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_missing_basis.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_missing_threshold": {
+      "digest": "6035f6db13afcb036232511edf2b038b0796503edece75fb6565a4a3eab79269",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_missing_threshold.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_zero_threshold": {
+      "digest": "cafcfd9fb9b3cf0b08a404bc3c3bfcb4b2d6821ff75a73e37fa6558fa4cd4e02",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_zero_threshold.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_bad_basis": {
+      "digest": "52c86b4c6c4470d9a7324253fb5b5019fef7b6e2d8595f3d5117deb6fe4a533c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_bad_basis.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_time_overflow": {
+      "digest": "c1e1e29bc8f500faa7b13678c853323ad71c828c08171bc028f4fa4ca5516908",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_time_overflow.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_accounting": {
+      "digest": "ec60d0b949c455e9267527375cd7ac051c245b0c0be24982713e7b877b0eebc8",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_accounting.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_reset_release": {
+      "digest": "62016466c50109ea2efbf9176649323f5555b460b086ddde4713a34a745e623a",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_reset_release.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_unknown_protocol": {
+      "digest": "3506390d095fc0fccdc02b979346eb5793192605978792b2d7f277af1d283de8",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_unknown_protocol.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_rewarm": {
+      "digest": "b6e97491f45f403c280727b30188a23fd9156e70e666556559acc22a60ddf4ff",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_rewarm.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_same_time": {
+      "digest": "825991eb3c2d76afba7ce0850542b273394d8eb7d4c43e979d63ee119c4d1daf",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_same_time.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_unknown": {
+      "digest": "da0edb00a7875ae5ca3642fb7d33a9de9667e568d953252aeebdbbc1562bbd2e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_unknown.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_time_budget": {
+      "digest": "fa46ca2682a57432971412ad3ac7c501783599388a34243b8691a89761cc4260",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_time_budget.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_member_controls": {
+      "digest": "5bcd165ec1426cbe2d585d44f34977f5ae1625a8620e5d01c707891802851d00",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_member_controls.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_cycle_unknown": {
+      "digest": "e4a7841d708ea4970c7df6fb0baf3c5250cb4408bb81d31f329c1bbe9fa0f7b5",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_cycle_unknown.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_initial": {
+      "digest": "83f506983aeb23e6a957c819fe7b06db5bbb29eb3c50aad06f3b4eb5d28fe73a",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_initial.sv"
+      ],
+      "defines": []
+    },
+    "tb_member_control_error": {
+      "digest": "3db42abd5b93ef910d1e30671f11db2f19c16633303444987b720c038a01c443",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_member_control_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_reset_deassert_sample": {
+      "digest": "d09b83b1b938b503f7d885f139a47ac73669dd03567b2a22da1f1b905e9909b1",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_reset_deassert_sample.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_time_budget": {
+      "digest": "6953f4f38aeb8806ccb89c2644ad36ee3f70c0c4f4160cb3941e8fe3e663974c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_time_budget.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_final_budget": {
+      "digest": "863b2d88c89f3946064273840d1e4d811fc651ffb659741b3e19b161d6403226",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_final_budget.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_same_cycle_stream": {
+      "digest": "50d9f4ffcbc50a386777da57f9ec6754872b651b31469867862f0ae9e0c81ad9",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_same_cycle_stream.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_same_cycle_live": {
+      "digest": "e3d8496aa473e4a0b5cbadd7772ec620aa279fffaaf3da08a9a458e32b4a44b5",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_same_cycle_live.sv"
+      ],
+      "defines": []
+    },
+    "tb_hint_same_cycle_cycle_live": {
+      "digest": "820406fdb33f67d8015d1d7dcf4d52e573194207f219097174842441b7db1242",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hint_same_cycle_cycle_live.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_boundary": {
+      "digest": "dd8ebafd8bbdeaa68455b5b70b4db2905551881384ec58d7ce3249252e47c7a1",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_boundary.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_gaps": {
+      "digest": "2e611e696cf19db9806c4ced43cedfdea5dd79141ab2ed56b4f7d4048937c23f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_gaps.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_cycle": {
+      "digest": "eac993630d6594ebfe6609f5149a287b921dd3d0505f9cedd1799f86052ea7eb",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_cycle.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_controls": {
+      "digest": "cf62ed806f25b9dbc974bdab7d993546635458104d772b2d7021244183ee34c7",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_controls.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_reset_deadline": {
+      "digest": "424db4f753a59ea071f1d612d5f2f3c4d0db1b9594a15ef5b55ac97c32382443",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_reset_deadline.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_final": {
+      "digest": "27285fd6adefd12baa756c9d0fbd9847cd4a5589290c912796a1f320f20ba3ba",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_final.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_final_budget": {
+      "digest": "4eed7022e5cef7a2e260cbe2bf4b8aab1fb8285f3d1b9b26398c7f9b37ead582",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_final_budget.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_config_error": {
+      "digest": "384066db3b5c3ecef1da7690b812d0ad19d07e9b73b79d099505229cb2911755",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_config_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_unknown_q": {
+      "digest": "dc5d9c2708170b787932ee585e5da9dd631f0dc7c560b95916523dedbd23f11e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_unknown_q.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_late_metadata": {
+      "digest": "2132f6a9fc36207765919ca0968e2af302ff3430dc906fd3cd3a9f9a90b299d0",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_late_metadata.sv"
+      ],
+      "defines": []
+    },
+    "tb_episode_pending": {
+      "digest": "afb80a47610e3c5aa13c02eeb1874b502705ae9268ef92e9f62829efd68f8a31",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_episode_pending.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_e2e": {
+      "digest": "d2cd8b39df6e5590a8da3ac92df26011ce978aedc5e56b0eed2deae6679a2ea2",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_e2e.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_cfg": {
+      "digest": "e5185744db0eb3241bf3749e8f6316e1e4c6f53ed92975ac2dde90dac13d66dc",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_cfg.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_quality": {
+      "digest": "0d079899961171ac2ccc37fe432a35419def04aa5fa65606ed2ed12ba5dffa32",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_quality.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_records": {
+      "digest": "f084130ad193e00633698de9ec8ebf360daa69f11965b41ee1f0a1017c085847",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_records.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_final_forward": {
+      "digest": "36537f0b49bb21fa9796159235ccba7a6d7805368c5865c8c53574ab1f56d2a5",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_final_forward.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_final_reverse": {
+      "digest": "cf287d057e9813d618c2baf1124c69696ea05316a9cf42b9b752017fef4825b7",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_final_reverse.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_final_budget": {
+      "digest": "fd2288b0d9d03d0b0d93c1f7f41aa0457120a89116e2a6c8f6d57697f783a57e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_final_budget.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_identity": {
+      "digest": "4647b59e59954107ea5f55c7b3b61db4c80404a31ca24b14ca3a1f6710e53e3c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_identity.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_delayed": {
+      "digest": "0a177dbd6801f9cb87ffa9021dc3a17273e4c12186c0eb4f66d7b32c99307da6",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_delayed.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_hysteresis": {
+      "digest": "8fadbc67450e80471eb0b0712854d7e07c989471ff287cee2fd0de44447e46d1",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_hysteresis.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_actual_time": {
+      "digest": "639f8aef90706e08e3d7210446f56f590cd3d510b22bee37779ebd867582d7d0",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_actual_time.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_episode_residue": {
+      "digest": "e93afdf6e9c67dee81526810eb90372e031b9ebac8dde5001a264d1d188f28e2",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_episode_residue.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_reset": {
+      "digest": "6a5c3f6f09913b37b5131de2cb8d3e2400506c75ee9619fe3ff78c6ee92d38aa",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_reset.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_repeated": {
+      "digest": "a083b974738b26c90698e1b2a0511d46c60ad1dba058f624d178e72ba6c3974c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_repeated.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_zero": {
+      "digest": "5a12dbb47a586f570509b5d21fff01cb3d79c1d54bd10dfdd822f49e556bf13f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_zero.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_fit_error": {
+      "digest": "d2f378079214068791c11a8ca23191e342931ef58cac0c3c76c31b21de3eef4e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_fit_error.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_valid": {
+      "digest": "6ae4206f650845939d9f0b35fc85c2eac49c182f6e0be9329ac4ac207b275349",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_valid.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_n": {
+      "digest": "5e70d97812604edcda6ef401e64b1db308bb21227eb228cbae8037bca443cd12",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_n.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_span": {
+      "digest": "a5459f2ba40695906e4e8ea9c17ef9f28d9273c94f5f0ff9461f56d4fac6d435",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_span.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_k": {
+      "digest": "fdec5b4b66d9c9b6175190a478b9929dae79325f329de1ee821675209ad6f35c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_k.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_negative": {
+      "digest": "34b8ab3ffd3c39eb8129ff607be5d7ab24007c7a55b3ca8c063d14ba7de0f686",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_negative.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_exit": {
+      "digest": "02ea5f7c12366ff4dacae832093bded4f312f151f5b3177732946c2489192482",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_exit.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_overlap": {
+      "digest": "f96109c77130e6465635628f562f265af4fd36bda3a742396d97ab9d5f6539c3",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_overlap.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_nan": {
+      "digest": "f39fc5ba7dbaba1b2755515eb5a2563fee79dacfd91b9ef52113649d7b674207",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_nan.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_storage": {
+      "digest": "3d1cdca345b32046baa32369fe75fe61c2c804d2ce601a8aff4f041712d2dd17",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_storage.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_episode": {
+      "digest": "bf925b78c3d439423cbfcf8da6b307bcc6fec93d836daaf57aef5b0da12ab7ad",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_episode.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_missing": {
+      "digest": "208953c288d87e15ea8997ec9805b5edf4710a9a7a8d0717e5fabd767628e98c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_missing.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_unknown": {
+      "digest": "3a7b908774b03d815bdf4f9da81a0c8ac2560b32dcc1800f0592de0f8631328c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_unknown.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_config_infinite": {
+      "digest": "ec9af4ebf8f57fbf3d0f97d716f83cb72b2420bc3c357a3934ec362582e30ba8",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/phase_config_fixture.sv",
+        "tests/tb_phase_config_infinite.sv"
+      ],
+      "defines": []
+    },
+    "tb_phase_candidate_change": {
+      "digest": "55b983d0bb8e1884b789f4785507abaaf56aa545a21cf41f5766d8eab93c2256",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_phase_candidate_change.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_hint_deferred": {
+      "digest": "5bb24dda574bea213be71910ff46bc60a9b2dce1bae6cd484ebc3ff41a5f36f6",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_hint_deferred.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_basic": {
+      "digest": "3649dc486b26d538fe850fe57ec5d204c01421575199134eeb9bf35eb0ca3fbe",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_basic.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_matching": {
+      "digest": "9bee6e16066197b5e50f350978e6ee13d03cd323061bd461038e2d10e5439221",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_matching.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_delayed": {
+      "digest": "6822a29e2861b445ba8ae1db008c93abfc5429597698e066182d61af9dc33610",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_delayed.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_metadata_order": {
+      "digest": "36eab3a10c2e4048a2af273a560d1f1c186c85903fc634e0e122dcdfacaa8b3c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_metadata_order.sv"
+      ],
+      "defines": []
+    },
+    "tb_transport_retention": {
+      "digest": "a5554d6cadf5b85417e344d4190a1312e3ebc063ab7e09715e648a686134abce",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_transport_retention.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_faults": {
+      "digest": "b03e5c704629155491c7d727f53404bf9c3322c5739621661faf73cac6efad55",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_faults.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_cycle_quality": {
+      "digest": "227044ea26d787fcc0093848b8002c075001fd86e546abf811fd84c4ce400831",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_cycle_quality.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_reset_quality": {
+      "digest": "e45066baa8980ed393365b6e25ec08241282a6918aae5c31fb35a7c8208e5928",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_reset_quality.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_wide": {
+      "digest": "5a7b26de9f38ac99b4f453712a9840eedb22e40691f932b5d05f67f908978ba7",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_wide.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_config_errors": {
+      "digest": "ad5725996795e64fa8a87379f5e288b5ed43eb15393b5d78a50921b5f2b7478c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_config_errors.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_startup_deadline": {
+      "digest": "6ae7b6d9f4157245f57c6591897bf2934af7d1d3936ba842cae0591f4cebfc40",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_startup_deadline.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_missing_ungrouped": {
+      "digest": "4adee0e0cb86ab02eeb40f0ae9736bcd5598561e3fc91930a5c3108eb1512a56",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_missing_ungrouped.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_unknown_count": {
+      "digest": "8dcfd88612fbbecd4b16e2f97e834d55ae57f4ec08f745dcbd7f34f4f1ac4234",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_unknown_count.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_unknown_timeout": {
+      "digest": "6e8555c027623ffe1e43c673d92ed280b014bffdf47cd9e71c324165ae2f99e2",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_unknown_timeout.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_wide_count": {
+      "digest": "2c43c59c7cfa0b999bf93bfee755a156337ef3b9e1b22f1ca6e3f84f01df31e0",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_wide_count.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_control_barrier": {
+      "digest": "977e7f7ac048092f3e534c670f2dd9ede1d4150e6fcf427fc519d9102bf3a866",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_control_barrier.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_deferred_final": {
+      "digest": "26ceece143dba34a182351a4485b76f7dab4c1bc26275652c609041b02f7ff5b",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_group_deferred_final.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_basic": {
+      "digest": "f25fe57552036b9bb0fd61cc5d660abbbe513cd74a1a769c7a61b52c1f70ad1c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hierarchy_basic.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_config": {
+      "digest": "16b3856c90ea989651792af5c139d54fe0b9151d8fbae12aced4179aa5e05ba8",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hierarchy_config.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_t4_ns": {
+      "digest": "bd38a2f372ce4e96b0ab812ef7727fa43a0845a9618224697c28d32122df904c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/hierarchy_t4_fixture.sv",
+        "tests/tb_hierarchy_t4_ns.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_t4_cycle": {
+      "digest": "799925f94c458ff6ff17a47a09117fac128e726fe90cfa99dacf9c21d699c579",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/hierarchy_t4_fixture.sv",
+        "tests/tb_hierarchy_t4_cycle.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_depth_transport": {
+      "digest": "a7e645381bebaa21fe3e5a229a59ee925946a3d861b753590cfeb16e5a78c3e6",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hierarchy_depth_transport.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_retention": {
+      "digest": "97d76574195184c89e9e960df3f1a52a81443a5d4b7f440fba87d160aa45bd7e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hierarchy_retention.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_t4_overlap": {
+      "digest": "69c917789a480e8f6b216c7f51b06ece6a0ff9fba64ec54b91768d9e8ceede53",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hierarchy_t4_overlap.sv"
+      ],
+      "defines": []
+    },
+    "tb_hierarchy_edge_limit": {
+      "digest": "7e825fd62dbba7b7675894d1e862bf3b938b42237f6c6828184028ae031e0a1c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_hierarchy_edge_limit.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_delayed": {
+      "digest": "4a392c5cdda4e92a8c7566ae1ce046b4a7dd8e15bbc8303ef2cf35a60418879c",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_delayed.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_repeated": {
+      "digest": "89503809613a2be519b199b071d03cff04895a6618ad3f86ff73b5a3905a0d2f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_repeated.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_quality": {
+      "digest": "a1d4ef8883cb840c63c318f7dd91ec191c904ab2be0dc8a035bd3542b88ac8de",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_quality.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_zero": {
+      "digest": "f8e56f3ccad0a99a43771f05728761d335253cf2244c18284baf68d8a391d884",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_zero.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_actual_clock": {
+      "digest": "b9f429d0812039fc66e5a2f4c9209c6b47d2f3d580c02f51704466c06f7ffbaf",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_actual_clock.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_exclusions": {
+      "digest": "2341109389ae9f994c398aad1914638a4629413a7578285be7d499e77980c3dc",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_exclusions.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_small": {
+      "digest": "f7f03628468c5d006810ff1e43481ee6e3fa5dc9f1f646f3663d75e485f6eb05",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_small.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_controls": {
+      "digest": "270f93eb6e1bb3f3c30f67499f913557ee31f3dd748928ac247d268bb33385dd",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_controls.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_interrupted": {
+      "digest": "822364e3a546a851728dd6e3eb6fd778ec04233bbf8d17216c6f7a87c2e4730d",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_interrupted.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_independent": {
+      "digest": "6139a3f2fa2ddca8d668794144e0b5c2efaf81e88b2b80f39e31d8f742871ea0",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_independent.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_late_recovery": {
+      "digest": "05bf5a62f8146110eebe8dcbbf1413da9bdb51a6b507b0aa8a16aa148a12541d",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_late_recovery.sv"
+      ],
+      "defines": []
+    },
+    "tb_metrics_stopped_history": {
+      "digest": "541e38619ce788a5a1f797981b31b990cd1d015212b5f6185bee1f628e6e944e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_metrics_stopped_history.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_metrics_repeated": {
+      "digest": "b1467c34d2ea25f5918628935e0f9335636609bf6564174311f96fb50e19a364",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_metrics_repeated.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_group_metrics": {
+      "digest": "c20e7b62e822472a9cd3bd0ec1d7cd0931979fed6b961b5000efa1980e2367cd",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_group_metrics.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_metrics_records": {
+      "digest": "9eeb470853d1ec88654e4bfa40c298dcbae6fb81b8588681533abaa2488265bc",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_metrics_records.sv"
+      ],
+      "defines": []
+    },
+    "tb_report_group_metrics_cycle": {
+      "digest": "5c41aa9b42b744de152f709b1dc9df513d3e031dde146b22453d0abd02f42480",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_report_group_metrics.sv",
+        "tests/tb_report_group_metrics_cycle.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_valid": {
+      "digest": "92c47a84754ae1759a7c71d6e302b0e43e76ed9949283418a52ae2f236a06997",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_valid.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_requires_episode": {
+      "digest": "2bada13573606b1e243807d4f91145d07358254975df6ea3fb840d479a524c0a",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_requires_episode.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_unknown_n": {
+      "digest": "ed44ed5e4cff07968f40cab29cdfc632e8e8bd1dbb3ffd64aca99a11829d3a79",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_unknown_n.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_infinity": {
+      "digest": "5c63df92c563d63d4cb3f02c35732616546be9e91c5bfac1c655236c50f9954d",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_infinity.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_unknown_q": {
+      "digest": "97ac5146b3d5699346faaf119c643f1ad34310c867b0707b80075f906ad8cb27",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_unknown_q.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_unknown_episode_enable": {
+      "digest": "6f9828f51593db9c43ae12b7156335c419bbf53f34f496b897ff70b8478344d0",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_unknown_episode_enable.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_invalid_episode_enable": {
+      "digest": "0c45e2d0c1eff42fe037ded7e52b94578645dbe0d65cfaf871ef13a6a47b5aeb",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_invalid_episode_enable.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_unknown_phase_enable": {
+      "digest": "ee87f6ab58bdaa349f2d967d4150bf7303c709f0a2d9e1a492b3799ee17e0678",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_unknown_phase_enable.sv"
+      ],
+      "defines": []
+    },
+    "tb_group_analysis_config_invalid_phase_enable": {
+      "digest": "0f566e45d56f2d04ec587b30864651a58e6ba11eb31e35ed4101b550daebaef4",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/group_analysis_config_fixture.sv",
+        "tests/tb_group_analysis_config_invalid_phase_enable.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_window_unknown": {
+      "digest": "30074e3da2e18526bcaa3bdc32b696572080f7372d71f85fc0b04e10145ce140",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_window_unknown.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_arithmetic": {
+      "digest": "732dd972305bdf231eb935a06d193ec5eb02c2754ccd70fdbb2f6e827b9305fc",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_arithmetic.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_record_unknown": {
+      "digest": "e8028f560eb075dbf180270e8c382c0ad931d51097e612889b8cc0572b9f73e3",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_record_unknown.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_dynamic_policy": {
+      "digest": "2c5b56a0dc254e019a5ad8c353c70a055e9cd60300442a4e3a3fbdd6ba5039fa",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_dynamic_policy.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_policy": {
+      "digest": "8c09b52eb4c73763b867f22143c56cbe2f23ba919268d797675c3fea413c87f1",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_policy.sv"
+      ],
+      "defines": []
+    },
+    "tb_history_trace_ns": {
+      "digest": "f43419020b8c091f35100d0eb20a8a223f2009034a5fa427225e2cc1d68d3274",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/history_trace_fixture.sv",
+        "tests/tb_history_trace_ns.sv"
+      ],
+      "defines": []
+    },
+    "tb_history_trace_cycle": {
+      "digest": "c537cba22b06d2238c49e88ef75571eb4b37f188b5973815465f88acb5bbbfa4",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/history_trace_fixture.sv",
+        "tests/tb_history_trace_cycle.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_subtract": {
+      "digest": "1eb7d23993732a31522863f4c2e061a9870b5bbf325a1f9296e2417402ccd42b",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_subtract.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_transport": {
+      "digest": "6706eb9a95f683077c835d56246fae57ac4d93aa48bc5f04f9174e5728774890",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_transport.sv"
+      ],
+      "defines": []
+    },
+    "tb_storage_failure": {
+      "digest": "527a3ef5a1ac5b251f2d9ea979378223b969e6940650072132ca17b563122e8f",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/storage_failure_fixture.sv",
+        "tests/tb_storage_failure.sv"
+      ],
+      "defines": [
+        "BW_MON_TEST_FAULTS"
+      ]
+    },
+    "tb_storage_clock_failure": {
+      "digest": "0a10e11169e0cd2ee220af0671b09048db6a34823ede70728abaf199139ace46",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/storage_failure_fixture.sv",
+        "tests/tb_storage_clock_failure.sv"
+      ],
+      "defines": [
+        "BW_MON_TEST_FAULTS"
+      ]
+    },
+    "tb_storage_registry_failure": {
+      "digest": "2bd5074e9e515992dce8cede7406cf7efe4d13ef3781edf3f2ee9acac7ba7753",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_storage_registry_failure.sv"
+      ],
+      "defines": [
+        "BW_MON_TEST_FAULTS"
+      ]
+    },
+    "tb_variation_pending_retention": {
+      "digest": "185351d3f2f1064e6016138a4c4bf0f89f079e2cbe0afa4e4020039cda5fe449",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_variation_pending_retention.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_queries": {
+      "digest": "6922e17269b73cf9bc954b6ef949ba21c946741692ff723a9fbaeff58cf82c9e",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_queries.sv"
+      ],
+      "defines": []
+    },
+    "tb_numeric_core": {
+      "digest": "a1c22c4349bfb210bd6ef1f44dc01525421a1a7f32219e8cf3f4e077b99ce788",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_numeric_core.sv"
+      ],
+      "defines": []
+    },
+    "tb_transport_growth": {
+      "digest": "147cf3cfe5f9d53a0fe4228d112c260177c3602395448d4fdc92221c63ed649b",
+      "sources": [
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_debug_hints.sv",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_hint_duration.sv",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_point_recorder.sv",
+        "rtl/bw_stats_core.sv",
+        "tests/tb_transport_growth.sv"
+      ],
+      "defines": []
+    }
+  },
+  "numeric_storage_cases": 87
+}

@@ -1,0 +1,1640 @@
+{
+  "status": "PASS",
+  "production_base": "8de785c86f513804168eb2b868ab1f967a3b0e8b",
+  "harness_revision": "661ef33",
+  "scenes": [
+    {
+      "scene": "child_reset_cycle",
+      "configuration": {
+        "scene": "child_reset",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2543,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 17,
+        "phases": 17,
+        "variations": 34
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 1,
+          "WARNING": 1
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [],
+      "fsdb_sha256": "a23c1092166228d25d50125da92597833dc3907187d8d4246cd878a0d40e0c4c",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "child_reset_ns",
+      "configuration": {
+        "scene": "child_reset",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2558,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 17,
+        "phases": 17,
+        "variations": 34
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 1,
+          "WARNING": 1
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "quality.png"
+      ],
+      "fsdb_sha256": "64462ae5eb8bbd59d423c7cc927878d0efcfe30a613474752f156a6ae49c74e2",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "clock_stop_cycle",
+      "configuration": {
+        "scene": "clock_stop",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 4448,
+        "windows": 2208,
+        "receipts": 4448
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 48,
+        "variations": 64
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 4,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "clock.png"
+      ],
+      "fsdb_sha256": "a62d43bfef28a7160a61286acc4dfb4beefde984ac467ddb1e805366e78b99e9",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "clock_stop_ns",
+      "configuration": {
+        "scene": "clock_stop",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 4448,
+        "windows": 2560,
+        "receipts": 4448
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 80,
+        "variations": 96
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 4,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "clock.png"
+      ],
+      "fsdb_sha256": "3b3e46f2c6676415918e1eb6b3ae9f10092268b8f4ce61c89e5df6b9d0384a11",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e2_cycle",
+      "configuration": {
+        "scene": "e2",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 40000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1264,
+        "windows": 624,
+        "receipts": 1264
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 4,
+        "variations": 8
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [],
+      "fsdb_sha256": "6dff987db5ef17d6c3c32b74bd5cafe032bf43e8a980a92057dd2c91317da958",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e2_ns",
+      "configuration": {
+        "scene": "e2",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 40000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1264,
+        "windows": 640,
+        "receipts": 1264
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 8,
+        "variations": 12
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [
+        "overview.png"
+      ],
+      "fsdb_sha256": "116f1a7900fd0f71d1a75882d1a02c29173d897aff8dcd76a7114fe166c050e6",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e3_boundary_ns",
+      "configuration": {
+        "scene": "e3_boundary",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 30,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 170000001,
+        "top": "tb_acceptance_e3_boundary",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 496,
+        "windows": 2720,
+        "receipts": 496
+      },
+      "analysis_counts": {
+        "episodes": 8,
+        "phases": 16,
+        "variations": 24
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "fe340a314958589b2412019a2a2347c6fe1b85b5a86d678eb86c0140950e29a1",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e3_delayed_ns",
+      "configuration": {
+        "scene": "e3_delayed",
+        "basis": "ns",
+        "W": 100,
+        "S": 10,
+        "Q": 60,
+        "N": 3,
+        "span": 20,
+        "K": 4,
+        "end_ticks": 196000001,
+        "top": "tb_acceptance_e3_delayed",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3120,
+        "windows": 304,
+        "receipts": 3120
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 4,
+        "variations": 8
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [
+        "phase.png",
+        "episode.png"
+      ],
+      "fsdb_sha256": "80822459424c01804a65f70108c702e2fb860b129821b103fd4477b7bdfb1443",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e4_below_ns",
+      "configuration": {
+        "scene": "e4_below",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 130000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 2064,
+        "windows": 2080,
+        "receipts": 2064
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 12,
+        "variations": 16
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 1,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "1774c6f2de85cf7bc7d4f6103b5d1ce27f194388941ebd36bfed75f6b85d10d3",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e4_boundary_ns",
+      "configuration": {
+        "scene": "e4_boundary",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 130000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 2064,
+        "windows": 2080,
+        "receipts": 2064
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 4,
+        "variations": 8
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "28c48bc6ac33a2516ec4333283a56ec6181731f75af94aa2c575ec39e0c65388",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e4_low_ns",
+      "configuration": {
+        "scene": "e4_low",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 130000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 2064,
+        "windows": 2080,
+        "receipts": 2064
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 4,
+        "variations": 8
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 1,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "0be583e0ff630bd9b5ab3374436e25041acc9726c9dfe2a27ceaa1604be04439",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "e5_ns",
+      "configuration": {
+        "scene": "e5",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 180000001,
+        "top": "tb_acceptance_e5",
+        "example_ids": true
+      },
+      "counts": {
+        "raw": 5744,
+        "windows": 2880,
+        "receipts": 5744
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 176,
+        "variations": 192
+      },
+      "performance": {
+        "expected": {
+          "PASS": 7,
+          "FAIL": 1,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "0538a4d2058255476e36a46cdcd98e969a08b9cf7877398ee5872bdbbb59aa16",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "frequency_cycle",
+      "configuration": {
+        "scene": "frequency",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3824,
+        "windows": 1904,
+        "receipts": 3824
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 32,
+        "variations": 48
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 5,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "clock.png"
+      ],
+      "fsdb_sha256": "a61336845cadd57b439e5ddf03f806db6c9d48705dbc86fda7c9f5c62b1bcab4",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "frequency_ns",
+      "configuration": {
+        "scene": "frequency",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3824,
+        "windows": 2560,
+        "receipts": 3824
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 48,
+        "variations": 64
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 5,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "clock.png"
+      ],
+      "fsdb_sha256": "d0cfedec8eb1283cb9fd7b34cd991f680d207675357dd18d44a191fe814ddff7",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "hints_cycle",
+      "configuration": {
+        "scene": "hints",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 4448,
+        "windows": 2208,
+        "receipts": 4448
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 48,
+        "variations": 64
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 4,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "hints.png"
+      ],
+      "fsdb_sha256": "5f00f7804b67f6220324dd12e028ec14dbd82a6fa5c9ba60356bd55a069b3b7f",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "hints_ns",
+      "configuration": {
+        "scene": "hints",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 4448,
+        "windows": 2560,
+        "receipts": 4448
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 80,
+        "variations": 96
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 4,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [],
+      "fsdb_sha256": "374d1b104a1ab83b9812807ec117bcabd2386962ea004d73d7e61ab18dea158b",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "isolated_cycle",
+      "configuration": {
+        "scene": "isolated",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 60000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1904,
+        "windows": 944,
+        "receipts": 1904
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 0,
+        "variations": 4
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [],
+      "fsdb_sha256": "0326ef1f098e54fa63f08c50ba7c2a140919a9fda0e12814942c0864a3bcf344",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "isolated_ns",
+      "configuration": {
+        "scene": "isolated",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 60000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1904,
+        "windows": 960,
+        "receipts": 1904
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 0,
+        "variations": 4
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 0,
+          "WARNING": 0
+        },
+        "summary_status": "PASS"
+      },
+      "images": [
+        "overview.png"
+      ],
+      "fsdb_sha256": "b32d6dd8120f045ab5ddcb84dd64840d786d0f5fbe85832c0bba6f137feab762",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "no_episode_cycle",
+      "configuration": {
+        "scene": "no_episode",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 60000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1904,
+        "windows": 944,
+        "receipts": 1904
+      },
+      "analysis_counts": {
+        "episodes": 0,
+        "phases": 0,
+        "variations": 0
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 0,
+          "WARNING": 2
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [],
+      "fsdb_sha256": "436e43dd484bd17fd2e0645c936fda3382b4c03de18c2233f21fc651aaea6d13",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "no_episode_ns",
+      "configuration": {
+        "scene": "no_episode",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 60000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1904,
+        "windows": 960,
+        "receipts": 1904
+      },
+      "analysis_counts": {
+        "episodes": 0,
+        "phases": 0,
+        "variations": 0
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 0,
+          "WARNING": 2
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "b3804efe3882b9e21876db2573d39a4f1aefa47da00f32904ff2ff9e101bd6d7",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "point_reset_cycle",
+      "configuration": {
+        "scene": "point_reset",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2543,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 17,
+        "phases": 23,
+        "variations": 40
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 3,
+          "WARNING": 1
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [],
+      "fsdb_sha256": "335137005cabf324c4409b101ba02fe8f94192e5deecfc362c9eb3f166d14f97",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "point_reset_ns",
+      "configuration": {
+        "scene": "point_reset",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2558,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 17,
+        "phases": 23,
+        "variations": 40
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 3,
+          "WARNING": 1
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "quality.png"
+      ],
+      "fsdb_sha256": "68a366b290bf9095b5096ea1323b2f49e0ac2dbb82fcfe933418adf08f4ffca6",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "protocols_cycle",
+      "configuration": {
+        "scene": "protocols",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2544,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 32,
+        "variations": 48
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 3,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [],
+      "fsdb_sha256": "74a88b6d641b3eb3661892dd163e0e76f9247ef7b8bb49c34fc173b7c12e67da",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "protocols_ns",
+      "configuration": {
+        "scene": "protocols",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2560,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 32,
+        "variations": 48
+      },
+      "performance": {
+        "expected": {
+          "PASS": 2,
+          "FAIL": 3,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "protocols.png"
+      ],
+      "fsdb_sha256": "146253e3259e2176106376444b25d0f6c2eb73c477f42c4c588831d1ca5d459f",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "reset_unknown_cycle",
+      "configuration": {
+        "scene": "reset_unknown",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2544,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 20,
+        "variations": 36
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 4
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [],
+      "fsdb_sha256": "f9ff49c3622793c8a9a99ad77feef2ec7315ef4977124afca5b7b05a5a02f96d",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "reset_unknown_ns",
+      "configuration": {
+        "scene": "reset_unknown",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2560,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 20,
+        "variations": 36
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 4
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [
+        "quality.png"
+      ],
+      "fsdb_sha256": "2cda079fe51d585efaea2e6ed4d50ec5d9baf2e4d742e134a2237b9ca04c4a14",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "size_unknown_cycle",
+      "configuration": {
+        "scene": "size_unknown",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2544,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 20,
+        "variations": 36
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 4
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [],
+      "fsdb_sha256": "3fcff4dc201b86e910e80c5091099c19e0238aa3e3858c9dbe55b712382889d0",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "size_unknown_ns",
+      "configuration": {
+        "scene": "size_unknown",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2560,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 20,
+        "variations": 36
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 4
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [
+        "quality.png",
+        "episode.png"
+      ],
+      "fsdb_sha256": "9819615d40b103aeeb27ea8e410547d84e37e7c3fa8cdfa534eca1f37f8f8300",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "start_stop_cycle",
+      "configuration": {
+        "scene": "start_stop",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 100000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3184,
+        "windows": 1584,
+        "receipts": 3184
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 32,
+        "variations": 48
+      },
+      "performance": {
+        "expected": {
+          "PASS": 3,
+          "FAIL": 2,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "overview.png"
+      ],
+      "fsdb_sha256": "bf706712396e6f1f5982fe59af380bf4d2556e52816e7b1d83b838d2c17e3afc",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "start_stop_ns",
+      "configuration": {
+        "scene": "start_stop",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 100000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3184,
+        "windows": 1600,
+        "receipts": 3184
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 32,
+        "variations": 48
+      },
+      "performance": {
+        "expected": {
+          "PASS": 3,
+          "FAIL": 2,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "overview.png"
+      ],
+      "fsdb_sha256": "3647bf9e22d43c247863372b23d7471a20945f2df62436b950198e1662b76836",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "steady_cycle",
+      "configuration": {
+        "scene": "steady",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2544,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 16,
+        "variations": 32
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 1,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "overview.png",
+        "clock.png"
+      ],
+      "fsdb_sha256": "e17a41b050cb29232a51839c00792b66be3a9e6162be6fe61f0ccf0648b724b7",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "steady_ns",
+      "configuration": {
+        "scene": "steady",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2560,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 16,
+        "variations": 32
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 1,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "overview.png"
+      ],
+      "fsdb_sha256": "9716ed94dcf8eacb7562a5ffc0d170b057612ca96dbcc35d2c51c85c061fd91b",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "truncated_cycle",
+      "configuration": {
+        "scene": "truncated",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 110000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3504,
+        "windows": 1744,
+        "receipts": 3504
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 16,
+        "variations": 32
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 0,
+          "WARNING": 2
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "cb6ba0df48f24b505180cffeeba70ad225796cb24b542866914fe95fa5ea7a38",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "truncated_ns",
+      "configuration": {
+        "scene": "truncated",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 110000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 3504,
+        "windows": 1760,
+        "receipts": 3504
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 16,
+        "variations": 32
+      },
+      "performance": {
+        "expected": {
+          "PASS": 0,
+          "FAIL": 0,
+          "WARNING": 2
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [],
+      "fsdb_sha256": "2bbf70ca4de3faff3accc6de1cbb23dd8cdd6a2e86380de90e0fd90d06034d82",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "upper_reset_cycle",
+      "configuration": {
+        "scene": "upper_reset",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2543,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 17,
+        "phases": 17,
+        "variations": 34
+      },
+      "performance": {
+        "expected": {
+          "PASS": 4,
+          "FAIL": 1,
+          "WARNING": 3
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [],
+      "fsdb_sha256": "2efc5f509f7908a1c7949443f8d66a82d2061fdf508e87dc455e51411d129cb5",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "upper_reset_ns",
+      "configuration": {
+        "scene": "upper_reset",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2558,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 17,
+        "phases": 17,
+        "variations": 34
+      },
+      "performance": {
+        "expected": {
+          "PASS": 3,
+          "FAIL": 2,
+          "WARNING": 3
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "quality.png"
+      ],
+      "fsdb_sha256": "e9ed0bfdb06856abbcf04e9f4537accb166208f038e8ea0be4bd31825e50c201",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "valid_unknown_cycle",
+      "configuration": {
+        "scene": "valid_unknown",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2544,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 20,
+        "variations": 36
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 4
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [],
+      "fsdb_sha256": "f9ead79afa11f064bbb0b86a1211534dc889c504f4e377118ebe882de5578be2",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "valid_unknown_ns",
+      "configuration": {
+        "scene": "valid_unknown",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 160000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5104,
+        "windows": 2560,
+        "receipts": 5104
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 20,
+        "variations": 36
+      },
+      "performance": {
+        "expected": {
+          "PASS": 1,
+          "FAIL": 0,
+          "WARNING": 4
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [
+        "quality.png"
+      ],
+      "fsdb_sha256": "bfddf5de668c2fed89e8f498fb66d2316c2f254c0d886722a9377226273a7027",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "varying_cycle",
+      "configuration": {
+        "scene": "varying",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 180000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5744,
+        "windows": 2864,
+        "receipts": 5744
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 176,
+        "variations": 192
+      },
+      "performance": {
+        "expected": {
+          "PASS": 16,
+          "FAIL": 2,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "phase.png"
+      ],
+      "fsdb_sha256": "1683cd5a7da2280c7e45cf4332b81fc52e66d9ed5b7199beff5def45b113bc01",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "varying_ns",
+      "configuration": {
+        "scene": "varying",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 180000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 5744,
+        "windows": 2880,
+        "receipts": 5744
+      },
+      "analysis_counts": {
+        "episodes": 16,
+        "phases": 176,
+        "variations": 192
+      },
+      "performance": {
+        "expected": {
+          "PASS": 16,
+          "FAIL": 2,
+          "WARNING": 0
+        },
+        "summary_status": "FAIL"
+      },
+      "images": [
+        "phase.png",
+        "episode.png"
+      ],
+      "fsdb_sha256": "e83dd1fe66b451c88f6a8b6b9e1b6100d6218989dc8fbb1c3c3ae5528c77cd09",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "zero_cycle",
+      "configuration": {
+        "scene": "zero",
+        "basis": "cycle",
+        "W": 20,
+        "S": 2,
+        "Q": 24,
+        "N": 3,
+        "span": 4,
+        "K": 2,
+        "end_ticks": 60000001,
+        "top": "tb_acceptance_cycle",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1904,
+        "windows": 944,
+        "receipts": 1904
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 4,
+        "variations": 8
+      },
+      "performance": {
+        "expected": {
+          "PASS": 6,
+          "FAIL": 0,
+          "WARNING": 2
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [],
+      "fsdb_sha256": "96d9ff9b4c8a09043ce8b0defa9a493132298a9426a6999c2a5631045988860d",
+      "human_review": "PENDING"
+    },
+    {
+      "scene": "zero_ns",
+      "configuration": {
+        "scene": "zero",
+        "basis": "ns",
+        "W": 10,
+        "S": 1,
+        "Q": 12,
+        "N": 3,
+        "span": 2,
+        "K": 2,
+        "end_ticks": 60000001,
+        "top": "tb_acceptance_ns",
+        "example_ids": false
+      },
+      "counts": {
+        "raw": 1904,
+        "windows": 960,
+        "receipts": 1904
+      },
+      "analysis_counts": {
+        "episodes": 4,
+        "phases": 4,
+        "variations": 8
+      },
+      "performance": {
+        "expected": {
+          "PASS": 6,
+          "FAIL": 0,
+          "WARNING": 2
+        },
+        "summary_status": "WARNING"
+      },
+      "images": [
+        "episode.png"
+      ],
+      "fsdb_sha256": "ee7171cc4676a01bd562fe744881a29c82a1eeca0929417d64f06d8271c1e991",
+      "human_review": "PENDING"
+    }
+  ],
+  "totals": {
+    "raw": 161472,
+    "windows": 86375,
+    "receipts": 161472
+  },
+  "analysis_totals": {
+    "episodes": 518,
+    "phases": 1350,
+    "variations": 1868
+  },
+  "fresh_actual_pngs": 33,
+  "human_review": "PENDING",
+  "no_production_changes": true,
+  "python": "3.6.8",
+  "window_real_tolerance_gbps": 1e-10,
+  "metric_real_tolerance": 1e-08,
+  "formal_tolerance": "cfg only; no hidden epsilon"
+}

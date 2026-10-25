@@ -4098,5 +4098,152 @@
   {
     "name": "transport_growth",
     "top": "tb_transport_growth"
+  },
+  {
+    "name": "settle_reset_module_nba",
+    "top": "tb_settle_reset_renba",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "settle_reset_program_renba",
+    "top": "tb_settle_reset_renba",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "settle_hint_active_clock",
+    "top": "tb_settle_hint_renba",
+    "plusargs": [
+      "+MODE=0"
+    ],
+    "expect_counts": {
+      "(?m)^BW_HINT_HIT scope=preflight\\.hint\\.late_clock kind=backpressure ": 1,
+      "(?m)^BW_HINT_END scope=preflight\\.hint\\.late_clock kind=backpressure ": 1
+    }
+  },
+  {
+    "name": "settle_hint_program_renba",
+    "top": "tb_settle_hint_renba",
+    "plusargs": [
+      "+MODE=1"
+    ],
+    "expect_counts": {
+      "(?m)^BW_HINT_HIT scope=preflight\\.hint\\.late_clock kind=backpressure ": 1,
+      "(?m)^BW_HINT_END scope=preflight\\.hint\\.late_clock kind=backpressure ": 1
+    }
+  },
+  {
+    "name": "settle_phase_module_nba",
+    "top": "tb_settle_phase_renba",
+    "plusargs": [
+      "+MODE=0"
+    ],
+    "expect_counts": {
+      "(?m)^BW_PHASE scope_kind=0 scope=settle\\.phase ": 0,
+      "(?m)^BW_EPISODE scope_kind=0 scope=settle\\.phase ": 1
+    }
+  },
+  {
+    "name": "settle_phase_program_renba",
+    "top": "tb_settle_phase_renba",
+    "plusargs": [
+      "+MODE=1"
+    ],
+    "expect_counts": {
+      "(?m)^BW_PHASE scope_kind=0 scope=settle\\.phase ": 0,
+      "(?m)^BW_EPISODE scope_kind=0 scope=settle\\.phase ": 1
+    }
+  },
+  {
+    "name": "settle_group_module",
+    "top": "tb_settle_group_reset",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "settle_group_assert",
+    "top": "tb_settle_group_reset",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "settle_group_pulse",
+    "top": "tb_settle_group_reset",
+    "plusargs": [
+      "+MODE=2"
+    ]
+  },
+  {
+    "name": "settle_group_release",
+    "top": "tb_settle_group_reset",
+    "plusargs": [
+      "+MODE=3"
+    ]
+  },
+  {
+    "name": "settle_group_unknown",
+    "top": "tb_settle_group_reset",
+    "plusargs": [
+      "+MODE=4"
+    ]
+  },
+  {
+    "name": "settle_exact_budget",
+    "top": "tb_settle_exact_budget",
+    "expect_counts": {
+      "(?m)^BW_EPISODE scope_kind=": 4,
+      "(?m)^BW_SUMMARY ": 1
+    },
+    "expect_log": [
+      "TB_PASS settle_exact_budget ticks=40000000000 windows=160000 receipts=8",
+      "BW_SUMMARY .*scopes_done=4 scopes_expected=4"
+    ]
+  },
+  {
+    "name": "settle_reset_stream_mixed",
+    "top": "tb_settle_reset_stream",
+    "plusargs": [
+      "+MODE=0"
+    ],
+    "expect_counts": {
+      "(?m)^RESET_STREAM p0 ": 5
+    }
+  },
+  {
+    "name": "settle_reset_stream_group_only",
+    "top": "tb_settle_reset_stream",
+    "plusargs": [
+      "+MODE=1"
+    ],
+    "expect_counts": {
+      "(?m)^RESET_STREAM p0 ": 1
+    }
+  },
+  {
+    "name": "settle_storage_reset_observer",
+    "top": "tb_settle_storage_failure",
+    "plusargs": [
+      "+MODE=0"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "expect_error": "(?s)^(?!.*BW_(?:EPISODE|PHASE|SUMMARY)).*BW_CORE_ERROR code=STORAGE_FAILURE.*scope=native.observer.*resource=scheduler.reset_observer"
+  },
+  {
+    "name": "settle_storage_reset_capture",
+    "top": "tb_settle_storage_failure",
+    "plusargs": [
+      "+MODE=1"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "expect_error": "(?s)^(?!.*BW_(?:EPISODE|PHASE|SUMMARY)).*BW_CORE_ERROR code=STORAGE_FAILURE.*scope=native.observer.*resource=scheduler.reset_capture"
   }
 ]

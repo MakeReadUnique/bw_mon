@@ -1,0 +1,950 @@
+{
+  "episodes": {
+    "p0": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p1": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p2": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p3": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p4": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p5": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p6": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p7": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p8": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p9": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p10": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "p11": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 5120,
+        "events": 80,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 128.0
+      }
+    ],
+    "die0": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 20480,
+        "events": 320,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 512.0
+      }
+    ],
+    "die1": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 20480,
+        "events": 320,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 512.0
+      }
+    ],
+    "all_dmc": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 40960,
+        "events": 640,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 1024.0
+      }
+    ],
+    "mixed": [
+      {
+        "epoch": 0,
+        "id": 1,
+        "first": 20000000,
+        "last": 59500000,
+        "tail": 60000000,
+        "confirm": 72000000,
+        "status": 2,
+        "bytes": 30720,
+        "events": 480,
+        "bc": true,
+        "ec": true,
+        "member": false,
+        "duration": 40000000,
+        "valid": true,
+        "e2e": 768.0
+      }
+    ]
+  },
+  "phases": {
+    "p0": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p1": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p2": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p3": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p4": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p5": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p6": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p7": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p8": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p9": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p10": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "p11": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 1024,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 8,
+          "mean": 76.8,
+          "min": 32.0,
+          "max": 121.6,
+          "sigma": 29.328484447717376,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 3520,
+        "raw_bw": 128.0,
+        "variation": {
+          "n": 28,
+          "mean": 128.0,
+          "min": 128.0,
+          "max": 128.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "die0": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 4096,
+        "raw_bw": 512.0,
+        "variation": {
+          "n": 8,
+          "mean": 307.2,
+          "min": 128.0,
+          "max": 486.4,
+          "sigma": 117.3139377908695,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 14080,
+        "raw_bw": 512.0,
+        "variation": {
+          "n": 28,
+          "mean": 512.0,
+          "min": 512.0,
+          "max": 512.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "die1": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 4096,
+        "raw_bw": 512.0,
+        "variation": {
+          "n": 8,
+          "mean": 307.2,
+          "min": 128.0,
+          "max": 486.4,
+          "sigma": 117.3139377908695,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 14080,
+        "raw_bw": 512.0,
+        "variation": {
+          "n": 28,
+          "mean": 512.0,
+          "min": 512.0,
+          "max": 512.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "all_dmc": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 8192,
+        "raw_bw": 1024.0,
+        "variation": {
+          "n": 8,
+          "mean": 614.4,
+          "min": 256.0,
+          "max": 972.8,
+          "sigma": 234.627875581739,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 28160,
+        "raw_bw": 1024.0,
+        "variation": {
+          "n": 28,
+          "mean": 1024.0,
+          "min": 1024.0,
+          "max": 1024.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ],
+    "mixed": [
+      {
+        "kind": 1,
+        "start": 22500000,
+        "end": 30500000,
+        "confirm": 23500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 6144,
+        "raw_bw": 768.0,
+        "variation": {
+          "n": 8,
+          "mean": 460.8,
+          "min": 192.0,
+          "max": 729.6,
+          "sigma": 175.97090668630426,
+          "cv": 38.18813079129867
+        },
+        "unknown_samples": 0
+      },
+      {
+        "kind": 2,
+        "start": 32500000,
+        "end": 60000000,
+        "confirm": 33500000,
+        "known": true,
+        "episode": 1,
+        "bytes": 21120,
+        "raw_bw": 768.0,
+        "variation": {
+          "n": 28,
+          "mean": 768.0,
+          "min": 768.0,
+          "max": 768.0,
+          "sigma": 0.0,
+          "cv": 0.0
+        },
+        "unknown_samples": 0
+      }
+    ]
+  }
+}

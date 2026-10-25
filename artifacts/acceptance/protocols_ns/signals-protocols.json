@@ -1,0 +1,26 @@
+{
+  "public_paths": [
+    "/tb_acceptance_ns/scene/ports[1]/dut/valid",
+    "/tb_acceptance_ns/scene/ports[1]/dut/ready",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/sampled_valid",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/sampled_ready",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/total_events",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/window_events",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/bytes_complete",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/events_complete",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_hit_count",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_duration_ticks",
+    "/tb_acceptance_ns/scene/ports[2]/dut/valid",
+    "/tb_acceptance_ns/scene/ports[2]/dut/flitv",
+    "/tb_acceptance_ns/scene/ports[2]/dut/lcrdv",
+    "/tb_acceptance_ns/scene/ports[2]/dut/mon/credit_balance",
+    "/tb_acceptance_ns/scene/ports[2]/dut/mon/credit_trusted",
+    "/tb_acceptance_ns/scene/ports[2]/dut/mon/credit_anomaly",
+    "/tb_acceptance_ns/scene/ports[2]/dut/mon/total_events",
+    "/tb_acceptance_ns/scene/ports[2]/dut/mon/window_events",
+    "/tb_acceptance_ns/scene/ports[2]/dut/mon/bandwidth_gbps",
+    "/tb_acceptance_ns/scene/all_dmc/window_bytes",
+    "/tb_acceptance_ns/scene/all_dmc/bytes_complete",
+    "/tb_acceptance_ns/scene/all_dmc/events_complete"
+  ]
+}
