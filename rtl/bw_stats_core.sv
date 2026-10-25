@@ -975,13 +975,21 @@ module bw_stats_core #(
     advance_episode_time(incoming.timestamp_ticks,last_edge_index,0);
     if(incoming.timestamp_ticks>=stats_start_ticks)advance_raw_quality(incoming.timestamp_ticks);
     update_quality(key,incoming.reset_n,incoming.timestamp_ticks);
-    if(incoming.timestamp_ticks<stats_start_ticks && !episode_active && current_reset_n!==1'b0)begin
+    if((incoming.timestamp_ticks<stats_start_ticks ||
+        (incoming.timestamp_ticks==stats_start_ticks && !$isunknown(incoming.reset_n))) &&
+        !episode_active && current_reset_n!==1'b0)begin
       // A pre-epoch notification refreshes member state, not lost observation
       // in the new epoch. The progress barrier prevents newer raw activity
       // from being accepted before these historical controls catch up.
       if(unknown_episode_control())interrupt_silence();
-      else begin
+      else if(raw_unknown_ticks==0 && raw_unknown_records==0)begin
         pre_episode_gap=0;observation_gap_active=0;gap_waits_for_edge=0;silence_active=0;
+      end else begin
+        // An independent own-control gap in this epoch survives historical
+        // member recovery. Resume quiet from its actual latest observation,
+        // never from the historical member time or the delivery time.
+        observation_gap_active=0;gap_waits_for_edge=0;
+        if(pre_episode_gap && WINDOW_BASIS==BW_NS)start_silence(raw_quality_ticks,last_edge_index);
       end
     end else episode_control_changed(incoming.timestamp_ticks);
     accepted_control_count=checked_add(accepted_control_count,1,scope_id);

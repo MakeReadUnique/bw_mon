@@ -58,11 +58,15 @@ module tb_metrics_late_recovery;
     if(mode!=0)begin
       #(9000000-$time);reset_n=0;
       #(9500000-$time);reset_n=1;
+      if(mode==3)begin
+        #(9600000-$time);reset_n=1'bx;
+        #(9700000-$time);reset_n=1;
+      end
     end
     #(10000000-$time);
     // Original recovery3.5 reaches the owner together with its later raw frame.
     // Both channels are the agreed normalized record/control component seam.
-    deliver_control(mode==2 ? 9750000 : 3500000,2,1'b1);deliver(10000000,3,1);watermark=10000000;
+    deliver_control(mode==2 ? 9750000 : mode==4 ? 9500000 : 3500000,2,1'b1);deliver(10000000,3,1);watermark=10000000;
     #1;
     if(final_seq!=1 || result.status!=(mode!=0 ? BW_EPISODE_RESET_INTERRUPTED : BW_EPISODE_COMPLETE) ||
        result.confirmation_ticks!=(mode!=0 ? 9000000 : 7500000) ||
@@ -72,10 +76,10 @@ module tb_metrics_late_recovery;
       $fatal(1,"late original recovery must preserve Q7.5 completion and start new episode10 without backward quality queries");
     #(11000000-$time);deliver(11000000,4,0);watermark=BW_U64_MAX;
     #(15000001-$time);
-    if(final_seq!=2 || result.e2e_valid!=(mode!=2) || result.first_known!=(mode!=2) ||
+    if(final_seq!=2 || result.e2e_valid!=(!(mode inside {2,3})) || result.first_known!=(!(mode inside {2,3})) ||
        result.first_ticks!=10000000 || result.tail_ticks!=11000000 || result.confirmation_ticks!=15000000 ||
-       (mode!=2 && result.e2e_gbps!=8.0))
-      $fatal(1,"late metadata cannot poison the independently complete later episode");
+       (!(mode inside {2,3}) && result.e2e_gbps!=8.0))
+      $fatal(1,"new episode quality must retain actual epoch gaps and exclude historical uncertainty");
     $display("TB_PASS metrics_late_recovery");$finish;
   end
 endmodule

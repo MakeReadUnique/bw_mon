@@ -943,5 +943,19 @@
     "plusargs": [
       "+MODE=2"
     ]
+  },
+  {
+    "name": "metrics_late_recovery_own_gap",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=3"
+    ]
+  },
+  {
+    "name": "metrics_late_recovery_left_boundary",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=4"
+    ]
   }
 ]
