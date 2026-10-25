@@ -189,3 +189,14 @@ commands, compile/simulation logs and time-v measurements are retained under the
 corresponding resource-pilot directories in the ticket evidence. These profiles
 prove their declared checks only; neither a common/max hierarchy workload nor a
 full scale/history matrix was run by this pilot.
+
+Final numeric/storage integration validation on2026-10-25: **408/408 contract
+cases passed** across **160 compiled tops**, including all321 incoming integration
+cases and87 numeric/storage additions. The full invocation returned0 without
+infrastructure retries. All final compile logs have no Warning-/Error- diagnostics;
+all current ROOT/runner/defines/source/recursive-header/fixture fingerprints match,
+and each runtime log is newer than its current compilation stamp. Exact error,
+expected-log and expected-count predicates were independently reapplied to all
+408 captured outputs. `git diff --check` passed. Current integration ae5edb5 was
+merged before final validation; this proof includes the full group-analysis and
+reporting composition.
