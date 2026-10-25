@@ -3,7 +3,23 @@ module bw_group_mon #(
   parameter string CLOCK_CONTEXT="default",
   parameter logic [1:0] WINDOW_BASIS=bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH=0,
-  parameter logic [63:0] UPDATE_STRIDE=0
+  parameter logic [63:0] UPDATE_STRIDE=0,
+  parameter logic [1:0] EPISODE_ENABLE = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = 0,
+  parameter logic [1:0] PHASE_ENABLE = 0,
+  parameter logic [63:0] PHASE_N = 0,
+  parameter logic [63:0] PHASE_MIN_SPAN = 0,
+  parameter logic [63:0] PHASE_K = 0,
+  parameter real PHASE_STEADY_ENTER_ABS = -1.0,
+  parameter real PHASE_STEADY_ENTER_REL = -1.0,
+  parameter real PHASE_STEADY_EXIT_ABS = -1.0,
+  parameter real PHASE_STEADY_EXIT_REL = -1.0,
+  parameter real PHASE_RMS_ENTER_ABS = -1.0,
+  parameter real PHASE_RMS_ENTER_REL = -1.0,
+  parameter real PHASE_RMS_EXIT_ABS = -1.0,
+  parameter real PHASE_RMS_EXIT_REL = -1.0,
+  parameter real PHASE_TREND_ABS = -1.0,
+  parameter real PHASE_TREND_REL = -1.0
 ) (
   input logic clk,
   input logic reset_n
@@ -24,6 +40,8 @@ module bw_group_mon #(
   real bandwidth_gbps,bytes_per_cycle;
   bit window_warmup,window_full,bytes_complete,events_complete;
   bit denominator_valid,window_valid,member_reset_coverage;
+  `include "bw_analysis_public.svh"
+
   bw_u64_t progress_watermark_ticks=0;
   typedef struct packed {
     bw_u64_t timestamp_ticks;
@@ -36,7 +54,20 @@ module bw_group_mon #(
 
   initial begin
     monitor_path=$sformatf("%m");scope_id=GROUP_ID;
-    group_handle=register_group_owner(scope_id,monitor_path,WINDOW_BASIS,
+    // Reject raw configuration before narrowing into legacy internal enums/bits.
+    if($isunknown({WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE}) || !(WINDOW_BASIS inside {BW_NS,BW_CYCLE}))
+      core_error("WINDOW_CONFIG",scope_id,"basis, W and S must be known; basis must be BW_NS/BW_CYCLE");
+    validate_window(bw_basis_t'(WINDOW_BASIS),WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
+    if($isunknown(EPISODE_ENABLE) || !(EPISODE_ENABLE inside {0,1}))
+      core_error("EPISODE_CONFIG",scope_id,"episode enable must be known0/1");
+    if($isunknown(PHASE_ENABLE) || !(PHASE_ENABLE inside {0,1}))
+      core_error("PHASE_CONFIG",scope_id,"phase enable must be known0/1");
+    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,bw_basis_t'(WINDOW_BASIS),scope_id);
+    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,bw_basis_t'(WINDOW_BASIS),PHASE_N,PHASE_MIN_SPAN,PHASE_K,
+      PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
+      PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
+      PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+    group_handle=register_group_owner(scope_id,monitor_path,bw_basis_t'(WINDOW_BASIS),
                                       WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
     transport_source=group_source_handle(group_handle);
     raw_record='0;raw_control='0;core_control='0;
@@ -212,7 +243,23 @@ module bw_group_mon #(
     end
   end
 
-  bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),.UPDATE_STRIDE(UPDATE_STRIDE)) core
+  bw_stats_core #(.WINDOW_BASIS(bw_basis_t'(WINDOW_BASIS)),.WINDOW_WIDTH(WINDOW_WIDTH),
+                  .UPDATE_STRIDE(UPDATE_STRIDE),.EPISODE_ENABLE(EPISODE_ENABLE),
+                  .SILENCE_THRESHOLD(SILENCE_THRESHOLD),
+                  .PHASE_ENABLE(PHASE_ENABLE),
+                  .PHASE_N(PHASE_N),
+                  .PHASE_MIN_SPAN(PHASE_MIN_SPAN),
+                  .PHASE_K(PHASE_K),
+                  .PHASE_STEADY_ENTER_ABS(PHASE_STEADY_ENTER_ABS),
+                  .PHASE_STEADY_ENTER_REL(PHASE_STEADY_ENTER_REL),
+                  .PHASE_STEADY_EXIT_ABS(PHASE_STEADY_EXIT_ABS),
+                  .PHASE_STEADY_EXIT_REL(PHASE_STEADY_EXIT_REL),
+                  .PHASE_RMS_ENTER_ABS(PHASE_RMS_ENTER_ABS),
+                  .PHASE_RMS_ENTER_REL(PHASE_RMS_ENTER_REL),
+                  .PHASE_RMS_EXIT_ABS(PHASE_RMS_EXIT_ABS),
+                  .PHASE_RMS_EXIT_REL(PHASE_RMS_EXIT_REL),
+                  .PHASE_TREND_ABS(PHASE_TREND_ABS),
+                  .PHASE_TREND_REL(PHASE_TREND_REL)) core
     (.scope_id(scope_id),.scope_kind(scope_kind),.record(raw_record),.record_toggle(record_toggle),.stats_reset_n(reset_n),
      .progress_watermark_ticks(progress_watermark_ticks),.member_control(core_control),
      .member_control_toggle(core_control_toggle),.accepted_record_seq(accepted_record_seq),
@@ -224,18 +271,39 @@ module bw_group_mon #(
      .window_warmup(window_warmup),.window_full(window_full),.bytes_complete(bytes_complete),
      .events_complete(events_complete),.denominator_valid(denominator_valid),.window_valid(window_valid),
      .member_reset_coverage(member_reset_coverage),
-     .episode_active(),.episode_status(),.episode_id(),.episode_result_seq(),
-     .episode_first_ticks(),.episode_last_ticks(),.episode_tail_ticks(),.episode_confirmation_ticks(),
-     .episode_first_cycle(),.episode_last_cycle(),.episode_tail_cycle(),.episode_bytes(),
-     .episode_events(),.episode_duration_ticks(),.episode_first_known(),.episode_last_known(),
-     .episode_tail_known(),.episode_bytes_complete(),.episode_events_complete(),.episode_member_reset_coverage(),
-     .episode_duration_valid(),.episode_e2e_valid(),.episode_e2e_gbps(),.episode_result(),
-     .phase_current(),.phase_candidate(),.phase_active(),.phase_eligible(),
-     .phase_evidence_continuous(),.phase_evidence_sufficient(),.phase_fit_valid(),.phase_id(),
-     .phase_result_seq(),.phase_window_seq(),.phase_evidence_count(),.phase_evidence_span(),
-     .phase_candidate_count(),.phase_candidate_ticks(),.phase_candidate_total_bytes(),.phase_candidate_total_events(),
-     .phase_start_ticks(),.phase_confirmation_ticks(),.phase_fit_mean(),.phase_fit_delta(),
-     .phase_fit_rms(),.phase_result());
+     .episode_active(episode_active),.episode_status(episode_status),.episode_id(episode_id),
+     .episode_result_seq(episode_result_seq),.episode_first_ticks(episode_first_ticks),
+     .episode_last_ticks(episode_last_ticks),.episode_tail_ticks(episode_tail_ticks),
+     .episode_confirmation_ticks(episode_confirmation_ticks),.episode_first_cycle(episode_first_cycle),
+     .episode_last_cycle(episode_last_cycle),.episode_tail_cycle(episode_tail_cycle),
+     .episode_bytes(episode_bytes),.episode_events(episode_events),.episode_duration_ticks(episode_duration_ticks),
+     .episode_first_known(episode_first_known),.episode_last_known(episode_last_known),
+     .episode_tail_known(episode_tail_known),.episode_bytes_complete(episode_bytes_complete),
+     .episode_events_complete(episode_events_complete),.episode_member_reset_coverage(episode_member_reset_coverage),
+     .episode_duration_valid(episode_duration_valid),.episode_e2e_valid(episode_e2e_valid),
+     .episode_e2e_gbps(episode_e2e_gbps),.episode_result(episode_result),
+     .phase_current(phase_current),
+     .phase_candidate(phase_candidate),
+     .phase_active(phase_active),
+     .phase_eligible(phase_eligible),
+     .phase_evidence_continuous(phase_evidence_continuous),
+     .phase_evidence_sufficient(phase_evidence_sufficient),
+     .phase_fit_valid(phase_fit_valid),
+     .phase_id(phase_id),
+     .phase_result_seq(phase_result_seq),
+     .phase_window_seq(phase_window_seq),
+     .phase_evidence_count(phase_evidence_count),
+     .phase_evidence_span(phase_evidence_span),
+     .phase_candidate_count(phase_candidate_count),
+     .phase_candidate_ticks(phase_candidate_ticks),
+     .phase_candidate_total_bytes(phase_candidate_total_bytes),
+     .phase_candidate_total_events(phase_candidate_total_events),
+     .phase_start_ticks(phase_start_ticks),
+     .phase_confirmation_ticks(phase_confirmation_ticks),
+     .phase_fit_mean(phase_fit_mean),
+     .phase_fit_delta(phase_fit_delta),
+     .phase_fit_rms(phase_fit_rms),
+     .phase_result(phase_result));
 endmodule
 
 program bw_group_collector_scheduler;

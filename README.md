@@ -6,7 +6,7 @@
 
 运行 `make test`，使用 VCS 编译执行组件与公开入口测试。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 
-单点过程结果可通过 `+BW_EXPECT=FILE` 配置全程平均带宽预期，按完整观测点标识比较并输出非终止的 PASS / FAIL / WARNING 与一次最终汇总；见[键表与结算接口](docs/bw-mon-expectations.md)。
+单点与聚合组可通过 `+BW_EXPECT=FILE` 按完整类型/身份配置全程与最后稳定段原始带宽、每段爬坡/下降时间及 min/max/标准差/CV 预期，逐指标输出非终止的 PASS / FAIL / WARNING 与一次最终汇总；见[键表与结算接口](docs/bw-mon-expectations.md)。
 
 ## 已确认需求
 
@@ -31,4 +31,4 @@
 
 [EDA 验证用 bandwidth monitor 开源调研](docs/bandwidth-monitor-research.md) 汇总了已有实现、统计口径差异和可参考的设计方式。
 
-分层聚合入口已实现：每组一个 `bw_group_mon`，支持显式点/子组混合成员、多父 DAG、统一配置完成及循环/递归重叠检查。各层自动进行同沿原始汇总、持久发布、独立消费确认、复位隔离和缺帧检测。配置与复现见[集成说明](docs/bw-mon-api.md)；完整组分析、波形人工检查与规模验收仍按对应 ticket 交付。
+分层聚合入口已实现：每组一个 `bw_group_mon`，支持显式点/子组混合成员、多父 DAG、统一配置完成及循环/递归重叠检查。各层自动进行同沿原始汇总、持久发布、独立消费确认、复位隔离和缺帧检测。配置与复现见[集成说明](docs/bw-mon-api.md)；组分析与单点共享独立的过程/阶段/指标算法及公开标量；波形人工检查与规模验收仍按对应 ticket 交付。
