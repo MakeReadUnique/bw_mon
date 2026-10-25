@@ -1,0 +1,21 @@
+{
+  "command": [
+    "verdi",
+    "-nWave",
+    "-ssf",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/steady_ns/waves.fsdb",
+    "-play",
+    "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/steady_ns/capture.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-1fbxvmi1",
+  "display": ":87",
+  "fresh": true,
+  "pixels": [
+    1500,
+    850
+  ],
+  "fsdb_sha256": "b8963c08b7daee27acdf2d0324885460a0b02c99703755d02493d461f90486dd",
+  "png_sha256": "e7f7f14eec68d56ce89131f6872787f15e5c830af8cd47c1e236e29c453b420e",
+  "agent_visual_review": "INSPECTED: real public hierarchy, input clock/data, window interval/quality and point/group/ungrouped rates visible. all_dmc real row uses rounded engineering display1.02K; exact1024 is independently checked in the table and FSDB export. This is agent inspection, not human review.",
+  "human_review": "PENDING"
+}

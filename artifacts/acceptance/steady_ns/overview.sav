@@ -1,0 +1,81 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 10 10 1500 850 660 180
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "waves.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+windowTimeUnit 1ns
+
+; waveform viewport range
+zoom 88.000000 112.000000 1n
+cursor 102.000001
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 0
+; marker line index
+markerPos 25
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "waves.fsdb"
+addSignal -h 15 /tb_acceptance_ns/scene/ports[0]/dut/clk
+addSignal -h 15 -holdScope reset_n
+addSignal -h 15 -holdScope valid
+addSignal -h 15 -UNSIGNED -UDEC -holdScope accounted_bytes[63:0]
+addSignal -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/scope_id
+addSignal -h 15 -UNSIGNED -UDEC -holdScope stats_epoch[63:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope result_seq[63:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope window_start_ticks[63:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope window_end_ticks[63:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope window_bytes[63:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope window_events[63:0]
+addSignal -h 15 -holdScope window_full
+addSignal -h 15 -holdScope window_warmup
+addSignal -h 15 -holdScope bytes_complete
+addSignal -h 15 -holdScope member_reset_coverage
+addSignal -w digital -c ID_RED5 -ls solid -lw 1 -h 15 -holdScope bandwidth_gbps
+addSignal -w digital -c ID_ORANGE5 -ls solid -lw 1 -h 15 /tb_acceptance_ns/scene/die0/bandwidth_gbps
+addSignal -w digital -c ID_YELLOW5 -ls solid -lw 1 -h 15 /tb_acceptance_ns/scene/die1/bandwidth_gbps
+addSignal -w digital -c ID_GREEN5 -ls solid -lw 1 -h 15 /tb_acceptance_ns/scene/all_dmc/bandwidth_gbps
+addSignal -w digital -c ID_CYAN5 -ls solid -lw 1 -h 15 /tb_acceptance_ns/scene/mixed/bandwidth_gbps
+addSignal -w digital -c ID_BLUE5 -ls solid -lw 1 -h 15 /tb_acceptance_ns/scene/ports[10]/dut/mon/bandwidth_gbps
+addSignal -w digital -c ID_PURPLE5 -ls solid -lw 1 -h 15 /tb_acceptance_ns/scene/ports[11]/dut/mon/bandwidth_gbps
+addSignal -h 15 -UNSIGNED /tb_acceptance_ns/scene/ports[0]/dut/mon/phase_current[1:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope phase_start_ticks[63:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope phase_confirmation_ticks[63:0]
+addGroup "G2"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+

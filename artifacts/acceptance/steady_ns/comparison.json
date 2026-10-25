@@ -1,0 +1,134 @@
+{
+  "status": "PASS",
+  "human_review": "PENDING",
+  "checks": [
+    {
+      "scope": "p0",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p1",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p2",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p3",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p4",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p5",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p6",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p7",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p8",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p9",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p10",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "p11",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 128,
+      "actual_gbps": 128.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "die0",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 512,
+      "actual_gbps": 512.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "die1",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 512,
+      "actual_gbps": 512.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "all_dmc",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 1024,
+      "actual_gbps": 1024.0,
+      "difference": 0.0
+    },
+    {
+      "scope": "mixed",
+      "start_ticks": 92000000,
+      "end_ticks": 102000000,
+      "expected_gbps": 768,
+      "actual_gbps": 768.0,
+      "difference": 0.0
+    }
+  ]
+}

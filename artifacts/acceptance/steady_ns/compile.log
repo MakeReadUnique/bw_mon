@@ -1,0 +1,56 @@
+                         Chronologic VCS (TM)
+       Version W-2024.09-SP1_Full64 -- Sun Oct 25 01:54:58 2026
+
+                    Copyright (c) 1991 - 2024 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_pkg.sv'
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_registry_types.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_pkg.sv'.
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_registry.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_pkg.sv'.
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_transport.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_pkg.sv'.
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_check_report.sv'
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_debug_hints.sv'
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_group_mon.sv'
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_analysis_public.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_group_mon.sv'.
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_hint_duration.sv'
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_mon_setup.sv'
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_point_mon.sv'
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_analysis_public.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_point_mon.sv'.
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_point_recorder.sv'
+Parsing design file '/tmp/bw-mon-spec13/wt-28/rtl/bw_stats_core.sv'
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_history.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_stats_core.sv'.
+Parsing included file '/tmp/bw-mon-spec13/wt-28/rtl/bw_variation_history.svh'.
+Back to file '/tmp/bw-mon-spec13/wt-28/rtl/bw_stats_core.sv'.
+Parsing design file '/tmp/bw-mon-spec13/wt-28/tests/acceptance/scene.sv'
+Top Level Modules:
+       tb_acceptance_ns
+TimeScale is 1 fs / 1 fs
+Starting vcs inline pass...
+17 modules and 0 UDP read.
+recompiling module tb_acceptance_ns
+	However, due to incremental compilation, only 1 module needs to be compiled. 
+rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x /tmp/bw-mon-spec13/wt-28/.build/acceptance/ns/simv ]; then chmod a-x /tmp/bw-mon-spec13/wt-28/.build/acceptance/ns/simv; fi
+g++  -o /tmp/bw-mon-spec13/wt-28/.build/acceptance/ns/simv      -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib -L/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _2853046_archive_1.so _prev_archive_1.so   SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o            -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o  _vcs_pli_stub_.o   /home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_save_restore_new.o /home/eda/app/synopsys/verdi/W-2024.09-SP1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
+/tmp/bw-mon-spec13/wt-28/.build/acceptance/ns/simv up to date
+CPU time: 1.044 seconds to compile + .274 seconds to elab + .229 seconds to link
+Verdi KDB elaboration done and the database successfully generated
