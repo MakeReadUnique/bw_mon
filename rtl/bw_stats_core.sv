@@ -20,11 +20,11 @@ module bw_stats_core #(
   parameter real PHASE_TREND_REL = -1.0
 ) (
   input string scope_id,
-  input bw_mon_pkg::bw_scope_t scope_kind = bw_mon_pkg::BW_POINT,
+  input logic scope_kind = bw_mon_pkg::BW_POINT,
   input bw_mon_pkg::bw_record_t record,
   input bit record_toggle,
   input logic stats_reset_n = 1'b1,
-  input bw_mon_pkg::bw_u64_t progress_watermark_ticks = bw_mon_pkg::BW_U64_MAX,
+  input logic [63:0] progress_watermark_ticks = bw_mon_pkg::BW_U64_MAX,
   input bw_mon_pkg::bw_control_t member_control = '0,
   input bit member_control_toggle = 1'b0,
   output bw_mon_pkg::bw_u64_t accepted_record_seq = 0,
@@ -239,7 +239,7 @@ module bw_stats_core #(
   endfunction
 
   function automatic bw_phase_result_t empty_phase_result();
-    return '{scope_kind:scope_kind,phase_kind:BW_PHASE_UNDETERMINED,end_reason:BW_PHASE_CHANGE,
+    return '{scope_kind:bw_scope_t'(scope_kind),phase_kind:BW_PHASE_UNDETERMINED,end_reason:BW_PHASE_CHANGE,
       episode_status:BW_EPISODE_NONE,duration_reason:BW_METRIC_BOUNDARY_UNKNOWN,
       bandwidth_reason:BW_METRIC_BOUNDARY_UNKNOWN,variation:empty_variation_result(),default:0};
   endfunction
@@ -414,7 +414,7 @@ module bw_stats_core #(
     pending_phase_t pending;
     if(!PHASE_ENABLE || !phase_active || core_failure_seen)return;
     if(end_known && end_tick<=phase_start_ticks)begin phase_active=0;return;end
-    fragment.scope_kind=scope_kind;fragment.stats_epoch=stats_epoch;
+    fragment.scope_kind=bw_scope_t'(scope_kind);fragment.stats_epoch=stats_epoch;
     fragment.episode_id=episode_id;fragment.phase_id=phase_id;fragment.result_seq=0;
     fragment.phase_kind=phase_current;fragment.end_reason=reason;fragment.episode_status=BW_EPISODE_ACTIVE;
     fragment.start_ticks=phase_start_ticks;fragment.end_ticks=end_tick;
@@ -658,7 +658,7 @@ module bw_stats_core #(
       real'(episode_bytes)*real'(BW_TICKS_PER_NS)/real'(episode_duration_ticks) : 0.0;
     episode_result_seq=checked_add(episode_result_seq,1,scope_id);
     if (core_failure_seen) return;
-    episode_result.scope_kind=scope_kind;
+    episode_result.scope_kind=bw_scope_t'(scope_kind);
     episode_result.stats_epoch=stats_epoch; episode_result.result_seq=episode_result_seq;
     episode_result.episode_id=episode_id; episode_result.status=status;
     episode_result.first_ticks=episode_first_ticks; episode_result.last_ticks=episode_last_ticks;
@@ -1108,6 +1108,13 @@ module bw_stats_core #(
     end
   end
   always @(stats_reset_n) if (monitor_ready) enqueue_reset();
+  always @(scope_kind or progress_watermark_ticks or monitor_ready)begin
+    if(monitor_ready && scope_id.len()!=0)begin
+      if($isunknown(scope_kind))core_error("SCOPE_KIND",scope_id,"scope kind must be known BW_POINT/BW_GROUP");
+      if($isunknown(progress_watermark_ticks))
+        core_error("INTEGER_UNKNOWN",scope_id,$sformatf("progress_watermark=%h",progress_watermark_ticks));
+    end
+  end
   always @(member_control_toggle) begin
     if(monitor_ready)validate_control_numeric(member_control,scope_id);
     if (monitor_ready && !core_failure_seen && member_control.control_seq!=0) begin
@@ -1204,7 +1211,7 @@ module bw_stats_core #(
       end else check_monitor_time($time,scope_id);
     end
     if(monitor_ready && !core_failure_pending()) begin
-      if(monitor_time_supported($time)) report_scope_done(scope_kind,scope_id,stats_epoch);
+      if(monitor_time_supported($time)) report_scope_done(bw_scope_t'(scope_kind),scope_id,stats_epoch);
       else check_monitor_time($time,scope_id);
     end
   end

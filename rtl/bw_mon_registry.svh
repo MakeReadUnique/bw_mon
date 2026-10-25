@@ -73,15 +73,21 @@
     return core_failure_seen ? 0 : registered_groups[index].source_handle;
   endfunction
 
-  function automatic int registered_scope_count(bw_scope_t kind);
+  function automatic int registered_scope_count(logic [1:0] kind);
     if (!monitor_ready) core_error("NOT_READY","registry","scope query before ready");
+    if($isunknown(kind))begin core_error("INTEGER_UNKNOWN","registry",$sformatf("scope_kind=%b",kind));return 0;end
+    if(!(kind inside {BW_POINT,BW_GROUP}))begin core_error("SCOPE_REFERENCE","registry",$sformatf("scope_kind=%0d",kind));return 0;end
     return kind==BW_POINT ? registered_points.size() : registered_groups.size();
   endfunction
 
-  function automatic string registered_scope_id(bw_scope_t kind,int index);
-    if (index<0 || index>=registered_scope_count(kind))
+  function automatic string registered_scope_id(logic [1:0] kind,logic [63:0] index);
+    int count;
+    count=registered_scope_count(kind);
+    if(core_failure_seen)return "";
+    if($isunknown(index))begin core_error("INTEGER_UNKNOWN","registry",$sformatf("scope_index=%h",index));return "";end
+    if (index>=count)
       core_error("SCOPE_REFERENCE","registry",$sformatf("kind=%0d index=%0d",kind,index));
-    return kind==BW_POINT ? registered_points[index].id : registered_groups[index].id;
+    return kind==BW_POINT ? registered_points[int'(index)].id : registered_groups[int'(index)].id;
   endfunction
 
   function automatic void require_configuration_open(string id);

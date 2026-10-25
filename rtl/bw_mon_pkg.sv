@@ -491,13 +491,17 @@ package bw_mon_pkg;
       core_error("PHASE_CONFIG",id,"trend must exceed steady exit tolerance for every nonnegative mean");
   endfunction
 
-  function automatic bit monitor_time_supported(bw_u64_t at_ticks);
+  function automatic bit monitor_time_supported(logic [63:0] at_ticks);
+    if($isunknown(at_ticks))return 0;
     if(!monitor_configured) return 1;
     if(at_ticks<monitor_start_ticks) return 0;
     return at_ticks-monitor_start_ticks<=BW_MONITOR_LIMIT_TICKS;
   endfunction
 
-  function automatic void check_monitor_time(bw_u64_t at_ticks, string scope_context);
+  function automatic void check_monitor_time(logic [63:0] at_ticks, string scope_context);
+    if($isunknown(at_ticks))begin
+      core_error("INTEGER_UNKNOWN",scope_context,$sformatf("time_ticks=%h",at_ticks));return;
+    end
     if(monitor_time_supported(at_ticks)) return;
     if(at_ticks<monitor_start_ticks)
       core_error("SIM_TIME_LIMIT",scope_context,

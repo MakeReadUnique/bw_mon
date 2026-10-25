@@ -3977,5 +3977,126 @@
   {
     "name": "variation_pending_retention",
     "top": "tb_variation_pending_retention"
+  },
+  {
+    "name": "numeric_query_time",
+    "top": "tb_numeric_queries",
+    "plusargs": [
+      "+MODE=time"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_query_scope_kind",
+    "top": "tb_numeric_queries",
+    "plusargs": [
+      "+MODE=scope_kind"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_query_scope_index",
+    "top": "tb_numeric_queries",
+    "plusargs": [
+      "+MODE=scope_index"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_query_scope_invalid",
+    "top": "tb_numeric_queries",
+    "plusargs": [
+      "+MODE=scope_invalid"
+    ],
+    "expect_error": "BW_CORE_ERROR code=SCOPE_REFERENCE"
+  },
+  {
+    "name": "numeric_query_pure_time",
+    "top": "tb_numeric_queries",
+    "plusargs": [
+      "+MODE=pure_time"
+    ]
+  },
+  {
+    "name": "numeric_query_known",
+    "top": "tb_numeric_queries",
+    "plusargs": [
+      "+MODE=known"
+    ]
+  },
+  {
+    "name": "numeric_core_frame_bytes",
+    "top": "tb_numeric_core",
+    "plusargs": [
+      "+MODE=frame_bytes"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_core_frame_time",
+    "top": "tb_numeric_core",
+    "plusargs": [
+      "+MODE=frame_time"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_core_control_sequence",
+    "top": "tb_numeric_core",
+    "plusargs": [
+      "+MODE=control_sequence"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_core_kind",
+    "top": "tb_numeric_core",
+    "plusargs": [
+      "+MODE=kind"
+    ],
+    "expect_error": "BW_CORE_ERROR code=SCOPE_KIND"
+  },
+  {
+    "name": "numeric_core_progress",
+    "top": "tb_numeric_core",
+    "plusargs": [
+      "+MODE=progress"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_core_known_partial",
+    "top": "tb_numeric_core",
+    "plusargs": [
+      "+MODE=known_partial"
+    ]
+  },
+  {
+    "name": "numeric_add_overflow",
+    "top": "tb_numeric_arithmetic",
+    "plusargs": [
+      "+MODE=add_overflow"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_OVERFLOW"
+  },
+  {
+    "name": "numeric_mul_overflow",
+    "top": "tb_numeric_arithmetic",
+    "plusargs": [
+      "+MODE=mul_overflow"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_OVERFLOW"
+  },
+  {
+    "name": "numeric_queue_range",
+    "top": "tb_numeric_arithmetic",
+    "plusargs": [
+      "+MODE=queue_range"
+    ],
+    "expect_error": "BW_CORE_ERROR code=STORAGE_RANGE"
+  },
+  {
+    "name": "transport_growth",
+    "top": "tb_transport_growth"
   }
 ]

@@ -10,6 +10,9 @@ module tb_numeric_arithmetic;
     $display("NUMERIC_TYPE raw=%h unsigned_longint=%h raw_unknown=%0b typed_unknown=%0b",raw_value,converted,$isunknown(raw_value),$isunknown(converted));
     if(mode=="add_unknown")value=checked_add(raw_value,1,"add.subject");
     else if(mode=="mul_unknown")value=checked_mul(raw_value,2,"mul.subject");
+    else if(mode=="add_overflow")value=checked_add(64'hffffffffffffffff,1,"add.subject");
+    else if(mode=="mul_overflow")value=checked_mul(64'hffffffffffffffff,2,"mul.subject");
+    else if(mode=="queue_range")check_queue_growth(32'sh7fffffff,"queue.subject");
     else if(mode=="known")begin
       if(checked_add(64'hffffffffffffffff,0,"add.known")!=64'hffffffffffffffff ||
          checked_mul(64'hffffffffffffffff,1,"mul.known")!=64'hffffffffffffffff ||
