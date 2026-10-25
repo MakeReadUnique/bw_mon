@@ -5,12 +5,16 @@ owner, with the independent segment/leaf-set oracle from the common-scale harnes
 Run `python3 tests/scale/history.py PROFILE --output-root PATH`. Small `tracer`
 profiles use32 points/8 groups/240ns and never substitute for nominal rows.
 
-The builder now includes repaired integrationcb0aef5, whose18 production files
-match runtime8e818394. Its five history and six legacy literal contracts and all
-six public history tracers pass. Every nominal history cell still awaits a fresh
-actual run on this repaired source. Earlier completed runs, interrupted MAX
-attempts and dated matrix files remain historical evidence for their original
-source; none qualifies a repaired-source cell.
+The current frozen builder is04ce34a, whose18 production files match the final
+review-fixed runtime56127495. Five history and six legacy literal contracts and
+all six serial public history tracers pass:112800 raw receipts and57078 new
+windows, zero differences. The [portable preparation archive](../tests/scale/history_evidence/final-preparation/README.md)
+contains actual inputs/configs, expected/actual/differences, source/native/tool/link
+fingerprints and measured small-run RSS. Its recorded-data verifier works without
+VCS or former temporary worktrees. Every nominal history cell still awaits a
+fresh actual run from this builder; small preparation is not nominal acceptance.
+Earlier completed runs, interrupted attempts and dated matrix files retain their
+historical source qualification and never qualify a final-source cell.
 
 | Size | New regular-clock baseline cells | Reused version-qualified rows |
 | --- | --- | --- |
@@ -31,9 +35,12 @@ These dense cells explicitly choose N3, K4, minimum span2×their stride, Q30ns o
 Legacy profiles retain their original20ns/40cycle minimum spans. Every scene
 records these engineering settings; they are not monitor defaults.
 
-Waves are OFF. Repaired builds compile the native scheduling helper with `+vpi`,
+Waves are OFF. Current builds compile the native scheduling helper with `+vpi`,
 minimum `-debug_access`, the SDK include path and every local header dependency,
-using an immutable consumed source snapshot. Earlier matched32/8/240ns visibility
+using an immutable consumed source snapshot. Their actual GCC options include
+`-O`; a separate full dependency inventory freezes50 SDK/system headers and the
+installed native link inputs. Original VCS `.d` files omit system headers and
+remain unchanged, alongside this complete inventory. Earlier matched32/8/240ns visibility
 probes retain their original source qualification. Every nominal cell requires its own
 actual checked run, source/options manifest, counts/reference/actual/diffs and
 measured compiler/simulator RSS. No memory or wall-time acceptance cap is added.
@@ -94,7 +101,29 @@ The public32/8/240ns clock/control tracers use an explicitly shortened input tab
 (20 half-ns edges,10 one-ns edges, resume30.25ns),450frames/scope, p0 sizeX40.25ns
 and group reset70.1–71.1ns. They passed18000 raw checks each,3199NS/5959cycle windows,
 41episode/41phase records and492 correct WARNING conclusions, zero differences.
-They establish integration sensitivity only, not nominal40us acceptance.
+They establish integration sensitivity only, not nominal40us acceptance. These
+same inputs were freshly rerun and independently audited on runtime56127495;
+the current six-tracer archive is linked above.
+
+## Current-source admission
+
+The prepared twelve-profile receipts preserve the original common/max sizes,
+clock/control inputs, W/S, exact40000000000fs observation endpoint and independent
+counts. Four original common29 profiles regenerate byte-identical input/cfg/
+reference/generated SV after composing the history extensions with the final
+integration source. No full history profile has been launched from this frozen
+builder. COMMON history admission is gated on independently qualifying and
+closing current-source common29 plus explicit coordinator admission; the prepared
+queue allows at most two COMMON jobs and no MAX history jobs. MAX history requires
+separate resource admission. Neither a prepared receipt nor a queued row is a pass.
+
+The prior runtime8e history queue and two actual partial COMMON runs were stopped
+when the Spec review found the final-steady validity defect. The original natural
+`OPERATOR_INTERRUPTED`/`VERIFICATION_FAILED` records and verified process-stop
+receipt are retained in the current preparation archive under
+`OPERATOR_SUPERSEDED_REVIEW_SOURCE_FIX`. This operator source supersession is not
+a correctness/resource failure or successful acceptance. No service or unrelated
+job was changed.
 
 ## Historical recorded execution status
 

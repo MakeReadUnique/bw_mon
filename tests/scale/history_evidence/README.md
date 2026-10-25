@@ -1,11 +1,18 @@
 # History matrix evidence
 
-Only completed verified profiles are archived here. Each bundle includes the
+Root per-profile bundles retain completed verified historical profiles. Each bundle includes the
 original input/cfg/generatedSV, expected/actual final scope rows, empty diffs,
 verification, full bounded final/progress logs, exact command/tool/source/options
 manifest, separate compiler/simulator time-v and launch context. Source snapshots
 are grouped by the consumed commit and preserve every hashed source/header/helper.
 No simulator binaries or vendor libraries are archived.
+
+The separate [final-source preparation](final-preparation/README.md) preserves
+eleven literal checks and six actual small public tracers on runtime56127495,
+plus twelve explicitly unlaunched nominal receipts. It is not a passed nominal
+matrix. Its verifier rehydrates the consumed source and original artifacts
+without VCS or former temporary worktrees; older root bundles stay qualified by
+their historical source. Operator-superseded records remain separately labelled.
 
 ```sh
 python3 tests/scale/history_evidence/archive.py verify

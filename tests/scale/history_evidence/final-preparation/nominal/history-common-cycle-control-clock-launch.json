@@ -1,0 +1,306 @@
+{
+  "complete_build_identity": "026129de69e8eac6c941b85acc9cdf28a11f83eb80aee2399bfc0c98e3c0b2a1",
+  "expected_counts": {
+    "configured_metrics_per_scope": 12,
+    "episode_final_records": 1281,
+    "expected_metric_conclusions_for_these_inputs": 15372,
+    "final_scope_rows": 1280,
+    "new_window_publications_checked": 34068478,
+    "per_scope_default_window_publications": 26616,
+    "performance_pass_not_required": true,
+    "raw_receipts_checked": 102208000,
+    "summary_records": 1,
+    "summary_scopes_done": 1280
+  },
+  "identity": {
+    "actual_native_options": [
+      "-w",
+      "-pipe",
+      "-fPIC",
+      "-I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include",
+      "-O",
+      "-I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include"
+    ],
+    "compile_options": [
+      "-full64",
+      "-sverilog",
+      "-timescale=1ns/1fs",
+      "+vpi",
+      "-debug_access",
+      "-CFLAGS",
+      "-I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include",
+      "+incdir+<consumed RTL>",
+      "-assert",
+      "svaext",
+      "-top",
+      "tb_bw_scale",
+      "-o",
+      "<isolated build>/simv"
+    ],
+    "installed_native_link_input_sha256": {
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/liberrorinf.so": "f5c8908df4b91fa8fdae91d809fb0ca7bd499ccc45f8f073424ee61dc145171b",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libsimprofile.so": "69bacb7ea55640316d1a1d37d8b7682a7069f871e5c06c23f92965509b24e4d2",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libsnpsmalloc.so": "1024a515c9d6fdd5ad36b66700678116612cd8ea9da158ef9096659b3a81e2c4",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libuclinative.so": "b519526b7ae1d489b9c7a7b587315c5b719ad0c5d01d680e0dfc026268923a9a",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libvcsnew.so": "554ce4b7ca017fc424cf5e698690f71f246227baee3c34187fd77b7e35e61319",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libvcsucli.so": "5d02887a72fbe03fcd25d7290b50625a14c346f1a9a2e5b891ec214dc3ad6ff4",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libvfs.so": "78e4f88106a06cfdd00a0fe9e6102c232c03f09f1ff02d21cf3fa9af63067c3b",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/libvirsim.so": "33c58535dd3cf80a34dca172424eba55bfa430505cbf4fb3cf83bc9ff1668fce",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_save_restore_new.o": "5a628dfdc84ff7bb48e1473d17bb0372425c9dd76f116a12b6284cb5f374a857",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_tls.o": "7db855898411f6b4a311a1294eee47fcab78b2522c69f4e7af9f117f74a58338",
+      "/home/eda/app/synopsys/verdi/W-2024.09-SP1/share/PLI/VCS/LINUX64/pli.a": "71fcb6fbcdc85be3843a17a8f47a326c3af3acd0f7ba41ff056abf1c593d9d8a",
+      "/usr/lib64/libc.so": "bc8e2fd8ffcf12e2156395df0a2ea6a0a139937ac835cdc1395b525ded29d7bb",
+      "/usr/lib64/libdl.so": "718c0ce0c7a718bc251d2223bbe191c381dbe6e49f430af40fccaf7ef6eb3aab",
+      "/usr/lib64/libm.so": "52574bf4c9782282123963e41346b158d6ff51f13bcf3442226652090b4d9c7a",
+      "/usr/lib64/libnuma.so.1": "3387f5e362510547d61b587da9b56a2adfb6430649905bb46058756c9bb8f42c",
+      "/usr/lib64/libpthread.so": "07606f340fafd96fe6a8247f891e289bb59a861331f4babca801d00e179c24cf"
+    },
+    "native_header_sha256": {
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/include/svdpi.h": "ec749a3fa3782cdac46f57b1438ddc585286b6b9b1b4905bd57db136652e063b",
+      "/home/eda/app/synopsys/vcs/W-2024.09-SP1/include/vpi_user.h": "01cf357355e2bec59601717dc2b1d40fc25948b6456b9d28304a879bd28bcd89",
+      "/usr/include/alloca.h": "d0e96c832aa91c543cb52889c907e4bd0a4a37c94f504ffe7438af5643d69f65",
+      "/usr/include/bits/byteswap.h": "60626f0a5ad299af1fca1a7d83a8577056de54f797c341f20bb18dcafec9aac0",
+      "/usr/include/bits/endian.h": "2c028a08deba098b5d39340617ff93f15a00a5256a10bc8e6fc98291a2b4944a",
+      "/usr/include/bits/floatn-common.h": "74413dfe9de86a915674f65dd429b9a40f5ff7d7831c9aeca9462ffe120182b7",
+      "/usr/include/bits/floatn.h": "1a000795126109d6be44c7a0f3e126fe2ab2d53902690ee43d1eac70a3d9c494",
+      "/usr/include/bits/libc-header-start.h": "0b0b2349cd49fa96a4ec1571797c0367df6d4002179144daee7e20f2b4b833c3",
+      "/usr/include/bits/long-double.h": "3945f7fb83453692053981cc2995bf21bea6f29be7431cd53804984354584153",
+      "/usr/include/bits/pthreadtypes-arch.h": "cad6e9e1823a94535d54e5c0a8eb7900d9d680b5134d0ac9b4999fb4e8fc55eb",
+      "/usr/include/bits/pthreadtypes.h": "74f9fd55a75a3a3890e8a74549c705d3001543ea7d98e13bcb7fcff0f34e0147",
+      "/usr/include/bits/select.h": "5fe57dbbe652d05c29c8f2af99ed82ba1996ae71566197b51191fb6abaed47cc",
+      "/usr/include/bits/stdint-intn.h": "74a08e99e86b79ff7686b8d603448a1eeb02baf2158ee7f121dd848c83241eba",
+      "/usr/include/bits/stdint-uintn.h": "d5f3a29405b59e79d8bf1af6924f27ac1833c4f8f0e30d24729da1a5fd2d21fc",
+      "/usr/include/bits/stdlib-bsearch.h": "e0067bde9778f7dee2cc937d159bdfcdd67cdee4eafb84a1532c5f09651bda0a",
+      "/usr/include/bits/stdlib-float.h": "031f09d1641cb1070da6322c2f0bfcdd547c1667189611ec8085c9c1804e5923",
+      "/usr/include/bits/thread-shared-types.h": "463aebe8cdc8ab76543f81867b575d797d679dfae4a570d0054ff24d4a96bfa9",
+      "/usr/include/bits/types.h": "e8c815f30e2a1e92a099baeabb83d9d81e69ea3acb2731b56825392c34bc9c99",
+      "/usr/include/bits/types/__locale_t.h": "e5fb27ce00678527937c13adced6c3854a1f0b367bdcd4d6e40bc1ec3482dfa2",
+      "/usr/include/bits/types/__sigset_t.h": "05291a7d38bb1d0da1ed01c09fe85fa2b1f4d5bc708e06bb930efec672db08d5",
+      "/usr/include/bits/types/clock_t.h": "81e60e8a8d99b28bc723c14b156d7f7fc8ff663d98a857a3f5aea90431f577e3",
+      "/usr/include/bits/types/clockid_t.h": "dcd64d184855b245e5c7acf21910a0aaca590f1faf094e400da5d30551d11eb0",
+      "/usr/include/bits/types/locale_t.h": "f0dd2c5850968b76bad25ddaa09ec4314e4fbc9e7e82ec631acbdf46df92c338",
+      "/usr/include/bits/types/sigset_t.h": "3db5ded9d98a694e8c7196a06690b2e816ec6bb82689940d281f6504533f37e1",
+      "/usr/include/bits/types/struct_timespec.h": "e9a310a50b8a14aeea4bde3e8b623506631de37a7a37dc422757f3275fc93755",
+      "/usr/include/bits/types/struct_timeval.h": "0909a593d7f6dfae1ca5cef6cf1e62b6a67aaa586e50f6215f3622a47be854d4",
+      "/usr/include/bits/types/time_t.h": "08a01b91752dc9dda93eb0f8c571e2c57fbb67b9768f5c23ad180fd0894e97a3",
+      "/usr/include/bits/types/timer_t.h": "d96a2452da0d933941273d11d1048ea525f033306892835b0a7a0999b13853aa",
+      "/usr/include/bits/typesizes.h": "8d903d5048221c66a2d9e43e0677bf33d34b1e393143a0e46ebe00674663e262",
+      "/usr/include/bits/uintn-identity.h": "07ff100385f6c91d9d9de7ad235fde9c41522f928ca1b861b0c12017a887353b",
+      "/usr/include/bits/waitflags.h": "e9ba2b87a976a4d0401a4b48a70a6c1fa0b67537eae026963fa25f8fc881878f",
+      "/usr/include/bits/waitstatus.h": "e1e04f5511e386c7bf0c8bf99779653338818bbe4b28c8fa27b366a62d4cf65e",
+      "/usr/include/bits/wchar.h": "341ce6a98a66f0a4e80eedf2bc7e0ab781a965fbb15d1d41511ac43e51c7d644",
+      "/usr/include/bits/wordsize.h": "716d8459074e2a082d65a28192b32eddbfd7587348372395b1c283a723ae4c18",
+      "/usr/include/endian.h": "4a3ea57a73e97d999f9bedb59472af4f04ce62db06be3c2df2afe31426770103",
+      "/usr/include/features.h": "7929e49415bca262a6bdf905a589b350943ab482378bcd7e4804a0ce6cd52baf",
+      "/usr/include/gnu/stubs-64.h": "a57cc3c790647abee7f6800e303b5c998c59c5d8791f64a0389ed404146d6281",
+      "/usr/include/gnu/stubs.h": "ef444295a0a9e8f5c40918399a00cc91ba0bd79774110cdf6e652baa6cfadb2e",
+      "/usr/include/inttypes.h": "06261ad45b1784c5030e3edac115996416f2744507aa5f3c5a9b435fd76b640e",
+      "/usr/include/stdc-predef.h": "7afa7fcfd2a1ac2d5fe86672db5828460a736519680da0b9fac4d91e5f227817",
+      "/usr/include/stdint.h": "4cb39fd12ba0f34118289f7c5d6fc7b8c036af1666357c8798a77e4a640b3f3a",
+      "/usr/include/stdlib.h": "568c579ba40e6532a3be40519b8d236acad90b64a9e852de6fc1cbe9e9cf2b1c",
+      "/usr/include/string.h": "f1b5a46412d1f4287e35ad746c164e9d56ebf1fe6d2e08572016ee370e34965d",
+      "/usr/include/strings.h": "84b1acbff22ecbaa6fa95d11a4be2ab09de65a912a673736672340eb1edb1751",
+      "/usr/include/sys/cdefs.h": "5434a26400044512b49fbdb56bb123c638a5b37cac45103a54eeb880cf042cd4",
+      "/usr/include/sys/select.h": "38a79fb8e9c1fae78a8ed289017ef726a9e898cded096f1c69f6589d84e98cef",
+      "/usr/include/sys/types.h": "5cc68bd9f95fb9b6c8f2df18fdc12436eaeb7901aa03d83d751f87948ae6ab7a",
+      "/usr/lib/gcc/x86_64-redhat-linux/8/include/stdarg.h": "c13e54e7c95faa3ad5ebe3f024852a755612c26db49eabcf2b15cea48d4aa3c9",
+      "/usr/lib/gcc/x86_64-redhat-linux/8/include/stddef.h": "00d0ea9efd2c42822baefc048d5e99e136e5f3482fbeb610ec512867c6c5f391",
+      "/usr/lib/gcc/x86_64-redhat-linux/8/include/stdint.h": "86a7914ab7d6a18465a6fb9a7b54f945cad604fdbf3ca0d10e4e0254e0037911"
+    },
+    "profile_input": {
+      "S": 3,
+      "W": 7,
+      "actual_input_edges_per_scope": 79850,
+      "bytes_per_transfer": 64,
+      "clock_segments_fs": [
+        [
+          250000,
+          500000,
+          1000
+        ],
+        [
+          500250000,
+          1000000,
+          50
+        ],
+        [
+          600250000,
+          500000,
+          78800
+        ]
+      ],
+      "duration_ns": 40000,
+      "end_ticks": 40000000000,
+      "first_edge_ticks": 250000,
+      "interventions": [
+        {
+          "edge_index": 201,
+          "kind": "point-size-unknown",
+          "known_bytes_lost": 64,
+          "known_event": true,
+          "point_index": 0,
+          "sticky_old_episode_bytes_incomplete": true,
+          "tick": 100250000
+        },
+        {
+          "ancestor_statistics_continue": true,
+          "assert_ticks": 300100000,
+          "group_index": 0,
+          "group_source_epoch": 0,
+          "kind": "group-own-statistics-reset",
+          "local_stats_epoch": 1,
+          "no_physical_point_reset_coverage": true,
+          "raw_frames_during_reset_still_forwarded": true,
+          "release_ticks": 301100000
+        },
+        {
+          "first_segment_hz": 2000000000,
+          "kind": "clock-change-and-stop",
+          "last_segment_hz": 2000000000,
+          "middle_segment_hz": 1000000000,
+          "segments_first_period_count_fs": [
+            [
+              250000,
+              500000,
+              1000
+            ],
+            [
+              500250000,
+              1000000,
+              50
+            ],
+            [
+              600250000,
+              500000,
+              78800
+            ]
+          ],
+          "stop_gap_boundary_ticks": [
+            549250000,
+            600250000
+          ],
+          "stop_gap_is_one_actual_cycle_not_102_invented_cycles": true
+        }
+      ],
+      "last_edge_ticks": 39999750000,
+      "ordinary_baseline_max_frequency_hz": 2000000000,
+      "scopes": 1280,
+      "topology": {
+        "depth": 2,
+        "direct_edges": 1248,
+        "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+        "groups": 256,
+        "max_direct_parents": 1,
+        "points": 1024,
+        "recursive_cardinality_histogram": {
+          "32": 32,
+          "4": 96,
+          "5": 128
+        },
+        "ungrouped_points": []
+      },
+      "topology_input": {
+        "graph_sha256": "d4710d71d666ddcf83e3f9b5dffc575f408f077de101c9f5ca9d5a4f1801e759",
+        "path": "/tmp/bw-mon-spec13/nominal20-common-topology-input.json",
+        "sha256": "c1f5a2ce9910a9f7aa38355c6816b83c67c7ab1e4d1026aede1716972ed35a50"
+      },
+      "variant": "group-clock",
+      "window_basis": "cycle"
+    },
+    "simulation_options": [
+      "-no_save"
+    ],
+    "source_sha256": {
+      "rtl/bw_analysis_public.svh": "1209f9fc2d4a26d7debd17d6a1d19cfd734c796f2d8e22118ae2011ab9e7f8e1",
+      "rtl/bw_check_report.sv": "45a69132c07073918875420bb5a4cff7fae3c28523fdf1d349f9bd60a5c5dd59",
+      "rtl/bw_debug_hints.sv": "3f2390293cf9492dfc3c9820dfb0e5b65d82d97acb3aebd14f9466d533d36aae",
+      "rtl/bw_group_mon.sv": "6d363771a8b73f02ad6de79e8a62f2f1033fb047f11f0079fd7959ccb47312d4",
+      "rtl/bw_hint_duration.sv": "7123c43c7ef3d0eac22523bdf44de7dfe7c63e85c88c135bd9517e9598298078",
+      "rtl/bw_history.svh": "2bcbb4023f17beaeaf54f3644217d4bb58a3fa6c3e716bc33fd8d9fe650ac0ec",
+      "rtl/bw_mon_pkg.sv": "589e2e9bdbddaec050b6b832ffc14938b5808aadd382c5abcfe920dc270f7dab",
+      "rtl/bw_mon_registry.svh": "7280bf539e26a8db3d8585fbc4d1785ae1d489d66d50f2f27b0e85be35d806c6",
+      "rtl/bw_mon_registry_types.svh": "b1079ab99ecc97848602c9e1d8f42feeff87f1ef18dfd54d9e81b6c680577549",
+      "rtl/bw_mon_setup.sv": "c65845dc920d850f0d09cd57d5738da81d5b5fdd8fd25e9e01b42bc2d7c34649",
+      "rtl/bw_mon_transport.svh": "fe64ac3b9928fb2fe199eae94cc900d524bcacf22da731b09250642dd07cf820",
+      "rtl/bw_point_mon.sv": "e74c786f5644541bc7809ba21d059f513ab8c0963f7b90e45df32281ad3112cd",
+      "rtl/bw_point_recorder.sv": "04a4192634d539048a1472dea8f1e9cbb1657ec397e9e3993410a8a7a071cee8",
+      "rtl/bw_reset_capture.svh": "f5822350f5a4bfc03a77c55457252192e01eacc0e000547b42df1a9973fddd37",
+      "rtl/bw_slot_settlement.c": "501759d1f663c36e2d9b997608ae3cb371ab7ad2f4bfe57811baf29e5f401bbf",
+      "rtl/bw_slot_settlement.svh": "b40f989e20e5f94891fdbcae83173f434904d13e5b93a245e9bd81abdcda050b",
+      "rtl/bw_stats_core.sv": "666da44ad1114611f1eb2f5ab3cda4f5518bc7c15eb212ea6ef75dbebff186d2",
+      "rtl/bw_variation_history.svh": "6c9099eb7996be712f61480784b3404b6e4eaeaaf183c98c20f845ba0a98ba1e",
+      "tests/scale/generate.py": "53dc72b084e7f975af1377aaaf878e052d28b9e6791724e29b344c875caee245",
+      "tests/scale/history.py": "39f8d2bf5803b2a04b5e921a132fd1481a2e3e2d8a0f84feb9aa55d6dbc9a99a",
+      "tests/scale/run.py": "1b87dcd16efb268d0fc7e6158908dea107745dd14351d94c2daf6a93799fb5c9",
+      "tests/scale/scenario.py": "fe367e86585060da01e9dff01a5cb7f16bc36217ecd372b8c63eb899a4e22db1",
+      "tests/scale/tb_scale_tracer.sv": "d326db5aaa022e000ea2c756c36b74cfa62e28933284520797466878115f8b38",
+      "tests/scale/test_history.py": "b50250efeb9a33268f0c8f29937b8975069d60e27695250dd8492ea912604bd8",
+      "tests/scale/test_reference.py": "5f6ec7f951ae30bb434c42e6b82367fb2dd9ddb78df901e027c41f5c2712c01f",
+      "tests/scale/tracer.py": "3cc76edab858851f8e8fb224039b9e33e324972e52088d2e9ef344719edd1fa5"
+    },
+    "tools": {
+      "g++": {
+        "executable": "/usr/bin/g++",
+        "sha256": "d509f3862b3e81e89ad624d59985e57b0b65e4b9ced1b02a474c4f44e5dee4b7",
+        "version": "g++ (GCC) 8.5.0 20210514 (Red Hat 8.5.0-28)\nCopyright (C) 2018 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+      },
+      "gcc": {
+        "executable": "/usr/bin/gcc",
+        "sha256": "366441e284188b8cef5177f568a82a74c3b4b959b0b5b358392b7bb5e9f54925",
+        "version": "gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-28)\nCopyright (C) 2018 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+      },
+      "vcs": {
+        "executable": "/home/eda/app/synopsys/vcs/W-2024.09-SP1/bin/vcs",
+        "sha256": "9ced09844ecf35766b6e2873eca764a12acc8a557bc447eabe65747b6c92df4b",
+        "version": "vcs script version : W-2024.09\nmachine name = localhost.localdomain \nmachine type = linux64 \nmachine os = Linux 4.18.0-553.89.1.el8_10.x86_64  \nThe FLEXlm host ID of this machine is \"000c299df92d\"\nCompiler version = VCS W-2024.09-SP1_Full64\nVCS Build Date = Dec 03 2024 20:20:03\nIf you need to renew your license, please email this information to your\nAccount Manager. To obtain contact information for your Account Manager\nplease email pass@synopsys.com"
+      }
+    }
+  },
+  "launcher_sha256": "e736825fd84a90265d98630b651633e035fd38eeaaef61e910499f1b6b314aa2",
+  "native_dependencies": "bw_slot_settlement.o: \\\n /tmp/bw-mon-spec13-resume/history31-final-frozen-04ce34a/rtl/bw_slot_settlement.c \\\n /usr/include/stdc-predef.h /usr/include/string.h \\\n /usr/include/bits/libc-header-start.h /usr/include/features.h \\\n /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \\\n /usr/include/bits/long-double.h /usr/include/gnu/stubs.h \\\n /usr/include/gnu/stubs-64.h \\\n /usr/lib/gcc/x86_64-redhat-linux/8/include/stddef.h \\\n /usr/include/bits/types/locale_t.h /usr/include/bits/types/__locale_t.h \\\n /usr/include/strings.h /usr/include/stdlib.h \\\n /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \\\n /usr/include/bits/floatn.h /usr/include/bits/floatn-common.h \\\n /usr/include/sys/types.h /usr/include/bits/types.h \\\n /usr/include/bits/typesizes.h /usr/include/bits/types/clock_t.h \\\n /usr/include/bits/types/clockid_t.h /usr/include/bits/types/time_t.h \\\n /usr/include/bits/types/timer_t.h /usr/include/bits/stdint-intn.h \\\n /usr/include/endian.h /usr/include/bits/endian.h \\\n /usr/include/bits/byteswap.h /usr/include/bits/uintn-identity.h \\\n /usr/include/sys/select.h /usr/include/bits/select.h \\\n /usr/include/bits/types/sigset_t.h /usr/include/bits/types/__sigset_t.h \\\n /usr/include/bits/types/struct_timeval.h \\\n /usr/include/bits/types/struct_timespec.h \\\n /usr/include/bits/pthreadtypes.h /usr/include/bits/thread-shared-types.h \\\n /usr/include/bits/pthreadtypes-arch.h /usr/include/alloca.h \\\n /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \\\n /usr/lib/gcc/x86_64-redhat-linux/8/include/stdint.h \\\n /usr/include/stdint.h /usr/include/bits/wchar.h \\\n /usr/include/bits/stdint-uintn.h \\\n /home/eda/app/synopsys/vcs/W-2024.09-SP1/include/svdpi.h \\\n /usr/include/inttypes.h \\\n /home/eda/app/synopsys/vcs/W-2024.09-SP1/include/vpi_user.h \\\n /usr/lib/gcc/x86_64-redhat-linux/8/include/stdarg.h",
+  "native_dependency_command": [
+    "gcc",
+    "-M",
+    "-w",
+    "-pipe",
+    "-fPIC",
+    "-I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include",
+    "-O",
+    "-I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include",
+    "/tmp/bw-mon-spec13-resume/history31-final-frozen-04ce34a/rtl/bw_slot_settlement.c"
+  ],
+  "native_dot_d_scope": "VCS original dependency file excludes system headers; preserve it and the separate actual-flags full inventory.",
+  "native_seed": {
+    "compile_log": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-ns-a4143e383995db719f46/builds/b95e4dbad357c051d540fe10817c32b6872a94438a5d43d724498aa431a92ff1/compile-attempt-1/compile.log",
+    "compile_log_sha256": "496b4155db5df0e7a012f07a926b5eb22f75be74b68fe552040777ec3685f7ab",
+    "link_command": "g++  -o /tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-ns-a4143e383995db719f46/builds/b95e4dbad357c051d540fe10817c32b6872a94438a5d43d724498aa431a92ff1/simv      -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib -L/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1 bw_slot_settlement.o   objs/amcQw_d.o   _3804251_archive_1.so   SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o            -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o  _vcs_pli_stub_.o   /home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_save_restore_new.o /home/eda/app/synopsys/verdi/W-2024.09-SP1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl ",
+    "native_command": "gcc -w  -pipe -fPIC -I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include -O -I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include    -c /tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-ns-a4143e383995db719f46/builds/b95e4dbad357c051d540fe10817c32b6872a94438a5d43d724498aa431a92ff1/source/rtl/bw_slot_settlement.c"
+  },
+  "output_root": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941",
+  "production_runtime": "56127495f597d215003000356ac3b5387cc809a1",
+  "production_sha256": {
+    "rtl/bw_analysis_public.svh": "1209f9fc2d4a26d7debd17d6a1d19cfd734c796f2d8e22118ae2011ab9e7f8e1",
+    "rtl/bw_check_report.sv": "45a69132c07073918875420bb5a4cff7fae3c28523fdf1d349f9bd60a5c5dd59",
+    "rtl/bw_debug_hints.sv": "3f2390293cf9492dfc3c9820dfb0e5b65d82d97acb3aebd14f9466d533d36aae",
+    "rtl/bw_group_mon.sv": "6d363771a8b73f02ad6de79e8a62f2f1033fb047f11f0079fd7959ccb47312d4",
+    "rtl/bw_hint_duration.sv": "7123c43c7ef3d0eac22523bdf44de7dfe7c63e85c88c135bd9517e9598298078",
+    "rtl/bw_history.svh": "2bcbb4023f17beaeaf54f3644217d4bb58a3fa6c3e716bc33fd8d9fe650ac0ec",
+    "rtl/bw_mon_pkg.sv": "589e2e9bdbddaec050b6b832ffc14938b5808aadd382c5abcfe920dc270f7dab",
+    "rtl/bw_mon_registry.svh": "7280bf539e26a8db3d8585fbc4d1785ae1d489d66d50f2f27b0e85be35d806c6",
+    "rtl/bw_mon_registry_types.svh": "b1079ab99ecc97848602c9e1d8f42feeff87f1ef18dfd54d9e81b6c680577549",
+    "rtl/bw_mon_setup.sv": "c65845dc920d850f0d09cd57d5738da81d5b5fdd8fd25e9e01b42bc2d7c34649",
+    "rtl/bw_mon_transport.svh": "fe64ac3b9928fb2fe199eae94cc900d524bcacf22da731b09250642dd07cf820",
+    "rtl/bw_point_mon.sv": "e74c786f5644541bc7809ba21d059f513ab8c0963f7b90e45df32281ad3112cd",
+    "rtl/bw_point_recorder.sv": "04a4192634d539048a1472dea8f1e9cbb1657ec397e9e3993410a8a7a071cee8",
+    "rtl/bw_reset_capture.svh": "f5822350f5a4bfc03a77c55457252192e01eacc0e000547b42df1a9973fddd37",
+    "rtl/bw_slot_settlement.c": "501759d1f663c36e2d9b997608ae3cb371ab7ad2f4bfe57811baf29e5f401bbf",
+    "rtl/bw_slot_settlement.svh": "b40f989e20e5f94891fdbcae83173f434904d13e5b93a245e9bd81abdcda050b",
+    "rtl/bw_stats_core.sv": "666da44ad1114611f1eb2f5ab3cda4f5518bc7c15eb212ea6ef75dbebff186d2",
+    "rtl/bw_variation_history.svh": "6c9099eb7996be712f61480784b3404b6e4eaeaaf183c98c20f845ba0a98ba1e"
+  },
+  "profile": "history-common-cycle-control-clock",
+  "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+  "source_root": "/tmp/bw-mon-spec13-resume/history31-final-frozen-04ce34a",
+  "source_tree": "d17f768abf30967d8c1ee8d1ec986d2ed5bdc174",
+  "state": "PREPARED_NOT_LAUNCHED"
+}
