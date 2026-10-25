@@ -5,6 +5,13 @@ owner, with the independent segment/leaf-set oracle from the common-scale harnes
 Run `python3 tests/scale/history.py PROFILE --output-root PATH`. Small `tracer`
 profiles use32 points/8 groups/240ns and never substitute for nominal rows.
 
+The builder now includes repaired integrationcb0aef5, whose18 production files
+match runtime8e818394. Its five history and six legacy literal contracts and all
+six public history tracers pass. Every nominal history cell still awaits a fresh
+actual run on this repaired source. Earlier completed runs, interrupted MAX
+attempts and dated matrix files remain historical evidence for their original
+source; none qualifies a repaired-source cell.
+
 | Size | New regular-clock baseline cells | Reused version-qualified rows |
 | --- | --- | --- |
 | Common1024 points/256 groups |NS10/S1;cycle20/S2;NS40000/S1;cycle80000/S1 |completed29 NS100/S10 +cycle200/S20, unknown-size +point-reset variants |
@@ -24,10 +31,10 @@ These dense cells explicitly choose N3, K4, minimum span2×their stride, Q30ns o
 Legacy profiles retain their original20ns/40cycle minimum spans. Every scene
 records these engineering settings; they are not monitor defaults.
 
-Waves are OFF. These new builds omit unnecessary `-debug_access+all`; the separate
-matched32/8/240ns four-profile probe verified public rows/formal records with and
-without that visibility option. This is small compatibility evidence, not a speed
-or nominal-scale equivalence claim. Every nominal cell still requires its own
+Waves are OFF. Repaired builds compile the native scheduling helper with `+vpi`,
+minimum `-debug_access`, the SDK include path and every local header dependency,
+using an immutable consumed source snapshot. Earlier matched32/8/240ns visibility
+probes retain their original source qualification. Every nominal cell requires its own
 actual checked run, source/options manifest, counts/reference/actual/diffs and
 measured compiler/simulator RSS. No memory or wall-time acceptance cap is added.
 
@@ -89,7 +96,7 @@ and group reset70.1–71.1ns. They passed18000 raw checks each,3199NS/5959cycle 
 41episode/41phase records and492 correct WARNING conclusions, zero differences.
 They establish integration sensitivity only, not nominal40us acceptance.
 
-## Recorded execution status
+## Historical recorded execution status
 
 The first actual common NS40000/S1 baseline completed at40us exactly from frozen
 source `ee69484e46d34ff83e89425dd822eb7017e2d0eb`:1024 points/256 groups,
@@ -105,12 +112,13 @@ or a comparison with other flags/workloads. Waveforms/debug visibility were off;
 the original manifest records every option and source hash. Portable originals
 and consumed source are in `tests/scale/history_evidence/`; its hash/row verifier
 passes. These are actual full long-window results, independently of prior small
-resource pilots. Other cells remain running/queued/unadmitted until individually
-completed and checked; this first row does not complete the matrix.
+resource pilots. This record belongs to its original source and does not qualify
+the repaired runtime; the first row did not complete the original matrix either.
 
 `tests/scale/history_evidence/matrix.json` records the12 new cells and reused29/30
-rows with a dated status snapshot and exact independent expected counts. Original
-final manifests and verified bundles are authoritative. The common operator queue
+rows with a dated pre-repair status snapshot and exact independent expected
+counts. Those source-qualified records remain historical. Fresh repaired-source
+final manifests and verified bundles will establish current qualification. The common operator queue
 admits at most four simultaneous common jobs, with isolated source/build/output
 roots; this is host scheduling rather than a monitor capacity. Max jobs require
 separate coordinator admission. Failed/interrupted attempts are preserved and
