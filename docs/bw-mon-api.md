@@ -1027,9 +1027,9 @@ the complete `hierarchy_*` matrix. Shared T4 fixture compilation units participa
 in the same cache digest as recursive RTL headers, source paths and runner flags.
 
 
-Before merging ticket25, hierarchy validation passed **188/188 contract cases** on
+Before merging ticket 25, hierarchy validation passed **188/188 contract cases** on
 2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8: all 146 prior cases
-and 42 hierarchy cases at integration6ad39d9. All 110 compiled tops had no
+and 42 hierarchy cases at integration 6ad39d9. All 110 compiled tops had no
 Warning-/Error- diagnostics. The source, recursive-header, explicit-fixture and
 runner fingerprints matched that tree;
 every runtime log follows its current compilation stamp. `git diff --check` passed.
@@ -1038,7 +1038,22 @@ fixtures. Full group analysis parameters/aliases, real waveform review and scale
 execution remain separate acceptance work.
 
 An additional malformed-configuration startup probe creates a 4,096-group chain
-and correctly terminates at time zero with `GROUP_DEPTH`, depth9, maximum8 and a
+and correctly terminates at time zero with `GROUP_DEPTH`, depth 9, maximum 8 and a
 nine-group path. This VCS build reported automatic stack growth to 50,084,512 bytes
 during that invalid graph traversal. This is startup diagnostic resource behavior;
 it is not maximum-scale functional/runtime evidence or a maximum-RSS measurement.
+
+
+After merging integration d9fad43 (the point report owner), **250/250 current
+contract cases passed** across **119 compiled tops**: all 208 integration cases
+and 42 hierarchy cases. The full invocation passed 238 cases; three initial
+compile targets could not connect to the license server, affecting twelve cases.
+Only those twelve cases were retried, and all twelve passed with unchanged source.
+Their original infrastructure logs and retry transcript are retained separately.
+All final compile logs have no Warning-/Error- diagnostics, all source/header/
+fixture/runner fingerprints match, and every runtime log follows its current
+compilation stamp. The audit rechecks the current `expect_log` and `expect_counts`
+predicates, including exactly one final summary with 16/16 scopes in every T4
+mode and 5/5 in the equal-text point/group identity case. A focused three-case
+report-barrier run also passed. Group analysis aliases/comparisons, real waveform
+review and nominal scale execution remain later acceptance work.
