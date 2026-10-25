@@ -142,6 +142,7 @@ module bw_stats_core #(
 
   bit silence_active=0;
   bw_u64_t silence_start_ticks=0, silence_start_cycle=0;
+  bw_u64_t silence_unknown_ticks=0;
   bit scheduled_episode_deadline_valid=0;
   bw_u64_t scheduled_episode_deadline=0;
   bw_u64_t episode_start_total_bytes=0, episode_end_total_bytes=0;
@@ -155,7 +156,30 @@ module bw_stats_core #(
     real value;
   } phase_sample_t;
   phase_sample_t phase_samples[$];
-  bw_phase_result_t pending_phases[$];
+  typedef struct {
+    bw_variation_result_t result;
+    real m2;
+  } variation_state_t;
+  typedef struct {
+    bw_u64_t ticks;
+    real value;
+    bit warmup,foreign_activity,unknown_observation,bad_denominator;
+  } variation_sample_t;
+  typedef struct {
+    bw_phase_result_t fragment;
+    variation_state_t stats;
+  } pending_phase_t;
+  pending_phase_t pending_phases[$];
+  variation_sample_t episode_pending_samples[$],phase_pending_samples[$];
+  variation_state_t episode_variation,phase_variation;
+  bw_phase_result_t last_steady;
+  bit last_steady_found=0;
+  bw_u64_t raw_unknown_records=0,raw_unknown_event_records=0,raw_unknown_ticks=0,raw_quality_ticks=0;
+  bw_u64_t phase_start_unknown_event_records=0,candidate_unknown_event_records=0,episode_end_unknown_event_records=0;
+  bw_u64_t raw_reset_records=0,phase_start_reset_records=0,candidate_reset_records=0,episode_end_reset_records=0;
+  bw_u64_t phase_start_unknown_records=0,phase_start_unknown_ticks=0;
+  bw_u64_t candidate_unknown_records=0,candidate_unknown_ticks=0;
+  bw_u64_t episode_end_unknown_records=0,episode_end_unknown_ticks=0;
   bw_u64_t phase_start_total_bytes=0,phase_start_total_events=0;
   real phase_confirmation_delta=0.0,phase_confirmation_rms=0.0;
   // Ordered episodes make this an exact compressed ownership query: every
@@ -163,6 +187,148 @@ module bw_stats_core #(
   // including a zero-byte event. Unknown evidence has a separate quality gate.
   bit retired_activity_valid=0;
   bw_u64_t retired_episode_id=0,retired_last_ticks=0,retired_last_cycle=0;
+
+  function automatic bit foreign_activity();
+    return retired_activity_valid && retired_episode_id!=episode_id &&
+      ((WINDOW_BASIS==BW_NS && window_start_ticks<=retired_last_ticks) ||
+       (WINDOW_BASIS==BW_CYCLE && window_start_cycle<=retired_last_cycle));
+  endfunction
+
+  function automatic bw_u64_t unknown_ticks_at(bw_u64_t tick);
+    if(tick<raw_quality_ticks)begin
+      core_error("METRIC_TIME",scope_id,$sformatf("snapshot=%0d quality_cursor=%0d",tick,raw_quality_ticks));
+      return raw_unknown_ticks;
+    end
+    return unknown_episode_control() ? checked_add(raw_unknown_ticks,tick-raw_quality_ticks,scope_id) : raw_unknown_ticks;
+  endfunction
+
+  task automatic advance_raw_quality(bw_u64_t tick);
+    // A known own reset suspends this statistical epoch. Member notifications
+    // still advance their transport receipts and may describe earlier times.
+    if(current_reset_n===1'b0)begin
+      if(tick>raw_quality_ticks)raw_quality_ticks=tick;
+      return;
+    end
+    raw_unknown_ticks=unknown_ticks_at(tick);raw_quality_ticks=tick;
+  endtask
+
+  function automatic bw_variation_result_t empty_variation_result();
+    return '{window_basis:WINDOW_BASIS,window_width:WINDOW_WIDTH,update_stride:UPDATE_STRIDE,
+      minmax_reason:BW_METRIC_NO_SAMPLES,stddev_reason:BW_METRIC_TOO_FEW_SAMPLES,
+      cv_reason:BW_METRIC_TOO_FEW_SAMPLES,default:0};
+  endfunction
+
+  function automatic variation_state_t empty_variation();
+    return '{result:empty_variation_result(),m2:0.0};
+  endfunction
+
+  function automatic bw_phase_result_t empty_phase_result();
+    return '{scope_kind:scope_kind,phase_kind:BW_PHASE_UNDETERMINED,end_reason:BW_PHASE_CHANGE,
+      episode_status:BW_EPISODE_NONE,duration_reason:BW_METRIC_BOUNDARY_UNKNOWN,
+      bandwidth_reason:BW_METRIC_BOUNDARY_UNKNOWN,variation:empty_variation_result(),default:0};
+  endfunction
+
+  task automatic add_variation_sample(ref variation_state_t state,variation_sample_t sample);
+    bw_u64_t n;
+    real delta,new_mean,new_m2;
+    if(sample.warmup)state.result.excluded_warmup=checked_add(state.result.excluded_warmup,1,scope_id);
+    if(sample.foreign_activity)state.result.excluded_foreign=checked_add(state.result.excluded_foreign,1,scope_id);
+    if(sample.unknown_observation && !sample.warmup && !sample.foreign_activity && !sample.bad_denominator)state.result.unknown_samples=checked_add(state.result.unknown_samples,1,scope_id);
+    if(sample.bad_denominator)state.result.excluded_denominator=checked_add(state.result.excluded_denominator,1,scope_id);
+    if(sample.warmup || sample.foreign_activity || sample.unknown_observation || sample.bad_denominator)return;
+    n=checked_add(state.result.sample_count,1,scope_id);
+    if(core_failure_seen)return;
+    if(n==1)begin
+      state.result.mean_gbps=sample.value;state.result.min_gbps=sample.value;state.result.max_gbps=sample.value;
+      state.result.first_sample_ticks=sample.ticks;state.m2=0.0;
+    end else begin
+      delta=sample.value-state.result.mean_gbps;
+      new_mean=state.result.mean_gbps+delta/real'(n);
+      new_m2=state.m2+delta*(sample.value-new_mean);
+      if(!finite_nonnegative_real(new_mean) || !finite_nonnegative_real(new_m2))begin
+        core_error("METRIC_ARITHMETIC",scope_id,$sformatf("sample_ticks=%0d count=%0d mean=%0.17g m2=%0.17g value=%0.17g",sample.ticks,n,new_mean,new_m2,sample.value));
+        return;
+      end
+      state.result.mean_gbps=new_mean;state.m2=new_m2;
+      if(sample.value<state.result.min_gbps)state.result.min_gbps=sample.value;
+      if(sample.value>state.result.max_gbps)state.result.max_gbps=sample.value;
+    end
+    state.result.sample_count=n;state.result.last_sample_ticks=sample.ticks;
+    state.result.sample_span_ticks=sample.ticks-state.result.first_sample_ticks;
+  endtask
+
+  function automatic bw_variation_result_t final_variation(variation_state_t state,
+      bit interval_known,bw_metric_reason_t interval_reason);
+    bw_variation_result_t result;
+    bw_metric_reason_t reason;
+    result=state.result;result.interval_known=interval_known;
+    result.coverage_complete=(result.unknown_samples==0 && result.excluded_denominator==0);
+    reason=interval_reason;
+    if(reason==BW_METRIC_OK && !interval_known)reason=BW_METRIC_BOUNDARY_UNKNOWN;
+    if(reason==BW_METRIC_OK && !result.coverage_complete)reason=BW_METRIC_OBSERVATION_UNKNOWN;
+    result.minmax_valid=(reason==BW_METRIC_OK && result.sample_count>=1);
+    result.stddev_valid=(reason==BW_METRIC_OK && result.sample_count>=2);
+    result.cv_valid=(result.stddev_valid && result.mean_gbps>0.0);
+    result.minmax_reason=(reason!=BW_METRIC_OK) ? reason :
+      (result.sample_count==0 ? BW_METRIC_NO_SAMPLES : BW_METRIC_OK);
+    result.stddev_reason=(reason!=BW_METRIC_OK) ? reason :
+      (result.sample_count<2 ? BW_METRIC_TOO_FEW_SAMPLES : BW_METRIC_OK);
+    result.cv_reason=(reason!=BW_METRIC_OK) ? reason :
+      (result.sample_count<2 ? BW_METRIC_TOO_FEW_SAMPLES :
+       (result.mean_gbps==0.0 ? BW_METRIC_ZERO_MEAN : BW_METRIC_OK));
+    result.stddev_gbps=result.stddev_valid ? $sqrt(state.m2/real'(result.sample_count)) : 0.0;
+    result.cv_pct=result.cv_valid ? (result.stddev_gbps/result.mean_gbps)*100.0 : 0.0;
+    if(!finite_nonnegative_real(result.stddev_gbps) || !finite_nonnegative_real(result.cv_pct))
+      core_error("METRIC_ARITHMETIC",scope_id,$sformatf("count=%0d mean=%0.17g m2=%0.17g sigma=%0.17g cv=%0.17g",result.sample_count,result.mean_gbps,state.m2,result.stddev_gbps,result.cv_pct));
+    return result;
+  endfunction
+
+  task automatic retain_variation_sample();
+    variation_sample_t sample;
+    if(!EPISODE_ENABLE || !episode_active)return;
+    sample.ticks=window_end_ticks;sample.value=bandwidth_gbps;
+    sample.warmup=!window_full;sample.foreign_activity=foreign_activity();
+    sample.unknown_observation=!bytes_complete;sample.bad_denominator=!denominator_valid;
+    check_queue_growth(episode_pending_samples.size(),scope_id);
+    if(core_failure_seen)return;
+    episode_pending_samples.push_back(sample);
+    if(PHASE_ENABLE)begin
+      check_queue_growth(phase_pending_samples.size(),scope_id);
+      if(core_failure_seen)return;
+      phase_pending_samples.push_back(sample);
+    end
+  endtask
+
+  // Only samples inside already established coverage and outside the possible
+  // backdated candidate suffix can enter irreversible online summaries.
+  task automatic settle_variation(bw_u64_t covered_through,bit finishing=0,bw_u64_t closed_through=0);
+    variation_sample_t sample;
+    bit assigned_sample,blocked_sample;
+    bw_u64_t phase_through;
+    phase_through=closed_through>covered_through ? closed_through : covered_through;
+    while(episode_pending_samples.size()!=0 && episode_pending_samples[0].ticks<covered_through)begin
+      sample=episode_pending_samples.pop_front();add_variation_sample(episode_variation,sample);
+    end
+    while(phase_pending_samples.size()!=0 && phase_pending_samples[0].ticks<phase_through)begin
+      sample=phase_pending_samples[0];assigned_sample=0;blocked_sample=0;
+      foreach(pending_phases[i])begin
+        if(sample.ticks>=pending_phases[i].fragment.start_ticks && sample.ticks<pending_phases[i].fragment.end_ticks)begin
+          if(sample.ticks<covered_through || (pending_phases[i].fragment.end_known &&
+              pending_phases[i].fragment.end_ticks<=closed_through))begin
+            add_variation_sample(pending_phases[i].stats,sample);assigned_sample=1;
+          end else blocked_sample=1;
+          break;
+        end
+      end
+      if(blocked_sample)break;
+      if(!assigned_sample && phase_candidate_count!=0 && sample.ticks>=phase_candidate_ticks && !finishing)break;
+      if(!assigned_sample && phase_active && sample.ticks>=phase_start_ticks)begin
+        if(sample.ticks>=covered_through && !finishing)break;
+        add_variation_sample(phase_variation,sample);
+      end
+      sample=phase_pending_samples.pop_front();
+    end
+  endtask
 
   task automatic clear_phase_evidence();
     phase_samples.delete();phase_evidence_count=0;phase_evidence_span=0;
@@ -173,25 +339,65 @@ module bw_stats_core #(
   endtask
 
   task automatic begin_phase_episode();
+    episode_pending_samples.delete();phase_pending_samples.delete();
+    episode_variation=empty_variation();phase_variation=empty_variation();
+    last_steady_found=0;last_steady=empty_phase_result();
     if(!PHASE_ENABLE)return;
     if(pending_phases.size()!=0)core_error("PHASE_STATE",scope_id,"unsettled phases at new episode");
     clear_phase_evidence();phase_current=BW_PHASE_UNDETERMINED;phase_active=0;
     phase_start_ticks=0;phase_confirmation_ticks=0;phase_eligible=0;
   endtask
 
-  task automatic deliver_phase(bw_phase_result_t fragment);
+  function automatic bit phase_reset_overlap(bw_u64_t left,bw_u64_t right);
+    foreach(episode_quality_intervals[i])
+      if(episode_quality_intervals[i].known_reset && episode_quality_intervals[i].start_ticks<right &&
+         episode_quality_intervals[i].end_ticks>left)return 1;
+    foreach(active_quality[key])
+      if(active_quality[key].reset_n===1'b0 && active_quality[key].start_ticks<right)return 1;
+    return 0;
+  endfunction
+
+  task automatic deliver_phase(bw_phase_result_t fragment,variation_state_t stats);
     bw_u64_t next_sequence;
+    if(core_failure_seen)return;
+    fragment.duration_valid=fragment.start_known && fragment.end_known && fragment.end_ticks>fragment.start_ticks;
+    fragment.duration_ticks=fragment.duration_valid ? fragment.end_ticks-fragment.start_ticks : 0;
+    fragment.duration_reason=fragment.duration_valid ? BW_METRIC_OK :
+      (fragment.episode_status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
+       (fragment.episode_status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED : BW_METRIC_BOUNDARY_UNKNOWN));
+    if(fragment.end_total_bytes<fragment.start_total_bytes || fragment.end_total_events<fragment.start_total_events)begin
+      core_error("METRIC_ARITHMETIC",scope_id,"phase cumulative count moved backwards");
+      return;
+    end
+    fragment.byte_count=fragment.end_total_bytes-fragment.start_total_bytes;
+    fragment.event_count=fragment.end_total_events-fragment.start_total_events;
+    fragment.bytes_complete=(fragment.start_unknown_records==fragment.end_unknown_records &&
+      fragment.start_unknown_ticks==fragment.end_unknown_ticks);
+    fragment.events_complete=(fragment.start_unknown_event_records==fragment.end_unknown_event_records &&
+      fragment.start_unknown_ticks==fragment.end_unknown_ticks);
+    fragment.member_reset_coverage=(fragment.start_reset_records!=fragment.end_reset_records) ||
+      phase_reset_overlap(fragment.start_ticks,fragment.end_ticks);
+    fragment.bandwidth_valid=fragment.duration_valid && fragment.bytes_complete;
+    fragment.bandwidth_reason=!fragment.duration_valid ? fragment.duration_reason :
+      (!fragment.bytes_complete ? BW_METRIC_BYTES_UNKNOWN : BW_METRIC_OK);
+    fragment.bandwidth_gbps=fragment.bandwidth_valid ?
+      real'(fragment.byte_count)*real'(BW_TICKS_PER_NS)/real'(fragment.duration_ticks) : 0.0;
+    fragment.variation=final_variation(stats,fragment.duration_valid,fragment.duration_reason);
+    if(!finite_nonnegative_real(fragment.bandwidth_gbps))core_error("METRIC_ARITHMETIC",scope_id,"phase bandwidth is not finite");
     if(core_failure_seen)return;
     next_sequence=checked_add(phase_result_seq,1,scope_id);
     if(core_failure_seen)return;
     phase_result_seq=next_sequence;
     fragment.result_seq=phase_result_seq;phase_result=fragment;
+    if(fragment.phase_kind==BW_PHASE_STEADY)begin last_steady=fragment;last_steady_found=1;end
     emit_phase_result(scope_id,fragment);
   endtask
 
   task automatic close_phase(bw_u64_t end_tick,bw_u64_t end_bytes,bw_u64_t end_events,
-                             bit end_known,bw_phase_end_t reason);
+                             bit end_known,bw_phase_end_t reason,
+                             bw_u64_t end_unknown_records,bw_u64_t end_unknown_ticks,bw_u64_t end_unknown_event_records,bw_u64_t end_reset_records);
     bw_phase_result_t fragment;
+    pending_phase_t pending;
     if(!PHASE_ENABLE || !phase_active || core_failure_seen)return;
     if(end_known && end_tick<=phase_start_ticks)begin phase_active=0;return;end
     fragment.scope_kind=scope_kind;fragment.stats_epoch=stats_epoch;
@@ -202,50 +408,70 @@ module bw_stats_core #(
     fragment.start_total_bytes=phase_start_total_bytes;fragment.end_total_bytes=end_bytes;
     fragment.start_total_events=phase_start_total_events;fragment.end_total_events=end_events;
     fragment.start_known=1;fragment.end_known=end_known;
+    fragment.start_unknown_records=phase_start_unknown_records;fragment.end_unknown_records=end_unknown_records;
+    fragment.start_unknown_event_records=phase_start_unknown_event_records;fragment.end_unknown_event_records=end_unknown_event_records;
+    fragment.start_reset_records=phase_start_reset_records;fragment.end_reset_records=end_reset_records;
+    fragment.start_unknown_ticks=phase_start_unknown_ticks;fragment.end_unknown_ticks=end_unknown_ticks;
     fragment.confirmation_delta=phase_confirmation_delta;fragment.confirmation_rms=phase_confirmation_rms;
     check_queue_growth(pending_phases.size(),scope_id);
     if(core_failure_seen)return;
-    pending_phases.push_back(fragment);phase_active=0;
+    pending.fragment=fragment;pending.stats=phase_variation;
+    pending_phases.push_back(pending);phase_variation=empty_variation();phase_active=0;
   endtask
 
   task automatic flush_safe_phases();
-    bw_phase_result_t fragment;
-    bw_u64_t known_covered_through;
-    if(!PHASE_ENABLE || !episode_active)return;
+    pending_phase_t pending;
+    bw_u64_t known_covered_through,closed_covered_through;
+    if(!episode_active)return;
     known_covered_through=episode_tail_known ? episode_tail_ticks : episode_last_ticks;
-    while(pending_phases.size()!=0 && pending_phases[0].end_known &&
-          pending_phases[0].end_ticks<=known_covered_through)begin
-      fragment=pending_phases.pop_front();deliver_phase(fragment);
+    // A real next edge has not occurred before the accounted observation
+    // horizon. This proves an already-closed fragment lies inside the current
+    // transfer cycle, without inventing that cycle's tail or closing a phase.
+    closed_covered_through=episode_tail_known ? episode_tail_ticks :
+      (($time<progress_watermark_ticks) ? $time : progress_watermark_ticks);
+    settle_variation(known_covered_through,0,closed_covered_through);
+    while(pending_phases.size()!=0 && pending_phases[0].fragment.end_known &&
+          pending_phases[0].fragment.end_ticks<=closed_covered_through)begin
+      pending=pending_phases.pop_front();deliver_phase(pending.fragment,pending.stats);
     end
   endtask
 
   task automatic finish_episode_phases(bw_episode_status_t status,bw_u64_t observed_end);
     bw_phase_result_t fragment;
+    pending_phase_t pending;
     bit known_end;
     bw_u64_t end_tick,end_bytes,end_events;
-    if(!PHASE_ENABLE || core_failure_seen)return;
+    if(core_failure_seen)return;
     flush_safe_phases();
     known_end=episode_tail_known && episode_last_known;
     end_tick=known_end ? episode_tail_ticks : observed_end;
     end_bytes=known_end ? episode_end_total_bytes : total_bytes;
     end_events=known_end ? episode_end_total_events : total_events;
-    close_phase(end_tick,end_bytes,end_events,known_end,BW_PHASE_EPISODE_END);
+    close_phase(end_tick,end_bytes,end_events,known_end,BW_PHASE_EPISODE_END,
+      known_end ? episode_end_unknown_records : raw_unknown_records,
+      known_end ? episode_end_unknown_ticks :
+        (status==BW_EPISODE_COMPLETE ? silence_unknown_ticks : unknown_ticks_at(observed_end)),
+      known_end ? episode_end_unknown_event_records : raw_unknown_event_records,
+      known_end ? episode_end_reset_records : raw_reset_records);
+    settle_variation(end_tick,1);
     while(pending_phases.size()!=0)begin
-      fragment=pending_phases.pop_front();
+      pending=pending_phases.pop_front();fragment=pending.fragment;
       if(known_end)begin
         if(fragment.start_ticks>=end_tick)continue;
         if(fragment.end_ticks>end_tick)begin
           fragment.end_ticks=end_tick;fragment.end_total_bytes=end_bytes;fragment.end_total_events=end_events;
           fragment.end_reason=BW_PHASE_EPISODE_END;
+          fragment.end_unknown_records=episode_end_unknown_records;fragment.end_unknown_ticks=episode_end_unknown_ticks;
+          fragment.end_unknown_event_records=episode_end_unknown_event_records;fragment.end_reset_records=episode_end_reset_records;
         end
       end else fragment.end_known=0;
-      fragment.episode_status=status;deliver_phase(fragment);
+      fragment.episode_status=status;deliver_phase(fragment,pending.stats);
     end
     clear_phase_evidence();phase_active=0;phase_current=BW_PHASE_UNDETERMINED;phase_eligible=0;
   endtask
 
   task automatic break_phase_evidence(bw_u64_t at_ticks);
-    close_phase(at_ticks,total_bytes,total_events,1,BW_PHASE_EVIDENCE_GAP);
+    close_phase(at_ticks,total_bytes,total_events,1,BW_PHASE_EVIDENCE_GAP,raw_unknown_records,unknown_ticks_at(at_ticks),raw_unknown_event_records,raw_reset_records);
     flush_safe_phases();clear_phase_evidence();
     phase_current=BW_PHASE_UNDETERMINED;phase_active=0;
     phase_start_ticks=0;phase_confirmation_ticks=0;
@@ -334,11 +560,16 @@ module bw_stats_core #(
     if(phase_candidate_count==0 || proposed!=phase_candidate)begin
       phase_candidate=proposed;phase_candidate_count=1;phase_candidate_ticks=window_end_ticks;
       phase_candidate_total_bytes=total_bytes;phase_candidate_total_events=total_events;
+      candidate_unknown_records=raw_unknown_records;candidate_unknown_ticks=unknown_ticks_at(window_end_ticks);
+      candidate_unknown_event_records=raw_unknown_event_records;candidate_reset_records=raw_reset_records;
     end else phase_candidate_count=checked_add(phase_candidate_count,1,scope_id);
     if(phase_candidate_count<PHASE_K)return;
-    close_phase(phase_candidate_ticks,phase_candidate_total_bytes,phase_candidate_total_events,1,BW_PHASE_CHANGE);
+    close_phase(phase_candidate_ticks,phase_candidate_total_bytes,phase_candidate_total_events,1,BW_PHASE_CHANGE,
+      candidate_unknown_records,candidate_unknown_ticks,candidate_unknown_event_records,candidate_reset_records);
     phase_current=proposed;phase_start_ticks=phase_candidate_ticks;phase_confirmation_ticks=window_end_ticks;
     phase_start_total_bytes=phase_candidate_total_bytes;phase_start_total_events=phase_candidate_total_events;
+    phase_start_unknown_records=candidate_unknown_records;phase_start_unknown_ticks=candidate_unknown_ticks;
+    phase_start_unknown_event_records=candidate_unknown_event_records;phase_start_reset_records=candidate_reset_records;
     phase_confirmation_delta=phase_fit_delta;phase_confirmation_rms=phase_fit_rms;
     if(proposed!=BW_PHASE_UNDETERMINED)begin
       phase_id=checked_add(phase_id,1,scope_id);phase_active=1;
@@ -374,6 +605,10 @@ module bw_stats_core #(
   task automatic start_silence(bw_u64_t at_ticks, bw_u64_t at_cycle);
     if (!silence_active) begin
       silence_active=1; silence_start_ticks=at_ticks; silence_start_cycle=at_cycle;
+      // The unknown-time prefix is constant throughout known quiet. Original
+      // Q may be completed after a delayed control and later frame are drained;
+      // retain its exact prefix rather than querying a past publication cursor.
+      silence_unknown_ticks=unknown_ticks_at(at_ticks);
     end
   endtask
 
@@ -425,6 +660,17 @@ module bw_stats_core #(
     episode_result.member_reset_coverage=episode_member_reset_coverage;
     episode_result.duration_valid=episode_duration_valid; episode_result.e2e_valid=episode_e2e_valid;
     episode_result.e2e_gbps=episode_e2e_gbps;
+    episode_result.variation=final_variation(episode_variation,episode_duration_valid,
+      status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
+      (status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED : BW_METRIC_OK));
+    episode_result.last_steady_found=last_steady_found;
+    episode_result.last_steady_selection_valid=(status==BW_EPISODE_COMPLETE && episode_duration_valid && last_steady_found);
+    episode_result.last_steady_reason=status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
+      (status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED :
+       (!episode_duration_valid ? BW_METRIC_BOUNDARY_UNKNOWN :
+        (!last_steady_found ? BW_METRIC_NO_STEADY : BW_METRIC_OK)));
+    episode_result.last_steady=last_steady;
+    if(core_failure_seen)return;
     if (status==BW_EPISODE_RESET_INTERRUPTED) episode_result.reason=BW_EPISODE_RESET;
     else if (status==BW_EPISODE_TRUNCATED) episode_result.reason=BW_EPISODE_OBSERVATION_END;
     else if (!episode_first_known) episode_result.reason=BW_EPISODE_FIRST_UNKNOWN;
@@ -434,6 +680,7 @@ module bw_stats_core #(
     else if (!episode_duration_valid) episode_result.reason=BW_EPISODE_DURATION_UNKNOWN;
     else episode_result.reason=BW_EPISODE_REASON_NONE;
     emit_episode_result(scope_id,episode_result);
+    episode_pending_samples.delete();phase_pending_samples.delete();
     pre_episode_gap=0; observation_gap_active=0; gap_waits_for_edge=0;
     pending_sample_reset_coverage=0; episode_quality_intervals.delete();
   endtask
@@ -446,6 +693,8 @@ module bw_stats_core #(
       episode_tail_ticks=incoming.timestamp_ticks; episode_tail_cycle=incoming.edge_index;
       episode_tail_known=1;
       episode_end_total_bytes=total_bytes; episode_end_total_events=total_events;
+      episode_end_unknown_records=raw_unknown_records;episode_end_unknown_ticks=unknown_ticks_at(incoming.timestamp_ticks);
+      episode_end_unknown_event_records=raw_unknown_event_records;episode_end_reset_records=raw_reset_records;
       update_episode_duration();
       update_episode_reset_coverage();
       if (!observation_gap_active && !unknown_episode_control())
@@ -610,6 +859,7 @@ module bw_stats_core #(
       coverage_cycles=at_cycle-left_cycle;
       window_full=(at_cycle-cycle_origin>=WINDOW_WIDTH);
     end
+    advance_raw_quality(at_ticks);
     // Rolling exact totals avoid an O(window-history) scan on each update.
     while (history.size() != 0 && ((WINDOW_BASIS == BW_NS && history[0].timestamp_ticks < left) ||
            (WINDOW_BASIS == BW_CYCLE && history[0].edge_index < left_cycle))) begin
@@ -635,10 +885,13 @@ module bw_stats_core #(
     if (WINDOW_BASIS == BW_CYCLE && coverage_cycles != 0)
       bytes_per_cycle=real'(window_bytes)/real'(coverage_cycles);
     result_seq=checked_add(result_seq,1,scope_id);
+    retain_variation_sample();
     consume_phase_window();
+    flush_safe_phases();
   endtask
 
   task automatic clear_statistics(bw_u64_t at_ticks);
+    advance_raw_quality(at_ticks);
     if (EPISODE_ENABLE && episode_active && progress_watermark_ticks<at_ticks)
       interrupt_silence();
     finish_episode(BW_EPISODE_RESET_INTERRUPTED,at_ticks);
@@ -661,6 +914,8 @@ module bw_stats_core #(
     retained_bytes=0; retained_events=0;
     unknown_bytes=0; unknown_events=0; reset_entries=0;
     total_bytes=0; total_events=0;
+    raw_reset_records=0;
+    raw_unknown_records=0;raw_unknown_event_records=0;raw_unknown_ticks=0;raw_quality_ticks=at_ticks;
     window_start_ticks=0; window_end_ticks=0;
     window_start_cycle=0; window_end_cycle=0;
     coverage_ticks=0; coverage_cycles=0;
@@ -704,6 +959,7 @@ module bw_stats_core #(
       stats_start_ticks=measurement_start_ticks;
       initialize_state();
     end
+    advance_raw_quality(action.timestamp_ticks);
     current_reset_n=action.reset_n;
     reset_applied=1;
     update_quality(-1,action.reset_n,action.timestamp_ticks);
@@ -731,8 +987,25 @@ module bw_stats_core #(
     member_control_times[key]=incoming.timestamp_ticks;
     if (WINDOW_BASIS==BW_NS && current_reset_n !== 1'b0) publish_due(incoming.timestamp_ticks);
     advance_episode_time(incoming.timestamp_ticks,last_edge_index,0);
+    if(incoming.timestamp_ticks>=stats_start_ticks)advance_raw_quality(incoming.timestamp_ticks);
     update_quality(key,incoming.reset_n,incoming.timestamp_ticks);
-    episode_control_changed(incoming.timestamp_ticks);
+    if((incoming.timestamp_ticks<stats_start_ticks ||
+        (incoming.timestamp_ticks==stats_start_ticks && !$isunknown(incoming.reset_n))) &&
+        !episode_active && current_reset_n!==1'b0)begin
+      // A pre-epoch notification refreshes member state, not lost observation
+      // in the new epoch. The progress barrier prevents newer raw activity
+      // from being accepted before these historical controls catch up.
+      if(unknown_episode_control())interrupt_silence();
+      else if(raw_unknown_ticks==0 && raw_unknown_records==0)begin
+        pre_episode_gap=0;observation_gap_active=0;gap_waits_for_edge=0;silence_active=0;
+      end else begin
+        // An independent own-control gap in this epoch survives historical
+        // member recovery. Resume quiet from its actual latest observation,
+        // never from the historical member time or the delivery time.
+        observation_gap_active=0;gap_waits_for_edge=0;
+        if(pre_episode_gap && WINDOW_BASIS==BW_NS)start_silence(raw_quality_ticks,last_edge_index);
+      end
+    end else episode_control_changed(incoming.timestamp_ticks);
     accepted_control_count=checked_add(accepted_control_count,1,scope_id);
   endtask
 
@@ -794,8 +1067,13 @@ module bw_stats_core #(
     if (WINDOW_BASIS == BW_NS) publish_due(now_ticks);
     advance_episode_time(now_ticks,is_frame ? incoming.edge_index : last_edge_index,is_frame);
     if (!is_frame) return;
+    advance_raw_quality(now_ticks);
     account_episode_frame(incoming);
     flush_safe_phases();
+    if(!incoming.bytes_complete || !incoming.events_complete)
+      raw_unknown_records=checked_add(raw_unknown_records,1,scope_id);
+    if(!incoming.events_complete)raw_unknown_event_records=checked_add(raw_unknown_event_records,1,scope_id);
+    if(incoming.reset_points!=0)raw_reset_records=checked_add(raw_reset_records,1,scope_id);
     total_bytes=checked_add(total_bytes,incoming.byte_inc,scope_id);
     total_events=checked_add(total_events,incoming.event_inc,scope_id);
     retained_bytes=checked_add(retained_bytes,incoming.byte_inc,scope_id);

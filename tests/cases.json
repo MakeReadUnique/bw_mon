@@ -2139,5 +2139,96 @@
       "+ORDER=mixed_first",
       "+MODE=size_unknown"
     ]
+  },
+  {
+    "name": "metrics_delayed",
+    "top": "tb_metrics_delayed",
+    "expect_log": [
+      "BW_VARIATION.*scope=phase.delayed .*interval=PHASE.*stddev_gbps=0 cv_pct=0 .*stddev_valid=1 cv_valid=1"
+    ]
+  },
+  {
+    "name": "metrics_repeated",
+    "top": "tb_metrics_repeated"
+  },
+  {
+    "name": "metrics_quality",
+    "top": "tb_metrics_quality"
+  },
+  {
+    "name": "metrics_zero",
+    "top": "tb_metrics_zero",
+    "expect_log": [
+      "BW_VARIATION.*scope=phase.zero0 .*interval=EPISODE.*stddev_gbps=0 cv_pct=UNAVAILABLE .*stddev_valid=1 cv_valid=0.*cv_reason=ZERO_MEAN",
+      "BW_VARIATION.*scope=phase.zero0 .*interval=PHASE.*stddev_gbps=UNAVAILABLE cv_pct=UNAVAILABLE .*stddev_valid=0 cv_valid=0.*stddev_reason=TOO_FEW_SAMPLES"
+    ]
+  },
+  {
+    "name": "metrics_actual_clock",
+    "top": "tb_metrics_actual_clock"
+  },
+  {
+    "name": "metrics_exclusions",
+    "top": "tb_metrics_exclusions"
+  },
+  {
+    "name": "metrics_small",
+    "top": "tb_metrics_small"
+  },
+  {
+    "name": "metrics_controls",
+    "top": "tb_metrics_controls"
+  },
+  {
+    "name": "metrics_interrupted",
+    "top": "tb_metrics_interrupted",
+    "expect_log": [
+      "BW_VARIATION.*scope=metrics.interrupted1 .*interval=EPISODE.*stddev_valid=0.*stddev_reason=OBSERVATION_TRUNCATED",
+      "BW_LAST_STEADY.*scope=metrics.interrupted1 .*selection_valid=0.*reason=OBSERVATION_TRUNCATED",
+      "BW_PHASE_METRICS.*scope=metrics.interrupted1 .*duration_reason=OBSERVATION_TRUNCATED"
+    ]
+  },
+  {
+    "name": "metrics_independent",
+    "top": "tb_metrics_independent"
+  },
+  {
+    "name": "metrics_late_recovery",
+    "top": "tb_metrics_late_recovery"
+  },
+  {
+    "name": "metrics_late_recovery_reset",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "metrics_late_recovery_epoch_gap",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=2"
+    ]
+  },
+  {
+    "name": "metrics_late_recovery_own_gap",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=3"
+    ]
+  },
+  {
+    "name": "metrics_late_recovery_left_boundary",
+    "top": "tb_metrics_late_recovery",
+    "plusargs": [
+      "+MODE=4"
+    ]
+  },
+  {
+    "name": "metrics_stopped_history",
+    "top": "tb_metrics_stopped_history",
+    "expect_log": [
+      "BW_PHASE_METRICS.*scope=metrics.stopped0 .*start_ticks=6000000 end_ticks=8000000.*duration_valid=1.*bandwidth_gbps=20 .*duration_reason=NONE"
+    ]
   }
 ]

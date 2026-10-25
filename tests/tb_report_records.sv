@@ -10,6 +10,8 @@ module tb_report_records;
     (.clk(1'b0),.reset_n(1'b1));
   initial begin
     bw_episode_result_t result;
+    bw_variation_result_t no_variation;
+    bw_phase_result_t no_phase;
     bw_report_summary_t summary;
     bit later_pass,invalid_actual,spoof_reset,unknown_status,transient_deferred;
     later_pass=$test$plusargs("LATER_PASS");
@@ -17,8 +19,14 @@ module tb_report_records;
     unknown_status=$test$plusargs("UNKNOWN_STATUS");
     transient_deferred=$test$plusargs("TRANSIENT_DEFERRED");
     wait(monitor_ready);#4000000;
+    no_variation='{window_basis:BW_NS,minmax_reason:BW_METRIC_NO_SAMPLES,
+      stddev_reason:BW_METRIC_TOO_FEW_SAMPLES,cv_reason:BW_METRIC_TOO_FEW_SAMPLES,default:0};
+    no_phase='{scope_kind:BW_POINT,phase_kind:BW_PHASE_UNDETERMINED,end_reason:BW_PHASE_CHANGE,
+      episode_status:BW_EPISODE_NONE,duration_reason:BW_METRIC_BOUNDARY_UNKNOWN,
+      bandwidth_reason:BW_METRIC_BOUNDARY_UNKNOWN,variation:no_variation,default:0};
     result='{scope_kind:BW_POINT,status:BW_EPISODE_COMPLETE,reason:BW_EPISODE_REASON_NONE,
-      e2e_gbps:128.0,default:0};
+      e2e_gbps:128.0,variation:no_variation,last_steady_reason:BW_METRIC_NO_STEADY,
+      last_steady:no_phase,default:0};
     result.stats_epoch=7;result.result_seq=1;result.episode_id=9;
     result.first_ticks=1000000;result.last_ticks=1000000;result.tail_ticks=2000000;
     result.confirmation_ticks=3000000;result.duration_ticks=1000000;
