@@ -31,7 +31,16 @@ Its `+INJECT_CHECKER_ERROR` changes the reference by one byte and must produce
 profile or a production fault-injection API. VCS can return exit0 for `$fatal`,
 so the runner checks terminal diagnostics and durable completion evidence.
 
-## Completed common-scale measurements
+## Historical common-scale measurements
+
+These completed measurements belong to their original source074c771. Scheduling
+repairs in integrationcb0aef5 require fresh nominal qualification; the original
+numbers and archives remain historical observations. On the repaired18-file
+runtime8e818394, the six literal contracts, three-point public tracer with its
+deliberate one-byte sensitivity failure, and four32point/8group smoke profiles
+pass. Those small checks do not qualify the four new full common profiles. Their
+fresh immutable-source runs and resource records are tracked separately until
+all actual40us runs finish and their references, hashes and reports are checked.
 
 All four profiles below completed at **40us exactly**, using frozen harness/source
 `074c77103bc8c135106facad00dbc21995f2d92f` (production integration8de785c).
