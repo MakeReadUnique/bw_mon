@@ -1006,8 +1006,11 @@ complete phase remains valid after a later gap, reset or observation end.
 
 Episode records also contain `last_steady_found`, `last_steady_selection_valid`,
 `last_steady_reason` and embedded immutable `last_steady`. Only a normally
-completed episode with known final boundaries makes representative selection
-formal; the embedded result preserves the original phase identity/result
+completed episode with a known last transfer and actual tail makes representative
+selection formal. An unknown episode start can invalidate e2e while a later
+complete steady interval remains comparable. Reset, truncation, or an unknown
+last transfer/tail leaves representative selection unavailable. The embedded
+result preserves the original phase identity/result
 sequence and its independent metric validity. Intermediate phase emissions
 report their own final intervals without declaring a formal last representative.
 Multiple steady intervals are allowed. A later good interval cannot erase an

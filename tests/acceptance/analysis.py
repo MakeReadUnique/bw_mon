@@ -1,7 +1,7 @@
 """Raw-derived episode and exact-window statistical references (no monitor imports)."""
 import math,re
 from fractions import Fraction
-from model import TICKS,LEAVES,own_reset
+from model import TICKS,LEAVES,own_reset,expected_scope_id
 
 def packets(log,prefix):
  return [dict(re.findall(r'(\w+)=([^\s]+)',line)) for line in log.splitlines() if line.startswith(prefix+' ')]
@@ -94,7 +94,7 @@ def phase_reference(c,name,windows,episode):
 
 def verify(c,rows,frames,windows,log):
  episodes=episode_reference(c,rows,frames);ep_packets=packets(log,'BW_EPISODE');ph_packets=packets(log,'BW_PHASE');ph_metrics=packets(log,'BW_PHASE_METRICS');variations=packets(log,'BW_VARIATION');last_steady=packets(log,'BW_LAST_STEADY');checks={'episodes':0,'phases':0,'variations':0}
- def scope_id(name):return ('tb.top.master0.bw' if name=='p0' else 'memory_all' if name=='all_dmc' else {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)) if c['example_ids'] else {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)
+ def scope_id(name):return expected_scope_id(c,name)
  def same(actual,key,expected):assert int(actual[key])==int(expected),(c['scene'],actual,key,expected)
  def near(actual,key,expected):assert abs(float(actual[key])-float(expected))<1e-8,(c['scene'],actual,key,expected)
  for name,expected_episodes in episodes.items():
@@ -162,7 +162,7 @@ def verify_reports(c,rows,frames,windows,log,cfg):
   match=re.fullmatch(r'(.+)_(min|max|abs_tol|rel_tol)_(gbps|ns|pct)',key)
   assert match,key
   rules.setdefault((owner,match.group(1)),{})[match.group(2)]=float(value)
- def sid(name):return 'tb.top.master0.bw' if c['example_ids'] and name=='p0' else 'memory_all' if c['example_ids'] and name=='all_dmc' else {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)
+ def sid(name):return expected_scope_id(c,name)
  episode_data=episode_reference(c,rows,frames);actual=packets(log,'BW_CHECK');phase_data=packets(log,'BW_PHASE');expected=[]
  def measure_variation(name,ep,left,right,known,family):
   samples,unknown=sample_set(windows[name],ep,left,right,episode_data[name],frames[name]);v=variation(samples)

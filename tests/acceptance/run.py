@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Actual public12-point scenes, exact raw-table oracle, FSDB and durable evidence."""
-import argparse,csv,hashlib,json,re,shutil,subprocess
+import argparse,csv,hashlib,json,re,subprocess
 from pathlib import Path
-from model import configuration,stimulus,frame_table,window_table,PRIMARY,SUPPLEMENTAL,LEAVES,TICKS,expectations
+from build import prepare,receipt
+from evidence import canonical_sha
+from model import configuration,stimulus,frame_table,window_table,PRIMARY,SUPPLEMENTAL,LEAVES,TICKS,expectations,expected_scope_id
 from summarize import write_tables
 from analysis import verify as verify_analysis,verify_reports,packets
 ROOT=Path(__file__).resolve().parents[2]
@@ -15,7 +17,7 @@ def check_trace(c,out,rows):
  frames=frame_table(rows);windows=window_table(c,rows,frames);counts={'raw':0,'windows':0,'receipts':0};checkpoints=[]
  for name in LEAVES:
   data=list(csv.reader((out/(name+'.csv')).open()));actual_id=next(r for r in data if r[0]=='ID')
-  expected_id=('tb.top.master0.bw' if name=='p0' else 'memory_all' if name=='all_dmc' else {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)) if c['example_ids'] else {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)
+  expected_id=expected_scope_id(c,name)
   assert actual_id[1:]==[str(int(not name.startswith('p'))),expected_id,name],(name,actual_id)
   records=[r for r in data if r[0]=='R'];receipts=[r for r in data if r[0]=='A'];public=[r for r in data if r[0]=='W']
   assert len(records)==len(frames[name]) and len(receipts)==len(frames[name]),(name,'raw/receipt count')
@@ -45,24 +47,17 @@ def check_trace(c,out,rows):
   for t,b in [(11,320),(12,384),(13,384),(21,256),(23,256)]:assert next(w for w in windows['p0'] if w['end']==t*TICKS)['bytes']==b
  return {'status':'PASS','human_review':'PENDING','counts':counts,'numeric_tolerance_gbps':1e-10,'checks':checkpoints}
 
-def one(scene,basis):
+def one(scene,basis,cflags=""):
  c=configuration(scene,basis);out=ROOT/'artifacts/acceptance'/(scene+'_'+basis);out.mkdir(parents=True,exist_ok=True)
  (out/'expect.cfg').write_text(expectations(c))
  rows=stimulus(c);(out/'stimulus.txt').write_text(''.join(' '.join(str(x) for x in row)+'\n' for row in rows))
- top=c['top'];build=ROOT/'.build/acceptance'/top;build.mkdir(parents=True,exist_ok=True)
+ top=c['top']
  sources=sorted((ROOT/'rtl').glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))+sorted((ROOT/'rtl').glob('*.c'))+[ROOT/'tests/acceptance/scene.sv']
- deps=sources+sorted(p for p in (ROOT/'rtl').rglob('*') if p.suffix in ['.svh','.vh','.h'])
- digest=hashlib.sha256(str(ROOT).encode()+(ROOT/'tests/acceptance/run.py').read_bytes()+top.encode()+b''.join(str(p.relative_to(ROOT)).encode()+p.read_bytes() for p in deps)).hexdigest()
- snapshot=build/('source-'+digest);snapshot.mkdir(exist_ok=True)
- for source in deps:
-  target=snapshot/source.relative_to(ROOT);target.parent.mkdir(parents=True,exist_ok=True)
-  if target.exists():assert target.read_bytes()==source.read_bytes(),('immutable source snapshot differs',target)
-  else:shutil.copyfile(str(source),str(target))
- vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
- cmd=['vcs','-full64','-sverilog','+vpi','-debug_access+all','-kdb','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(snapshot/'rtl'),'-assert','svaext','-top',top,'-o',build/'simv']+[snapshot/p.relative_to(ROOT) for p in sources]
- stamp=build/'source.sha256'
- if not stamp.exists() or stamp.read_text()!=digest:
+ build,snapshot,cmd,fingerprint,native_flags=prepare(ROOT,top,sources,cflags)
+ digest=canonical_sha(fingerprint);stamp=build/'source.sha256'
+ if not stamp.exists() or stamp.read_text()!=digest or not (build/'simv').exists() or not (build/'csrc/bw_slot_settlement.d').exists():
   command(cmd,build,build/'compile.log');assert not re.search(r'(?:Warning|Error)-\[',(build/'compile.log').read_text());stamp.write_text(digest)
+ native=receipt(ROOT,out,build,snapshot,cmd,fingerprint,native_flags)
  (out/'compile.log').write_text((build/'compile.log').read_text())
  sim=[build/'simv','-no_save','+STIM='+str(out/'stimulus.txt'),'+OBS_DIR='+str(out),'+FSDB='+str(out/'waves.fsdb'),'+END_TICKS='+str(c['end_ticks']-1),'+BW_EXPECT='+str(out/'expect.cfg')]
  command(sim,build,out/'run.log');log=(out/'run.log').read_text();assert 'TB_PASS acceptance' in log and 'Fatal:' not in log and 'Error-[' not in log
@@ -112,17 +107,19 @@ def one(scene,basis):
  assert (out/'waves.fsdb').stat().st_size>0
  (out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n')
  write_tables(c,rows,out,result)
- manifest={'configuration':c,'top':top,'compile':[str(x) for x in cmd],'run':[str(x) for x in sim],'source_snapshot':str(snapshot),'base_revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=str(ROOT),universal_newlines=True).strip(),'dependency_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in deps+[ROOT/'tests/acceptance/run.py',ROOT/'tests/acceptance/model.py',ROOT/'tests/acceptance/analysis.py',ROOT/'tests/acceptance/summarize.py',out/'stimulus.txt',out/'expect.cfg']},'compiler':'VCS W-2024.09-SP1_Full64','actual_observation_end_ticks':c['end_ticks'],'human_review':'PENDING'}
+ dependencies=dict(fingerprint['project_sha256'])
+ dependencies.update({str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [out/'stimulus.txt',out/'expect.cfg']})
+ manifest={'configuration':c,'top':top,'compile':[str(x) for x in cmd],'run':[str(x) for x in sim],'source_snapshot':str(snapshot),'base_revision':native['runtime_head'],'dependency_sha256':dependencies,'runtime_evidence':native,'compiler':fingerprint['tools']['vcs_version'],'actual_observation_end_ticks':c['end_ticks'],'human_review':'PENDING'}
  (out/'commands.json').write_text(json.dumps(manifest,indent=2)+'\n')
  print('PASS',scene,basis,result['counts'],'realFSDB',out/'waves.fsdb',flush=True)
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--scene',choices=PRIMARY+SUPPLEMENTAL,default='steady');p.add_argument('--basis',choices=['ns','cycle'],default='ns');p.add_argument('--all',action='store_true');args=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--scene',choices=PRIMARY+SUPPLEMENTAL,default='steady');p.add_argument('--basis',choices=['ns','cycle'],default='ns');p.add_argument('--all',action='store_true');p.add_argument('--cflags',default='',help='additional native C compiler options, recorded in the build fingerprint');args=p.parse_args()
  if args.all:
   for s in PRIMARY:
-   for b in ['ns','cycle']:one(s,b)
-  for s in SUPPLEMENTAL:one(s,'ns')
+   for b in ['ns','cycle']:one(s,b,args.cflags)
+  for s in SUPPLEMENTAL:one(s,'ns',args.cflags)
  else:
   if args.scene in SUPPLEMENTAL and args.basis!='ns':p.error('supplemental exact-vector scene uses its declared NS context')
-  one(args.scene,args.basis)
+  one(args.scene,args.basis,args.cflags)
 if __name__=='__main__':main()

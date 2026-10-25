@@ -540,9 +540,7 @@ module bw_stats_core #(
     bit residue;
     if(!PHASE_ENABLE)return;
     phase_window_seq=result_seq;
-    residue=retired_activity_valid && retired_episode_id!=episode_id &&
-      ((WINDOW_BASIS==BW_NS && window_start_ticks<=retired_last_ticks) ||
-       (WINDOW_BASIS==BW_CYCLE && window_start_cycle<=retired_last_cycle));
+    residue=foreign_activity();
     phase_eligible=episode_active && window_full && bytes_complete && denominator_valid && !residue;
     if(!phase_eligible)begin break_phase_evidence(window_end_ticks);return;end
     phase_evidence_continuous=1;
@@ -686,10 +684,13 @@ module bw_stats_core #(
       status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
       (status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED : BW_METRIC_OK));
     episode_result.last_steady_found=last_steady_found;
-    episode_result.last_steady_selection_valid=(status==BW_EPISODE_COMPLETE && episode_duration_valid && last_steady_found);
+    // Representative ordering needs a final known episode end. The episode's
+    // uncertain start does not invalidate a later independently complete phase.
+    episode_result.last_steady_selection_valid=(status==BW_EPISODE_COMPLETE &&
+      episode_last_known && episode_tail_known && last_steady_found);
     episode_result.last_steady_reason=status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
       (status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED :
-       (!episode_duration_valid ? BW_METRIC_BOUNDARY_UNKNOWN :
+       (!(episode_last_known && episode_tail_known) ? BW_METRIC_BOUNDARY_UNKNOWN :
         (!last_steady_found ? BW_METRIC_NO_STEADY : BW_METRIC_OK)));
     episode_result.last_steady=last_steady;
     if(core_failure_seen)return;
