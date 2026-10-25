@@ -76,42 +76,77 @@ cap is imposed.
 
 ## Current evidence
 
-Current-source preparation was tested at commit `1508f8f6f03ae03768f107ce0cd472182c9b6654`,
-after merging integration `cb0aef54f94efc8fd485bb97341cdcbe3f21e506`. All18 runtime
-RTL/C/header SHA256 values match the repaired `8e81839` freeze. The fixed maximum
-profiles, five literal contracts, shared input reference and generator are
-unchanged from `2d5c685`. The five maximum and six legacy reference contracts pass.
+The final-source preparation at `31ce03c16af62911985ee9191da51c7534396ebf`
+merges integration `467b722c`. Its18 runtime RTL/C/local-header hashes exactly
+match the reviewed production milestone `56127495`. Five maximum and six legacy
+reference contracts passed, followed by four serial32-point/24-group/240ns
+public tracers:107,520 raw receipts and5,263 windows, zero differences.
+The maximum wrapper, fixed profiles, independent reference and generator retain
+their original inputs and nominal expected counts above.
 
-The four separately named tracers ran32 actual points and24 groups for240ns,
-including a depth-eight path and sixteen direct consumers of subgroup0. Each
-checked26,880 raw receipts with zero differences under the required native build.
-
-| Tracer | Window checks | Compiler peak KiB | Simulator peak KiB |
+| Final-source tracer | Window checks | Compiler peak KiB | Simulator peak KiB |
 | --- | ---: | ---: | ---: |
-| max-tracer-ns |1,344 |355,808 |127,156 |
-| max-tracer-cycle |1,288 |355,808 |126,352 |
-| max-tracer-unknown |1,344 |355,808 |127,304 |
-| max-tracer-reset |1,287 |355,672 |127,460 |
+| max-tracer-ns |1,344 |350,680 |126,216 |
+| max-tracer-cycle |1,288 |350,676 |125,668 |
+| max-tracer-unknown |1,344 |350,676 |125,304 |
+| max-tracer-reset |1,287 |350,676 |125,832 |
 
-These runs also checked controls, every direct-member ACK, complete release of
-retained frames/controls, hints,56 typed scopes and final report ordering. Compiler
-and runtime tool diagnostics were absent. Formal report WARNING results are
-expected for the continuously active, truncated episodes. Portable inputs,
-per-scope expected/actual rows, empty differences, logs, compile receipts, SDK
-provenance and consumed source snapshots are in
-[`tests/scale/evidence/maximum-preparation`](../tests/scale/evidence/maximum-preparation/README.md).
-These small checks establish neither nominal memory nor nominal correctness.
+Each small graph includes a depth-eight path and sixteen direct consumers of a
+subgroup. Every receipt, window, quality flag, control, direct-member ACK and
+release, hint and final report stream was checked. Separate recorded-data audits
+also found zero differences. Performance WARNINGs reflect truncated traffic;
+they do not replace correctness checks or establish maximum resource use.
 
-All four native profiles remain **unrun for the repaired source**, awaiting the
-current common-scale gate and resource admission. Their expected counts above
-are unchanged. Each will instantiate20,480 public owners and therefore20,480
-native reset observer contexts, plus one coalesced pending settlement callback.
-The small measurements provide no justified maximum RSS extrapolation; actual
-full runs must measure it.
+The [final-source preparation archive](../tests/scale/evidence/maximum-final-preparation/README.md)
+retains the26 consumed sources, complete original/generated inputs, cfg,
+per-scope expected/actual/differences, native build/cache and runtime evidence.
+Its portable verifier regenerates the independent inputs/reference and checks
+all original hashes and final streams without VCS or former temporary paths:
 
-The original source `2d5c685` had one license-service interruption and four later
-partial runs stopped as `operator-superseded-source` when the scheduling defects
-were confirmed. Their original manifests, logs and receipts are preserved in a
-separate archive. They are neither current-source acceptance nor capacity
-failures. The older no-debug compatibility probe applies only to its original
-runtime and does not establish support for removing the new native dependency.
+```sh
+python3 tests/scale/evidence/maximum-final-preparation/verify.py --current-source
+```
+
+Fresh output roots include the profile, source, compiler options/tool, native
+header and installed-link-input identity. Full GCC dependency discovery uses
+actual native `-w -pipe -fPIC -O` flags:50 headers, including2SDK and48system
+headers. Plain `gcc -M` finds49; optimization additionally includes
+`bits/stdlib-bsearch.h`. The original VCS dependency file intentionally omits
+system headers, so the full inventory and original twoSDK dependency entries
+are preserved separately. Native object/binary and before/after source/header/
+link-input hashes accompany the exact compile/link commands. Vendor header text
+and binaries are not redistributed.
+
+At this preparation checkpoint all four final-source nominal profiles remain
+**not launched**. They require the new common-source qualification and explicit
+resource admission. The four `prepared-max-*.json` receipts retain unchanged
+16,384-point/4,096-group/40us inputs and independent expected counts; they are
+plans, not actual results. Each full row will create20,480 native reset observer
+contexts, plus the coalesced pending settlement callback.
+
+The archived resource plan considers four topology MAX rows and six later
+history MAX rows. Prior8e-source partial MAX kernels used about1.6GiB each;
+current final-source maximum peak and throughput are unmeasured. Start with one
+MAX, inspect real kernel/Ready/RSS/progress, then admit a second. Later increases
+need fresh host/worker/RSS observations, rather than starting all ten blindly.
+These scheduling choices impose no product memory or wall-time acceptance cap.
+
+## Historical preparation and superseded attempts
+
+The earlier [maximum preparation](../tests/scale/evidence/maximum-preparation/README.md)
+retains its genuine11 literal checks and four small tracers on the8e runtime.
+It is historical after the561 production review fix; its `--current-source`
+comparison is expected to reject a changed runtime. Its former native profile
+plans were never full nominal passes.
+
+Two8e-production MAX runs from frozen builder `7e9e441` were later launched and
+explicitly stopped when the final-statistics review fix required a new production
+source. Their sources, original manifests/logs and stop receipts are preserved
+in the final-source preparation archive. The classification is
+`OPERATOR_SUPERSEDED_REVIEW_SOURCE_FIX`, neither PASS nor a correctness/capacity
+failure. Their interrupted manifests are retained byte-for-byte.
+
+Still older2d5-source attempts include a license-service interruption and four
+partials superseded by the scheduling fix; these remain in the historical
+preparation archive. Neither those partials nor their older no-debug probe
+establish support for omitting the final runtime's native/debug dependencies.

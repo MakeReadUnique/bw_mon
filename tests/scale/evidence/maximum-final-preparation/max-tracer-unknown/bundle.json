@@ -1,0 +1,145 @@
+{
+  "files": {
+    "actual.csv": {
+      "gzip_bytes": 870,
+      "gzip_file": "actual.csv.gz",
+      "gzip_sha256": "67bc80f387cff5e68daed8e335de300b5f7461dc5302acd199da68bfd6c6c9a4",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/actual.csv",
+      "uncompressed_bytes": 9330,
+      "uncompressed_sha256": "03a1486edb900d92ffa4c0d61e67bf57e4de63fd125b9b8f48d4b311da65088b"
+    },
+    "checker.sv": {
+      "gzip_bytes": 1635,
+      "gzip_file": "checker.sv.gz",
+      "gzip_sha256": "f401e25be4ece94aa768e240554323fd266eea20e7f6210920139754a43b7308",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/checker.sv",
+      "uncompressed_bytes": 6924,
+      "uncompressed_sha256": "235ee2ee59357eedf062d8231ee55aee0445fb5983295a996e2674c2f8b093bb"
+    },
+    "compile-success.json": {
+      "gzip_bytes": 768,
+      "gzip_file": "compile-success.json.gz",
+      "gzip_sha256": "0a4d3ad5ba87106dca46d5bd79426cf9d747a97b870537c98db8f34648078770",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/builds/8992887e5116bd02f225be5ec42ca38316c92e7c2c724626b878bbed8128412d/compile-success.json",
+      "uncompressed_bytes": 4651,
+      "uncompressed_sha256": "5ae770f14975d89fe4958e6eea2740ec6e96324a9658415ea17a34d6da23f886"
+    },
+    "compile.log": {
+      "gzip_bytes": 1708,
+      "gzip_file": "compile.log.gz",
+      "gzip_sha256": "3ca6d9528f745488a28e33d53a13957e6fa5a152767ca4e1d46f453a7cab8aa8",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/builds/8992887e5116bd02f225be5ec42ca38316c92e7c2c724626b878bbed8128412d/compile-attempt-1/compile.log",
+      "uncompressed_bytes": 12757,
+      "uncompressed_sha256": "53f5fc8bbefc1cc25661f28eed5ce2848f3acb9304a3babe6c5ae9c9272d9af9"
+    },
+    "compile.time-v.txt": {
+      "gzip_bytes": 758,
+      "gzip_file": "compile.time-v.txt.gz",
+      "gzip_sha256": "b92f1bb50df156cd18ef09262944e717be19543285b35b1268c8020b61bba8e4",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/builds/8992887e5116bd02f225be5ec42ca38316c92e7c2c724626b878bbed8128412d/compile-attempt-1/time-v.txt",
+      "uncompressed_bytes": 3750,
+      "uncompressed_sha256": "3fa01864aee40b4f1bbe3a37eb48093b44d7171ab9f132dc472a5760565715cc"
+    },
+    "diffs.json": {
+      "gzip_bytes": 23,
+      "gzip_file": "diffs.json.gz",
+      "gzip_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/diffs.json",
+      "uncompressed_bytes": 3,
+      "uncompressed_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "expect.cfg": {
+      "gzip_bytes": 610,
+      "gzip_file": "expect.cfg.gz",
+      "gzip_sha256": "1c608dff115d115c9a21cb7174b7b255ebbdd580f6f21eec12aa19e600753701",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/expect.cfg",
+      "uncompressed_bytes": 18957,
+      "uncompressed_sha256": "250827673cc9b8fa1a5191d7f58e9ec9b9ccdbaca997609e27836e392affb693"
+    },
+    "expected.csv": {
+      "gzip_bytes": 889,
+      "gzip_file": "expected.csv.gz",
+      "gzip_sha256": "789ff6ca4fd4fc08edaebfa7744f84cd3dd90c98972117131c41a4262d49c888",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/expected.csv",
+      "uncompressed_bytes": 9387,
+      "uncompressed_sha256": "b9776e4925ebe3332352d2788f39f0d932fdd40c42891550163edcc840b85d36"
+    },
+    "input.json": {
+      "gzip_bytes": 1487,
+      "gzip_file": "input.json.gz",
+      "gzip_sha256": "cfd128d5a021a93f10e0895da401e083d7f268e001e518d2a9fc9ecb03fa77ad",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/input.json",
+      "uncompressed_bytes": 6700,
+      "uncompressed_sha256": "061114459e571208845fd0ee49161ba7c8b4653cdcbdfb347579e32475ed6af9"
+    },
+    "input_pkg.sv": {
+      "gzip_bytes": 1958,
+      "gzip_file": "input_pkg.sv.gz",
+      "gzip_sha256": "bf66b8546d721cb70ed300bc857203f9e7bc6e578dcbfc34768c4cbbc03fb07e",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/input_pkg.sv",
+      "uncompressed_bytes": 6751,
+      "uncompressed_sha256": "f62df8af7764cc0b6feec19ac83257fc41613c9b9523bfd6b8ded75d31058fbd"
+    },
+    "manifest.json": {
+      "gzip_bytes": 5332,
+      "gzip_file": "manifest.json.gz",
+      "gzip_sha256": "713161c71303b42b9cee8ffa189d5d74ee9e052a268ffddbe1a8aa27263bd407",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/manifest.json",
+      "uncompressed_bytes": 20640,
+      "uncompressed_sha256": "5381b94e0626b0b3e9b2a2ada70e0021a2815d39b07113d362dd89a6d01ced5b"
+    },
+    "native-dependencies.d": {
+      "gzip_bytes": 242,
+      "gzip_file": "native-dependencies.d.gz",
+      "gzip_sha256": "0258d1af42c8ae1b20413a06fc01ad1b4099d6348f239de7e8f8843c3c6f280d",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/builds/8992887e5116bd02f225be5ec42ca38316c92e7c2c724626b878bbed8128412d/csrc/bw_slot_settlement.d",
+      "uncompressed_bytes": 348,
+      "uncompressed_sha256": "563b453ab913969ba225d41ffc02ff7f0096070bab1547d6293e808d2800732d"
+    },
+    "simulation.log": {
+      "gzip_bytes": 13834,
+      "gzip_file": "simulation.log.gz",
+      "gzip_sha256": "f193d3e16fb5cc77d20d3520d8425cbc5b8873e8345cc52aca9e94a83fb77455",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/simulation.log",
+      "uncompressed_bytes": 917424,
+      "uncompressed_sha256": "70a9b419024a3c1fc8bfc96a9d71c81e4d2b90f2ae86b24465c82c8d7dee04be"
+    },
+    "simulation.time-v.txt": {
+      "gzip_bytes": 594,
+      "gzip_file": "simulation.time-v.txt.gz",
+      "gzip_sha256": "9f10cf022af6eb8cb2c35d2137fb1d0ea7e64f2847f3889227f079ab87d31a7d",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/simulation.time-v.txt",
+      "uncompressed_bytes": 1250,
+      "uncompressed_sha256": "bc15db9a5586522b7bfa31a45e4131f43226f82935ca9d3e495e7127e60b6939"
+    },
+    "supplementary-audit.json": {
+      "gzip_bytes": 285,
+      "gzip_file": "supplementary-audit.json.gz",
+      "gzip_sha256": "634be17b268a4f151b68c4370b0f9c8a36880b96ac0dab61bd042b0181fa0b30",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/supplementary-audit.json",
+      "uncompressed_bytes": 397,
+      "uncompressed_sha256": "2f5cd3403d23582bd03ebad0482b5321a711a2fa6c92ac56c829b8c53bed2e50"
+    },
+    "tb_bw_scale.sv": {
+      "gzip_bytes": 2943,
+      "gzip_file": "tb_bw_scale.sv.gz",
+      "gzip_sha256": "bf6e44940bf6a12b32638a26d8944fb0b16164f1cddef1965e8cd00aa163771a",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/tb_bw_scale.sv",
+      "uncompressed_bytes": 12938,
+      "uncompressed_sha256": "9a9716c6b4cf3ee85be705668c7664d4d10f08e480cd85408fb90ec04739593e"
+    },
+    "verification.json": {
+      "gzip_bytes": 238,
+      "gzip_file": "verification.json.gz",
+      "gzip_sha256": "14ed9969d2580f421e6c7fd169a8de4072a44513fe2fe0d75b4f3a5df708e9e9",
+      "original_path": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/verification.json",
+      "uncompressed_bytes": 458,
+      "uncompressed_sha256": "59b0368f13526bb608976862d28b456bf1822877b8857100d27f6734dc3da0ab"
+    }
+  },
+  "original_checked_pass": true,
+  "original_manifest": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-tracer-unknown-fef6a6b0ec486b8ea230/runs/max-tracer-unknown/20261025T154800-3807569/manifest.json",
+  "scenario": "max-tracer-unknown",
+  "source_head": "31ce03c16af62911985ee9191da51c7534396ebf",
+  "source_tree": "09b7d0e0c4d2c042c5cbce6a13475239652be4d8"
+}
