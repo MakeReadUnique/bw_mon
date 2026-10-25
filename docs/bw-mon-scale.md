@@ -31,6 +31,53 @@ Its `+INJECT_CHECKER_ERROR` changes the reference by one byte and must produce
 profile or a production fault-injection API. VCS can return exit0 for `$fatal`,
 so the runner checks terminal diagnostics and durable completion evidence.
 
+## Completed common-scale measurements
+
+All four profiles below completed at **40us exactly**, using frozen harness/source
+`074c77103bc8c135106facad00dbc21995f2d92f` (production integration8de785c).
+Each instantiated1024 actual public points and256 group owners. Every profile
+produced1280 expected/actual final scope rows with **zero differences** and
+102,400,000 checked raw receipts. Both baseline streams additionally passed the
+independent steady-candidate/confirmation audit:120/150ns forNS and
+120.25/150.25ns forcycle, with unavailable final representative selection.
+
+| Full profile | Window checks | Episode / phase final records | Simulation peakRSS KiB (MiB) | Compiler peakRSS KiB |
+| --- | ---: | ---: | ---: | ---: |
+|Prescribed NS100/10 baseline |5,120,000 |1280 /1280 |307,452 (300.25) |355,736 |
+|Cycle200/20 |5,118,720 |1280 /1280 |306,148 (298.97) |350,664 |
+|NS100/10, p0 unknown size |5,120,000 |1280 /1280 |306,632 (299.45) |352,408 |
+|NS100/10, p0 known reset |5,119,999 |1281 /1280 |306,384 (299.20) |350,664 |
+
+The four runs checked409,600,000 raw receipts and20,478,719 published windows in
+total. Reset's one extra episode is p0's independent RESET_INTERRUPTED episode;
+its own lifetime window count is3999 while ancestors retain4000. All final
+summaries had1280/1280 scopes done. Baseline/cycle/unknown each concluded15360
+WARNINGs; reset15372. Those are correct unavailable-metric conclusions for the
+continuous-flow truncation, not test failures or forced performancePASS.
+
+Source hashes21files and generated hashes3files match the consumed snapshots;
+all four compiles were clean/successful with no infrastructure retry. Simulator
+exit codes are0, full expected/actual/diff and hash checks passed, and all streams
+settled before their single final report summary. The numerical tests never use
+the performance conclusion as their pass predicate.
+
+The host had31,857MiB RAM and8 logicalCPUs. After observing stable footprints,
+the acceptance coordinator allowed up to four isolated common jobs concurrently;
+compiler/simulator peaks remain separate per-command GNUtime-v measurements.
+Concurrent wall durations and1s process-family samples are retained with full
+context, with no speed or fixed-memory acceptance limit. Maximum-scale and
+short/middle/long/dense history-matrix measurements remain separate work.
+
+[Portable recorded evidence](../tests/scale/evidence/README.md) contains the
+original manifests/config/input/generatedSV, per-scope reference/actual CSVs,
+empty differences, bounded final-stream logs, resource records and consumed
+source snapshot, with compressed and original SHA256s. Verify its repository
+copies without any /tmp dependency:
+
+```sh
+python3 tests/scale/evidence/verify.py
+```
+
 ## Fixed inputs and complete feature configuration
 
 | Setting | Common baseline | Cycle variant | Quality/reset variants |
@@ -51,6 +98,7 @@ so the runner checks terminal diagnostics and durable completion evidence.
 | Phase |enabled everywhere; N3, minimum span20ns, K4 |span40cycles |same as baseline |
 | Hysteresis |steady entry/exit ABS0/REL0; RMS entry/exit ABS1e-6GB/s/REL0; trend ABS1GB/s/REL0 |same |same |
 | Report |explicit scene rules for all12 supported metrics on every typed scope |same |same |
+| Setup deadlines |startup100ns; missing-record1ns from original expected edge |same |same |
 | Time/dump |1fs timeunit/precision, no waves/FSDB |same |same |
 
 These engineering settings are scene inputs, not new product defaults. Supported
@@ -59,6 +107,10 @@ sends and one return per edge keep every credit ledger trusted at balance16, wit
 no shortage or backpressure hits. The checker verifies support/enable/credit/hit
 state and control counts at the final scope barrier. No credit anomaly is used to
 create an otherwise illegal traffic stream.
+
+The clock input has a1fs high pulse at each listed positive edge; only actual
+positive-edge intervals define the2GHz sampling period. The setup deadline values
+above are the fixed public-module defaults in the recorded source revision.
 
 Each parent contains seven disjoint leaf groups: four five-point leaves and
 three four-point leaves, hence32 recursive points. Across the graph this gives
@@ -185,3 +237,27 @@ more storage. There is no user history capacity knob or universal heap guarantee
 See [numeric/storage semantics](bw-mon-numeric-storage.md) for the implementation
 contract and version-qualified earlier pilot evidence. A64-point pilot or a
 one-point duration delta is not a linear prediction of common/max scale memory.
+
+Source-level logical estimates for this1280-scope uniform scene help interpret
+RSS; they are not simulator heap sizes or required allocations:
+
+| Retained category | Count/model | Logical payload before containers/alignment |
+| --- | --- | --- |
+| Equal event runs |one compatible run per scope; sparse variants briefly split affected runs |579bits/run, about90.47KiB for1280 runs |
+| Physical clock runs |cycle mode, one constant-period run per scope |320bits/run,50KiB for1280 runs |
+| Fit evidence |N3 ×1280 |3840samples; two64bit positions +one real each,90KiB |
+| Registry recursive masks |current fixed16384bit representation ×256groups |512KiB |
+| Direct ACK values |two64bit cursors ×1248edges |19.5KiB, excluding keys/maps/member lists |
+| Report rules |12 ×1280 |15360rules; roughly0.947MiB logical fields, excluding padding/containers |
+| Clipping/quality/result state |per scope, plus sparse original-time controls |additional summaries, pending runs/fragments, origin maps and immutable result payloads |
+
+These run counts are an inference from the declared equal increments/qualities
+and source representation, not a private slot-count acceptance assertion. Event
+expiry occurs at publication: W100/S10 can temporarily represent220 logical
+positions before the next prune. Equal-run storage retains their exact positions
+without allocating220 normalized records. Cycle boundaries expire by actual edge
+and retain the needed left boundary/current context. Origin/control maps,
+source/current frames, pending actions, strings and simulator/debug/checker state
+add overhead; summing only packed payloads cannot predict total RSS. The final
+ALL-ACK queries establish zero outstanding transport at settlement, rather than
+assuming all80000 records were buffered. No RAM bound follows from these estimates.

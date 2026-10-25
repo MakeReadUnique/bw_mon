@@ -1,0 +1,28 @@
+[
+  {
+    "at_utc": "2026-10-25T06:05:03.672975Z",
+    "authorization": "acceptance_lead: at most TWO common jobs; max jobs separately coordinated",
+    "active": [
+      "common-ns",
+      "common-cycle"
+    ],
+    "context": "separate output/build roots avoid shared runtime auxiliary files; no standalone wall-time claim",
+    "memory": "              total        used        free      shared  buff/cache   available\nMem:          31857       13529        6566          13       11761       17836\nSwap:          4031          10        4021\n",
+    "load": " 02:05:03 up 1 day, 23:29,  2 users,  load average: 1.17, 0.86, 0.45\n",
+    "cpu_count": "8\n"
+  },
+  {
+    "at_utc": "2026-10-25T06:16:40.042726Z",
+    "authorization": "acceptance_lead refinement: at most FOUR common jobs after stable measured footprints; no max before29 completion/frontier",
+    "active": [
+      "common-ns",
+      "common-cycle",
+      "common-ns-unknown",
+      "common-ns-reset"
+    ],
+    "context": "four isolated build/output roots; no standalone wall-time or monitor-free benchmark inference; no memory cap/target change",
+    "memory": "              total        used        free      shared  buff/cache   available\nMem:          31857       13797        6268          13       11791       17568\nSwap:          4031          10        4021\n",
+    "load": " 02:16:40 up 1 day, 23:40,  2 users,  load average: 2.52, 2.13, 1.41\n",
+    "cpu_count": "8\n"
+  }
+]

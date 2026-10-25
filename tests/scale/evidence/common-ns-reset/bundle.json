@@ -1,0 +1,130 @@
+{
+  "files": {
+    "actual.csv": {
+      "gzip_bytes": 8434,
+      "gzip_file": "actual.csv.gz",
+      "gzip_sha256": "bdce137df64283c8ccfe264731b9409c28c81aad0dc24505f47f674b604dc5ec",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/actual.csv",
+      "uncompressed_bytes": 238900,
+      "uncompressed_sha256": "1297419bd42a2a36a37d140b03bde7dee9c96ccdbf042b6843053a311867b288"
+    },
+    "checker.sv": {
+      "gzip_bytes": 1635,
+      "gzip_file": "checker.sv.gz",
+      "gzip_sha256": "f401e25be4ece94aa768e240554323fd266eea20e7f6210920139754a43b7308",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/checker.sv",
+      "uncompressed_bytes": 6924,
+      "uncompressed_sha256": "235ee2ee59357eedf062d8231ee55aee0445fb5983295a996e2674c2f8b093bb"
+    },
+    "compile.log": {
+      "gzip_bytes": 1549,
+      "gzip_file": "compile.log.gz",
+      "gzip_sha256": "050eb1a500ff1b8e2bebefb6092ba03ecc392d78610ac03e213bd4500700c36f",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/builds/a91e004cd05160748c469792c7bf8ca23f2a076dfcb495abd540dbe42d9a11fc/compile-attempt-1/compile.log",
+      "uncompressed_bytes": 7551,
+      "uncompressed_sha256": "14f01a96ae3adfa5d96e9d44703e7cebd6fb68472655db89bfbdebe54719516b"
+    },
+    "compile.time-v.txt": {
+      "gzip_bytes": 655,
+      "gzip_file": "compile.time-v.txt.gz",
+      "gzip_sha256": "ad8cf543e14c9e4d707d7b604ff13b91be2251acf1ff2992a436ec1ea1a72404",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/builds/a91e004cd05160748c469792c7bf8ca23f2a076dfcb495abd540dbe42d9a11fc/compile-attempt-1/time-v.txt",
+      "uncompressed_bytes": 2692,
+      "uncompressed_sha256": "fbcbd16add8b2a2a2384dbebb5ab1860bf2197681c3b1c037581aee9ba104219"
+    },
+    "diffs.json": {
+      "gzip_bytes": 23,
+      "gzip_file": "diffs.json.gz",
+      "gzip_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/diffs.json",
+      "uncompressed_bytes": 3,
+      "uncompressed_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "expect.cfg": {
+      "gzip_bytes": 5104,
+      "gzip_file": "expect.cfg.gz",
+      "gzip_sha256": "0531ebe46dc9c458130e5107e8b3092588ce03565ca237184e83eac57da05c34",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/expect.cfg",
+      "uncompressed_bytes": 441083,
+      "uncompressed_sha256": "1b2ea20d99846499fe7a10bdeb3266284a25e03e227a89b3533c9485e872337f"
+    },
+    "expected.csv": {
+      "gzip_bytes": 8507,
+      "gzip_file": "expected.csv.gz",
+      "gzip_sha256": "774230c5f5755e8218ee92aa5506c20ab627ee88668e7a8b46b59cc48658ccde",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/expected.csv",
+      "uncompressed_bytes": 240181,
+      "uncompressed_sha256": "a43fcded9de2faaef35c7368f841d1e7d10d434d125213bca5abc4f1c84b6a7b"
+    },
+    "input.json": {
+      "gzip_bytes": 10008,
+      "gzip_file": "input.json.gz",
+      "gzip_sha256": "136b1518772be480cee1e573a21a17945fb38317df4f41a44cf3eaad027e6f65",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/input.json",
+      "uncompressed_bytes": 91133,
+      "uncompressed_sha256": "3f126b306f6d93640d300cbb8ad495bc600dedd638079acb8a296dadc037bec2"
+    },
+    "input_pkg.sv": {
+      "gzip_bytes": 2726,
+      "gzip_file": "input_pkg.sv.gz",
+      "gzip_sha256": "00ca88e4445790dbd11a380bac86ac7395c556520dc7b1f1ce82c2bf00c2ab59",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/input_pkg.sv",
+      "uncompressed_bytes": 15875,
+      "uncompressed_sha256": "19ef6772b39cb5cb163514212436ca53e66188b78e3799c86b3a04cfaac862bb"
+    },
+    "manifest.json": {
+      "gzip_bytes": 14410,
+      "gzip_file": "manifest.json.gz",
+      "gzip_sha256": "3f5afe0862afc8787d5a1254d91f3ed3ed2c29560ef57ce8da9767eda9bc4b8f",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/manifest.json",
+      "uncompressed_bytes": 117964,
+      "uncompressed_sha256": "aab96d07fdd41e7d3d70a969205278d8e1a08036b6c22671beb5642859a313a0"
+    },
+    "simulation.log": {
+      "gzip_bytes": 228801,
+      "gzip_file": "simulation.log.gz",
+      "gzip_sha256": "fba4aee2caacad9312628574e45fb58c1e007d88715f601a9a28da74288b496d",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/simulation.log",
+      "uncompressed_bytes": 19848510,
+      "uncompressed_sha256": "f456a06f5c758c49e39272322d1a1a01550ec214857f43a7796fc21f9b24c06c"
+    },
+    "simulation.time-v.txt": {
+      "gzip_bytes": 569,
+      "gzip_file": "simulation.time-v.txt.gz",
+      "gzip_sha256": "875b06bd2d1e3e7310d87d11390b7a4a7ecbcc7872b04b23a0e3c3f1d290e674",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/simulation.time-v.txt",
+      "uncompressed_bytes": 1092,
+      "uncompressed_sha256": "09f30da5056383a9e014602d22b41e8edf02df1dc5d6b9c8a83ff46da977165d"
+    },
+    "supplementary-audit.json": {
+      "gzip_bytes": 255,
+      "gzip_file": "supplementary-audit.json.gz",
+      "gzip_sha256": "a849846feea47d2e7e49feb6892691eba9b410f4f6a60ba47c111f8bc4a28cc8",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/supplementary-audit.json",
+      "uncompressed_bytes": 344,
+      "uncompressed_sha256": "52d0f37311ae409a80079a10c379de6f3d6f26ec9c4727d0e915fb369f4a65cf"
+    },
+    "tb_bw_scale.sv": {
+      "gzip_bytes": 8530,
+      "gzip_file": "tb_bw_scale.sv.gz",
+      "gzip_sha256": "b15d8ee7f86fc416abbcea60a203ac9e9255e423f2bbb67a5e8ab640d2b6d817",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/tb_bw_scale.sv",
+      "uncompressed_bytes": 100609,
+      "uncompressed_sha256": "da165ae9055be842d50c9fc36daaafcae6ded5fdf96865f47e0b09dcf5166acf"
+    },
+    "verification.json": {
+      "gzip_bytes": 246,
+      "gzip_file": "verification.json.gz",
+      "gzip_sha256": "bc42b2aae1ad1d32000f609bfd1ca5011a23b1b623f1abba4ac7fdd405e8e0e3",
+      "original_path": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/verification.json",
+      "uncompressed_bytes": 488,
+      "uncompressed_sha256": "fe66f2156f5362b1b4ed63cbf0226ce7fbf27d065bb96552b3c7fbfe3b214e18"
+    }
+  },
+  "original_checked_pass": true,
+  "original_manifest": "/tmp/bw-mon-spec13/wt-29/.build/scale-reset/runs/common-ns-reset/20261025T061638-2878856/manifest.json",
+  "scenario": "common-ns-reset",
+  "source_head": "074c77103bc8c135106facad00dbc21995f2d92f",
+  "source_snapshot": "../source-074c771/source-index.json",
+  "source_tree": "6d66786643596ea9dc9e14055311da2295a22f7e"
+}
