@@ -4098,5 +4098,63 @@
   {
     "name": "transport_growth",
     "top": "tb_transport_growth"
+  },
+  {
+    "name": "settle_reset_module_nba",
+    "top": "tb_settle_reset_renba",
+    "plusargs": [
+      "+MODE=0"
+    ]
+  },
+  {
+    "name": "settle_reset_program_renba",
+    "top": "tb_settle_reset_renba",
+    "plusargs": [
+      "+MODE=1"
+    ]
+  },
+  {
+    "name": "settle_hint_active_clock",
+    "top": "tb_settle_hint_renba",
+    "plusargs": [
+      "+MODE=0"
+    ],
+    "expect_counts": {
+      "(?m)^BW_HINT_HIT scope=preflight\\.hint\\.late_clock kind=backpressure ": 1,
+      "(?m)^BW_HINT_END scope=preflight\\.hint\\.late_clock kind=backpressure ": 1
+    }
+  },
+  {
+    "name": "settle_hint_program_renba",
+    "top": "tb_settle_hint_renba",
+    "plusargs": [
+      "+MODE=1"
+    ],
+    "expect_counts": {
+      "(?m)^BW_HINT_HIT scope=preflight\\.hint\\.late_clock kind=backpressure ": 1,
+      "(?m)^BW_HINT_END scope=preflight\\.hint\\.late_clock kind=backpressure ": 1
+    }
+  },
+  {
+    "name": "settle_phase_module_nba",
+    "top": "tb_settle_phase_renba",
+    "plusargs": [
+      "+MODE=0"
+    ],
+    "expect_counts": {
+      "(?m)^BW_PHASE scope_kind=0 scope=settle\\.phase ": 0,
+      "(?m)^BW_EPISODE scope_kind=0 scope=settle\\.phase ": 1
+    }
+  },
+  {
+    "name": "settle_phase_program_renba",
+    "top": "tb_settle_phase_renba",
+    "plusargs": [
+      "+MODE=1"
+    ],
+    "expect_counts": {
+      "(?m)^BW_PHASE scope_kind=0 scope=settle\\.phase ": 0,
+      "(?m)^BW_EPISODE scope_kind=0 scope=settle\\.phase ": 1
+    }
   }
 ]
