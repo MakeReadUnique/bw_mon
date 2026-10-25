@@ -1,10 +1,12 @@
 # Integration, acceptance evidence and review
 
 The monitor and component contracts are implemented. The current durable component
-proof contains424/424 VCS cases on frozen runtime `8e818394`; the public12-point
-campaign was rerun against the same18 production files with42 unchanged original
+proof records424/424 VCS cases on historical runtime `8e818394`; the retained public12-point
+campaign consumed those18 production files with42 unchanged original
 input/configuration scenes and33 fresh real Verdi captures. These are
-automated results. **Human T6 review is pending** until an actual person reviews
+historical automated results. The later final-steady validity correction needs
+its own component, waveform and scale qualification; this guide does not extend
+the earlier proof to changed production source. **Human T6 review is pending** until an actual person reviews
 and records the completed bundle. Agent inspection never supplies that attestation.
 The [scale guide](bw-mon-scale.md) retains each campaign's exact source/profile
 manifest; these small wave scenes do not substitute for scale revalidation.
@@ -12,14 +14,14 @@ manifest; these small wave scenes do not substitute for scale revalidation.
 Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), not the
 architecture HTML's illustrative curves. It links original FSDBs, public signal
 views, fresh Verdi images, input/configuration, expected/actual/difference tables
-and provenance. The [current424 proof](../artifacts/acceptance/current-component-proof/verification.json)
+and provenance. The [retained424 proof](../artifacts/acceptance/current-component-proof/verification.json)
 and its [portable archives/verifier](../artifacts/acceptance/current-component-proof/README.md)
 cover167 tops and3 minimum-option runs. The unchanged [historical408 proof](../artifacts/acceptance/component-proof/verification.json)
 and [archive](../artifacts/acceptance/component-proof/final-408-proof.tar.gz) retain
 their original numeric/storage27 source scope. The [runtime freeze](../artifacts/acceptance/runtime-source.json)
 records18 RTL/C/local-header hashes and49 transitive native-header hashes; each
 scene's commands also preserve its actual consumed snapshot and native `.d`.
-The [current source/test hashes](../artifacts/acceptance/current-source-manifest.json),
+The [historical campaign source/test hashes](../artifacts/acceptance/current-source-manifest.json),
 [original-input/config equality](../artifacts/acceptance/input-equivalence.json),
 [fresh-capture provenance](../artifacts/acceptance/capture-provenance.json) and
 [actual relocated-view proof](../artifacts/acceptance/portable-view-proof.json)
@@ -119,9 +121,11 @@ precise error code and absence of continuation, not shell status alone.
 ## Commands, artifacts and review
 
 ```sh
-make test                         # component/current424 manifest
-make acceptance                   #42 actual public scenes, FSDB and independent checks
+make test                         # current component manifest (427 cases)
+make acceptance                   #42 fresh public scenes, FSDB and independent checks
 python3 tests/acceptance/run.py --scene size_unknown --basis cycle
+python3 tests/acceptance/publish.py --pack
+python3 tests/acceptance/audit.py  # recorded-source/trace audit; no simulation
 python3 tests/acceptance/views.py --capture --display "$DISPLAY"
 cd artifacts/acceptance/steady_ns
 ./open.sh overview                 # portable FSDB + fixed public signal view
@@ -141,6 +145,39 @@ scope depth1 includes actual DUT pins/public monitors; no private Core layout is
 required by views. X11 is required only for capture/viewing; headless capture can
 use Xvfb with a window manager. Exact local paths are provenance, not required
 checkout locations. Scripts resolve their source/output relative to this checkout.
+
+The current runner writes version2 `runtime_evidence`, the VCS-generated
+`native-dependencies.d`, a full transitive native `.d`, and `source.tar.gz` for
+its actual project snapshot. The cache fingerprint covers project source,
+transitive native header hashes, exact compile options, tool identities and the
+compile environment. `--cflags` adds native C options and is part of that
+fingerprint. A changed header or option selects a new immutable build directory;
+missing executables or actual native dependency receipts force compilation.
+SDK/system headers remain filenames, hashes and compiler identities; their
+installed contents are not copied into the project archive.
+
+`publish.py --pack` packages actual raw inputs/CSV/logs. `audit.py` checks the
+recorded scene source archive and independent numeric results after `.build` is
+removed; it does not require today's source or SDK to equal a historical build.
+`audit.py --current-source` additionally requires every scene's production hashes
+to match this checkout, and rejects mixed or stale production snapshots. Each
+scene retains its actual checkout revision and production hashes. The global
+`production_sources` list identifies every consumed runtime; a mixed bundle does
+not claim one current production base or borrow the old component qualification.
+
+The [historical project archive](../artifacts/acceptance/historical-source-8e81839.tar.gz)
+preserves the23 actual8e81839 project files consumed by the original42 scenes,
+including the original runner/reference scripts. Its bytes were checked against
+all42 existing manifests. The original frozen assets remain unchanged. Editing
+the current runner therefore does not relabel their provenance or make their
+recorded-source audits depend on today's harness. The historical424-case
+verifier continues to check its exact original source and counts.
+
+A rerun changes its scene's data and provenance. Prepare new public views and
+capture fresh images for any changed scenes that previously had images before
+publishing the bundle. The publisher rejects stale images. Regenerated assets
+return human review to PENDING; neither a rerun nor publication supplies actual
+human attestation.
 
 Full original input, CSV and compile/runtime traces are retrievable in each scene's
 trace archive; FSDB, views, PNGs, references, tables and manifests remain directly
@@ -169,14 +206,17 @@ implies separate human approval of every scene. Original comparison/capture
 manifests and expected/actual tables retain their historical PENDING text and
 bytes. Do not use `--pack` for a review-status refresh.
 
-`python3 tests/acceptance/test_publish.py` tests this public CLI with real frozen
+`python3 tests/acceptance/test_reproduce.py` runs real VCS scene generation,
+publication/packing and portable audit in a disposable committed checkout. It
+also checks native transitive-header and compiler-option cache invalidation.
+`python3 tests/acceptance/test_publish.py` tests the publishing CLI with real frozen
 assets copied into disposable directories, using explicitly SYNTHETIC records
 only. It checks matching-fingerprint retention, changed-asset invalidation and
 byte preservation without touching the real ledger, simulation or capture.
 
 ## Contract to evidence
 
-| Clauses | Component anchors (current424 proof; historical408 retained) | Public scene evidence |
+| Clauses | Component anchors (historical424/408 proofs retained) | Public scene evidence |
 | --- | --- | --- |
 | D1–D3/T1 | ns_bind, startup_*, group_matching, hierarchy_* | All42 use12 bound wrappers +4 groups/setup; exact IDs/free points/multi-parent mixed DAG. |
 | D4–D5/T3 | protocol_recording, sample_view, credit_* | protocols ns/cycle: validX&ready0 known idle; credit valid0/flitv1/R0 definite send; fixed/dynamic amounts. |
@@ -184,7 +224,7 @@ byte preservation without touching the real ledger, simulation or capture.
 | D8–D9/T5-E2 | subns_vectors, cycle_window, reset_same_time_* | e2 both bases, isolated endpoints, start_stop, unknown/reset, clock_stop/frequency. E2 relative0 maps legal physical1ns after Ready. |
 | D10/T5-E3 | episode_boundary/cycle/gaps/controls/final | e3_boundary: [80,102),confirm132, old-before-new132ns runtime markers in point+affected groups; zero/no_episode/truncated. |
 | D11/T5-E3 | phase_delayed/hysteresis/actual_clock, metrics_delayed | e3_delayed: candidate120/confirm150, clipped[120,136), raw0 versus6.4 windows; varying/repeated stages. Fraction OLS uses actual publication times, K and independent qualification. |
-| D12 | metrics_repeated/zero/quality/independent/stopped_history | Independent exact raw interval counts and population statistics for every delivered phase/episode; last steady PASS while whole CV FAIL, no earlier plateau substitution. |
+| D12 | metrics_repeated/zero/quality/independent/first_boundary/stopped_history | Independent exact raw interval counts and population statistics for every delivered phase/episode; last steady PASS while whole CV FAIL, no earlier plateau substitution. |
 | D13/T5-E4–E5 | report_* all48 keys/strict parsing/replays/barrier | e4 actual128/151.99FAIL and152PASS at effective152; e5 exact point/group IDs and only configured family sets; all conclusions/counters independently checked. |
 | D14 | hint_* / credit_* | protocols + hints: NS hit during stopped cycle clock, unknown gap split, independent byte/metric counts. |
 | D15/D17/T6/T8 | public point/group result aliases | Original FSDBs, portable public views, fresh real images, full expected/actual tables and explicit human ledger. Human remains pending. |
@@ -192,5 +232,5 @@ byte preservation without touching the real ledger, simulation or capture.
 
 The scene index states source revisions, configurations, independent counts/results
 and review status. Earlier per-ticket proof counts in API history stay historical;
-this handoff links current durable proof and new scene evidence without conflating
+this handoff links retained proof and source-specific scene evidence without conflating
 automation, human review or scale targets.
