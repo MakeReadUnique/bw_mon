@@ -88,3 +88,22 @@ The public32/8/240ns clock/control tracers use an explicitly shortened input tab
 and group reset70.1–71.1ns. They passed18000 raw checks each,3199NS/5959cycle windows,
 41episode/41phase records and492 correct WARNING conclusions, zero differences.
 They establish integration sensitivity only, not nominal40us acceptance.
+
+## Recorded execution status
+
+The first actual common NS40000/S1 baseline completed at40us exactly from frozen
+source `ee69484e46d34ff83e89425dd822eb7017e2d0eb`:1024 points/256 groups,
+102400000 raw receipts and51200000 publications checked,1280/1280 reference/actual
+rows,zero differences. The final [0,40000)ns window is full/known/valid with5120000B
+and80000events per point. Only that final publication is full, so N3 phase evidence
+is unavailable:1280 episode finals,0 phase finals and15360 correct WARNINGs.
+The actual tail remains unknown beyond the observation; no e2e endpoint is invented.
+
+GNUtime-v simulation peak is221156KiB (215.97MiB); compiler peak350168KiB.
+Elapsed1321.70s includes admitted max30 concurrency; it is not a speed requirement
+or a comparison with other flags/workloads. Waveforms/debug visibility were off;
+the original manifest records every option and source hash. Portable originals
+and consumed source are in `tests/scale/history_evidence/`; its hash/row verifier
+passes. These are actual full long-window results, independently of prior small
+resource pilots. Other cells remain running/queued/unadmitted until individually
+completed and checked; this first row does not complete the matrix.
