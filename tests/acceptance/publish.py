@@ -2,14 +2,18 @@
 """Validate and package durable acceptance assets, never manufacturing review."""
 import argparse,csv,hashlib,io,json,platform,re,shutil,subprocess,tarfile
 from pathlib import Path
+from evidence import runtime_evidence,scene_runtime_evidence
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/acceptance'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pack',action='store_true');args=p.parse_args();scenes=[];totals={};analysis={};pictures=[]
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pack',action='store_true');args=p.parse_args();scenes=[];totals={};analysis={};pictures=[];revisions=set()
+ runtime=runtime_evidence(ROOT,OUT)
  for directory in sorted(OUT.iterdir()):
   if not (directory/'commands.json').exists():continue
   manifest=json.loads((directory/'commands.json').read_text());comparison=json.loads((directory/'comparison.json').read_text());assert comparison['status']=='PASS' and comparison['human_review']=='PENDING'
+  scene_runtime_evidence(ROOT,OUT,directory,manifest,runtime)
+  revisions.add(manifest['base_revision'])
   for name,digest in manifest['dependency_sha256'].items():
    path=ROOT/name
    if not path.exists() and name.endswith('/stimulus.txt'):
@@ -69,20 +73,23 @@ def main():
   if not (directory/'commands.json').exists():continue
   review_objects +=[f for f in directory.iterdir() if f.is_file() and (f.suffix in ['.fsdb','.png','.sav','.cfg'] or f.name in ['expected-actual.md','reference.json','commands.json'] or f.name.startswith('signals-'))]
  fingerprint=hashlib.sha256(json.dumps([(str(f.relative_to(OUT)),sha(f)) for f in sorted(review_objects)],sort_keys=True).encode()).hexdigest()
- review={'human':{'status':'PENDING','reviewer':None,'date':None,'objects_intervals_conclusion':None},'agent':{'status':'SEE IMAGE-SPECIFIC ENTRIES','note':'Agent inspection is not human attestation'},'actual_images':pictures,'instructions':'Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.'}
+ review={'human':{'status':'PENDING','reviewer':None,'date':None,'objects_intervals_conclusion':None},'agent':{'status':'PENDING','note':'Agent inspection is not human attestation'},'actual_images':pictures,'instructions':'Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.'}
  if 'previous_human_record' in previous_review:review['previous_human_record']=previous_review['previous_human_record']
  if previous_review.get('human',{}).get('status','PENDING')!='PENDING':
   if previous_review.get('asset_fingerprint')==fingerprint:review['human']=previous_review['human']
   else:review['previous_human_record']=previous_review['human'];review['human']['reason']='Assets changed; prior attestation does not cover new assets'
- if 'agent' in previous_review:review['agent']=previous_review['agent']
+ if 'previous_agent_record' in previous_review:review['previous_agent_record']=previous_review['previous_agent_record']
+ if 'agent' in previous_review:
+  if previous_review.get('asset_fingerprint')==fingerprint:review['agent']=previous_review['agent']
+  elif previous_review['agent'].get('status')!='PENDING':review['previous_agent_record']=previous_review['agent']
  review['asset_fingerprint']=fingerprint
  (OUT/'review.json').write_text(json.dumps(review,indent=2)+'\n')
  human_status=review['human']['status']
- (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':'8de785c86f513804168eb2b868ab1f967a3b0e8b','harness_revision':'661ef33','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':human_status,'human_review_scope':'Only named objects and intervals in review.json; no per-scene approval inferred','no_production_changes':True,'python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
+ (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':runtime['head'],'harness_revisions':sorted(revisions),'runtime_source_manifest':'runtime-source.json','runtime_source_unchanged':True,'current_component_proof':'current-component-proof/verification.json','historical_component_proof':'component-proof/verification.json','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':human_status,'human_review_scope':'Only named objects and intervals in review.json; no per-scene approval inferred','python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
  index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **human T6 ledger status: '+human_status+'**. Agent image inspection is separate.\n\n'
  index+='Human status covers only the ledger\'s named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.\n\n'
  index+='Independent totals: '+str(totals)+'; analysis: '+str(analysis)+'. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).\n\n'
- index+='The durable [408-case component proof](component-proof/verification.json) and [complete log/config archive](component-proof/final-408-proof.tar.gz) are separate from this new scene campaign. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|\n|---|---|---|---|---|\n'
+ index+='This campaign consumes the [frozen runtime and native dependency hashes](runtime-source.json), with [current 424-case /167-top /3 minimum-option component proof](current-component-proof/verification.json). Its [portable archives and verifier](current-component-proof/README.md) are retained here. The unchanged [historical 408-case component proof](component-proof/verification.json) and [historical log/config archive](component-proof/final-408-proof.tar.gz) describe their original source, not the current runtime. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|\n|---|---|---|---|---|\n'
  for s in scenes:
   name=s['scene'];c=s['configuration'];imgs=' '.join('['+i+']('+name+'/'+i+')' for i in s['images']) or 'Portable public views; FSDB directly available'
   index+='|%s|%s %s/%s/%s|[FSDB](%s/waves.fsdb) · [expected/actual](%s/expected-actual.md) · [reference](%s/reference.json) · [cfg](%s/expect.cfg) · [open](%s/open.sh)|%s|%s %s|\n'%(name,c['basis'],c['W'],c['S'],c['Q'],name,name,name,name,name,imgs,s['performance']['summary_status'],s['performance']['expected'])

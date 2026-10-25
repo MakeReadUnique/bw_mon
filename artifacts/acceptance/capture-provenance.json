@@ -1,0 +1,274 @@
+{
+  "runtime_head": "8e81839423ab7db335365a5e577e25b2ebe5dcb0",
+  "fresh_actual_captures": 33,
+  "capture_retries": 0,
+  "prior_scene_directories_removed_before_regeneration": true,
+  "entries": [
+    {
+      "image": "child_reset_ns/quality.png",
+      "sha256": "39854b5d60142e914efa31d0cb3dc90d9c150eb89754416bc9f990fec61c8493",
+      "source_fsdb_sha256": "4346b5561e5d2966393d33191976f981fe0ca1eaac209aa6bba63858bca241d2",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:02.026522Z",
+      "fresh_tool_manifest": "child_reset_ns/capture-quality-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "clock_stop_cycle/clock.png",
+      "sha256": "dd04f1c6ec598a582d74097299e74b36aaceb6ba4aa624126a1193ce9a7d6754",
+      "source_fsdb_sha256": "8c7e79b4acfe024daa42b6089c26edbf6f4b322d12f932f1b0d882dcec436e84",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:11.050396Z",
+      "fresh_tool_manifest": "clock_stop_cycle/capture-clock-manifest.json",
+      "rendering_equals_historical_png": false
+    },
+    {
+      "image": "clock_stop_ns/clock.png",
+      "sha256": "aea13c99bbb62e071372572c71698e041ad5dc74678079a4a9b087bdf746eb3c",
+      "source_fsdb_sha256": "35cbeaf2a105176d1db0595b8c9313327da66a18e96b573b14fc09a6f26b0fab",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:19.067283Z",
+      "fresh_tool_manifest": "clock_stop_ns/capture-clock-manifest.json",
+      "rendering_equals_historical_png": false
+    },
+    {
+      "image": "e2_ns/overview.png",
+      "sha256": "6c4d113f7f134dad1b4318b1418458ca11c640c24dfc318775520e99db9ce4a1",
+      "source_fsdb_sha256": "72cfdb3e0b1b324008d4e37291c65ca65e8a3ec51cc7c8479720b732ce7a2217",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:27.986158Z",
+      "fresh_tool_manifest": "e2_ns/capture-overview-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e3_boundary_ns/episode.png",
+      "sha256": "35866d05483a8680168e25279f71a08f0272d4e786ddc89b8222020de23b1e75",
+      "source_fsdb_sha256": "93a7657d3f77738b802f22b86e96d709f88f59bf232036240e4e7a21d4e19095",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:35.877048Z",
+      "fresh_tool_manifest": "e3_boundary_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e3_delayed_ns/episode.png",
+      "sha256": "65c2f255a46f3ae12e4362e16d0d2c1e8476efc28ee4e64ff08e24d20e7b4444",
+      "source_fsdb_sha256": "5e4b788c82c2f0cc3ec6c50e2c1ce67900418072cba70dd923cb7d9cd09bacfc",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:52.669812Z",
+      "fresh_tool_manifest": "e3_delayed_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e3_delayed_ns/phase.png",
+      "sha256": "a6f263dcba2725272f4056288b31b9288b48bcd36d8cff2748e37bb64155721c",
+      "source_fsdb_sha256": "5e4b788c82c2f0cc3ec6c50e2c1ce67900418072cba70dd923cb7d9cd09bacfc",
+      "actual_capture_mtime_utc": "2026-10-25T13:54:43.825936Z",
+      "fresh_tool_manifest": "e3_delayed_ns/capture-phase-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e4_below_ns/episode.png",
+      "sha256": "a5a38ce358be07ae04ee8372bcdea17736e6c25daa5f201705d3a8910ca7e7ad",
+      "source_fsdb_sha256": "452326a059bc5df649dbe0cc0f9e3204c43e18338d6b85ff697f52aca9311683",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:00.792698Z",
+      "fresh_tool_manifest": "e4_below_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e4_boundary_ns/episode.png",
+      "sha256": "6ee118da6d785e2a122990f180ef4b6f3ef298d544f4dc748eec419da3efecc9",
+      "source_fsdb_sha256": "17238d872b4b501f44a9cf8a948d9307592c0586c24addc37bf2d2f24799db64",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:08.661588Z",
+      "fresh_tool_manifest": "e4_boundary_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e4_low_ns/episode.png",
+      "sha256": "6504fa8594e657df446437fddc8dfe85c5e5d8bf41fe18cb253a01c082d18582",
+      "source_fsdb_sha256": "e937e7971d59f912106c2d61f67ee5972664308bbd431bcbec18efb48f24c123",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:17.529463Z",
+      "fresh_tool_manifest": "e4_low_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "e5_ns/episode.png",
+      "sha256": "fa293cbc0d4cc87d689b70061a9a45acf0b879c0d5146f4758ebdd735d48e803",
+      "source_fsdb_sha256": "a84c765fb1dfd1fa9e09619c22246ed74a76fb21de0cfe4c4692b5d9018d297f",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:25.383353Z",
+      "fresh_tool_manifest": "e5_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "frequency_cycle/clock.png",
+      "sha256": "82ba08b6792196f312a0d50256e112b762b52df5f511d767d2cf82ed2cf39669",
+      "source_fsdb_sha256": "80d57b13b8facbb056dc59219c4a72f752b44f5eacd5449f78f66db73ee9b2c7",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:33.382241Z",
+      "fresh_tool_manifest": "frequency_cycle/capture-clock-manifest.json",
+      "rendering_equals_historical_png": false
+    },
+    {
+      "image": "frequency_ns/clock.png",
+      "sha256": "3745c1b124782d27c993ab83b47ea8dd90ed45e31021f79dff0a7eb77e3822b0",
+      "source_fsdb_sha256": "c97050f8fccdcecc57cbb9429f23a12cab853226f29b04a8e0d9883fc92d4f71",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:41.414128Z",
+      "fresh_tool_manifest": "frequency_ns/capture-clock-manifest.json",
+      "rendering_equals_historical_png": false
+    },
+    {
+      "image": "hints_cycle/hints.png",
+      "sha256": "3cc5bc9ce6f138bac9f166f1975ae1294905a74b1364352e1089fe441216425c",
+      "source_fsdb_sha256": "9b34f8169d3bb904c794525ce19b432c6a7f83d4c277565d0bf7c51ce79e731a",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:49.179019Z",
+      "fresh_tool_manifest": "hints_cycle/capture-hints-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "isolated_ns/overview.png",
+      "sha256": "aaf6c000fb6ec622092bb5230e76a88720f648ffcf9fab78836661ea732d6886",
+      "source_fsdb_sha256": "7fa4ecc71b13566f6f98150942a1395d8694cb8eb1e971084c7d25b89a17d2d6",
+      "actual_capture_mtime_utc": "2026-10-25T13:55:58.217893Z",
+      "fresh_tool_manifest": "isolated_ns/capture-overview-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "no_episode_ns/episode.png",
+      "sha256": "8fb56f7e71e721939fad4b4271beec8837d235220d4b49b42aadc004b3685037",
+      "source_fsdb_sha256": "a324cb49d40c5a96b937f54668d960dc244959ca4664d630088477e56aa7d4ae",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:06.122782Z",
+      "fresh_tool_manifest": "no_episode_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "point_reset_ns/quality.png",
+      "sha256": "6aae68fe4012cb975a75a2a257318253e9f1529d9694e10ebd8cf4d5e22ddd0f",
+      "source_fsdb_sha256": "eeba698c5cbc9d64c370d028401047c28c8b6913f47a9149e631051dd4e12991",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:14.030671Z",
+      "fresh_tool_manifest": "point_reset_ns/capture-quality-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "protocols_ns/protocols.png",
+      "sha256": "4bcd3907514de0785a5257a97802f49e42523277f65a16c6416ba874dcbdf1c1",
+      "source_fsdb_sha256": "7bc4f32868b71dde124207d292ad7106dd3b3e99dd0b6c22252c719943596c5f",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:22.197556Z",
+      "fresh_tool_manifest": "protocols_ns/capture-protocols-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "reset_unknown_ns/quality.png",
+      "sha256": "3e1987775a2f54669b6ebd30e6e872a1e76f57337b345e7d2dccdbbb218c0298",
+      "source_fsdb_sha256": "7a6eb68ba906b01cf4096ddd21454bf49fe212eade1d0888d40a2c187052c9a9",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:30.109445Z",
+      "fresh_tool_manifest": "reset_unknown_ns/capture-quality-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "size_unknown_ns/episode.png",
+      "sha256": "39d64c84554218394cad4232f075cdc44fadb948d60b07ec03c922088279a5b7",
+      "source_fsdb_sha256": "b542f49dd89932b962b775b2373cacc31f990e2f39c0f68491ac2c58732bbf34",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:46.106221Z",
+      "fresh_tool_manifest": "size_unknown_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "size_unknown_ns/quality.png",
+      "sha256": "72e18159b36167530beb22f3820e89dec6dbed06c88383ae9a273052b3a53bd2",
+      "source_fsdb_sha256": "b542f49dd89932b962b775b2373cacc31f990e2f39c0f68491ac2c58732bbf34",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:38.266331Z",
+      "fresh_tool_manifest": "size_unknown_ns/capture-quality-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "start_stop_cycle/overview.png",
+      "sha256": "f6794809c3a49136ecaf68d00a0870eb1c899d80299383b9bbd7d6f3088f7e91",
+      "source_fsdb_sha256": "9983f65bd66d3ff3234e853fb2f616ef8634b4822dd2dde239b933c679db7ee9",
+      "actual_capture_mtime_utc": "2026-10-25T13:56:55.121094Z",
+      "fresh_tool_manifest": "start_stop_cycle/capture-overview-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "start_stop_ns/overview.png",
+      "sha256": "e2fe31e0cad7eaab2bc21b842fab5b21f028b3cb9a5b1115ae0e82dbddbbcedf",
+      "source_fsdb_sha256": "d4cd8839829dfec36d00888a8a8d2aebdd4c64aa293018c7130ff580c9683a0d",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:03.133982Z",
+      "fresh_tool_manifest": "start_stop_ns/capture-overview-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "steady_cycle/clock.png",
+      "sha256": "4d1774deeba1bfeec85836537a8a634c6601549b7d30479161ce9947936100e3",
+      "source_fsdb_sha256": "a6689b0e24e0fea8149c236b3bba7ad868b96ccc405ca84a8bfbd71631614dab",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:19.054759Z",
+      "fresh_tool_manifest": "steady_cycle/capture-clock-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "steady_cycle/overview.png",
+      "sha256": "606901ec9f5e2e19d7e4e8ee19805526115e6cc8388c3ec7e234db478d01769b",
+      "source_fsdb_sha256": "a6689b0e24e0fea8149c236b3bba7ad868b96ccc405ca84a8bfbd71631614dab",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:11.070871Z",
+      "fresh_tool_manifest": "steady_cycle/capture-overview-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "steady_ns/overview.png",
+      "sha256": "ff1edbe0d2cd4c2e5e328cd091aef0593eb15c5c115752285cfd4a007dd4f39d",
+      "source_fsdb_sha256": "cd8651234f9f1883d03e0625f427224288982fe7538ee1a994ec103a740474cb",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:28.207630Z",
+      "fresh_tool_manifest": "steady_ns/capture-overview-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "truncated_cycle/episode.png",
+      "sha256": "2a752249b1f9a8572d88f37d0e1d6ba7f9ea26483f26441d0987d771ffcea5e2",
+      "source_fsdb_sha256": "f7406332b26bfa44904313da41e0a9d41bdbdf439306018225b3bd1da4605607",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:37.317503Z",
+      "fresh_tool_manifest": "truncated_cycle/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "upper_reset_ns/quality.png",
+      "sha256": "4a8decd5e0a4f24d45132e6d04f0dd6c949e22997260d1c8c78b488332382bba",
+      "source_fsdb_sha256": "0f481741eb974c0a79b7893dcb923eef15af44b0c6c28afdb989106da74b7434",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:46.277377Z",
+      "fresh_tool_manifest": "upper_reset_ns/capture-quality-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "valid_unknown_ns/quality.png",
+      "sha256": "d03d7c503896085be71adc68e07cc15c05410506bfd2d8bffe261745e2e9d10c",
+      "source_fsdb_sha256": "0243074111b29d7583193f800e0aa1d8ab51172739ab0276c31cc038f581aa7e",
+      "actual_capture_mtime_utc": "2026-10-25T13:57:54.202266Z",
+      "fresh_tool_manifest": "valid_unknown_ns/capture-quality-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "varying_cycle/phase.png",
+      "sha256": "f940f69f90e2d8c751b673df0c4a6f1a6126953cbec34743d22be6964c7836b2",
+      "source_fsdb_sha256": "2f1780f80dfaef848ea624d966a9c79eb5f871a9decba51bbd1da5ac4aaca972",
+      "actual_capture_mtime_utc": "2026-10-25T13:58:02.211154Z",
+      "fresh_tool_manifest": "varying_cycle/capture-phase-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "varying_ns/episode.png",
+      "sha256": "099e8e71e11498497ba86ca45a4d53821c25aaee78e2dbb5ac84573f2e2aee6c",
+      "source_fsdb_sha256": "8a1d0e1c91014174a1b4a39c72b4cf8ca547e3e4711473988c42bb5fa4ffdfbe",
+      "actual_capture_mtime_utc": "2026-10-25T13:58:18.070931Z",
+      "fresh_tool_manifest": "varying_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "varying_ns/phase.png",
+      "sha256": "28f8d8320ae3365e189fa4d6c53803dd554962223c28564ccd34b80afbe0bb18",
+      "source_fsdb_sha256": "8a1d0e1c91014174a1b4a39c72b4cf8ca547e3e4711473988c42bb5fa4ffdfbe",
+      "actual_capture_mtime_utc": "2026-10-25T13:58:10.236041Z",
+      "fresh_tool_manifest": "varying_ns/capture-phase-manifest.json",
+      "rendering_equals_historical_png": true
+    },
+    {
+      "image": "zero_ns/episode.png",
+      "sha256": "7e529cc1ea7d5f0969812653d14aaa4a97aa5defa648fb3e98f50624aacf5eff",
+      "source_fsdb_sha256": "26196587baf09d77de7caf47e062a58d69e97b23616f182ffc07d4d9ac9760ca",
+      "actual_capture_mtime_utc": "2026-10-25T13:58:25.986820Z",
+      "fresh_tool_manifest": "zero_ns/capture-episode-manifest.json",
+      "rendering_equals_historical_png": true
+    }
+  ],
+  "note": "Each original PNG was deleted with its old scene directory, then regenerated by real Verdi. Identical public values/layouts can yield byte-identical renderings; no old image was copied. Human review remains PENDING.",
+  "visible_view_update": "Four stopped-clock/frequency views now show the existing die0/die1/mixed bytes_per_cycle rows, as specified by the already checked-in capture script. This accounts for the four non-identical PNGs; all original scenario targets/intervals remain unchanged."
+}

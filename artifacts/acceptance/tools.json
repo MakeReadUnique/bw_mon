@@ -1,7 +1,6 @@
 {
-  "source_harness_revision": "661ef33",
-  "current_documentation_revision": "db7fa7128ad20a3b4d704499890b00f369166b63",
-  "production_base": "8de785c86f513804168eb2b868ab1f967a3b0e8b",
+  "source_harness_revision": "8e81839423ab7db335365a5e577e25b2ebe5dcb0",
+  "production_base": "8e81839423ab7db335365a5e577e25b2ebe5dcb0",
   "VCS": "W-2024.09-SP1_Full64",
   "Verdi": "W-2024.09-SP1",
   "python": "3.6.8",
@@ -16,9 +15,11 @@
   "simulation_flags": [
     "-full64",
     "-sverilog",
+    "+vpi",
     "-debug_access+all",
     "-kdb",
-    "+incdir+rtl",
+    "-CFLAGS -I<VCS>/include",
+    "+incdir+<immutable snapshot>/rtl",
     "-assert svaext"
   ],
   "run_flags": [
@@ -30,5 +31,22 @@
   "wall_time_acceptance_threshold": null,
   "manual_history_capacity": null,
   "human_review": "PENDING",
-  "capture": "actualnWave privateX11;fresh1500x850;Scientific10 real display;no image/data changes"
+  "capture": "actualnWave privateX11;fresh1500x850;Scientific10 real display;no image/data changes",
+  "runtime_source_manifest": "runtime-source.json",
+  "native_build": "rtl/bw_slot_settlement.c compiled by VCS; actual .d/snapshot and49 transitive header hashes recorded",
+  "evidence_tools_sha256": {
+    "tests/acceptance/capture.py": "727185968eff0248e8b0e9944e2f7ed1dd4fd39e076a2c92391a4c24e7d86b12",
+    "tests/acceptance/model.py": "4789d87198622afe8d6899fec2f4ec30a7928b7c4202528b50f85a866cbdb0cc",
+    "tests/acceptance/analysis.py": "bf4c541f41cd72f12822c72794647399d8914ac39187930f0b694424ea929532",
+    "tests/acceptance/summarize.py": "dbd1499a0dba51e9f16fea12020bbb8e5466a6840e1e853ff598ef49557eb9c1",
+    "tests/acceptance/views.py": "123d5c5728eb4e5d4dcb7420978106d2910253a8e57a3ec2bdd3a3f2dbca53ba",
+    "tests/acceptance/catalog.py": "facdf01108f9422c928257504c2930626ec26f79840fbad1757d2f28c22ef35b",
+    "tests/acceptance/publish.py": "7e2aac5540a2604f1a7d44d4d3df6968629ebe5280cf5a309e7c14c7d84a21b5",
+    "tests/acceptance/audit.py": "947c4c3e74e92ebf4af7f7df88170c0a1f68bfaa5bcee21d04e951349276a66d",
+    "tests/acceptance/test_publish.py": "97fc007353aa8aa186cf085185b83ece5744e8f20f620d0804bad94240c72143",
+    "tests/acceptance/run.py": "a8d1f3d8022ec101aad3935000ed530d2962ae1632f936b453c0be203be61188",
+    "tests/acceptance/evidence.py": "7833a838a0f2836c16874f7a0b5e6ac91007280d25b8c2af14420bc145fe4bd0"
+  },
+  "capture_display": ":87",
+  "fresh_capture_count": 33
 }

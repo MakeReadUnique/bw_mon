@@ -7,18 +7,15 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/frequency_ns/capture-clock.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-3b8a2ivt",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-imw95dk6",
   "display": ":87",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "d0cfedec8eb1283cb9fd7b34cd991f680d207675357dd18d44a191fe814ddff7",
-  "png_sha256": "1c1cb4d9b7fa97bfa71d7175238307f45ad1949bd8d60ec9bce976d8ba34fbf4",
+  "fsdb_sha256": "c97050f8fccdcecc57cbb9429f23a12cab853226f29b04a8e0d9883fc92d4f71",
+  "png_sha256": "3745c1b124782d27c993ab83b47ea8dd90ed45e31021f79dff0a7eb77e3822b0",
   "agent_visual_review": "PENDING",
-  "human_review": "PENDING",
-  "actual_tcl_sha256": "94946e730fd0d99cdd880e97ba0a4b314253c1a4bd7f9742e1f2d69b4f1d008a",
-  "portable_sav_sha256": "8bfa5f48f78943cd08f6603fa2b22ba0b85b148b06725c13d15858052ceae8d2",
-  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+  "human_review": "PENDING"
 }
