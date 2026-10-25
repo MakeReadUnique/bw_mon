@@ -2516,5 +2516,13 @@
     "plusargs": [
       "+MODE=valid_reset"
     ]
+  },
+  {
+    "name": "storage_failure_history",
+    "top": "tb_storage_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "expect_error": "BW_CORE_ERROR code=STORAGE_FAILURE scope=fault.point.*resource=history.events.*edge=1 record_seq=1"
   }
 ]

@@ -24,7 +24,7 @@
     run.byte_inc=incoming.byte_inc;run.event_inc=incoming.event_inc;
     run.bytes_complete=incoming.bytes_complete;run.events_complete=incoming.events_complete;
     run.has_reset=(incoming.reset_points!=0);
-    check_queue_growth(history.size(),{scope_id," event history"});
+    check_storage_growth(history.size(),scope_id,"history.events",incoming.timestamp_ticks,incoming.edge_index,incoming.record_seq);
     if(core_failure_seen)return;
     history.push_back(run);
   endtask
@@ -83,7 +83,7 @@
       end
     end
     run='0;run.first_ticks=at_ticks;run.last_ticks=at_ticks;run.first_edge=at_edge;run.count=1;
-    check_queue_growth(clock_runs.size(),{scope_id," clock history"});
+    check_storage_growth(clock_runs.size(),scope_id,"history.clock",at_ticks,at_edge,last_record_seq);
     if(core_failure_seen)return;
     clock_runs.push_back(run);
   endtask

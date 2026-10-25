@@ -512,6 +512,30 @@ package bw_mon_pkg;
         $sformatf("queue_entries=%0d next entry cannot be represented",current_size));
   endfunction
 
+`ifdef BW_MON_TEST_FAULTS
+  // One-shot semantic allocation rejection for contract tests only. It is not
+  // a capacity limit, module parameter or ordinary-build configuration API.
+  bit injected_growth_failures[string][string];
+  function automatic void inject_growth_failure(string id,string resource);
+    injected_growth_failures[id][resource]=1;
+  endfunction
+`endif
+
+  function automatic void check_storage_growth(int current_size,string id,string resource,
+      bw_u64_t at_ticks=0,bw_u64_t edge_index=0,bw_u64_t record_number=0);
+    if(core_failure_seen)return;
+    check_queue_growth(current_size,{id," ",resource});
+    if(core_failure_seen)return;
+`ifdef BW_MON_TEST_FAULTS
+    if(injected_growth_failures.exists(id) && injected_growth_failures[id].exists(resource))begin
+      injected_growth_failures[id].delete(resource);
+      core_error("STORAGE_FAILURE",id,
+        $sformatf("resource=%s entries=%0d requested=1 edge=%0d record_seq=%0d original_ticks=%0d injected=1",
+          resource,current_size,edge_index,record_number,at_ticks));
+    end
+`endif
+  endfunction
+
   function automatic void validate_window(logic [1:0] basis, logic [63:0] width,
                                           logic [63:0] stride, string id);
     if ($isunknown({basis,width,stride}) || !(basis inside {BW_NS,BW_CYCLE}))
