@@ -12,13 +12,17 @@ implementation tickets extend this same public contract.
 ## Compile and start
 
 Compile `rtl/bw_mon_pkg.sv`, then `rtl/bw_check_report.sv`, then the other
-`rtl/*.sv` files. The report package must precede `bw_mon_setup.sv`. All production
-builds need `+incdir+rtl` and `-assert svaext` for the package headers and deferred
+`rtl/*.sv` files, plus `rtl/bw_slot_settlement.c`. The report package must precede `bw_mon_setup.sv`. All production
+builds need `+vpi`, `-debug_access` (or waveform `-debug_access+all`), the installed
+VCS include directory through `-CFLAGS -I<VCS>/include`, `+incdir+rtl` and `-assert svaext` for the package headers and deferred
 deadline assertions, including point-only setups. Headers are included by the package or public modules and are not standalone
 compilation units. All production
 scopes use `timeunit 1fs; timeprecision 1fs`; timestamps are unsigned 64-bit integer
 femtosecond ticks, read directly with `$time` in that scope. A nanosecond is
 1,000,000 ticks. Do not override production time units or precision.
+The private native adapter preserves ordered reset input and writable same-time
+closure; [scheduling and build details](bw-mon-scheduling.md) include its tested
+tool contract and public regressions. The point/group/setup interfaces are unchanged.
 
 ```systemverilog
 // Once for every target module instance of this type:
