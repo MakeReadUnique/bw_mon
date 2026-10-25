@@ -1,10 +1,10 @@
 module bw_stats_core #(
-  parameter bw_mon_pkg::bw_basis_t WINDOW_BASIS = bw_mon_pkg::BW_NS,
-  parameter bw_mon_pkg::bw_u64_t WINDOW_WIDTH = 0,
-  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE = 0,
-  parameter bit EPISODE_ENABLE = 0,
+  parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
+  parameter logic [63:0] WINDOW_WIDTH = 0,
+  parameter logic [63:0] UPDATE_STRIDE = 0,
+  parameter logic [1:0] EPISODE_ENABLE = 0,
   parameter logic [63:0] SILENCE_THRESHOLD = 0,
-  parameter bit PHASE_ENABLE = 0,
+  parameter logic [1:0] PHASE_ENABLE = 0,
   parameter logic [63:0] PHASE_N = 0,
   parameter logic [63:0] PHASE_MIN_SPAN = 0,
   parameter logic [63:0] PHASE_K = 0,
@@ -213,7 +213,7 @@ module bw_stats_core #(
   endtask
 
   function automatic bw_variation_result_t empty_variation_result();
-    return '{window_basis:WINDOW_BASIS,window_width:WINDOW_WIDTH,update_stride:UPDATE_STRIDE,
+    return '{window_basis:bw_basis_t'(WINDOW_BASIS),window_width:WINDOW_WIDTH,update_stride:UPDATE_STRIDE,
       minmax_reason:BW_METRIC_NO_SAMPLES,stddev_reason:BW_METRIC_TOO_FEW_SAMPLES,
       cv_reason:BW_METRIC_TOO_FEW_SAMPLES,default:0};
   endfunction
@@ -1090,7 +1090,8 @@ module bw_stats_core #(
   endtask
 
   always @(record_toggle) begin
-    if (monitor_ready && record.record_seq != 0) begin
+    if(monitor_ready)validate_record_numeric(record,scope_id);
+    if (monitor_ready && !core_failure_seen && record.record_seq != 0) begin
       if (record.timestamp_ticks>$time)
         core_error("RECORD_TIME",scope_id,"record timestamp is in the future");
       check_queue_growth(pending_frames.size(),scope_id);
@@ -1100,7 +1101,8 @@ module bw_stats_core #(
   end
   always @(stats_reset_n) if (monitor_ready) enqueue_reset();
   always @(member_control_toggle) begin
-    if (monitor_ready && member_control.control_seq!=0) begin
+    if(monitor_ready)validate_control_numeric(member_control,scope_id);
+    if (monitor_ready && !core_failure_seen && member_control.control_seq!=0) begin
       check_queue_growth(pending_member_controls.size(),scope_id);
       pending_member_controls.push_back(member_control);
       requested_actions=checked_add(requested_actions,1,scope_id);
@@ -1174,6 +1176,7 @@ module bw_stats_core #(
 
   initial begin
     wait(scope_id.len()!=0);
+    validate_window(WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
     validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
     validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,

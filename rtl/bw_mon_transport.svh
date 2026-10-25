@@ -52,6 +52,8 @@
     bw_source_state source;
     if (!monitor_ready) core_error("NOT_READY",source_name(source_handle),"frame before ready");
     source=registered_sources[source_handle];check_monitor_time($time,source.id);
+    validate_record_numeric(frame,source.id);
+    if(core_failure_seen)return;
     if (frame.record_seq!=checked_add(source.last_frame_seq,1,source.id))
       core_error("RECORD_SEQUENCE",source.id,
         $sformatf("source_kind=%s expected=%0d received=%0d edge=%0d",
@@ -86,6 +88,8 @@
     source=registered_sources[source_handle];
     if (!monitor_ready) core_error("NOT_READY",source.id,"control before ready");
     check_monitor_time($time,source.id);
+    validate_control_numeric(control,source.id);
+    if(core_failure_seen)return;
     point_handle=int'(control.point_handle);
     if (control.point_handle>=registered_points.size())
       core_error("POINT_REFERENCE",source.id,$sformatf("control point_handle=%0d",control.point_handle));

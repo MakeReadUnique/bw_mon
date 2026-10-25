@@ -1,7 +1,7 @@
 module bw_point_recorder #(
   parameter logic [63:0] FIXED_BYTES = 64'b0,
   parameter bw_mon_pkg::bw_protocol_t PROTOCOL = bw_mon_pkg::BW_VALID_ONLY,
-  parameter bit DYNAMIC_BYTES = 0
+  parameter logic [1:0] DYNAMIC_BYTES = 0
 ) (
   input string scope_id,
   input logic clk,

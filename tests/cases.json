@@ -2230,5 +2230,202 @@
     "expect_log": [
       "BW_PHASE_METRICS.*scope=metrics.stopped0 .*start_ticks=6000000 end_ticks=8000000.*duration_valid=1.*bandwidth_gbps=20 .*duration_reason=NONE"
     ]
+  },
+  {
+    "name": "numeric_window_unknown",
+    "top": "tb_numeric_window_unknown",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=WINDOW_CONFIG.*known"
+  },
+  {
+    "name": "numeric_add_unknown",
+    "top": "tb_numeric_arithmetic",
+    "plusargs": [
+      "+MODE=add_unknown"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_mul_unknown",
+    "top": "tb_numeric_arithmetic",
+    "plusargs": [
+      "+MODE=mul_unknown"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_arithmetic_known",
+    "top": "tb_numeric_arithmetic"
+  },
+  {
+    "name": "numeric_frame_bytes_unknown",
+    "top": "tb_numeric_record_unknown",
+    "plusargs": [
+      "+MODE=frame_bytes"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_frame_ticks_unknown",
+    "top": "tb_numeric_record_unknown",
+    "plusargs": [
+      "+MODE=frame_ticks"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_frame_sequence_unknown",
+    "top": "tb_numeric_record_unknown",
+    "plusargs": [
+      "+MODE=frame_sequence"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_control_sequence_unknown",
+    "top": "tb_numeric_record_unknown",
+    "plusargs": [
+      "+MODE=control_sequence"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_control_origin_unknown",
+    "top": "tb_numeric_record_unknown",
+    "plusargs": [
+      "+MODE=control_origin"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_dynamic_policy",
+    "top": "tb_numeric_dynamic_policy",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_dynamic_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=dynamic_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_dynamic_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=dynamic_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=BYTE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_credit_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=credit_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "numeric_policy_credit_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=credit_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "numeric_policy_initial_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=initial_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "numeric_policy_initial_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=initial_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CREDIT_CONFIG"
+  },
+  {
+    "name": "numeric_policy_episode_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=episode_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_episode_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=episode_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=EPISODE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_phase_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=phase_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_phase_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=phase_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG"
+  },
+  {
+    "name": "numeric_policy_hint_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=hint_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "numeric_policy_hint_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=hint_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=HINT_CONFIG"
+  },
+  {
+    "name": "numeric_policy_basis_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=basis_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "numeric_policy_basis_2",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=basis_2"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "numeric_policy_stride_x",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=stride_x"
+    ],
+    "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+  },
+  {
+    "name": "numeric_policy_disabled",
+    "top": "tb_numeric_policy",
+    "plusargs": [
+      "+MODE=disabled"
+    ]
   }
 ]

@@ -261,8 +261,8 @@
     try_ready();
   endfunction
 
-  function automatic int register_point(string id,string monitor_path,bw_basis_t basis,
-      bw_u64_t width,bw_u64_t stride,string clock_context);
+  function automatic int register_point(string id,string monitor_path,logic [1:0] basis,
+      logic [63:0] width,logic [63:0] stride,string clock_context);
     bw_point_registration_t entry;
     bw_source_state source;
     int handle,transport;
@@ -277,16 +277,16 @@
     transport=create_source(BW_POINT,id);handle=registered_points.size();
     source=registered_sources[transport];source.point_handle=handle;
     source.monitor_path=monitor_path;source.clock_context=clock_context;
-    source.basis=basis;source.width=width;source.stride=stride;
-    entry.id=id;entry.monitor_path=monitor_path;entry.basis=basis;entry.width=width;
+    source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
+    entry.id=id;entry.monitor_path=monitor_path;entry.basis=bw_basis_t'(basis);entry.width=width;
     entry.stride=stride;entry.clock_context=clock_context;entry.transport_source=transport;
     registered_points.push_back(entry);point_by_id[id]=handle;
     registration_seq=checked_add(registration_seq,1,"registration");try_ready();
     return handle;
   endfunction
 
-  function automatic int register_group_owner(string id,string monitor_path,bw_basis_t basis,
-      bw_u64_t width,bw_u64_t stride,string clock_context);
+  function automatic int register_group_owner(string id,string monitor_path,logic [1:0] basis,
+      logic [63:0] width,logic [63:0] stride,string clock_context);
     int handle;
     bw_group_state group;
     bw_source_state source;
@@ -299,7 +299,7 @@
       core_error("DUPLICATE_OWNER",id,$sformatf("first=%s second=%s",group.owner_path,monitor_path));
     group.owner_registered=1;group.owner_path=monitor_path;source=registered_sources[group.source_handle];
     source.monitor_path=monitor_path;source.clock_context=clock_context;
-    source.basis=basis;source.width=width;source.stride=stride;
+    source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
     registration_seq=checked_add(registration_seq,1,"registration");try_ready();
     return handle;
   endfunction

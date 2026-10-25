@@ -1,9 +1,9 @@
 module bw_group_mon #(
   parameter string GROUP_ID="",
   parameter string CLOCK_CONTEXT="default",
-  parameter bw_mon_pkg::bw_basis_t WINDOW_BASIS=bw_mon_pkg::BW_NS,
-  parameter bw_mon_pkg::bw_u64_t WINDOW_WIDTH=0,
-  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE=0
+  parameter logic [1:0] WINDOW_BASIS=bw_mon_pkg::BW_NS,
+  parameter logic [63:0] WINDOW_WIDTH=0,
+  parameter logic [63:0] UPDATE_STRIDE=0
 ) (
   input logic clk,
   input logic reset_n

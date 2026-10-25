@@ -1,8 +1,8 @@
 // Private state machine reused by the two independent public hint kinds.
 module bw_hint_duration #(
   parameter string HINT_NAME = "hint",
-  parameter bit SUPPORTED = 0,
-  parameter bit ENABLED = 0,
+  parameter logic [1:0] SUPPORTED = 0,
+  parameter logic [1:0] ENABLED = 0,
   parameter logic [1:0] BASIS = 2'bxx,
   parameter logic [63:0] THRESHOLD = 64'bx
 ) (
