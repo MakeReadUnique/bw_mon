@@ -1,5 +1,10 @@
 # Repaired-source common-scale evidence
 
+This is preserved historical qualification for production8e818394. The later
+steady-metric fix56127495 is qualified separately by the
+[frozen467b722 campaign](../final-runtime-467b722/README.md); these original
+measurements and source hashes are not reassigned to that runtime.
+
 Four actual prescribed common profiles completed at40us on immutable source
 `3bba72c56d0edbef9f2d259fb19897ad86ba7cab`. Its18 production RTL/C/header files
 match repaired runtime8e818394. All use1024 public Observation Points,256 two-level
@@ -40,7 +45,7 @@ python3 tests/scale/evidence/repaired-source-3bba72c/verify.py
 python3 tests/scale/evidence/verify.py --current-source
 ```
 
-The second command also verifies the historical campaign and requires the18
+The second command verifies every campaign and requires the latest campaign's18
 production files to match the current checkout. Recorded native SDK hashes are
 retained as provenance; portable inspection does not need or read SDK headers.
 Full simulation reproduction uses the public runner/configuration in
