@@ -7,14 +7,14 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/varying_ns/capture-episode.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-e0123osz",
-  "display": ":87",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-kmr0xjmc",
+  "display": ":88",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "8a1d0e1c91014174a1b4a39c72b4cf8ca547e3e4711473988c42bb5fa4ffdfbe",
+  "fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
   "png_sha256": "099e8e71e11498497ba86ca45a4d53821c25aaee78e2dbb5ac84573f2e2aee6c",
   "agent_visual_review": "PENDING",
   "human_review": "PENDING"

@@ -21,6 +21,8 @@ class AcceptanceReproductionCLI(unittest.TestCase):
             shutil.copytree(str(ROOT / name), str(self.root / name),
                             ignore=shutil.ignore_patterns('__pycache__'))
         shutil.copyfile(str(ROOT / '.gitignore'), str(self.root / '.gitignore'))
+        native = self.root / 'rtl/bw_slot_settlement.c'
+        native.write_text('/* Actual disposable provenance fixture source. */\n' + native.read_text())
         self.out = self.root / 'artifacts/acceptance'
         self.scene = self.out / 'no_episode_cycle'
         self.cli(['git', 'init', '-q'])
