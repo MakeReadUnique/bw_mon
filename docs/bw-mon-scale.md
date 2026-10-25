@@ -31,7 +31,65 @@ Its `+INJECT_CHECKER_ERROR` changes the reference by one byte and must produce
 profile or a production fault-injection API. VCS can return exit0 for `$fatal`,
 so the runner checks terminal diagnostics and durable completion evidence.
 
-## Current repaired-source common-scale measurements
+## Current runtime common-scale measurements
+
+All four prescribed full profiles completed on frozen integration source
+`467b722cde3ea00e8eb8ed0e97dcc72d4dc67aa9`. Its18 production RTL/C/header files
+match the independently reviewed steady-metric fix
+`56127495f597d215003000356ac3b5387cc809a1` and the current checkout. Later evidence
+commits do not change the source actually simulated. Each profile instantiated
+1024 public points and256 two-level groups, at2GHz through **40us exactly**, with
+the unchanged complete feature and intervention settings below.
+
+| Full profile | Window checks | Episode / phase final records | Simulation peakRSS KiB (MiB) | Compiler peakRSS KiB |
+| --- | ---: | ---: | ---: | ---: |
+|Prescribed NS100/10 baseline |5,120,000 |1280 /1280 |283,284 (276.64) |349,304 |
+|Cycle200/20 |5,118,720 |1280 /1280 |286,844 (280.12) |355,700 |
+|NS100/10, p0 unknown size |5,120,000 |1280 /1280 |286,592 (279.88) |349,160 |
+|NS100/10, p0 known reset |5,119,999 |1281 /1280 |284,524 (277.86) |355,828 |
+
+The four actual runs checked409,600,000 raw receipts and20,478,719 windows, with
+1280 expected/actual scope rows per profile and zero differences. All four
+compiled without Warning/Error diagnostics, then settled every scope before
+their once-only summary. The expected unavailable-metric WARNING counts remain
+15360 for baseline/cycle/unknown and15372 for reset; continuous flow has no actual
+tail edge within the observation. Independent audits rechecked the baseline's
+steady boundary120ns/confirmation150ns, plus cycle's0.25ns offset, alongside the
+distinct raw/window/quality and final report checks.
+
+The [current campaign](../tests/scale/evidence/final-runtime-467b722/README.md)
+retains the24 consumed source/driver files, original generated input/config/
+reference/actual/differences, complete bounded result logs, commands, cache/native
+dependencies and separate compiler/simulator RSS. The original launch fingerprint
+covers source24, SDK2, tool/Python identity and declared build/run options. It is
+preserved without relabelling that pre-run inventory as a larger one.
+
+A separate **post-run** dependency-only replay of each actual recorded gcc argv,
+including VCS's implicit `-O`, identifies50 headers. The original VCS `.d` still
+records source+2SDK headers; full system dependencies live in the supplementary
+inventory. The50 header files and compiler binary have mtime/ctime before the
+campaign start; their post-run hashes and stat records remain unchanged across
+repeated surveys, and SDK2 hashes match the original receipt. This supplements
+provenance retrospectively; it does not rerun native compilation or simulation,
+and does not claim a pre-run50-header freeze. Header text and executables are not
+copied into the repository.
+
+Portable verification uses the archived driver to regenerate exact input/cfg/
+reference and all3 generatedSV files, rechecks every final scope and complete
+episode/phase/metric/summary streams, and validates hashes, native/cache links,
+source identity and measured RSS without VCS or original temporary paths:
+
+```sh
+python3 tests/scale/evidence/verify.py --current-source
+```
+
+The command preserves and verifies both earlier campaigns while matching only
+the latest campaign's18 production files to this checkout. Four isolated COMMON
+jobs shared the31,857MiB/8CPU host with the separately recorded427-case component
+campaign. No standalone speed claim, fixed memory ceiling or elapsed-time gate
+is inferred. Maximum topology and the history/window matrix remain separate.
+
+## Historical scheduling-repair common-scale measurements
 
 All four original full profiles completed on frozen source
 `3bba72c56d0edbef9f2d259fb19897ad86ba7cab`, whose18 production RTL/C/header files
@@ -47,7 +105,7 @@ checked102,400,000 raw receipts and1280 final scopes with zero differences.
 |NS100/10, p0 unknown size |5,120,000 |1280 /1280 |281,656 (275.05) |345,032 |
 |NS100/10, p0 known reset |5,119,999 |1281 /1280 |282,320 (275.70) |351,312 |
 
-Together these current-source runs checked409,600,000 raw receipts and20,478,719
+Together these original-source runs checked409,600,000 raw receipts and20,478,719
 windows. All four compiled without Warning/Error diagnostics and settled all1280
 scopes before their once-only summary. Baseline/cycle/unknown correctly produce
 15360 unavailable-metric WARNINGs, reset15372, because the continuous-flow tail
@@ -55,19 +113,19 @@ is outside the observation. Those conclusions remain separate from the numerical
 checks. Independent recorded-data audits also checked the baseline's first
 steady boundary120ns/confirmation150ns and cycle's0.25ns offset.
 
-The [current campaign](../tests/scale/evidence/repaired-source-3bba72c/README.md)
+The [historical scheduling-repair campaign](../tests/scale/evidence/repaired-source-3bba72c/README.md)
 preserves all24 consumed source/driver files, original generated inputs/config/
 reference/actual/differences/logs, commands and separate compiler/simulator RSS.
 The actual C dependency files and compile-success records link the private helper
 to the recorded SDK header hashes and binary fingerprint. Vendor header text and
 simulator binaries are not copied. A post-run audit verified these hashes against
 the launch receipt and original build, and every production hash against this
-checkout. Portable verification regenerates all input/config/reference/SV bytes
-from the archived driver, checks all final rows and formal result/report streams,
-and can require the production files to match the current checkout:
+checkout at that audit. Portable verification regenerates all input/config/
+reference/SV bytes from the archived driver, checks all final rows and formal result/report streams,
+without assigning those source8e818394 results to the later56127495 runtime:
 
 ```sh
-python3 tests/scale/evidence/verify.py --current-source
+python3 tests/scale/evidence/repaired-source-3bba72c/verify.py
 ```
 
 Four isolated builds/runs overlapped on the31,857MiB/8CPU host; launch/resource
@@ -79,8 +137,8 @@ the complete short/middle/long/dense history matrix remain separate acceptance.
 ## Historical common-scale measurements
 
 The original source074c771 campaign is retained intact below and in the original
-profile directories. Its measurements are historical; the repaired-source
-campaign above supplies the current-source qualification.
+profile directories. Its measurements are historical; the frozen467b722
+campaign above supplies current runtime qualification.
 
 All four profiles below completed at **40us exactly**, using frozen harness/source
 `074c77103bc8c135106facad00dbc21995f2d92f` (production integration8de785c).
