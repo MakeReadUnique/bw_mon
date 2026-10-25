@@ -2427,5 +2427,39 @@
     "plusargs": [
       "+MODE=disabled"
     ]
+  },
+  {
+    "name": "history_trace_ns",
+    "top": "tb_history_trace_ns",
+    "sources": [
+      "history_trace_fixture.sv"
+    ]
+  },
+  {
+    "name": "history_trace_cycle",
+    "top": "tb_history_trace_cycle",
+    "sources": [
+      "history_trace_fixture.sv"
+    ]
+  },
+  {
+    "name": "numeric_subtract_known",
+    "top": "tb_numeric_subtract"
+  },
+  {
+    "name": "numeric_subtract_underflow",
+    "top": "tb_numeric_subtract",
+    "plusargs": [
+      "+MODE=underflow"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNDERFLOW"
+  },
+  {
+    "name": "numeric_subtract_unknown",
+    "top": "tb_numeric_subtract",
+    "plusargs": [
+      "+MODE=unknown"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
   }
 ]

@@ -99,7 +99,16 @@ module bw_stats_core #(
 );
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_record_t history[$];
+  typedef struct packed {
+    bw_u64_t first_ticks,first_edge,last_ticks,last_edge,count,step_ticks,step_edges;
+    bw_u64_t byte_inc,event_inc;
+    bit bytes_complete,events_complete,has_reset;
+  } event_run_t;
+  typedef struct packed {
+    bw_u64_t first_ticks,first_edge,last_ticks,count,step_ticks;
+  } clock_run_t;
+  event_run_t history[$];
+  clock_run_t clock_runs[$];
   bw_record_t pending_frames[$];
   bw_u64_t pending_timers[$];
   typedef struct packed {
@@ -135,8 +144,7 @@ module bw_stats_core #(
   bw_u64_t last_frame_ticks = 0, last_edge_index = 0;
   // Idle edges are physical cycle boundaries too. Keep their integer times
   // separately from the sparse event/quality history used by both bases.
-  bw_u64_t cycle_boundary_ticks[$];
-  bw_u64_t boundary_first_cycle, cycle_origin, next_update_cycle;
+  bw_u64_t cycle_origin, next_update_cycle;
   bit cycle_initialized = 0;
   bit initialized = 0;
 
@@ -187,6 +195,8 @@ module bw_stats_core #(
   // including a zero-byte event. Unknown evidence has a separate quality gate.
   bit retired_activity_valid=0;
   bw_u64_t retired_episode_id=0,retired_last_ticks=0,retired_last_cycle=0;
+
+  `include "bw_history.svh"
 
   function automatic bit foreign_activity();
     return retired_activity_valid && retired_episode_id!=episode_id &&
@@ -844,7 +854,6 @@ module bw_stats_core #(
   endtask
 
   task automatic publish_window(bw_u64_t at_ticks, bw_u64_t at_cycle = 0);
-    bw_record_t expired;
     bw_u64_t width_ticks, left, left_cycle;
     if (WINDOW_BASIS == BW_NS) begin
       width_ticks = ns_to_ticks(WINDOW_WIDTH,scope_id);
@@ -854,22 +863,15 @@ module bw_stats_core #(
     end else begin
       left_cycle = (at_cycle-cycle_origin >= WINDOW_WIDTH) ? at_cycle-WINDOW_WIDTH
                                                          : cycle_origin;
-      left=cycle_boundary_ticks[0];
+      left=left_clock_tick();
       window_start_cycle=left_cycle; window_end_cycle=at_cycle;
       coverage_cycles=at_cycle-left_cycle;
       window_full=(at_cycle-cycle_origin>=WINDOW_WIDTH);
     end
     advance_raw_quality(at_ticks);
     // Rolling exact totals avoid an O(window-history) scan on each update.
-    while (history.size() != 0 && ((WINDOW_BASIS == BW_NS && history[0].timestamp_ticks < left) ||
-           (WINDOW_BASIS == BW_CYCLE && history[0].edge_index < left_cycle))) begin
-      expired=history.pop_front();
-      retained_bytes -= expired.byte_inc;
-      retained_events -= expired.event_inc;
-      if (!expired.bytes_complete) unknown_bytes--;
-      if (!expired.events_complete) unknown_events--;
-      if (expired.reset_points != 0) reset_entries--;
-    end
+    expire_event_history(left,left_cycle);
+    if(core_failure_seen)return;
     window_start_ticks=left; window_end_ticks=at_ticks;
     coverage_ticks=at_ticks-left;
     window_bytes=retained_bytes; window_events=retained_events;
@@ -909,7 +911,7 @@ module bw_stats_core #(
     episode_duration_valid=0; episode_e2e_valid=0; episode_e2e_gbps=0.0;
     stats_epoch=checked_add(stats_epoch,1,scope_id);
     stats_start_ticks=at_ticks;
-    history.delete(); cycle_boundary_ticks.delete();
+    history.delete(); clock_runs.delete();
     quality_intervals.delete(); active_quality.delete(-1);
     retained_bytes=0; retained_events=0;
     unknown_bytes=0; unknown_events=0; reset_entries=0;
@@ -1023,7 +1025,7 @@ module bw_stats_core #(
   // publishes all due [left,T) results before accounting T's event; a timer
   // arriving first advances the same schedule, so either order gives one result.
   task automatic dispatch(bit is_frame, bw_record_t incoming, bw_u64_t now_ticks);
-    bw_u64_t left_cycle, discarded_boundary;
+    bw_u64_t left_cycle;
     if (!monitor_ready) return;
     if (is_frame) begin
       if (incoming.record_seq != checked_add(last_record_seq,1,scope_id))
@@ -1045,18 +1047,14 @@ module bw_stats_core #(
       if (WINDOW_BASIS == BW_CYCLE) begin
         if (!cycle_initialized) begin
           cycle_origin=incoming.edge_index;
-          boundary_first_cycle=cycle_origin;
           next_update_cycle=checked_add(cycle_origin,UPDATE_STRIDE,scope_id);
           cycle_initialized=1;
         end
-        check_queue_growth(cycle_boundary_ticks.size(),scope_id);
-        cycle_boundary_ticks.push_back(incoming.timestamp_ticks);
+        append_clock_boundary(incoming.timestamp_ticks,incoming.edge_index);
         left_cycle=(incoming.edge_index-cycle_origin>=WINDOW_WIDTH) ?
                     incoming.edge_index-WINDOW_WIDTH : cycle_origin;
-        while (boundary_first_cycle<left_cycle) begin
-          discarded_boundary=cycle_boundary_ticks.pop_front();
-          boundary_first_cycle=checked_add(boundary_first_cycle,1,scope_id);
-        end
+        expire_clock_boundaries(left_cycle);
+        if(core_failure_seen)return;
         if (incoming.edge_index == next_update_cycle) begin
           publish_window(now_ticks,incoming.edge_index);
           next_update_cycle=checked_add(next_update_cycle,UPDATE_STRIDE,scope_id);
@@ -1083,8 +1081,7 @@ module bw_stats_core #(
     if (incoming.reset_points!=0) reset_entries=checked_add(reset_entries,1,scope_id);
     if (incoming.byte_inc!=0 || incoming.event_inc!=0 || !incoming.bytes_complete ||
         !incoming.events_complete || incoming.reset_points!=0) begin
-      check_queue_growth(history.size(),scope_id);
-      history.push_back(incoming);
+      append_event_history(incoming);
     end
     accepted_record_seq=incoming.record_seq;
   endtask

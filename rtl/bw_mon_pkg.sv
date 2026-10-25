@@ -397,6 +397,18 @@ package bw_mon_pkg;
     return wide[63:0];
   endfunction
 
+  function automatic bw_u64_t checked_sub(logic [63:0] a,logic [63:0] b,string scope_context);
+    if($isunknown({a,b}))begin
+      core_error("INTEGER_UNKNOWN",scope_context,$sformatf("subtraction a=%h b=%h",a,b));
+      return 0;
+    end
+    if(b>a)begin
+      core_error("INTEGER_UNDERFLOW",scope_context,$sformatf("subtraction a=%0d b=%0d",a,b));
+      return 0;
+    end
+    return a-b;
+  endfunction
+
   function automatic bw_u64_t ns_to_ticks(logic [63:0] ns, string scope_context = "time");
     return checked_mul(ns, BW_TICKS_PER_NS, scope_context);
   endfunction
