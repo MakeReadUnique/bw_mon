@@ -1,11 +1,13 @@
 # Recorded common-scale evidence
 
-The original profile directories below retain the historical source074c771
-campaign. The [repaired-source campaign](repaired-source-3bba72c/README.md) contains
-four fresh full-scale40us results on production8e818394; its source, profiles,
-resource measurements and results are separate. `verify.py` checks both campaigns;
-`--current-source` additionally matches the repaired production files to this
-checkout. No original historical bundle was replaced.
+The [current campaign](final-runtime-467b722/README.md) contains four fresh
+full-scale40us results on frozen467b722/production56127495, including the final
+steady-metric fix. The original profile directories retain historical source
+074c771; the [scheduling-repair campaign](repaired-source-3bba72c/README.md) retains
+source3bba72c/production8e818394. Each source, profile and resource record remains
+separate. `verify.py` checks all three campaigns; `--current-source` additionally
+matches only the latest campaign's18 production files to this checkout. No
+original historical bundle was replaced.
 
 Each profile directory contains deterministic-gzip copies of original run files.
 `bundle.json` records their uncompressed/compressed SHA256s and the original
@@ -46,5 +48,9 @@ paths or later repository revisions.
 The recorded audit honors `manifest.source_snapshot` when the current runner
 stores consumed files under `build/source/`. Original manifests without that
 field retain their earlier `build/rtl/` interpretation. The current archive also
-retains the actual native dependency and compile-success records. These tooling
-changes do not rerun simulations or alter original result files.
+retains the actual native dependency and compile-success records. The latest
+campaign separately supplements its unchanged source+SDK2 launch receipt with
+actual-gcc-flag50-header provenance, without relabelling it as a pre-run freeze.
+The shared `verify_campaign.py` regenerates original inputs/reference/config/SV
+and rechecks complete final result streams for both24-source campaigns. These
+tooling changes do not rerun simulations or alter original result files.

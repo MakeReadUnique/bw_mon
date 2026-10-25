@@ -37,5 +37,7 @@ for path in sorted(base.glob('*/bundle.json')):
             if field in ('window_gbps','window_bpc'):assert abs(F(a)-F(value))<=F(1,10**9)+F(1,10**12)*abs(F(value)),(key,field)
             else:assert a==value,(key,field)
     print('PASS',bundle['scenario'],'1280 archived reference/actual rows; source/gzip/original hashes; zero differences')
-current=base/'repaired-source-3bba72c/verify.py'
-if current.exists():subprocess.run([sys.executable,str(current)]+sys.argv[1:],check=True)
+campaigns=[base/name/'verify.py' for name in ('repaired-source-3bba72c','final-runtime-467b722')]
+campaigns=[path for path in campaigns if path.exists()]
+for i,path in enumerate(campaigns):
+    subprocess.run([sys.executable,str(path)]+(sys.argv[1:] if i==len(campaigns)-1 else []),check=True)
