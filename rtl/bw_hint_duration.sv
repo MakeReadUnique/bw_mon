@@ -21,9 +21,16 @@ module bw_hint_duration #(
   edge_action_t pending_edges[$];
   timer_action_t pending_timers[$];
   bw_u64_t requested_actions=0,consumed_actions=0;
+  bw_u64_t settlement_required=0;
   bw_u64_t timer_requests=0,timer_receipts=0,timer_schedule_seq=0;
   bw_u64_t edge_sequence=0,last_edge_ticks=0,last_edge_index=0,threshold_ticks=0;
   bit configured=0,reset_held=0,edge_seen=0;
+  bit external_reset_capture=0,assertion_seen=0;
+  bit reset_observer_ready=0;
+  bw_u64_t last_assert_ticks=0;
+  function void use_external_reset_capture();external_reset_capture=1;endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);enqueue_status(value,ticks);endfunction
+  `include "bw_reset_capture.svh"
 
   function automatic void begin_action(int current_size,string queue_kind);
     check_monitor_time($time,{scope_id," ",HINT_NAME});
@@ -91,6 +98,7 @@ module bw_hint_duration #(
     if(action.reset_value===1'b0) begin
       close_interval(action.at_ticks,BW_HINT_RESET);
       if(!reset_held) result.epoch=checked_add(result.epoch,1,scope_id);
+      assertion_seen=1;last_assert_ticks=action.at_ticks;
       reset_held=1;result.trusted=0;touch(action.at_ticks);return;
     end
     reset_held=0;
@@ -118,23 +126,36 @@ module bw_hint_duration #(
     end
     advance_interval(action.at_ticks);touch(action.at_ticks);
   endfunction
-  function automatic void enqueue_status();
+  function automatic void enqueue_status(logic reset_value,bw_u64_t at_ticks);
     status_action_t action;
     if(!configured || !monitor_ready || !SUPPORTED || !ENABLED || core_failure_seen) return;
     begin_action(pending_status.size(),"status");
     if(core_failure_seen)return;
-    action.at_ticks=$time;action.condition_value=raw_condition;action.reset_value=reset_n;
+    action.at_ticks=at_ticks;action.condition_value=raw_condition;action.reset_value=reset_value;
     pending_status.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
+    settlement_required=request_slot_settlement(scope_id);
   endfunction
   function automatic void drain_actions();
     edge_action_t edge_action;
     status_action_t status_action;
     timer_action_t timer_action;
+    int status_index;
     while(consumed_actions!=requested_actions && !core_failure_seen) begin
       // Actual edge metadata exists before recorder ReNBA publication. Complete
       // the prior cycle before applying same-time release/unknown/reset changes.
       if(pending_edges.size()!=0) begin edge_action=pending_edges.pop_front();process_edge(edge_action);end
-      else if(pending_status.size()!=0) begin status_action=pending_status.pop_front();process_status(status_action);end
+      else if(pending_status.size()!=0) begin
+        status_index=0;
+        if(!(assertion_seen && last_assert_ticks==pending_status[0].at_ticks))
+          foreach(pending_status[s])
+            if(pending_status[s].at_ticks==pending_status[0].at_ticks &&
+               pending_status[s].reset_value===1'b0)begin status_index=s;break;end
+        repeat(status_index)begin
+          status_action=pending_status.pop_front();reset_held=0;
+          consumed_actions=checked_add(consumed_actions,1,scope_id);
+        end
+        status_action=pending_status.pop_front();process_status(status_action);
+      end
       else begin
         timer_action=pending_timers.pop_front();
         if(timer_action.generation==timer_schedule_seq && result.active) begin
@@ -152,9 +173,16 @@ module bw_hint_duration #(
     wait(scope_id.len()!=0);
     validate_hint_config(SUPPORTED,ENABLED,BASIS,THRESHOLD,scope_id,HINT_NAME);
     if(SUPPORTED && ENABLED && BASIS==BW_NS) threshold_ticks=ns_to_ticks(THRESHOLD,scope_id);
-    configured=1;enqueue_status();
+    initialize_reset_capture($sformatf("%m"),"reset_n");
+    configured=1;enqueue_status(reset_n,$time);
   end
-  always @(raw_condition or reset_n or monitor_ready) enqueue_status();
+  always @(raw_condition or monitor_ready) enqueue_status(reset_n,$time);
+  initial begin
+    wait(configured && monitor_ready);
+    if(!external_reset_capture)begin
+      wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    end
+  end
   always @(posedge clk) begin : capture_hint_edge
     edge_action_t action;
     if(configured && monitor_ready && $time>measurement_start_ticks && SUPPORTED && ENABLED && !core_failure_seen) begin
@@ -163,6 +191,7 @@ module bw_hint_duration #(
       edge_sequence=checked_add(edge_sequence,1,scope_id);
       action.at_ticks=$time;action.index=edge_sequence;
       pending_edges.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
+      settlement_required=request_slot_settlement(scope_id);
     end
   end
   bw_hint_duration_scheduler scheduler();
@@ -187,6 +216,7 @@ module bw_hint_duration #(
           action.at_ticks=due_ticks;action.generation=schedule;pending_timers.push_back(action);
           timer_requests=checked_add(timer_requests,1,scope_id);request=timer_requests;
           requested_actions=checked_add(requested_actions,1,scope_id);
+          settlement_required=request_slot_settlement(scope_id);
           wait(timer_receipts>=request);
         end
       end
@@ -207,6 +237,7 @@ program bw_hint_duration_scheduler;
   timeunit 1fs;timeprecision 1fs;
   initial forever begin
     wait(bw_hint_duration.requested_actions!=bw_hint_duration.consumed_actions);
+    wait(bw_mon_pkg::slot_settlement_generation>=bw_hint_duration.settlement_required);
     bw_hint_duration.drain_actions();
   end
 endprogram

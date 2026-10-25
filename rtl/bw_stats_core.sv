@@ -132,11 +132,17 @@ module bw_stats_core #(
   bw_u64_t member_control_sequences[int];
   bw_u64_t member_control_times[int];
   bw_u64_t requested_actions=0, consumed_actions=0;
+  bw_u64_t settlement_required=0;
   bw_u64_t timer_requests=0, timer_receipts=0, timer_schedule_seq=0;
   bw_u64_t stats_start_ticks;
   bw_u64_t last_assert_ticks=0;
   bit assertion_observed=0, reset_enqueued=0, reset_applied=0;
   logic observed_reset_n, current_reset_n=1'b1;
+  bit external_reset_capture=0;
+  bit reset_observer_ready=0;
+  function void use_external_reset_capture();external_reset_capture=1;endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);enqueue_reset(value,ticks);endfunction
+  `include "bw_reset_capture.svh"
   bw_u64_t next_update_ticks;
   bw_u64_t retained_bytes = 0, retained_events = 0;
   bw_u64_t unknown_bytes = 0, unknown_events = 0, reset_entries = 0;
@@ -939,18 +945,19 @@ module bw_stats_core #(
     timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
   endtask
 
-  task automatic enqueue_reset();
+  function automatic void enqueue_reset(logic reset_value,bw_u64_t at_ticks);
     reset_action_t action;
-    if (reset_enqueued && observed_reset_n === stats_reset_n) return;
-    check_monitor_time($time,scope_id);
-    observed_reset_n=stats_reset_n;
+    if (reset_enqueued && observed_reset_n === reset_value) return;
+    check_monitor_time(at_ticks,scope_id);
+    observed_reset_n=reset_value;
     reset_enqueued=1;
-    action.timestamp_ticks=$time; action.reset_n=stats_reset_n;
+    action.timestamp_ticks=at_ticks; action.reset_n=reset_value;
     check_storage_growth(pending_resets.size(),scope_id,"core.resets",action.timestamp_ticks,last_edge_index,last_record_seq);
     if(core_failure_seen)return;
     pending_resets.push_back(action);
     requested_actions=checked_add(requested_actions,1,scope_id);
-  endtask
+    settlement_required=request_slot_settlement(scope_id);
+  endfunction
 
   task automatic apply_reset(reset_action_t action);
     if (reset_applied && action.reset_n !== 1'b0 && current_reset_n !== 1'b0) begin
@@ -1104,10 +1111,10 @@ module bw_stats_core #(
       if(!core_failure_seen)begin
         pending_frames.push_back(record);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        settlement_required=request_slot_settlement(scope_id);
       end
     end
   end
-  always @(stats_reset_n) if (monitor_ready) enqueue_reset();
   always @(scope_kind or progress_watermark_ticks or monitor_ready)begin
     if(monitor_ready && scope_id.len()!=0)begin
       if($isunknown(scope_kind))core_error("SCOPE_KIND",scope_id,"scope kind must be known BW_POINT/BW_GROUP");
@@ -1122,6 +1129,7 @@ module bw_stats_core #(
       if(!core_failure_seen)begin
         pending_member_controls.push_back(member_control);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        settlement_required=request_slot_settlement(scope_id);
       end
     end
   end
@@ -1131,9 +1139,21 @@ module bw_stats_core #(
     bw_record_t frame;
     bw_control_t control;
     bw_u64_t timer_tick;
+    int reset_index;
     check_monitor_time($time,scope_id);
     while (consumed_actions != requested_actions) begin
       if (pending_resets.size()!=0) begin
+        reset_index=0;
+        if(!(assertion_observed && last_assert_ticks==pending_resets[0].timestamp_ticks))
+          foreach(pending_resets[r])
+            if(pending_resets[r].timestamp_ticks==pending_resets[0].timestamp_ticks &&
+               pending_resets[r].reset_n===1'b0)begin reset_index=r;break;end
+        // A known own assertion dominates earlier zero-duration level changes
+        // at T. Fold their level, without publishing or tainting the old epoch.
+        repeat(reset_index)begin
+          reset_action=pending_resets.pop_front();current_reset_n=reset_action.reset_n;
+          consumed_actions=checked_add(consumed_actions,1,scope_id);
+        end
         reset_action=pending_resets.pop_front();
         apply_reset(reset_action);
       end else if (pending_member_controls.size()!=0) begin
@@ -1157,7 +1177,9 @@ module bw_stats_core #(
   initial begin : core_timer_worker
     bw_u64_t observed_schedule, due_tick, request_number;
     wait(monitor_ready);
-    enqueue_reset();
+    if(!external_reset_capture)begin
+      wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    end
     wait(reset_applied);
     if (WINDOW_BASIS == BW_NS) begin
       forever begin
@@ -1185,6 +1207,7 @@ module bw_stats_core #(
             timer_requests=checked_add(timer_requests,1,scope_id);
             request_number=timer_requests;
             requested_actions=checked_add(requested_actions,1,scope_id);
+            settlement_required=request_slot_settlement(scope_id);
             wait(timer_receipts >= request_number);
           end
         end
@@ -1200,6 +1223,7 @@ module bw_stats_core #(
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
       PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
       PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+    initialize_reset_capture($sformatf("%m"),"stats_reset_n");
   end
 
   final begin
@@ -1221,6 +1245,7 @@ program bw_stats_core_scheduler;
   timeunit 1fs; timeprecision 1fs;
   initial forever begin
     wait(bw_stats_core.requested_actions != bw_stats_core.consumed_actions);
+    wait(bw_mon_pkg::slot_settlement_generation>=bw_stats_core.settlement_required);
     bw_stats_core.drain_actions();
   end
 endprogram

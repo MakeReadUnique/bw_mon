@@ -558,6 +558,7 @@ package bw_mon_pkg;
       core_error("WINDOW_CONFIG", id, "cycle width exceeds 80000 cycles");
   endfunction
 
+  `include "bw_slot_settlement.svh"
   `include "bw_mon_registry.svh"
   `include "bw_mon_transport.svh"
 endpackage

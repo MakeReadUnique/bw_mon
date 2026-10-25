@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 
@@ -22,6 +23,8 @@ def main():
         parser.error("unknown cases: " + ", ".join(sorted(unknown)))
     selected = [case for case in cases if not args.cases or case["name"] in args.cases]
     sources = sorted((ROOT / "rtl").glob("*.sv"), key=lambda p: (p.name != "bw_mon_pkg.sv", p.name))
+    sources += sorted((ROOT / "rtl").glob("*.c"))
+    vcs_include = Path(shutil.which("vcs")).resolve().parents[1] / "include"
     compiled = {}
     failures = []
     for case in selected:
@@ -30,7 +33,7 @@ def main():
         build.mkdir(parents=True, exist_ok=True)
         files = sources + [ROOT / "tests" / name for name in case.get("sources", [])] + [ROOT / "tests" / (top + ".sv")]
         dependencies = files + sorted(path for path in (ROOT / "rtl").rglob("*")
-                                      if path.suffix in {".svh", ".vh"})
+                                      if path.suffix in {".svh", ".vh", ".h"})
         defines = case.get("defines", [])
         build_fingerprint = (str(ROOT).encode() + Path(__file__).resolve().read_bytes() +
                              json.dumps(defines).encode())
@@ -40,7 +43,8 @@ def main():
         if top not in compiled or compiled[top][0] != digest:
             if args.no_cache or not (build / "simv").exists() or not stamp.exists() or stamp.read_text() != digest:
                 cmd = ["vcs", "-full64", "-sverilog", "-timescale=1ns/1fs", "-debug_access+all",
-                       "+incdir+" + str(ROOT / "rtl"), "-assert", "svaext",
+                       "+incdir+" + str(ROOT / "rtl"), "+vpi", "-CFLAGS", "-I" + str(vcs_include) +
+                       (" -DBW_MON_TEST_FAULTS" if "BW_MON_TEST_FAULTS" in defines else ""), "-assert", "svaext",
                        "-top", top, "-o", str(build / "simv")] + ["+define+" + name for name in defines] + [str(path) for path in files]
                 with (build / "compile.log").open("w") as log:
                     result = subprocess.run(cmd, cwd=build, stdout=log, stderr=subprocess.STDOUT)

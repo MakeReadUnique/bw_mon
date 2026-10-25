@@ -23,9 +23,30 @@ module bw_point_recorder #(
   bw_u64_t record_seq = 0, edge_index = 0;
   bw_u64_t control_seq = 0, source_epoch = 0;
   bw_u64_t requested_actions = 0, consumed_actions = 0;
+  bw_u64_t settlement_required=0;
   bw_u64_t last_assert_ticks = 0;
   bit reset_observed = 0, assertion_observed = 0;
   logic observed_reset;
+  bit external_reset_capture=0;
+  bit reset_observer_ready=0;
+  bit publication_receipts=0;
+  bw_u64_t published_control_seq=0,published_record_seq=0;
+  function void use_external_reset_capture();external_reset_capture=1;endfunction
+  function void use_publication_receipts();publication_receipts=1;endfunction
+  function void note_control_published(logic [63:0] sequence_number);
+    if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"control publication receipt is unknown");return;end
+    if(sequence_number!=control.control_seq || sequence_number<=published_control_seq)
+      core_error("RECORDER_RECEIPT",scope_id,"control publication receipt does not match the held payload");
+    if(!core_failure_seen)published_control_seq=sequence_number;
+  endfunction
+  function void note_record_published(logic [63:0] sequence_number);
+    if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"frame publication receipt is unknown");return;end
+    if(sequence_number!=record.record_seq || sequence_number<=published_record_seq)
+      core_error("RECORDER_RECEIPT",scope_id,"frame publication receipt does not match the held payload");
+    if(!core_failure_seen)published_record_seq=sequence_number;
+  endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);observe_reset(value,ticks);endfunction
+  `include "bw_reset_capture.svh"
   typedef struct packed {
     bw_u64_t timestamp_ticks;
     bw_u64_t record_seq;
@@ -40,37 +61,40 @@ module bw_point_recorder #(
     sampled_view = 'x;
     wait(scope_id.len()!=0);
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
+    initialize_reset_capture($sformatf("%m"),"reset_n");
   end
 
-  task automatic observe_reset();
+  function automatic void observe_reset(logic reset_value,bw_u64_t at_ticks);
     bw_control_t next_control;
-    if (reset_observed && observed_reset === reset_n) return;
-    check_monitor_time($time,scope_id);
-    if (reset_n === 1'b0 && (!reset_observed || observed_reset !== 1'b0)) begin
+    if (reset_observed && observed_reset === reset_value) return;
+    check_monitor_time(at_ticks,scope_id);
+    if (reset_value === 1'b0 && (!reset_observed || observed_reset !== 1'b0)) begin
       source_epoch=checked_add(source_epoch,1,{scope_id," source epoch"});
-      last_assert_ticks=$time;
+      last_assert_ticks=at_ticks;
       assertion_observed=1;
     end
-    observed_reset=reset_n;
+    observed_reset=reset_value;
     reset_observed=1;
     control_seq=checked_add(control_seq,1,{scope_id," control"});
     next_control='0;
-    next_control.timestamp_ticks=$time;
+    next_control.timestamp_ticks=at_ticks;
     next_control.control_seq=control_seq;
     next_control.source_epoch=source_epoch;
     next_control.point_handle=point_handle_for_id(scope_id);
-    next_control.reset_n=reset_n;
+    next_control.reset_n=reset_value;
     check_storage_growth(pending_controls.size(),scope_id,"recorder.controls",next_control.timestamp_ticks,edge_index,record_seq);
     if(core_failure_seen)return;
     pending_controls.push_back(next_control);
     requested_actions=checked_add(requested_actions,1,scope_id);
-  endtask
+    settlement_required=request_slot_settlement(scope_id);
+  endfunction
 
   initial begin
     wait(monitor_ready);
-    observe_reset();
+    if(!external_reset_capture)begin
+      wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    end
   end
-  always @(reset_n) if (monitor_ready) observe_reset();
 
   always @(posedge clk) begin : capture_edge
     pending_sample_t sample;
@@ -94,6 +118,7 @@ module bw_point_recorder #(
       if(!core_failure_seen)begin
         pending_samples.push_back(sample);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        settlement_required=request_slot_settlement(scope_id);
       end
     end
   end
@@ -102,12 +127,18 @@ module bw_point_recorder #(
     pending_sample_t sample;
     logic transfer;
     while (consumed_actions != requested_actions) begin
+      wait(slot_settlement_generation>=settlement_required);
       if (pending_controls.size()!=0) begin
         control=pending_controls.pop_front();
         consumed_actions=checked_add(consumed_actions,1,scope_id);
         control_toggle<=!control_toggle;
-        // Module consumers copy/persist this control before another is shown.
         @(control_toggle);
+        if(publication_receipts)wait(published_control_seq>=control.control_seq);
+        // A ReNBA waiter can wake before module consumers copy the payload.
+        // Hold it through a writable quiescent generation before exposing the
+        // next item, including multiple controls captured at the same tick.
+        settlement_required=request_slot_settlement(scope_id);
+        wait(slot_settlement_generation>=settlement_required);
         continue;
       end
       sample=pending_samples.pop_front();
@@ -148,14 +179,17 @@ module bw_point_recorder #(
       consumed_actions=checked_add(consumed_actions,1,scope_id);
       record_toggle <= !record_toggle;
       @(record_toggle);
+      if(publication_receipts)wait(published_record_seq>=record.record_seq);
+      settlement_required=request_slot_settlement(scope_id);
+      wait(slot_settlement_generation>=settlement_required);
     end
   endtask
 
   bw_point_record_scheduler scheduler();
 endmodule
 
-// A private reactive coordinator waits for durable work, after module NBA
-// updates settle. Upward module-type references bind to each owning instance.
+// A private coordinator waits for the shared writable end-of-slot generation.
+// Upward module-type references bind to each owning instance.
 program bw_point_record_scheduler;
   timeunit 1fs; timeprecision 1fs;
   initial forever begin

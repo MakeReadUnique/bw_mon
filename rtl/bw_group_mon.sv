@@ -51,8 +51,13 @@ module bw_group_mon #(
   bw_u64_t expected_notice=0,expected_edge_index=0,last_expected_ticks=0,deadline_alarm_seq=0;
   bit deferred_failure=0;
   string deferred_failure_code,deferred_failure_detail;
+  bit reset_observer_ready=0;
+  localparam bit external_reset_capture=0;
+  function void apply_captured_reset(logic value,bw_u64_t ticks);core.enqueue_reset(value,ticks);endfunction
+  `include "bw_reset_capture.svh"
 
   initial begin
+    core.use_external_reset_capture();
     monitor_path=$sformatf("%m");scope_id=GROUP_ID;
     // Reject raw configuration before narrowing into legacy internal enums/bits.
     if($isunknown({WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE}) || !(WINDOW_BASIS inside {BW_NS,BW_CYCLE}))
@@ -67,10 +72,13 @@ module bw_group_mon #(
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
       PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
       PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+    initialize_reset_capture(monitor_path,"reset_n");
     group_handle=register_group_owner(scope_id,monitor_path,bw_basis_t'(WINDOW_BASIS),
                                       WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
     transport_source=group_source_handle(group_handle);
     raw_record='0;raw_control='0;core_control='0;
+    wait(monitor_ready && core.scope_id==scope_id);
+    reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
   end
 
   task automatic refresh_progress();
