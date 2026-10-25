@@ -63,18 +63,55 @@ intact. Ancestors receive all original-time frames/controls and retain member
 reset coverage until exact expiry. The independent final rows and every-result
 checks distinguish cumulative raw traffic, local epoch totals and window counts.
 
-Waves are off. This runner omits `-debug_access+all`; a separately recorded
-four-profile matched small public-module probe established identical numeric and
-formal results with that sole option change. No speed claim follows from the
-probe. Original common-scale measurements retain their original compile options
-and source version. GNUtime-v compiler/simulator peaks and sampled process-family
-peaks are recorded separately; no memory or wall-time acceptance cap is imposed.
+Waves are off. The repaired runtime requires `rtl/bw_slot_settlement.c`, `+vpi`
+and at least `-debug_access`. The runner passes the installed VCS SDK include
+directory to the C compiler, snapshots every local RTL/C/header and harness
+source before compilation, and fingerprints their contents. It uses
+`-debug_access` without `+all`; removing debug access completely is unsupported
+for this runtime. See [the scheduling contract](bw-mon-scheduling.md). SDK header
+paths and SHA256 values are retained with the preparation evidence, without
+redistributing vendor headers. GNUtime-v compiler/simulator peaks and sampled
+process-family peaks are recorded separately; no memory or wall-time acceptance
+cap is imposed.
 
 ## Current evidence
 
+Current-source preparation was tested at commit `1508f8f6f03ae03768f107ce0cd472182c9b6654`,
+after merging integration `cb0aef54f94efc8fd485bb97341cdcbe3f21e506`. All18 runtime
+RTL/C/header SHA256 values match the repaired `8e81839` freeze. The fixed maximum
+profiles, five literal contracts, shared input reference and generator are
+unchanged from `2d5c685`. The five maximum and six legacy reference contracts pass.
+
 The four separately named tracers ran32 actual points and24 groups for240ns,
 including a depth-eight path and sixteen direct consumers of subgroup0. Each
-checked26,880 raw receipts; the four window totals were1344/1288/1344/1287, all
-with zero differences. They also verified controls, per-direct-consumer release,
-hints and final report ordering. These small checks validate the reused harness
-and provide no nominal-scale pass claim. Native measurements are pending.
+checked26,880 raw receipts with zero differences under the required native build.
+
+| Tracer | Window checks | Compiler peak KiB | Simulator peak KiB |
+| --- | ---: | ---: | ---: |
+| max-tracer-ns |1,344 |355,808 |127,156 |
+| max-tracer-cycle |1,288 |355,808 |126,352 |
+| max-tracer-unknown |1,344 |355,808 |127,304 |
+| max-tracer-reset |1,287 |355,672 |127,460 |
+
+These runs also checked controls, every direct-member ACK, complete release of
+retained frames/controls, hints,56 typed scopes and final report ordering. Compiler
+and runtime tool diagnostics were absent. Formal report WARNING results are
+expected for the continuously active, truncated episodes. Portable inputs,
+per-scope expected/actual rows, empty differences, logs, compile receipts, SDK
+provenance and consumed source snapshots are in
+[`tests/scale/evidence/maximum-preparation`](../tests/scale/evidence/maximum-preparation/README.md).
+These small checks establish neither nominal memory nor nominal correctness.
+
+All four native profiles remain **unrun for the repaired source**, awaiting the
+current common-scale gate and resource admission. Their expected counts above
+are unchanged. Each will instantiate20,480 public owners and therefore20,480
+native reset observer contexts, plus one coalesced pending settlement callback.
+The small measurements provide no justified maximum RSS extrapolation; actual
+full runs must measure it.
+
+The original source `2d5c685` had one license-service interruption and four later
+partial runs stopped as `operator-superseded-source` when the scheduling defects
+were confirmed. Their original manifests, logs and receipts are preserved in a
+separate archive. They are neither current-source acceptance nor capacity
+failures. The older no-debug compatibility probe applies only to its original
+runtime and does not establish support for removing the new native dependency.
