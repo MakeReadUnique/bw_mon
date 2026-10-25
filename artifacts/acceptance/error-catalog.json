@@ -29,7 +29,7 @@
   "COLLECTOR_STATE": {
     "cases": [],
     "locations": [
-      "rtl/bw_group_mon.sv:120"
+      "rtl/bw_group_mon.sv:128"
     ]
   },
   "CONFIG_FROZEN": {
@@ -72,15 +72,15 @@
     ],
     "locations": [
       "rtl/bw_mon_transport.svh:110",
-      "rtl/bw_stats_core.sv:993"
+      "rtl/bw_stats_core.sv:1000"
     ]
   },
   "CONTROL_TIME": {
     "cases": [],
     "locations": [
       "rtl/bw_mon_transport.svh:115",
-      "rtl/bw_stats_core.sv:986",
-      "rtl/bw_stats_core.sv:996"
+      "rtl/bw_stats_core.sv:993",
+      "rtl/bw_stats_core.sv:1003"
     ]
   },
   "CREDIT_CONFIG": {
@@ -123,7 +123,7 @@
     ],
     "locations": [
       "rtl/bw_mon_transport.svh:66",
-      "rtl/bw_stats_core.sv:1046"
+      "rtl/bw_stats_core.sv:1053"
     ]
   },
   "EMPTY_GROUP": {
@@ -145,7 +145,7 @@
       "numeric_policy_episode_2"
     ],
     "locations": [
-      "rtl/bw_group_mon.sv:62",
+      "rtl/bw_group_mon.sv:67",
       "rtl/bw_mon_pkg.sv:450",
       "rtl/bw_mon_pkg.sv:453",
       "rtl/bw_mon_pkg.sv:455"
@@ -156,7 +156,7 @@
       "group_fault_wrong_time"
     ],
     "locations": [
-      "rtl/bw_group_mon.sv:165"
+      "rtl/bw_group_mon.sv:173"
     ]
   },
   "FRAME_TIMEOUT": {
@@ -168,7 +168,7 @@
       "hierarchy_depth_missing"
     ],
     "locations": [
-      "rtl/bw_group_mon.sv:203"
+      "rtl/bw_group_mon.sv:211"
     ]
   },
   "FRAME_TIMEOUT_CONFIG": {
@@ -182,7 +182,7 @@
   "GROUP_CLOCK": {
     "cases": [],
     "locations": [
-      "rtl/bw_group_mon.sv:90"
+      "rtl/bw_group_mon.sv:98"
     ]
   },
   "GROUP_CONTEXT": {
@@ -273,7 +273,7 @@
   "HINT_CLOCK": {
     "cases": [],
     "locations": [
-      "rtl/bw_hint_duration.sv:110"
+      "rtl/bw_hint_duration.sv:118"
     ]
   },
   "HINT_CONFIG": {
@@ -294,7 +294,7 @@
   "HINT_TIME": {
     "cases": [],
     "locations": [
-      "rtl/bw_hint_duration.sv:54"
+      "rtl/bw_hint_duration.sv:61"
     ]
   },
   "HISTORY_STATE": {
@@ -365,7 +365,9 @@
       "rtl/bw_mon_transport.svh:38",
       "rtl/bw_mon_transport.svh:173",
       "rtl/bw_mon_transport.svh:192",
-      "rtl/bw_stats_core.sv:1115"
+      "rtl/bw_point_recorder.sv:37",
+      "rtl/bw_point_recorder.sv:43",
+      "rtl/bw_stats_core.sv:1122"
     ]
   },
   "MEMBER_COUNT": {
@@ -400,16 +402,16 @@
   "METRIC_ARITHMETIC": {
     "cases": [],
     "locations": [
-      "rtl/bw_stats_core.sv:265",
-      "rtl/bw_stats_core.sv:298",
-      "rtl/bw_stats_core.sv:383",
-      "rtl/bw_stats_core.sv:400"
+      "rtl/bw_stats_core.sv:271",
+      "rtl/bw_stats_core.sv:304",
+      "rtl/bw_stats_core.sv:389",
+      "rtl/bw_stats_core.sv:406"
     ]
   },
   "METRIC_TIME": {
     "cases": [],
     "locations": [
-      "rtl/bw_stats_core.sv:215"
+      "rtl/bw_stats_core.sv:221"
     ]
   },
   "NOT_READY": {
@@ -442,7 +444,7 @@
       "numeric_policy_phase_2"
     ],
     "locations": [
-      "rtl/bw_group_mon.sv:64",
+      "rtl/bw_group_mon.sv:69",
       "rtl/bw_mon_pkg.sv:470",
       "rtl/bw_mon_pkg.sv:473",
       "rtl/bw_mon_pkg.sv:475",
@@ -457,15 +459,15 @@
       "phase_fit_error"
     ],
     "locations": [
-      "rtl/bw_stats_core.sv:513",
-      "rtl/bw_stats_core.sv:525",
-      "rtl/bw_stats_core.sv:563"
+      "rtl/bw_stats_core.sv:519",
+      "rtl/bw_stats_core.sv:531",
+      "rtl/bw_stats_core.sv:569"
     ]
   },
   "PHASE_STATE": {
     "cases": [],
     "locations": [
-      "rtl/bw_stats_core.sv:360"
+      "rtl/bw_stats_core.sv:366"
     ]
   },
   "POINT_COUNT": {
@@ -498,7 +500,7 @@
       "rtl/bw_mon_registry.svh:15",
       "rtl/bw_mon_registry.svh:62",
       "rtl/bw_mon_transport.svh:102",
-      "rtl/bw_stats_core.sv:988"
+      "rtl/bw_stats_core.sv:995"
     ]
   },
   "PROTOCOL_CONFIG": {
@@ -509,6 +511,13 @@
     "locations": [
       "rtl/bw_mon_pkg.sv:352",
       "rtl/bw_mon_pkg.sv:363"
+    ]
+  },
+  "RECORDER_RECEIPT": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_point_recorder.sv:39",
+      "rtl/bw_point_recorder.sv:45"
     ]
   },
   "RECORD_RELEASE": {
@@ -526,15 +535,15 @@
     ],
     "locations": [
       "rtl/bw_mon_transport.svh:62",
-      "rtl/bw_stats_core.sv:1041"
+      "rtl/bw_stats_core.sv:1048"
     ]
   },
   "RECORD_TIME": {
     "cases": [],
     "locations": [
       "rtl/bw_mon_transport.svh:71",
-      "rtl/bw_stats_core.sv:1044",
-      "rtl/bw_stats_core.sv:1102"
+      "rtl/bw_stats_core.sv:1051",
+      "rtl/bw_stats_core.sv:1109"
     ]
   },
   "REGISTRATION_FROZEN": {
@@ -571,12 +580,18 @@
       "rtl/bw_mon_pkg.sv:291"
     ]
   },
+  "RESET_OBSERVER_SCOPE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_slot_settlement.svh:12"
+    ]
+  },
   "SCOPE_KIND": {
     "cases": [
       "numeric_core_kind"
     ],
     "locations": [
-      "rtl/bw_stats_core.sv:1113"
+      "rtl/bw_stats_core.sv:1120"
     ]
   },
   "SCOPE_REFERENCE": {
@@ -601,6 +616,14 @@
     "locations": [
       "rtl/bw_mon_pkg.sv:507",
       "rtl/bw_mon_pkg.sv:510"
+    ]
+  },
+  "SLOT_SCHEDULER": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_reset_capture.svh:33",
+      "rtl/bw_reset_capture.svh:56",
+      "rtl/bw_slot_settlement.svh:31"
     ]
   },
   "SOURCE_EPOCH": {
@@ -666,10 +689,13 @@
       "storage_failure_registry_groups",
       "storage_failure_registry_rules",
       "storage_failure_registry_members",
-      "storage_failure_registry_parents"
+      "storage_failure_registry_parents",
+      "settle_storage_reset_observer",
+      "settle_storage_reset_capture"
     ],
     "locations": [
-      "rtl/bw_mon_pkg.sv:538"
+      "rtl/bw_mon_pkg.sv:538",
+      "rtl/bw_reset_capture.svh:55"
     ]
   },
   "STORAGE_RANGE": {
@@ -680,7 +706,8 @@
     "locations": [
       "rtl/bw_check_report.sv:289",
       "rtl/bw_mon_pkg.sv:478",
-      "rtl/bw_mon_pkg.sv:517"
+      "rtl/bw_mon_pkg.sv:517",
+      "rtl/bw_reset_capture.svh:48"
     ]
   },
   "TOPOLOGY_LIMIT": {
@@ -706,13 +733,13 @@
       "dynamic_size_error"
     ],
     "locations": [
-      "rtl/bw_point_recorder.sv:140"
+      "rtl/bw_point_recorder.sv:171"
     ]
   },
   "UNEXPECTED_FRAME": {
     "cases": [],
     "locations": [
-      "rtl/bw_group_mon.sv:198"
+      "rtl/bw_group_mon.sv:206"
     ]
   },
   "WINDOW_CONFIG": {
@@ -728,7 +755,7 @@
       "numeric_policy_stride_x"
     ],
     "locations": [
-      "rtl/bw_group_mon.sv:59",
+      "rtl/bw_group_mon.sv:64",
       "rtl/bw_mon_pkg.sv:548",
       "rtl/bw_mon_pkg.sv:550",
       "rtl/bw_mon_pkg.sv:554",

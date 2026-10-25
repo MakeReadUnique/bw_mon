@@ -1,12 +1,14 @@
 # Actual12-point/four-group acceptance assets
 
-Automated **42/42PASS**; **humanT6reviewPENDING**. Agent image inspection is separate.
+Automated **42/42PASS**; **human T6 ledger status: PENDING**. Agent image inspection is separate.
+
+Human status covers only the ledger's named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.
 
 Independent totals: {'raw': 161472, 'windows': 86375, 'receipts': 161472}; analysis: {'episodes': 518, 'phases': 1350, 'variations': 1868}. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).
 
-The durable [408-case component proof](component-proof/verification.json) and [complete log/config archive](component-proof/final-408-proof.tar.gz) are separate from this new scene campaign. Scale evidence is separately scoped by its own manifests.
+This campaign consumes the [frozen runtime and native dependency hashes](runtime-source.json), with [current 424-case /167-top /3 minimum-option component proof](current-component-proof/verification.json). Its [portable archives and verifier](current-component-proof/README.md) are retained here. The unchanged [historical 408-case component proof](component-proof/verification.json) and [historical log/config archive](component-proof/final-408-proof.tar.gz) describe their original source, not the current runtime. Scale evidence is separately scoped by its own manifests.
 
-|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Performance summary|
+|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|
 |---|---|---|---|---|
 |child_reset_cycle|cycle 20/2/24|[FSDB](child_reset_cycle/waves.fsdb) · [expected/actual](child_reset_cycle/expected-actual.md) · [reference](child_reset_cycle/reference.json) · [cfg](child_reset_cycle/expect.cfg) · [open](child_reset_cycle/open.sh)|Portable public views; FSDB directly available|FAIL {'PASS': 4, 'FAIL': 1, 'WARNING': 1}|
 |child_reset_ns|ns 10/1/12|[FSDB](child_reset_ns/waves.fsdb) · [expected/actual](child_reset_ns/expected-actual.md) · [reference](child_reset_ns/reference.json) · [cfg](child_reset_ns/expect.cfg) · [open](child_reset_ns/open.sh)|[quality.png](child_reset_ns/quality.png)|FAIL {'PASS': 4, 'FAIL': 1, 'WARNING': 1}|

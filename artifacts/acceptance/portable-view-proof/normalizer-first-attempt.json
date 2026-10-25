@@ -1,0 +1,7 @@
+{
+  "actual_verdi_restore_exit_code": 0,
+  "normalizer_status": "FAILED",
+  "reason": "One-off proof parser did not expand native addSignal -holdScope or strip bus widths; unrelated to runtime/data correctness",
+  "repair": "Expand relative field using the previous absolute field parent and normalize only terminal bus range",
+  "human_review": "PENDING"
+}

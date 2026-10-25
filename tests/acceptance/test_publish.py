@@ -29,7 +29,7 @@ class PublishReviewCLI(unittest.TestCase):
         shutil.copytree(str(ROOT / 'artifacts/acceptance'), str(self.out))
         # Copy the source inputs declared by the public evidence manifests; the
         # stimulus itself is already retained in each original trace archive.
-        dependencies = {'tests/acceptance/publish.py'}
+        dependencies = {'tests/acceptance/publish.py', 'tests/acceptance/evidence.py'}
         for manifest in self.out.glob('*/commands.json'):
             dependencies.update(json.loads(manifest.read_text())['dependency_sha256'])
         for name in dependencies:
@@ -46,6 +46,13 @@ class PublishReviewCLI(unittest.TestCase):
                 'no real human review or approval is represented.'),
             'synthetic_test_only': True,
         }
+        self.synthetic_agent = {
+            'status': 'SYNTHETIC_AGENT_IMAGE_CHECK_NOT_HUMAN',
+            'reviewer_type': 'SYNTHETIC AGENT FIXTURE ONLY',
+            'entries': [{'image': 'steady_ns/overview.png',
+                         'sha256': hashlib.sha256(
+                             (self.out / 'steady_ns/overview.png').read_bytes()).hexdigest()}],
+        }
 
     def read(self, name):
         return json.loads((self.out / name).read_text())
@@ -60,6 +67,7 @@ class PublishReviewCLI(unittest.TestCase):
     def seed_synthetic_review(self):
         ledger = self.read('review.json')
         ledger['human'] = self.synthetic
+        ledger['agent'] = self.synthetic_agent
         (self.out / 'review.json').write_text(json.dumps(ledger, indent=2) + '\n')
         return ledger['asset_fingerprint']
 
@@ -78,6 +86,7 @@ class PublishReviewCLI(unittest.TestCase):
         ledger, verification = self.read('review.json'), self.read('verification.json')
         self.assertEqual(ledger['asset_fingerprint'], fingerprint)
         self.assertEqual(ledger['human'], self.synthetic)
+        self.assertEqual(ledger['agent'], self.synthetic_agent)
         self.assertEqual(verification['human_review'], SYNTHETIC_STATUS)
         index = (self.out / 'INDEX.md').read_text()
         self.assertIn(SYNTHETIC_STATUS, index)
@@ -104,6 +113,8 @@ class PublishReviewCLI(unittest.TestCase):
         for field in ['reviewer', 'date', 'objects_intervals_conclusion']:
             self.assertIsNone(ledger['human'][field])
         self.assertEqual(ledger['previous_human_record'], self.synthetic)
+        self.assertEqual(ledger['agent']['status'], 'PENDING')
+        self.assertEqual(ledger['previous_agent_record'], self.synthetic_agent)
         self.assertEqual(verification['human_review'], 'PENDING')
         index = (self.out / 'INDEX.md').read_text()
         self.assertIn('human T6 ledger status: PENDING', index)
@@ -125,6 +136,8 @@ class PublishReviewCLI(unittest.TestCase):
         self.assertTrue('previous_human_record' in ledger,
                         'Third publication lost the archived SYNTHETIC record')
         self.assertEqual(ledger['previous_human_record'], self.synthetic)
+        self.assertEqual(ledger['agent']['status'], 'PENDING')
+        self.assertEqual(ledger['previous_agent_record'], self.synthetic_agent)
         self.assertEqual((self.out / 'review.json').read_text().count(SYNTHETIC_STATUS), 1)
         self.assertEqual(ledger['asset_fingerprint'], invalidated['asset_fingerprint'])
         self.assertEqual(ledger['human']['status'], 'PENDING')
@@ -136,6 +149,43 @@ class PublishReviewCLI(unittest.TestCase):
         self.assertNotIn(SYNTHETIC_STATUS, index)
         self.assertEqual(self.snapshot_evidence(), evidence,
                          'Repeated pending publication must preserve evidence bytes')
+
+    def test_rejects_wrong_consumed_c_or_local_header_metadata(self):
+        manifest = self.out / 'child_reset_cycle/commands.json'
+        original = manifest.read_text()
+        ledger = (self.out / 'review.json').read_bytes()
+        for name in ['rtl/bw_slot_settlement.c', 'rtl/bw_reset_capture.svh']:
+            with self.subTest(consumed_source=name):
+                changed = json.loads(original)
+                changed['dependency_sha256'][name] = '0' * 64
+                manifest.write_text(json.dumps(changed, indent=2) + '\n')
+                evidence = self.snapshot_evidence()
+                result = subprocess.run(
+                    [sys.executable, str(self.root / 'tests/acceptance/publish.py')],
+                    cwd=str(self.root), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    universal_newlines=True, timeout=120)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('scene consumed a different runtime', result.stdout)
+                self.assertEqual((self.out / 'review.json').read_bytes(), ledger)
+                self.assertEqual(self.snapshot_evidence(), evidence)
+        manifest.write_text(original)
+
+    def test_rejects_wrong_sdk_header_hash_without_editing_the_sdk(self):
+        freeze = self.out / 'runtime-source.json'
+        changed = json.loads(freeze.read_text())
+        sdk = changed['native_header_dependencies']['vendor_headers'][0]
+        changed['native_header_dependencies']['header_sha256'][sdk] = '0' * 64
+        freeze.write_text(json.dumps(changed, indent=2) + '\n')
+        ledger = (self.out / 'review.json').read_bytes()
+        evidence = self.snapshot_evidence()
+        result = subprocess.run(
+            [sys.executable, str(self.root / 'tests/acceptance/publish.py')],
+            cwd=str(self.root), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            universal_newlines=True, timeout=120)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('native header changed', result.stdout)
+        self.assertEqual((self.out / 'review.json').read_bytes(), ledger)
+        self.assertEqual(self.snapshot_evidence(), evidence)
 
 
 if __name__ == '__main__':

@@ -9,6 +9,117 @@
     "status": "REPRESENTATIVE_IMAGES_INSPECTED",
     "reviewer": "Codex agent",
     "reviewer_type": "AGENT, NOT HUMAN",
+    "date_utc": "2026-10-25T14:08:57.741191Z",
+    "asset_fingerprint": "65f318be688aa05ca26231cda061d011f936e41c94f0f52857d773e9d8f3ae98",
+    "entries": [
+      {
+        "image": "steady_ns/overview.png",
+        "sha256": "ff1edbe0d2cd4c2e5e328cd091aef0593eb15c5c115752285cfd4a007dd4f39d",
+        "observations": "At102ns full known [92,102):1280B/20events gives128GB/s; die0/die1512, all1024,mixed768; free points remain128."
+      },
+      {
+        "image": "steady_cycle/clock.png",
+        "sha256": "4d1774deeba1bfeec85836537a8a634c6601549b7d30479161ce9947936100e3",
+        "observations": "At102.5ns [92.5,102.5):20cycles/10ns, point64B/cycle; die256,all512,mixed384; physical bandwidth128/512/1024/768."
+      },
+      {
+        "image": "start_stop_ns/overview.png",
+        "sha256": "e2fe31e0cad7eaab2bc21b842fab5b21f028b3cb9a5b1115ae0e82dbddbbcedf",
+        "observations": "Valid stops60ns; cursor61ns reads1152B/18events/10ns=115.2GB/s, history subsequently expires."
+      },
+      {
+        "image": "varying_ns/phase.png",
+        "sha256": "28f8d8320ae3365e189fa4d6c53803dd554962223c28564ccd34b80afbe0bb18",
+        "observations": "Repeated stage results; final phase11 [136,140)raw128/mean128/stddev0, whole-process CV43.568% valid; current/final IDs distinguished."
+      },
+      {
+        "image": "e3_delayed_ns/phase.png",
+        "sha256": "a6f263dcba2725272f4056288b31b9288b48bcd36d8cff2748e37bb64155721c",
+        "observations": "Candidate120ns, evidenceN3/span20, confirmation150; final result sequence remains0 before process settlement."
+      },
+      {
+        "image": "clock_stop_cycle/clock.png",
+        "sha256": "dd04f1c6ec598a582d74097299e74b36aaceb6ba4aa624126a1193ce9a7d6754",
+        "observations": "Cycle resultseq79 held during stop; resume101ns window[70.5,101) spans30.5ns/20cycles,1280B gives41.9672GB/s and64B/cycle."
+      },
+      {
+        "image": "size_unknown_ns/quality.png",
+        "sha256": "72e18159b36167530beb22f3820e89dec6dbed06c88383ae9a273052b3a53bd2",
+        "observations": "At105ns full [95,105), point1216B and all10176B; BC0/EC1, no known reset coverage; later window recovers."
+      },
+      {
+        "image": "point_reset_ns/quality.png",
+        "sha256": "6aae68fe4012cb975a75a2a257318253e9f1529d9694e10ebd8cf4d5e22ddd0f",
+        "observations": "Point epoch1/rewarmup while all epoch0 retains10176B, BC/EC1 and member-reset coverage1; upstream state continues."
+      },
+      {
+        "image": "child_reset_ns/quality.png",
+        "sha256": "39854b5d60142e914efa31d0cb3dc90d9c150eb89754416bc9f990fec61c8493",
+        "observations": "Only child epoch1/warmup; point/all epoch0, all10240B/full/1024GB/s, no actual point-reset coverage."
+      },
+      {
+        "image": "e4_below_ns/episode.png",
+        "sha256": "a5a38ce358be07ae04ee8372bcdea17736e6c25daa5f201705d3a8910ca7e7ad",
+        "observations": "Completed[1,101) with15199B/100events/100ns; e2e151.99 valid distinct from last steady152; exact effective lower152 therefore fails."
+      },
+      {
+        "image": "hints_cycle/hints.png",
+        "sha256": "3cc5bc9ce6f138bac9f166f1975ae1294905a74b1364352e1089fe441216425c",
+        "observations": "Stopped clock/cycle result79 held while live backpressure starts85/hits87/ends95ns; duration10ns and hit/interval counts1."
+      },
+      {
+        "image": "protocols_ns/protocols.png",
+        "sha256": "4bcd3907514de0785a5257a97802f49e42523277f65a16c6416ba874dcbdf1c1",
+        "observations": "At61ns p1 validX/ready0 remains known idle and BC/EC1; p2 valid0/flitv1/lcrdv0 counts, credit13 trusted/anomaly0."
+      },
+      {
+        "image": "frequency_cycle/clock.png",
+        "sha256": "82ba08b6792196f312a0d50256e112b762b52df5f511d767d2cf82ed2cf39669",
+        "observations": "At103.5ns20cycles span20ns; point1280B gives64GB/s and64B/cycle, all10240B gives512GB/s and512B/cycle; added group B/cycle rows256/256/384 visible."
+      }
+    ],
+    "limitations": "Only the named fresh images were visually inspected by an agent; all human review remains PENDING."
+  },
+  "actual_images": [
+    "child_reset_ns/quality.png",
+    "clock_stop_cycle/clock.png",
+    "clock_stop_ns/clock.png",
+    "e2_ns/overview.png",
+    "e3_boundary_ns/episode.png",
+    "e3_delayed_ns/phase.png",
+    "e3_delayed_ns/episode.png",
+    "e4_below_ns/episode.png",
+    "e4_boundary_ns/episode.png",
+    "e4_low_ns/episode.png",
+    "e5_ns/episode.png",
+    "frequency_cycle/clock.png",
+    "frequency_ns/clock.png",
+    "hints_cycle/hints.png",
+    "isolated_ns/overview.png",
+    "no_episode_ns/episode.png",
+    "point_reset_ns/quality.png",
+    "protocols_ns/protocols.png",
+    "reset_unknown_ns/quality.png",
+    "size_unknown_ns/quality.png",
+    "size_unknown_ns/episode.png",
+    "start_stop_cycle/overview.png",
+    "start_stop_ns/overview.png",
+    "steady_cycle/overview.png",
+    "steady_cycle/clock.png",
+    "steady_ns/overview.png",
+    "truncated_cycle/episode.png",
+    "upper_reset_ns/quality.png",
+    "valid_unknown_ns/quality.png",
+    "varying_cycle/phase.png",
+    "varying_ns/phase.png",
+    "varying_ns/episode.png",
+    "zero_ns/episode.png"
+  ],
+  "instructions": "Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.",
+  "previous_agent_record": {
+    "status": "REPRESENTATIVE_IMAGES_INSPECTED",
+    "reviewer": "Codex agent",
+    "reviewer_type": "AGENT, NOT HUMAN",
     "date_utc": "2026-10-25T08:00:02.842712Z",
     "entries": [
       {
@@ -92,43 +203,8 @@
         "observations": "At102.5ns:20cycles,1280B point64B/cycle; die0/die1256, all512,mixed384; physical10ns bandwidth128/512/1024/768. Actual fresh supplementary capture after license restoration."
       }
     ],
-    "limitations": "Other captures are automation-validated and available for actual humanreview; this ledger never supplies humanattestation."
+    "limitations": "Other captures are automation-validated and available for actual humanreview; this ledger never supplies humanattestation.",
+    "asset_fingerprint": "7d5ec87e4779cdf54fcde49d1d9c516a4afa6d752ceaab30eb2debc5ee27884c"
   },
-  "actual_images": [
-    "child_reset_ns/quality.png",
-    "clock_stop_cycle/clock.png",
-    "clock_stop_ns/clock.png",
-    "e2_ns/overview.png",
-    "e3_boundary_ns/episode.png",
-    "e3_delayed_ns/phase.png",
-    "e3_delayed_ns/episode.png",
-    "e4_below_ns/episode.png",
-    "e4_boundary_ns/episode.png",
-    "e4_low_ns/episode.png",
-    "e5_ns/episode.png",
-    "frequency_cycle/clock.png",
-    "frequency_ns/clock.png",
-    "hints_cycle/hints.png",
-    "isolated_ns/overview.png",
-    "no_episode_ns/episode.png",
-    "point_reset_ns/quality.png",
-    "protocols_ns/protocols.png",
-    "reset_unknown_ns/quality.png",
-    "size_unknown_ns/quality.png",
-    "size_unknown_ns/episode.png",
-    "start_stop_cycle/overview.png",
-    "start_stop_ns/overview.png",
-    "steady_cycle/overview.png",
-    "steady_cycle/clock.png",
-    "steady_ns/overview.png",
-    "truncated_cycle/episode.png",
-    "upper_reset_ns/quality.png",
-    "valid_unknown_ns/quality.png",
-    "varying_cycle/phase.png",
-    "varying_ns/phase.png",
-    "varying_ns/episode.png",
-    "zero_ns/episode.png"
-  ],
-  "instructions": "Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.",
-  "asset_fingerprint": "7d5ec87e4779cdf54fcde49d1d9c516a4afa6d752ceaab30eb2debc5ee27884c"
+  "asset_fingerprint": "65f318be688aa05ca26231cda061d011f936e41c94f0f52857d773e9d8f3ae98"
 }

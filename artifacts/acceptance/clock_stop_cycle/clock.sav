@@ -27,7 +27,7 @@ marker 0.000000
 ; visible top row signal index
 top 0
 ; marker line index
-markerPos 26
+markerPos 29
 
 ; event list
 ; addEvent event_name event_expression
@@ -75,6 +75,9 @@ addSignal -w digital -c ID_YELLOW5 -ls solid -lw 1 -h 16 -holdScope bandwidth_gb
 addSignal -w digital -c ID_GREEN5 -ls solid -lw 1 -h 16 -holdScope bytes_per_cycle
 addSignal -h 16 -holdScope window_full
 addSignal -h 16 -holdScope bytes_complete
+addSignal -w digital -c ID_CYAN5 -ls solid -lw 1 -h 16 /tb_acceptance_cycle/scene/die0/bytes_per_cycle
+addSignal -w digital -c ID_BLUE5 -ls solid -lw 1 -h 16 /tb_acceptance_cycle/scene/die1/bytes_per_cycle
+addSignal -w digital -c ID_PURPLE5 -ls solid -lw 1 -h 16 /tb_acceptance_cycle/scene/mixed/bytes_per_cycle
 addGroup "G2"
 
 ; getSignalForm Scope Hierarchy Status

@@ -25,7 +25,10 @@
     "/tb_acceptance_cycle/scene/all_dmc/bandwidth_gbps",
     "/tb_acceptance_cycle/scene/all_dmc/bytes_per_cycle",
     "/tb_acceptance_cycle/scene/all_dmc/window_full",
-    "/tb_acceptance_cycle/scene/all_dmc/bytes_complete"
+    "/tb_acceptance_cycle/scene/all_dmc/bytes_complete",
+    "/tb_acceptance_cycle/scene/die0/bytes_per_cycle",
+    "/tb_acceptance_cycle/scene/die1/bytes_per_cycle",
+    "/tb_acceptance_cycle/scene/mixed/bytes_per_cycle"
   ],
   "view": "clock",
   "prepared": true
