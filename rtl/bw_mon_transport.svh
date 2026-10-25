@@ -9,30 +9,33 @@
       notify_group(registered_sources[source_handle].parents[p]);
   endfunction
 
-  function automatic int group_member_count(int group_handle);
-    return registered_groups[group_handle].members.size();
+  function automatic int group_member_count(logic [63:0] group_handle);
+    return registered_groups[checked_group_index(group_handle)].members.size();
   endfunction
 
-  function automatic int group_recursive_point_count(int group_handle);
-    return $countones(registered_groups[group_handle].recursive_points);
+  function automatic int group_recursive_point_count(logic [63:0] group_handle);
+    return $countones(registered_groups[checked_group_index(group_handle)].recursive_points);
   endfunction
 
-  function automatic bw_notification group_notification(int group_handle);
-    return registered_groups[group_handle].notification;
+  function automatic bw_notification group_notification(logic [63:0] group_handle);
+    return registered_groups[checked_group_index(group_handle)].notification;
   endfunction
 
-  function automatic int member_source(int group_handle,int member_index);
-    if (group_handle<0 || group_handle>=registered_groups.size())
-      core_error("GROUP_REFERENCE","transport",$sformatf("group_handle=%0d",group_handle));
-    if (member_index<0 || member_index>=registered_groups[group_handle].members.size())
-      core_error("MEMBER_REFERENCE",registered_groups[group_handle].id,
-        $sformatf("member_index=%0d",member_index));
-    return registered_groups[group_handle].members[member_index];
+  function automatic int member_source(logic [63:0] group_handle,logic [63:0] member_index);
+    int group_index;group_index=checked_group_index(group_handle,"member_source");
+    if(core_failure_seen)return 0;
+    if($isunknown(member_index))begin core_error("INTEGER_UNKNOWN",registered_groups[group_index].id,$sformatf("member_index=%h",member_index));return 0;end
+    if(member_index>=registered_groups[group_index].members.size())begin
+      core_error("MEMBER_REFERENCE",registered_groups[group_index].id,$sformatf("member_index=%0d",member_index));return 0;
+    end
+    return registered_groups[group_index].members[int'(member_index)];
   endfunction
 
-  function automatic void set_source_progress(int source_handle,bw_u64_t watermark);
+  function automatic void set_source_progress(logic [63:0] source_handle,logic [63:0] watermark);
     bw_source_state source;
-    source=registered_sources[source_handle];
+    source=registered_sources[checked_source_index(source_handle)];
+    if(core_failure_seen)return;
+    if($isunknown(watermark))begin core_error("INTEGER_UNKNOWN",source.id,$sformatf("progress_watermark=%h",watermark));return;end
     if (source.progress_watermark_ticks!=watermark) begin
       source.progress_watermark_ticks=watermark;
       notify_parents(source_handle);
@@ -48,10 +51,11 @@
     return watermark;
   endfunction
 
-  function automatic void publish_frame(int source_handle,bw_record_t frame);
+  function automatic void publish_frame(logic [63:0] source_handle,bw_record_t frame);
     bw_source_state source;
     if (!monitor_ready) core_error("NOT_READY",source_name(source_handle),"frame before ready");
-    source=registered_sources[source_handle];check_monitor_time($time,source.id);
+    source=registered_sources[checked_source_index(source_handle)];
+    if(core_failure_seen)return;check_monitor_time($time,source.id);
     validate_record_numeric(frame,source.id);
     if(core_failure_seen)return;
     if (frame.record_seq!=checked_add(source.last_frame_seq,1,source.id))
@@ -80,12 +84,13 @@
     notify_parents(source_handle);
   endfunction
 
-  function automatic void publish_control(int source_handle,bw_control_t control);
+  function automatic void publish_control(logic [63:0] source_handle,bw_control_t control);
     bw_source_state source;
     bw_control_frame_t envelope;
     int point_handle;
     bw_u64_t expected;
-    source=registered_sources[source_handle];
+    source=registered_sources[checked_source_index(source_handle)];
+    if(core_failure_seen)return;
     if (!monitor_ready) core_error("NOT_READY",source.id,"control before ready");
     check_monitor_time($time,source.id);
     validate_control_numeric(control,source.id);
@@ -119,7 +124,7 @@
     notify_parents(source_handle);
   endfunction
 
-  function automatic bit peek_member_frame(int group_handle,int member_index,output bw_record_t frame);
+  function automatic bit peek_member_frame(logic [63:0] group_handle,logic [63:0] member_index,output bw_record_t frame);
     bw_source_state source;
     bw_u64_t wanted,index;
     source=registered_sources[member_source(group_handle,member_index)];frame='0;
@@ -135,7 +140,7 @@
     frame=source.frames[int'(index)];return 1;
   endfunction
 
-  function automatic bit peek_member_control(int group_handle,int member_index,output bw_control_frame_t control);
+  function automatic bit peek_member_control(logic [63:0] group_handle,logic [63:0] member_index,output bw_control_frame_t control);
     bw_source_state source;
     bw_u64_t wanted,index;
     source=registered_sources[member_source(group_handle,member_index)];control='0;
@@ -151,11 +156,13 @@
     control=source.controls[int'(index)];return 1;
   endfunction
 
-  function automatic void acknowledge_member_frame(int group_handle,int member_index,bw_u64_t consumed_seq);
+  function automatic void acknowledge_member_frame(logic [63:0] group_handle,logic [63:0] member_index,logic [63:0] consumed_seq);
     bw_record_t frame,discarded;
     bw_source_state source;
     bw_u64_t minimum;
     source=registered_sources[member_source(group_handle,member_index)];
+    if(core_failure_seen)return;
+    if($isunknown(consumed_seq))begin core_error("INTEGER_UNKNOWN",registered_groups[group_handle].id,$sformatf("frame_ack=%h member=%0d",consumed_seq,member_index));return;end
     if (!peek_member_frame(group_handle,member_index,frame) || frame.record_seq!=consumed_seq)
       core_error("ACK_SEQUENCE",registered_groups[group_handle].id,
         $sformatf("source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.frame_acks[group_handle]));
@@ -168,11 +175,13 @@
     notify_group(group_handle);
   endfunction
 
-  function automatic void acknowledge_member_control(int group_handle,int member_index,bw_u64_t consumed_seq);
+  function automatic void acknowledge_member_control(logic [63:0] group_handle,logic [63:0] member_index,logic [63:0] consumed_seq);
     bw_control_frame_t control,discarded;
     bw_source_state source;
     bw_u64_t minimum;
     source=registered_sources[member_source(group_handle,member_index)];
+    if(core_failure_seen)return;
+    if($isunknown(consumed_seq))begin core_error("INTEGER_UNKNOWN",registered_groups[group_handle].id,$sformatf("control_ack=%h member=%0d",consumed_seq,member_index));return;end
     if (!peek_member_control(group_handle,member_index,control) || control.transport_seq!=consumed_seq)
       core_error("ACK_SEQUENCE",registered_groups[group_handle].id,
         $sformatf("control source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.control_acks[group_handle]));
@@ -230,12 +239,12 @@
   endfunction
 
   // Controlled diagnostics for contract tests/reports; no mutable buffers escape.
-  function automatic int retained_frame_count(int source_handle);
-    return registered_sources[source_handle].frames.size();
+  function automatic int retained_frame_count(logic [63:0] source_handle);
+    return registered_sources[checked_source_index(source_handle)].frames.size();
   endfunction
-  function automatic int retained_control_count(int source_handle);
-    return registered_sources[source_handle].controls.size();
+  function automatic int retained_control_count(logic [63:0] source_handle);
+    return registered_sources[checked_source_index(source_handle)].controls.size();
   endfunction
-  function automatic bw_u64_t acknowledged_frame_seq(int group_handle,int member_index);
+  function automatic bw_u64_t acknowledged_frame_seq(logic [63:0] group_handle,logic [63:0] member_index);
     return registered_sources[member_source(group_handle,member_index)].frame_acks[group_handle];
   endfunction

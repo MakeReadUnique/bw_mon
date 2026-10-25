@@ -2461,5 +2461,60 @@
       "+MODE=unknown"
     ],
     "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_publish_handle",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=publish_handle"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_ack_frame",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=ack_frame"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_ack_control",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=ack_control"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_group_handle",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=group_handle"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_member_index",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=member_index"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_progress",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=progress"
+    ],
+    "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  },
+  {
+    "name": "numeric_transport_valid_reset",
+    "top": "tb_numeric_transport",
+    "plusargs": [
+      "+MODE=valid_reset"
+    ]
   }
 ]

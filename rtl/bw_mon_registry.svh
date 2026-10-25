@@ -1,11 +1,30 @@
-  function automatic string source_name(int handle);
-    if (handle<0 || handle>=registered_sources.size())
-      core_error("SOURCE_REFERENCE","transport",$sformatf("source_handle=%0d",handle));
-    return registered_sources[handle].id;
+  function automatic int checked_source_index(logic [63:0] handle,string operation="transport");
+    if($isunknown(handle))begin core_error("INTEGER_UNKNOWN","transport",{operation,$sformatf(" source_handle=%h",handle)});return 0;end
+    if(handle>=registered_sources.size())begin core_error("SOURCE_REFERENCE","transport",{operation,$sformatf(" source_handle=%0d",handle)});return 0;end
+    return int'(handle);
   endfunction
 
-  function automatic string source_kind_name(int handle);
-    return registered_sources[handle].kind==BW_POINT ? "point" : "group";
+  function automatic int checked_group_index(logic [63:0] handle,string operation="transport");
+    if($isunknown(handle))begin core_error("INTEGER_UNKNOWN","transport",{operation,$sformatf(" group_handle=%h",handle)});return 0;end
+    if(handle>=registered_groups.size())begin core_error("GROUP_REFERENCE","transport",{operation,$sformatf(" group_handle=%0d",handle)});return 0;end
+    return int'(handle);
+  endfunction
+
+  function automatic int checked_point_index(logic [63:0] handle,string operation="transport");
+    if($isunknown(handle))begin core_error("INTEGER_UNKNOWN","transport",{operation,$sformatf(" point_handle=%h",handle)});return 0;end
+    if(handle>=registered_points.size())begin core_error("POINT_REFERENCE","transport",{operation,$sformatf(" point_handle=%0d",handle)});return 0;end
+    return int'(handle);
+  endfunction
+
+  function automatic string source_name(logic [63:0] handle);
+    int index;index=checked_source_index(handle,"source_name");
+    return core_failure_seen ? "" : registered_sources[index].id;
+  endfunction
+
+  function automatic string source_kind_name(logic [63:0] handle);
+    int index;index=checked_source_index(handle,"source_kind");
+    if(core_failure_seen)return "";
+    return registered_sources[index].kind==BW_POINT ? "point" : "group";
   endfunction
 
   function automatic int create_source(bw_scope_t kind,string id);
@@ -40,16 +59,14 @@
     return -1;
   endfunction
 
-  function automatic int point_source_handle(int point_handle);
-    if (point_handle<0 || point_handle>=registered_points.size())
-      core_error("POINT_REFERENCE","transport",$sformatf("point_handle=%0d",point_handle));
-    return registered_points[point_handle].transport_source;
+  function automatic int point_source_handle(logic [63:0] handle);
+    int index;index=checked_point_index(handle,"point_source");
+    return core_failure_seen ? 0 : registered_points[index].transport_source;
   endfunction
 
-  function automatic int group_source_handle(int group_handle);
-    if (group_handle<0 || group_handle>=registered_groups.size())
-      core_error("GROUP_REFERENCE","transport",$sformatf("group_handle=%0d",group_handle));
-    return registered_groups[group_handle].source_handle;
+  function automatic int group_source_handle(logic [63:0] handle);
+    int index;index=checked_group_index(handle,"group_source");
+    return core_failure_seen ? 0 : registered_groups[index].source_handle;
   endfunction
 
   function automatic int registered_scope_count(bw_scope_t kind);
