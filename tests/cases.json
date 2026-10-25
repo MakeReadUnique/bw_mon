@@ -1739,7 +1739,13 @@
   },
   {
     "name": "hierarchy_basic",
-    "top": "tb_hierarchy_basic"
+    "top": "tb_hierarchy_basic",
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_self_cycle",
@@ -1883,7 +1889,13 @@
     ],
     "plusargs": [
       "+MODE=normal"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_ns_child_reset",
@@ -1893,7 +1905,13 @@
     ],
     "plusargs": [
       "+MODE=child_reset"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_ns_point_reset",
@@ -1903,7 +1921,13 @@
     ],
     "plusargs": [
       "+MODE=point_reset"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_ns_size_unknown",
@@ -1913,7 +1937,13 @@
     ],
     "plusargs": [
       "+MODE=size_unknown"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_ns_parent_reset",
@@ -1923,7 +1953,13 @@
     ],
     "plusargs": [
       "+MODE=parent_reset"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_cycle_normal",
@@ -1933,7 +1969,13 @@
     ],
     "plusargs": [
       "+MODE=normal"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_cycle_child_reset",
@@ -1943,7 +1985,13 @@
     ],
     "plusargs": [
       "+MODE=child_reset"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_cycle_point_reset",
@@ -1953,7 +2001,13 @@
     ],
     "plusargs": [
       "+MODE=point_reset"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_cycle_size_unknown",
@@ -1963,7 +2017,13 @@
     ],
     "plusargs": [
       "+MODE=size_unknown"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_t4_cycle_parent_reset",
@@ -1973,7 +2033,13 @@
     ],
     "plusargs": [
       "+MODE=parent_reset"
-    ]
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_depth_transport",

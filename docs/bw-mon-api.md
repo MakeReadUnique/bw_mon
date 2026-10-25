@@ -1010,7 +1010,7 @@ also checked. A sampled observation gap retains the other points' known bytes
 and events through all eight levels, with both completeness flags false. A later
 actual edge while a middle group remains held in statistics reset still advances
 its own raw source, core receipt and input acknowledgement. Its ancestors recover
-a complete window independently of that group's reset local statistics.
+a complete window independently of that group's local statistics held in reset.
 
 Startup cases cover typed equal-text IDs, duplicate direct subgroup rules,
 point/subgroup/sibling/diamond overlap with both paths, conflicts beyond 32/64-bit
@@ -1027,10 +1027,11 @@ the complete `hierarchy_*` matrix. Shared T4 fixture compilation units participa
 in the same cache digest as recursive RTL headers, source paths and runner flags.
 
 
-Hierarchy integration validation: **188/188 contract cases passed** on
+Before merging ticket25, hierarchy validation passed **188/188 contract cases** on
 2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8: all 146 prior cases
-and 42 hierarchy cases. All 110 compiled tops have no Warning-/Error- diagnostics.
-The source, recursive-header, explicit-fixture and runner fingerprints are current;
+and 42 hierarchy cases at integration6ad39d9. All 110 compiled tops had no
+Warning-/Error- diagnostics. The source, recursive-header, explicit-fixture and
+runner fingerprints matched that tree;
 every runtime log follows its current compilation stamp. `git diff --check` passed.
 This includes the final forward-reference, sampled-gap and held-upper-reset
 fixtures. Full group analysis parameters/aliases, real waveform review and scale
