@@ -1,8 +1,8 @@
 `define ACCEPT_ANALYSIS \
-  .WINDOW_BASIS(BASIS),.WINDOW_WIDTH(BASIS==bw_mon_pkg::BW_NS ? 10 : 20), \
-  .UPDATE_STRIDE(BASIS==bw_mon_pkg::BW_NS ? 1 : 2),.EPISODE_ENABLE(1), \
-  .SILENCE_THRESHOLD(BASIS==bw_mon_pkg::BW_NS ? 12 : 24),.PHASE_ENABLE(1), \
-  .PHASE_N(3),.PHASE_MIN_SPAN(BASIS==bw_mon_pkg::BW_NS ? 2 : 4),.PHASE_K(2), \
+  .WINDOW_BASIS(BASIS),.WINDOW_WIDTH(BASIS==bw_mon_pkg::BW_NS ? W_NS : W_CYCLES), \
+  .UPDATE_STRIDE(BASIS==bw_mon_pkg::BW_NS ? S_NS : S_CYCLES),.EPISODE_ENABLE(1), \
+  .SILENCE_THRESHOLD(BASIS==bw_mon_pkg::BW_NS ? Q_NS : Q_CYCLES),.PHASE_ENABLE(1), \
+  .PHASE_N(3),.PHASE_MIN_SPAN(BASIS==bw_mon_pkg::BW_NS ? SPAN_NS : SPAN_CYCLES),.PHASE_K(K), \
   .PHASE_STEADY_ENTER_ABS(0.01),.PHASE_STEADY_ENTER_REL(0.0), \
   .PHASE_STEADY_EXIT_ABS(0.01),.PHASE_STEADY_EXIT_REL(0.0), \
   .PHASE_RMS_ENTER_ABS(0.01),.PHASE_RMS_ENTER_REL(0.0), \
@@ -52,7 +52,7 @@ endmodule
 
 // DUT-facing wrapper: the bus encodes bytes-minus-one plus an explicit zero bit.
 // Protocol controls stay visible; the reusable monitor receives decoded bytes.
-module acceptance_port #(parameter int P=0,parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS)(
+module acceptance_port #(parameter int P=0,parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS, parameter int W_NS=10,S_NS=1,W_CYCLES=20,S_CYCLES=2,Q_NS=12,Q_CYCLES=24,SPAN_NS=2,SPAN_CYCLES=4,K=2,parameter bit EXAMPLE_IDS=0)(
   input logic clk,reset_n,valid,ready,flitv,lcrdv,
   input logic [31:0] byte_count_minus_one,input logic zero_bytes,input logic decode_known);
   timeunit 1fs;timeprecision 1fs;
@@ -60,7 +60,7 @@ module acceptance_port #(parameter int P=0,parameter logic [1:0] BASIS=bw_mon_pk
   wire accounted_known=decode_known && !$isunknown({byte_count_minus_one,zero_bytes});
   `ACCEPT_OBSERVER(view,$sformatf("p%0d",P),mon)
 endmodule
-bind acceptance_port bw_point_mon #(.POINT_ID($sformatf("p%0d",P)),
+bind acceptance_port bw_point_mon #(.POINT_ID(EXAMPLE_IDS && P==0 ? "tb.top.master0.bw" : $sformatf("p%0d",P)),
   .PROTOCOL(bw_mon_pkg::bw_protocol_t'(P%3)),.DYNAMIC_BYTES(P%2==0),.FIXED_BYTES(64),
   .CREDIT_ENABLE(P%3==2),.CREDIT_CAPACITY(16),.CREDIT_INITIAL(16),.CREDIT_INITIAL_KNOWN(1),
   .BACKPRESSURE_ENABLE(P%3==1),.BACKPRESSURE_BASIS(bw_mon_pkg::BW_NS),.BACKPRESSURE_THRESHOLD(2),
@@ -68,31 +68,36 @@ bind acceptance_port bw_point_mon #(.POINT_ID($sformatf("p%0d",P)),
   `ACCEPT_ANALYSIS) mon(.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.flitv(flitv),.lcrdv(lcrdv),
     .size_bytes(accounted_bytes),.size_known(accounted_known));
 
-module acceptance_scene #(parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS);
+module acceptance_scene #(parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS, parameter int W_NS=10,S_NS=1,W_CYCLES=20,S_CYCLES=2,Q_NS=12,Q_CYCLES=24,SPAN_NS=2,SPAN_CYCLES=4,K=2,parameter bit EXAMPLE_IDS=0);
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,child_reset_n=1,parent_reset_n=1;
-  logic [11:0] point_reset_n='1,valid='0,ready='1,returns='0;
+  logic [11:0] point_reset_n='1,valid='0,flits='0,ready='1,returns='0;
   logic [31:0] size_code[12];logic [11:0] zeros='0,size_known='1;
   bw_mon_setup #(.EXPECTED_POINT_COUNT(12),.EXPECTED_GROUP_COUNT(4)) setup();
   for(genvar p=0;p<12;p++)begin:ports
-    acceptance_port #(.P(p),.BASIS(BASIS)) dut(.clk(clk),.reset_n(point_reset_n[p]),
-      .valid(valid[p]),.ready(ready[p]),.flitv(valid[p]),.lcrdv(returns[p]),
+    acceptance_port #(.P(p),.BASIS(BASIS),.W_NS(W_NS),.S_NS(S_NS),.W_CYCLES(W_CYCLES),.S_CYCLES(S_CYCLES),.Q_NS(Q_NS),.Q_CYCLES(Q_CYCLES),.SPAN_NS(SPAN_NS),.SPAN_CYCLES(SPAN_CYCLES),.K(K),.EXAMPLE_IDS(EXAMPLE_IDS)) dut(.clk(clk),.reset_n(point_reset_n[p]),
+      .valid(valid[p]),.ready(ready[p]),.flitv(flits[p]),.lcrdv(returns[p]),
       .byte_count_minus_one(size_code[p]),.zero_bytes(zeros[p]),.decode_known(size_known[p]));
   end
   bw_group_mon #(.GROUP_ID("die0_dmc"),`ACCEPT_ANALYSIS) die0(.clk(clk),.reset_n(child_reset_n));
   bw_group_mon #(.GROUP_ID("die1_dmc"),`ACCEPT_ANALYSIS) die1(.clk(clk),.reset_n(1'b1));
-  bw_group_mon #(.GROUP_ID("all_dmc"),`ACCEPT_ANALYSIS) all_dmc(.clk(clk),.reset_n(parent_reset_n));
+  bw_group_mon #(.GROUP_ID(EXAMPLE_IDS ? "memory_all" : "all_dmc"),`ACCEPT_ANALYSIS) all_dmc(.clk(clk),.reset_n(parent_reset_n));
   bw_group_mon #(.GROUP_ID("mixed"),`ACCEPT_ANALYSIS) mixed(.clk(clk),.reset_n(1'b1));
   `ACCEPT_OBSERVER(die0_view,"die0",die0)
   `ACCEPT_OBSERVER(die1_view,"die1",die1)
   `ACCEPT_OBSERVER(all_view,"all_dmc",all_dmc)
   `ACCEPT_OBSERVER(mixed_view,"mixed",mixed)
+  function automatic string point_id(int p);
+    return EXAMPLE_IDS && p==0 ? "tb.top.master0.bw" : $sformatf("p%0d",p);
+  endfunction
   initial begin
-    define_group("die0_dmc",4);define_group("die1_dmc",4);define_group("all_dmc",2);define_group("mixed",3);
-    for(int p=0;p<4;p++)add_point_member("die0_dmc",$sformatf("p%0d",p));
+    string all_id;
+    all_id=EXAMPLE_IDS ? "memory_all" : "all_dmc";
+    define_group("die0_dmc",4);define_group("die1_dmc",4);define_group(all_id,2);define_group("mixed",3);
+    for(int p=0;p<4;p++)add_point_member("die0_dmc",point_id(p));
     for(int p=4;p<8;p++)add_point_member("die1_dmc",$sformatf("p%0d",p));
-    add_group_member("all_dmc","die0_dmc");add_group_member("all_dmc","die1_dmc");
+    add_group_member(all_id,"die0_dmc");add_group_member(all_id,"die1_dmc");
     add_group_member("mixed","die0_dmc");add_point_member("mixed","p8");add_point_member("mixed","p9");
     finish_configuration();
   end
@@ -118,9 +123,19 @@ module acceptance_scene #(parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS);
     $fsdbDumpvars(1,all_dmc,"+all");
     $fsdbDumpvars(1,mixed,"+all");
   end
+  task automatic check_e3_order(string label,bw_episode_result_t previous,
+      bit active,bw_u64_t first,bw_u64_t bytes_now);
+    if(!active || first!=132000000 || bytes_now!=128 || previous.status!==BW_EPISODE_COMPLETE ||
+       previous.first_ticks!=80000000 || previous.last_ticks!=100000000 || previous.tail_ticks!=102000000 ||
+       previous.confirmation_ticks!=132000000 || previous.byte_count!=256 || previous.event_count!=3 ||
+       previous.duration_ticks!=22000000 || !previous.e2e_valid ||
+       $abs(previous.e2e_gbps-11.636363636363636)>1e-10)
+      $fatal(1,"E3 old complete[80,102) must precede the new132ns transfer at%0d scope=%s",$time,label);
+    $display("ACCEPT_E3_ORDER scope=%s ticks=%0d old_first=80000000 old_tail=102000000 old_bytes=256 old_events=3 new_first=%0d new_bytes=%0d",label,$time,first,bytes_now);
+  endtask
   initial begin:drive
     integer fd,rc;string stimulus,line;bw_u64_t at_ticks,end_ticks;
-    integer edge_flag,activity,readiness,credit_returns,reset_mask,reset_x,size_x,valid_x,child_level,parent_level;
+    integer edge_flag,activity,flit_activity,readiness,credit_returns,reset_mask,reset_x,size_x,valid_x,child_level,parent_level;
     integer amount[12];
     if(!$value$plusargs("STIM=%s",stimulus))$fatal(1,"STIM input table required");
     if(!$value$plusargs("END_TICKS=%d",end_ticks))$fatal(1,"END_TICKS required");
@@ -128,13 +143,13 @@ module acceptance_scene #(parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS);
     foreach(size_code[p])size_code[p]=63;
     wait(monitor_ready);
     while($fgets(line,fd))begin
-      rc=$sscanf(line,"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
-       at_ticks,edge_flag,activity,readiness,credit_returns,reset_mask,reset_x,size_x,valid_x,child_level,parent_level,
+      rc=$sscanf(line,"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+       at_ticks,edge_flag,activity,flit_activity,readiness,credit_returns,reset_mask,reset_x,size_x,valid_x,child_level,parent_level,
        amount[0],amount[1],amount[2],amount[3],amount[4],amount[5],amount[6],amount[7],amount[8],amount[9],amount[10],amount[11]);
-      if(rc!=23)$fatal(1,"malformed input table");
+      if(rc!=24)$fatal(1,"malformed input table");
       if(at_ticks<(edge_flag ? $time+100 : $time))$fatal(1,"unordered input table");
       #(at_ticks-(edge_flag ? 100 : 0)-$time);
-      valid=activity;ready=readiness;returns=credit_returns;point_reset_n=reset_mask;
+      valid=activity;flits=flit_activity;ready=readiness;returns=credit_returns;point_reset_n=reset_mask;
       child_reset_n=child_level;parent_reset_n=parent_level;
       for(int p=0;p<12;p++)begin
         if((reset_x>>p)&1)point_reset_n[p]=1'bx;
@@ -142,7 +157,15 @@ module acceptance_scene #(parameter logic [1:0] BASIS=bw_mon_pkg::BW_NS);
         size_known[p]=!((size_x>>p)&1);zeros[p]=(amount[p]==0);
         size_code[p]=((size_x>>p)&1) ? 32'bx : amount[p]-1;
       end
-      if(edge_flag)begin #100;clk=1;clk<=#250000 0;#1;end
+      if(edge_flag)begin
+        #100;clk=1;clk<=#250000 0;#1;
+        if(Q_NS==30 && BASIS==BW_NS && at_ticks==132000000)begin
+          check_e3_order("p0",ports[0].dut.mon.episode_result,ports[0].dut.mon.episode_active,ports[0].dut.mon.episode_first_ticks,ports[0].dut.mon.episode_bytes);
+          check_e3_order("die0",die0.episode_result,die0.episode_active,die0.episode_first_ticks,die0.episode_bytes);
+          check_e3_order("all_dmc",all_dmc.episode_result,all_dmc.episode_active,all_dmc.episode_first_ticks,all_dmc.episode_bytes);
+          check_e3_order("mixed",mixed.episode_result,mixed.episode_active,mixed.episode_first_ticks,mixed.episode_bytes);
+        end
+      end
     end
     $fclose(fd);#(end_ticks-$time);#1;
     $display("TB_PASS acceptance basis=%0d",BASIS);$finish;
@@ -155,6 +178,18 @@ endmodule
 module tb_acceptance_cycle;
   timeunit 1fs;timeprecision 1fs;
   acceptance_scene #(.BASIS(bw_mon_pkg::BW_CYCLE)) scene();
+endmodule
+module tb_acceptance_e3_boundary;
+  timeunit 1fs;timeprecision 1fs;
+  acceptance_scene #(.Q_NS(30)) scene();
+endmodule
+module tb_acceptance_e3_delayed;
+  timeunit 1fs;timeprecision 1fs;
+  acceptance_scene #(.W_NS(100),.S_NS(10),.Q_NS(60),.SPAN_NS(20),.K(4)) scene();
+endmodule
+module tb_acceptance_e5;
+  timeunit 1fs;timeprecision 1fs;
+  acceptance_scene #(.EXAMPLE_IDS(1)) scene();
 endmodule
 `undef ACCEPT_OBSERVER
 `undef ACCEPT_ANALYSIS
