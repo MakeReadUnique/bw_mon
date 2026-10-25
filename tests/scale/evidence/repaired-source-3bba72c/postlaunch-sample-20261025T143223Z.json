@@ -1,0 +1,134 @@
+{
+  "classification": "RUNNING_NOT_PASSED",
+  "host": {
+    "memory": "              total        used        free      shared  buff/cache   available\nMem:          31857       13216        7988          12       10652       18174\nSwap:          4031          49        3982\n",
+    "uptime": " 10:32:23 up 2 days,  7:24,  2 users,  load average: 4.03, 1.54, 0.62\n"
+  },
+  "profiles": [
+    {
+      "actual_simulator_children": [
+        {
+          "argv": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/simv -no_save +VARIANT=baseline +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/runs/common-ns/20261025T143011-3472900/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/runs/common-ns/20261025T143011-3472900/expect.cfg",
+          "pid": 3476093,
+          "rss_kib": 255372
+        }
+      ],
+      "compile_peak_rss_kib": 345212,
+      "compile_returncode": 0,
+      "compiler_log": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/compile-attempt-1/compile.log",
+      "last_progress": "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000",
+      "manifest": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/runs/common-ns/20261025T143011-3472900/manifest.json",
+      "manifest_state": "SIMULATION_RUNNING",
+      "not_passed": true,
+      "profile": "common-ns",
+      "runner": {
+        "argv": "/usr/bin/python3 -B /tmp/bw-mon-spec13/common29-frozen-3bba72c/tests/scale/run.py common-ns --force-compile --output-root /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns",
+        "pid": 3472900,
+        "rss_kib": 18108
+      },
+      "source_head": "3bba72c56d0edbef9f2d259fb19897ad86ba7cab",
+      "source_inventory_count": 24,
+      "source_snapshot_hash_differences": [],
+      "source_status": "",
+      "time_wrapper": {
+        "argv": "/usr/bin/time -v -o /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/runs/common-ns/20261025T143011-3472900/simulation.time-v.txt /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/simv -no_save +VARIANT=baseline +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/runs/common-ns/20261025T143011-3472900/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns/runs/common-ns/20261025T143011-3472900/expect.cfg",
+        "pid": 3476091,
+        "rss_kib": 960
+      }
+    },
+    {
+      "actual_simulator_children": [
+        {
+          "argv": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/builds/f4e341f98836c17cfecd522005fc6e0884f1e19706f76947f299d99d43f7585b/simv -no_save +VARIANT=baseline +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/runs/common-cycle/20261025T143011-3472901/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/runs/common-cycle/20261025T143011-3472901/expect.cfg",
+          "pid": 3476094,
+          "rss_kib": 256204
+        }
+      ],
+      "compile_peak_rss_kib": 347976,
+      "compile_returncode": 0,
+      "compiler_log": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/builds/f4e341f98836c17cfecd522005fc6e0884f1e19706f76947f299d99d43f7585b/compile-attempt-1/compile.log",
+      "last_progress": "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000",
+      "manifest": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/runs/common-cycle/20261025T143011-3472901/manifest.json",
+      "manifest_state": "SIMULATION_RUNNING",
+      "not_passed": true,
+      "profile": "common-cycle",
+      "runner": {
+        "argv": "/usr/bin/python3 -B /tmp/bw-mon-spec13/common29-frozen-3bba72c/tests/scale/run.py common-cycle --force-compile --output-root /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle",
+        "pid": 3472901,
+        "rss_kib": 17784
+      },
+      "source_head": "3bba72c56d0edbef9f2d259fb19897ad86ba7cab",
+      "source_inventory_count": 24,
+      "source_snapshot_hash_differences": [],
+      "source_status": "",
+      "time_wrapper": {
+        "argv": "/usr/bin/time -v -o /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/runs/common-cycle/20261025T143011-3472901/simulation.time-v.txt /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/builds/f4e341f98836c17cfecd522005fc6e0884f1e19706f76947f299d99d43f7585b/simv -no_save +VARIANT=baseline +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/runs/common-cycle/20261025T143011-3472901/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-cycle/runs/common-cycle/20261025T143011-3472901/expect.cfg",
+        "pid": 3476092,
+        "rss_kib": 848
+      }
+    },
+    {
+      "actual_simulator_children": [
+        {
+          "argv": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/simv -no_save +VARIANT=unknown +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/runs/common-ns-unknown/20261025T143011-3472902/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/runs/common-ns-unknown/20261025T143011-3472902/expect.cfg",
+          "pid": 3476095,
+          "rss_kib": 257328
+        }
+      ],
+      "compile_peak_rss_kib": 345032,
+      "compile_returncode": 0,
+      "compiler_log": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/compile-attempt-1/compile.log",
+      "last_progress": "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000",
+      "manifest": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/runs/common-ns-unknown/20261025T143011-3472902/manifest.json",
+      "manifest_state": "SIMULATION_RUNNING",
+      "not_passed": true,
+      "profile": "common-ns-unknown",
+      "runner": {
+        "argv": "/usr/bin/python3 -B /tmp/bw-mon-spec13/common29-frozen-3bba72c/tests/scale/run.py common-ns-unknown --force-compile --output-root /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown",
+        "pid": 3472902,
+        "rss_kib": 17768
+      },
+      "source_head": "3bba72c56d0edbef9f2d259fb19897ad86ba7cab",
+      "source_inventory_count": 24,
+      "source_snapshot_hash_differences": [],
+      "source_status": "",
+      "time_wrapper": {
+        "argv": "/usr/bin/time -v -o /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/runs/common-ns-unknown/20261025T143011-3472902/simulation.time-v.txt /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/simv -no_save +VARIANT=unknown +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/runs/common-ns-unknown/20261025T143011-3472902/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-unknown/runs/common-ns-unknown/20261025T143011-3472902/expect.cfg",
+        "pid": 3476090,
+        "rss_kib": 864
+      }
+    },
+    {
+      "actual_simulator_children": [
+        {
+          "argv": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/simv -no_save +VARIANT=reset +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/runs/common-ns-reset/20261025T143011-3472903/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/runs/common-ns-reset/20261025T143011-3472903/expect.cfg",
+          "pid": 3476300,
+          "rss_kib": 257224
+        }
+      ],
+      "compile_peak_rss_kib": 351312,
+      "compile_returncode": 0,
+      "compiler_log": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/compile-attempt-1/compile.log",
+      "last_progress": "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000",
+      "manifest": "/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/runs/common-ns-reset/20261025T143011-3472903/manifest.json",
+      "manifest_state": "SIMULATION_RUNNING",
+      "not_passed": true,
+      "profile": "common-ns-reset",
+      "runner": {
+        "argv": "/usr/bin/python3 -B /tmp/bw-mon-spec13/common29-frozen-3bba72c/tests/scale/run.py common-ns-reset --force-compile --output-root /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset",
+        "pid": 3472903,
+        "rss_kib": 17992
+      },
+      "source_head": "3bba72c56d0edbef9f2d259fb19897ad86ba7cab",
+      "source_inventory_count": 24,
+      "source_snapshot_hash_differences": [],
+      "source_status": "",
+      "time_wrapper": {
+        "argv": "/usr/bin/time -v -o /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/runs/common-ns-reset/20261025T143011-3472903/simulation.time-v.txt /tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/builds/93b4fa677c296bfc7beef690d83ac618d1b07f1833a63a1eabf646e8bb730193/simv -no_save +VARIANT=reset +ACTUAL=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/runs/common-ns-reset/20261025T143011-3472903/actual.csv +BW_EXPECT=/tmp/bw-mon-spec13/common29-newsource-3bba72c/common-ns-reset/runs/common-ns-reset/20261025T143011-3472903/expect.cfg",
+        "pid": 3476299,
+        "rss_kib": 928
+      }
+    }
+  ],
+  "sampled_utc": "2026-10-25T14:32:23.348056Z"
+}

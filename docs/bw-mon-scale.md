@@ -31,7 +31,56 @@ Its `+INJECT_CHECKER_ERROR` changes the reference by one byte and must produce
 profile or a production fault-injection API. VCS can return exit0 for `$fatal`,
 so the runner checks terminal diagnostics and durable completion evidence.
 
-## Completed common-scale measurements
+## Current repaired-source common-scale measurements
+
+All four original full profiles completed on frozen source
+`3bba72c56d0edbef9f2d259fb19897ad86ba7cab`, whose18 production RTL/C/header files
+match repaired runtime `8e81839423ab7db335365a5e577e25b2ebe5dcb0`. Each ran1024
+actual public points and256 two-level groups at2GHz through **40us exactly**.
+The full feature and intervention settings below are unchanged. Every profile
+checked102,400,000 raw receipts and1280 final scopes with zero differences.
+
+| Full profile | Window checks | Episode / phase final records | Simulation peakRSS KiB (MiB) | Compiler peakRSS KiB |
+| --- | ---: | ---: | ---: | ---: |
+|Prescribed NS100/10 baseline |5,120,000 |1280 /1280 |280,668 (274.09) |345,212 |
+|Cycle200/20 |5,118,720 |1280 /1280 |280,492 (273.92) |347,976 |
+|NS100/10, p0 unknown size |5,120,000 |1280 /1280 |281,656 (275.05) |345,032 |
+|NS100/10, p0 known reset |5,119,999 |1281 /1280 |282,320 (275.70) |351,312 |
+
+Together these current-source runs checked409,600,000 raw receipts and20,478,719
+windows. All four compiled without Warning/Error diagnostics and settled all1280
+scopes before their once-only summary. Baseline/cycle/unknown correctly produce
+15360 unavailable-metric WARNINGs, reset15372, because the continuous-flow tail
+is outside the observation. Those conclusions remain separate from the numerical
+checks. Independent recorded-data audits also checked the baseline's first
+steady boundary120ns/confirmation150ns and cycle's0.25ns offset.
+
+The [current campaign](../tests/scale/evidence/repaired-source-3bba72c/README.md)
+preserves all24 consumed source/driver files, original generated inputs/config/
+reference/actual/differences/logs, commands and separate compiler/simulator RSS.
+The actual C dependency files and compile-success records link the private helper
+to the recorded SDK header hashes and binary fingerprint. Vendor header text and
+simulator binaries are not copied. A post-run audit verified these hashes against
+the launch receipt and original build, and every production hash against this
+checkout. Portable verification regenerates all input/config/reference/SV bytes
+from the archived driver, checks all final rows and formal result/report streams,
+and can require the production files to match the current checkout:
+
+```sh
+python3 tests/scale/evidence/verify.py --current-source
+```
+
+Four isolated builds/runs overlapped on the31,857MiB/8CPU host; launch/resource
+context is retained. The measured RSS difference from the historical campaign
+below is not a controlled causality or speed benchmark. Neither campaign sets
+a memory ceiling or elapsed-time acceptance threshold. Maximum topology and
+the complete short/middle/long/dense history matrix remain separate acceptance.
+
+## Historical common-scale measurements
+
+The original source074c771 campaign is retained intact below and in the original
+profile directories. Its measurements are historical; the repaired-source
+campaign above supplies the current-source qualification.
 
 All four profiles below completed at **40us exactly**, using frozen harness/source
 `074c77103bc8c135106facad00dbc21995f2d92f` (production integration8de785c).

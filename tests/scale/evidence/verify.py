@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Check portable archive bytes, original manifests and every final scope row."""
-import csv,gzip,hashlib,io,json
+import csv,gzip,hashlib,io,json,subprocess,sys
 from fractions import Fraction as F
 from pathlib import Path
 base=Path(__file__).resolve().parent
@@ -37,3 +37,5 @@ for path in sorted(base.glob('*/bundle.json')):
             if field in ('window_gbps','window_bpc'):assert abs(F(a)-F(value))<=F(1,10**9)+F(1,10**12)*abs(F(value)),(key,field)
             else:assert a==value,(key,field)
     print('PASS',bundle['scenario'],'1280 archived reference/actual rows; source/gzip/original hashes; zero differences')
+current=base/'repaired-source-3bba72c/verify.py'
+if current.exists():subprocess.run([sys.executable,str(current)]+sys.argv[1:],check=True)
