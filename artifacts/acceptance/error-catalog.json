@@ -72,15 +72,15 @@
     ],
     "locations": [
       "rtl/bw_mon_transport.svh:110",
-      "rtl/bw_stats_core.sv:1000"
+      "rtl/bw_stats_core.sv:1001"
     ]
   },
   "CONTROL_TIME": {
     "cases": [],
     "locations": [
       "rtl/bw_mon_transport.svh:115",
-      "rtl/bw_stats_core.sv:993",
-      "rtl/bw_stats_core.sv:1003"
+      "rtl/bw_stats_core.sv:994",
+      "rtl/bw_stats_core.sv:1004"
     ]
   },
   "CREDIT_CONFIG": {
@@ -123,7 +123,7 @@
     ],
     "locations": [
       "rtl/bw_mon_transport.svh:66",
-      "rtl/bw_stats_core.sv:1053"
+      "rtl/bw_stats_core.sv:1054"
     ]
   },
   "EMPTY_GROUP": {
@@ -367,7 +367,7 @@
       "rtl/bw_mon_transport.svh:192",
       "rtl/bw_point_recorder.sv:37",
       "rtl/bw_point_recorder.sv:43",
-      "rtl/bw_stats_core.sv:1122"
+      "rtl/bw_stats_core.sv:1123"
     ]
   },
   "MEMBER_COUNT": {
@@ -461,7 +461,7 @@
     "locations": [
       "rtl/bw_stats_core.sv:519",
       "rtl/bw_stats_core.sv:531",
-      "rtl/bw_stats_core.sv:569"
+      "rtl/bw_stats_core.sv:567"
     ]
   },
   "PHASE_STATE": {
@@ -500,7 +500,7 @@
       "rtl/bw_mon_registry.svh:15",
       "rtl/bw_mon_registry.svh:62",
       "rtl/bw_mon_transport.svh:102",
-      "rtl/bw_stats_core.sv:995"
+      "rtl/bw_stats_core.sv:996"
     ]
   },
   "PROTOCOL_CONFIG": {
@@ -535,15 +535,15 @@
     ],
     "locations": [
       "rtl/bw_mon_transport.svh:62",
-      "rtl/bw_stats_core.sv:1048"
+      "rtl/bw_stats_core.sv:1049"
     ]
   },
   "RECORD_TIME": {
     "cases": [],
     "locations": [
       "rtl/bw_mon_transport.svh:71",
-      "rtl/bw_stats_core.sv:1051",
-      "rtl/bw_stats_core.sv:1109"
+      "rtl/bw_stats_core.sv:1052",
+      "rtl/bw_stats_core.sv:1110"
     ]
   },
   "REGISTRATION_FROZEN": {
@@ -591,7 +591,7 @@
       "numeric_core_kind"
     ],
     "locations": [
-      "rtl/bw_stats_core.sv:1120"
+      "rtl/bw_stats_core.sv:1121"
     ]
   },
   "SCOPE_REFERENCE": {

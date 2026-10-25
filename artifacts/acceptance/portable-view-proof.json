@@ -1,6 +1,7 @@
 {
   "status": "PASS",
-  "runtime_head": "8e81839423ab7db335365a5e577e25b2ebe5dcb0",
+  "runtime_head": "cd07c77fcb706022069a9496bcf72d4354c1d2f8",
+  "production_milestone": "56127495f597d215003000356ac3b5387cc809a1",
   "command": [
     "verdi",
     "-nWave",
@@ -9,7 +10,7 @@
     "-play",
     "restore.tcl"
   ],
-  "actual_relocated_directory": "/tmp/bw-relocated-frozen-view-xarx8jzz",
+  "actual_relocated_directory": "/tmp/bw-final-relocated-view-xulr76rb",
   "independent_of_original_build_and_source": true,
   "restored_public_signal_count": 31,
   "exact_restored_paths_match": true,
@@ -46,16 +47,17 @@
     "/tb_acceptance_ns/scene/ports[0]/dut/mon/phase_start_ticks",
     "/tb_acceptance_ns/scene/ports[0]/dut/mon/phase_confirmation_ticks"
   ],
-  "original_fsdb_sha256": "cd8651234f9f1883d03e0625f427224288982fe7538ee1a994ec103a740474cb",
-  "relocated_fsdb_sha256": "cd8651234f9f1883d03e0625f427224288982fe7538ee1a994ec103a740474cb",
+  "original_fsdb_sha256": "ed3712e53339789700383a18002730c6561fb673c35aec1add40d590c379cfdb",
+  "relocated_fsdb_sha256": "ed3712e53339789700383a18002730c6561fb673c35aec1add40d590c379cfdb",
   "original_view_sha256": "963e5fb9e0a17ea2349f8f09508d509e9b1df6283ed7f33a86843167f10d61d9",
-  "restored_view_sha256": "ee24421e185296bbd92d650e3eff3d25aa2ab1a5957a98e2bc6e9adf91ec3ce8",
+  "restored_view_sha256": "80e73789ef5ce5d31862ce69862c1eb62643e2fe85d742f9af64c3f9e84a9ea9",
   "human_review": "PENDING",
   "temporary_directory_removed": true,
   "actual_restore_archive": "portable-view-proof/actual-restore.tar.gz",
-  "actual_restore_archive_sha256": "724d8a3c7e69c55b11ccd41b7698555f5810d75bfb61ed43a6588f90be258094",
-  "verdi_log_member": "verdi.log",
-  "first_verdi_log_member": "verdi-first.log",
+  "actual_restore_archive_sha256": "fb8e1d90918d739dca67eae123f8b015f1f8d7c30ce667ed92f1f734bf5e256e",
   "actual_restored_view_member": "restored.sav",
-  "archive_note": "Original Verdi output/log bytes retained verbatim, including native whitespace. Restore script and normalizer first-attempt explanation remain beside this archive."
+  "verdi_log_member": "verdi.log",
+  "resolved_csv_member": "resolved.csv",
+  "normalizer": "Expand native -holdScope relative fields and remove only terminal bus width; original output bytes retained verbatim",
+  "archive_note": "Actual fresh Verdi restore/log/CSV bytes, no image or simulation data editing"
 }

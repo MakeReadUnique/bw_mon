@@ -23,16 +23,16 @@ wvSetRadix -win $w -Unsigned -format Dec {/tb_acceptance_e3_delayed/scene/ports[
 wvSetWindowTimeUnit -win $w 1 ns
 wvZoom -win $w 90.0 160.0
 wvSetCursor -win $w 150.000001
-wvSaveSignal -win $w {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-iru4r2j4/before.sav}
-set fd [open {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-iru4r2j4/before.sav} r]
+wvSaveSignal -win $w {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-xdm8pyof/before.sav}
+set fd [open {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-xdm8pyof/before.sav} r]
 set value [read $fd]
 close $fd
 regsub {viewPort[^\n]*} $value {viewPort 10 10 1500 850 760 180} value
 regsub {top [0-9]+} $value {top 0} value
-set fd [open {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-iru4r2j4/layout.sav} w]
+set fd [open {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-xdm8pyof/layout.sav} w]
 puts $fd $value
 close $fd
-wvRestoreSignal -win $w -appendSignals off {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-iru4r2j4/layout.sav}
+wvRestoreSignal -win $w -appendSignals off {/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-xdm8pyof/layout.sav}
 wvSetRadix -win $w -Unsigned -format Dec {(G1 2)}
 wvSetRadix -win $w -Unsigned -format Dec {(G1 3)}
 wvSetRadix -win $w -Unsigned -format Dec {(G1 6)}

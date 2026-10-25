@@ -2,11 +2,13 @@
 
 Automated **42/42PASS**; **human T6 ledger status: PENDING**. Agent image inspection is separate.
 
+Fixed data bundle: [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance), asset fingerprint `863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee`. Later documentation/review-status commits do not change that data identity.
+
 Human status covers only the ledger's named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.
 
 Independent totals: {'raw': 161472, 'windows': 86375, 'receipts': 161472}; analysis: {'episodes': 518, 'phases': 1350, 'variations': 1868}. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).
 
-This campaign consumes the [frozen runtime and native dependency hashes](runtime-source.json), with [current 424-case /167-top /3 minimum-option component proof](current-component-proof/verification.json). Its [portable archives and verifier](current-component-proof/README.md) are retained here. The unchanged [historical 408-case component proof](component-proof/verification.json) and [historical log/config archive](component-proof/final-408-proof.tar.gz) describe their original source, not the current runtime. Scale evidence is separately scoped by its own manifests.
+Each scene records its actual consumed checkout, immutable project snapshot and compiler dependencies. The [current runtime/native freeze](runtime-source.json) identifies the scene checkout and18 production hashes independently of the [427-case component proof](final-component-proof/verification.json), whose source is `467b722cde3ea00e8eb8ed0e97dcc72d4dc67aa9`. Their production bytes match exactly; their checkout identities are not conflated. The [historical424 proof](current-component-proof/verification.json), [historical408 proof](component-proof/verification.json), [8e81839 runtime freeze](historical-runtime-source-8e81839.json) and [historical consumed sources](historical-source-8e81839.tar.gz) keep their original qualification scope. Scale evidence is separately scoped by its own manifests.
 
 |Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|
 |---|---|---|---|---|

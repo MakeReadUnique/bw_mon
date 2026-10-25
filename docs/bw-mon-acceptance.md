@@ -1,31 +1,42 @@
 # Integration, acceptance evidence and review
 
-The monitor and component contracts are implemented. The current durable component
-proof records424/424 VCS cases on historical runtime `8e818394`; the retained public12-point
-campaign consumed those18 production files with42 unchanged original
-input/configuration scenes and33 fresh real Verdi captures. These are
-historical automated results. The later final-steady validity correction needs
-its own component, waveform and scale qualification; this guide does not extend
-the earlier proof to changed production source. **Human T6 review is pending** until an actual person reviews
-and records the completed bundle. Agent inspection never supplies that attestation.
-The [scale guide](bw-mon-scale.md) retains each campaign's exact source/profile
-manifest; these small wave scenes do not substitute for scale revalidation.
+The current production18 matches the independently reviewed final-steady fix
+`56127495`. The [427-case/168-top proof](../artifacts/acceptance/final-component-proof/verification.json)
+records component checkout `467b722`; the fresh42-scene public-input campaign
+records its actual simulation checkout `cd07c77`. Their18 production files match
+byte for byte. All42 original inputs/cfg and independent numeric references are
+unchanged, and all33 real Verdi images were freshly regenerated. **Actual human
+T6 review remains PENDING**; agent image inspection is separate.
 
-Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), not the
-architecture HTML's illustrative curves. It links original FSDBs, public signal
-views, fresh Verdi images, input/configuration, expected/actual/difference tables
-and provenance. The [retained424 proof](../artifacts/acceptance/current-component-proof/verification.json)
-and its [portable archives/verifier](../artifacts/acceptance/current-component-proof/README.md)
-cover167 tops and3 minimum-option runs. The unchanged [historical408 proof](../artifacts/acceptance/component-proof/verification.json)
-and [archive](../artifacts/acceptance/component-proof/final-408-proof.tar.gz) retain
-their original numeric/storage27 source scope. The [runtime freeze](../artifacts/acceptance/runtime-source.json)
-records18 RTL/C/local-header hashes and49 transitive native-header hashes; each
-scene's commands also preserve its actual consumed snapshot and native `.d`.
-The [historical campaign source/test hashes](../artifacts/acceptance/current-source-manifest.json),
-[original-input/config equality](../artifacts/acceptance/input-equivalence.json),
-[fresh-capture provenance](../artifacts/acceptance/capture-provenance.json) and
+The fixed data bundle is [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance),
+with the [Chinese human-review guide](bw-mon-wave-review-zh.md) and exact fingerprint
+in the current checklist. Later documentation/status edits retain that data identity.
+
+Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), which links
+the original FSDBs, portable public views, fresh images, independent tables and
+per-scene commands. The [current runtime/native freeze](../artifacts/acceptance/runtime-source.json)
+keeps actual scene checkout, production milestone and component checkout distinct.
+Every scene retains version2 source/native receipts and an immutable project
+archive. The actual VCS `.d` lists source+2SDK headers; the separate full survey
+uses the actual implicit `-fPIC -O` options and includes50 native headers.
+SDK/system header contents are not vendored. The427 proof retains its own original
+49-header pre-run record and honest actual-flags50 post-run supplement.
+
+The unchanged [historical424 proof](../artifacts/acceptance/current-component-proof/verification.json),
+[historical408 proof](../artifacts/acceptance/component-proof/verification.json) and
+[8e81839 freeze](../artifacts/acceptance/historical-runtime-source-8e81839.json)
+remain scoped to their original source. The [review history](../artifacts/acceptance/review-history/README.md)
+preserves earlier agent observations and pending human records. Fresh campaign
+[input/cfg equality](../artifacts/acceptance/input-equivalence.json),
+[oracle equality](../artifacts/acceptance/oracle-equivalence.json),
+[capture provenance](../artifacts/acceptance/capture-provenance.json),
+[detached clean-checkout run](../artifacts/acceptance/clean-checkout-repro.json) and
 [actual relocated-view proof](../artifacts/acceptance/portable-view-proof.json)
-remain directly accessible after temporary build directories are removed.
+remain directly auditable after temporary builds are removed. The
+[current handoff source inventory](../artifacts/acceptance/current-source-manifest.json)
+distinguishes actual consumed scene snapshots from later packaging/audit wrappers.
+The [scale guide](bw-mon-scale.md) retains each scale campaign's exact source and
+profile; these small wave scenes do not substitute for scale qualification.
 
 ## Three integration entries
 
@@ -216,7 +227,7 @@ byte preservation without touching the real ledger, simulation or capture.
 
 ## Contract to evidence
 
-| Clauses | Component anchors (historical424/408 proofs retained) | Public scene evidence |
+| Clauses | Component anchors (current427; historical424/408 retained) | Public scene evidence |
 | --- | --- | --- |
 | D1–D3/T1 | ns_bind, startup_*, group_matching, hierarchy_* | All42 use12 bound wrappers +4 groups/setup; exact IDs/free points/multi-parent mixed DAG. |
 | D4–D5/T3 | protocol_recording, sample_view, credit_* | protocols ns/cycle: validX&ready0 known idle; credit valid0/flitv1/R0 definite send; fixed/dynamic amounts. |
