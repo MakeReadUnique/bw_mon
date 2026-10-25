@@ -166,7 +166,7 @@ def run(s,output,force=False):
         for p in gen:shutil.copyfile(str(p),str(build/p.name))
         sources=sorted(rtl.glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))
         n=len(list(build.glob('compile-attempt-*')))+1;compile_dir=build/('compile-attempt-'+str(n));compile_dir.mkdir()
-        cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','-debug_access+all','+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
+        cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
         cmd+=list(map(str,sources))+[str(build/p.name) for p in gen]
         print('COMPILE '+s.name+' '+str(compile_dir),flush=True)
         result=execute(cmd,build,compile_dir/'compile.log',compile_dir/'time-v.txt',manifest_path,manifest,'compile')
