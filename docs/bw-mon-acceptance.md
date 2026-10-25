@@ -144,6 +144,21 @@ conclusion and discrepancies. One later attestation cannot retroactively claim
 review of future assets. HTML illustration/probe screenshots and small resource
 pilots do not stand in for real monitor/human/nominal-scale acceptance.
 
+After a genuine named ledger entry is recorded, `python3 tests/acceptance/publish.py`
+revalidates the existing assets and renders the current global human status in
+`verification.json` and INDEX. It retains the entry only for the same asset
+fingerprint; changed assets return the current status to PENDING. This command
+does not create an attestation. Scene rows describe automated results, and
+`human_review_at_generation` records their original generation-time state; neither
+implies separate human approval of every scene. Original comparison/capture
+manifests and expected/actual tables retain their historical PENDING text and
+bytes. Do not use `--pack` for a review-status refresh.
+
+`python3 tests/acceptance/test_publish.py` tests this public CLI with real frozen
+assets copied into disposable directories, using explicitly SYNTHETIC records
+only. It checks matching-fingerprint retention, changed-asset invalidation and
+byte preservation without touching the real ledger, simulation or capture.
+
 ## Contract to evidence
 
 | Clauses | Component anchors (durable408 proof) | Public scene evidence |
