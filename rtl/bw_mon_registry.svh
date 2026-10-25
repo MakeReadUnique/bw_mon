@@ -239,6 +239,7 @@
     if (registered_points.size()!=expected_point_count) return;
     freeze_routing();
     measurement_start_ticks=$time;monitor_ready=1;
+    if(report_sink!=null) report_sink.on_ready();
     $display("BW_READY time_ticks=%0d points=%0d groups=%0d",measurement_start_ticks,
              registered_points.size(),declared_group_count);
   endfunction

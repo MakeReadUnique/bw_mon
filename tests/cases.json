@@ -421,6 +421,775 @@
     ]
   },
   {
+    "name": "report_e2e_boundary",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK .*metric=e2e_bw .*actual=152 .*conclusion=PASS",
+      "BW_SUMMARY status=PASS pass=1 fail=0 warning=0 scopes_done=1 scopes_expected=1"
+    ]
+  },
+  {
+    "name": "report_e2e_below",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg",
+      "+TOTAL=15199",
+      "+EXPECTED=FAIL"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=FAIL pass=0 fail=1 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_low",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg",
+      "+TOTAL=12800",
+      "+EXPECTED=FAIL"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=FAIL pass=0 fail=1 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_range_lower",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_range.cfg",
+      "+TOTAL=15000",
+      "+EXPECTED=PASS"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=PASS pass=1 fail=0 warning=0"
+    ]
+  },
+  {
+    "name": "report_cfg_suffix",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_suffix.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_CHECK .*scope=cfg.good .*conclusion=PASS",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_overflow",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_overflow.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_huge_exp",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_huge_exp.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_underflow",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_underflow.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_short_exp",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_short_exp.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_nan",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_nan.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_inf",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_inf.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_negative",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_negative.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_negative_zero",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_negative_zero.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_hex",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_hex.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_underscore",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_underscore.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_max_above",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_max_above.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_conflict",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_conflict.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=3 scope=cfg.bad key=e2e_bw reason=CONFLICTING_BOUNDS",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_tolerance_overflow",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_tolerance_overflow.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw reason=TOLERANCE_OVERFLOW",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_tolerance_only",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_tolerance_only.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw reason=BOUND_REQUIRED",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "report_cfg_quoted",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_quoted.cfg",
+      "+WARNINGS=0",
+      "+PASSES=2",
+      "+FAILURES=0"
+    ],
+    "expect_log": []
+  },
+  {
+    "name": "report_cfg_empty",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_empty.cfg",
+      "+WARNINGS=1",
+      "+PASSES=1",
+      "+FAILURES=0"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=3 .*key=e2e_bw_max_gbps reason=INVALID_NUMBER"
+    ]
+  },
+  {
+    "name": "report_quality",
+    "top": "tb_report_quality",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_quality.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=quality.zero .*actual=0 .*conclusion=PASS",
+      "BW_CHECK .*scope=quality.gap .*conclusion=WARNING reason=BYTES_INCOMPLETE",
+      "BW_CHECK .*scope=quality.reset .*conclusion=WARNING reason=RESET_INTERRUPTED",
+      "BW_CHECK .*scope=quality.truncated .*conclusion=WARNING reason=OBSERVATION_TRUNCATED",
+      "(?s)BW_CHECK .*scope=quality.idle .*reason=NO_EPISODE.*BW_SUMMARY status=WARNING pass=1 fail=0 warning=4 scopes_done=5 scopes_expected=5",
+      "BW_CHECK .*scope=quality.gap .*actual=UNAVAILABLE .*conclusion=WARNING reason=BYTES_INCOMPLETE"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 5,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_records",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=records.fail epoch=7 episode=9 result_seq=1 .*conclusion=FAIL",
+      "(?s)BW_CHECK .*scope=records.missing .*reason=NO_EPISODE.*BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK .*scope=records.fail epoch=7": 1
+    }
+  },
+  {
+    "name": "report_records_later_pass",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+LATER_PASS"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=records.fail epoch=7 episode=9 result_seq=1 .*conclusion=FAIL",
+      "(?s)BW_CHECK .*scope=records.missing .*reason=NO_EPISODE.*BW_SUMMARY status=FAIL pass=2 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 4,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK .*scope=records.fail epoch=7": 1
+    }
+  },
+  {
+    "name": "report_records_nonfinite",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+INVALID_ACTUAL"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=records.fail .*actual=UNAVAILABLE .*conclusion=WARNING reason=ACTUAL_NONFINITE",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=2 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_records_reset_quality",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+SPOOF_RESET"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=records.fail .*actual=UNAVAILABLE .*conclusion=WARNING reason=RESET_INTERRUPTED",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=2 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_cfg_duplicate",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_duplicate.cfg",
+      "+WARNINGS=1",
+      "+PASSES=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=DUPLICATE_KEY"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 1,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 1
+    }
+  },
+  {
+    "name": "report_cfg_unknown_key",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_unknown_key.cfg",
+      "+WARNINGS=1",
+      "+PASSES=2"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=UNKNOWN_KEY"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 1,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 2
+    }
+  },
+  {
+    "name": "report_cfg_malformed_header",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_malformed_header.cfg",
+      "+WARNINGS=2",
+      "+PASSES=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=MALFORMED_HEADER",
+      "BW_CFG WARNING .*reason=NO_VALID_SECTION"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 2,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 1
+    }
+  },
+  {
+    "name": "report_cfg_unregistered",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_unregistered.cfg",
+      "+WARNINGS=2",
+      "+PASSES=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=UNREGISTERED_SCOPE",
+      "BW_CFG WARNING .*reason=NO_VALID_SECTION"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 2,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 1
+    }
+  },
+  {
+    "name": "report_cfg_wrong_type",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_wrong_type.cfg",
+      "+WARNINGS=2",
+      "+PASSES=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=UNSUPPORTED_SCOPE",
+      "BW_CFG WARNING .*reason=NO_VALID_SECTION"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 2,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 1
+    }
+  },
+  {
+    "name": "report_cfg_missing_equals",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_missing_equals.cfg",
+      "+WARNINGS=1",
+      "+PASSES=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=EXPECTED_KEY_VALUE"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 1,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 1
+    }
+  },
+  {
+    "name": "report_cfg_decimal_forms",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_decimal_forms.cfg",
+      "+WARNINGS=0",
+      "+PASSES=2"
+    ],
+    "expect_log": [],
+    "expect_counts": {
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 2
+    }
+  },
+  {
+    "name": "report_cfg_max_finite",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_max_finite.cfg",
+      "+WARNINGS=0",
+      "+PASSES=2"
+    ],
+    "expect_log": [],
+    "expect_counts": {
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 2
+    }
+  },
+  {
+    "name": "report_cfg_subnormal",
+    "top": "tb_report_cfg",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/cfg_subnormal.cfg",
+      "+WARNINGS=0",
+      "+PASSES=2"
+    ],
+    "expect_log": [],
+    "expect_counts": {
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 2
+    }
+  },
+  {
+    "name": "report_e2e_range_upper",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_range.cfg",
+      "+TOTAL=21200",
+      "+EXPECTED=PASS"
+    ],
+    "expect_log": [
+      "BW_CHECK .*effective_min=150 effective_max=212 .*conclusion=PASS"
+    ]
+  },
+  {
+    "name": "report_e2e_range_below",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_range.cfg",
+      "+TOTAL=14999",
+      "+EXPECTED=FAIL"
+    ],
+    "expect_log": [
+      "BW_CHECK .*effective_min=150 effective_max=212 .*conclusion=FAIL"
+    ]
+  },
+  {
+    "name": "report_e2e_range_above",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_range.cfg",
+      "+TOTAL=21201",
+      "+EXPECTED=FAIL"
+    ],
+    "expect_log": [
+      "BW_CHECK .*effective_min=150 effective_max=212 .*conclusion=FAIL"
+    ]
+  },
+  {
+    "name": "report_e2e_upper",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_upper.cfg",
+      "+TOTAL=17000",
+      "+EXPECTED=PASS"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=PASS pass=1 fail=0 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_upper_above",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_upper_above.cfg",
+      "+TOTAL=17001",
+      "+EXPECTED=FAIL"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=FAIL pass=0 fail=1 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_abs",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_abs.cfg",
+      "+TOTAL=15200",
+      "+EXPECTED=PASS"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=PASS pass=1 fail=0 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_default_tolerance",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_default_tolerance.cfg",
+      "+TOTAL=15200",
+      "+EXPECTED=FAIL"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=FAIL pass=0 fail=1 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_zero",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_zero.cfg",
+      "+TOTAL=0",
+      "+EXPECTED=PASS"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=PASS pass=1 fail=0 warning=0"
+    ]
+  },
+  {
+    "name": "report_e2e_negative_effective",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_negative_effective.cfg",
+      "+TOTAL=0",
+      "+EXPECTED=PASS"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=PASS pass=1 fail=0 warning=0",
+      "BW_CHECK .*effective_min=-2 .*conclusion=PASS"
+    ]
+  },
+  {
+    "name": "report_statistics_only",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+EXPECTED=STATISTICS_ONLY"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_unreadable",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/does-not-exist.cfg",
+      "+EXPECTED=WARNING",
+      "+WARNINGS=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=0 .*reason=FILE_UNREADABLE",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_missing_path",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT",
+      "+EXPECTED=WARNING",
+      "+WARNINGS=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=0 .*reason=FILE_PATH_REQUIRED",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_final_forward",
+    "top": "tb_report_final_forward",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_final_order.cfg"
+    ],
+    "expect_log": [
+      "(?s)BW_CHECK .*scope=order.a .*conclusion=WARNING reason=OBSERVATION_TRUNCATED.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=2 scopes_expected=2",
+      "(?s)BW_CHECK .*scope=order.b .*conclusion=WARNING reason=OBSERVATION_TRUNCATED.*BW_SUMMARY"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 2,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_final_reverse",
+    "top": "tb_report_final_reverse",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_final_order.cfg"
+    ],
+    "expect_log": [
+      "(?s)BW_CHECK .*scope=order.a .*conclusion=WARNING reason=OBSERVATION_TRUNCATED.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=2 scopes_expected=2",
+      "(?s)BW_CHECK .*scope=order.b .*conclusion=WARNING reason=OBSERVATION_TRUNCATED.*BW_SUMMARY"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 2,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_final_budget",
+    "top": "tb_report_final_budget",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg"
+    ],
+    "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT",
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 0,
+      "BW_EPISODE ": 0
+    }
+  },
+  {
+    "name": "report_directory",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect",
+      "+EXPECTED=WARNING",
+      "+WARNINGS=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*reason=FILE_READ_ERROR",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_identity",
+    "top": "tb_report_identity",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_identity.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=tb_report_identity.gen_points\\[0\\].bw .*conclusion=PASS",
+      "BW_CHECK .*scope=scope.# bucket\\[2\\] .*conclusion=PASS",
+      "BW_SUMMARY status=PASS pass=3 fail=0 warning=0 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_records_unknown_status",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+UNKNOWN_STATUS"
+    ],
+    "expect_log": [
+      "BW_CHECK .*scope=records.fail .*actual=UNAVAILABLE .*conclusion=WARNING reason=EPISODE_NOT_COMPLETE",
+      "BW_SUMMARY status=WARNING pass=1 fail=0 warning=2 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_result_budget",
+    "top": "tb_report_final_budget",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg",
+      "+SUBMIT_LATE"
+    ],
+    "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT",
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 0,
+      "BW_EPISODE ": 0
+    }
+  },
+  {
+    "name": "report_unrelated_plusargs",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECTED=other",
+      "+BW_EXPECT_MORE=other",
+      "+EXPECTED=STATISTICS_ONLY"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0"
+    ],
+    "expect_counts": {
+      "BW_CFG ": 0,
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_empty_path",
+    "top": "tb_report_e2e",
+    "plusargs": [
+      "+BW_EXPECT=",
+      "+EXPECTED=WARNING",
+      "+WARNINGS=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*line=0 .*reason=FILE_PATH_REQUIRED",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1"
+    ],
+    "expect_counts": {
+      "BW_CFG ": 1,
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
     "name": "phase_delayed",
     "top": "tb_phase_delayed"
   },
@@ -559,6 +1328,68 @@
   {
     "name": "phase_candidate_change",
     "top": "tb_phase_candidate_change"
+  },
+  {
+    "name": "report_transient_deferred",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+TRANSIENT_DEFERRED"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 3,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_scope_deferred",
+    "top": "tb_report_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_records.cfg",
+      "+FINAL_DEFERRED"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REPORT_DEFERRED",
+    "expect_log": [
+      "REPORT_DEFERRED_FACT seen=0 pending=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 2,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "report_final_deferred",
+    "top": "tb_report_final_forward",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_final_order.cfg",
+      "+FINAL_DEFERRED"
+    ],
+    "expect_error": "BW_CORE_ERROR code=REPORT_FINAL_DEFERRED",
+    "expect_log": [
+      "REPORT_FINAL_FACT seen=0 pending=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 0,
+      "BW_EPISODE ": 0
+    }
+  },
+  {
+    "name": "report_hint_deferred",
+    "top": "tb_report_hint_deferred",
+    "expect_error": "BW_CORE_ERROR code=REPORT_HINT_DEFERRED",
+    "expect_log": [
+      "REPORT_HINT_FACT seen=0 pending=1"
+    ],
+    "expect_counts": {
+      "BW_HINT_HIT ": 1,
+      "BW_HINT_END ": 0,
+      "BW_CHECK ": 0,
+      "BW_SUMMARY ": 0
+    }
   },
   {
     "name": "group_basic",
@@ -873,6 +1704,38 @@
     "expect_log": [
       "DEFERRED_FINAL_GUARD pending=1 seen=0"
     ]
+  },
+  {
+    "name": "report_group_barrier",
+    "top": "tb_group_basic",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_group_barrier.cfg"
+    ],
+    "expect_log": [
+      "(?s)BW_CHECK .*scope=p0 .*actual=UNAVAILABLE .*reason=NO_EPISODE.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=3 scopes_expected=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 1,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_typed_scope_barrier",
+    "top": "tb_group_matching",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/e2e_typed_scope.cfg"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*scope=tb.noc1.p0 .*reason=UNSUPPORTED_SCOPE scope_kind=group",
+      "BW_CHECK scope_kind=0 scope=tb.noc1.p0 .*reason=NO_EPISODE",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=3 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_CFG WARNING ": 2,
+      "BW_CHECK ": 1,
+      "BW_CHECK scope_kind=1 ": 0,
+      "BW_SUMMARY ": 1
+    }
   },
   {
     "name": "hierarchy_basic",
