@@ -118,6 +118,26 @@ module tb_hierarchy_depth_transport;
        groups[7].mon.bytes_complete || groups[7].mon.events_complete || groups[7].mon.window_valid ||
        groups[7].mon.member_reset_coverage)
       $fatal(1,"partial known raw total and both quality axes must enter the original-time root window");
+    // An upper group held in statistics reset still supplies its own ancestors.
+    #(6100000-$time);middle_reset_n=0;
+    #(6250000-$time);clk=1;
+    frame.record_seq=4;frame.edge_index=4;frame.timestamp_ticks=$time;
+    for(int p=0;p<3;p++)begin
+      frame.source_epoch=(p==0) ? 1 : 0;publish_frame(sources[p],frame);
+    end
+    #1;clk=0;
+    if(epochs[3]!=2 || totals[3]!=0 || receipts[3]!=4 || raw_sequences[3]!=4 ||
+       raw_bytes[3]!=64'd8589934590 || receipts[7]!=4 || raw_sequences[7]!=4 ||
+       raw_bytes[7]!=64'd12884901885 || totals[7]!=64'd47244640245 || epochs[7]!=0 ||
+       groups[7].mon.control_result_seq!=7 || groups[3].mon.control_result_seq!=6 ||
+       acknowledged_frame_seq(groups[3].mon.group_handle,0)!=4 ||
+       acknowledged_frame_seq(groups[4].mon.group_handle,0)!=4)
+      $fatal(1,"held upper-group reset must preserve raw upstream contribution and every consumer position");
+    #(7000001-$time);
+    if(groups[7].mon.window_bytes!=64'd12884901885 || groups[7].mon.window_events!=3 ||
+       !groups[7].mon.window_valid || !groups[7].mon.bytes_complete || !groups[7].mon.events_complete ||
+       groups[7].mon.member_reset_coverage || groups[3].mon.window_valid || totals[3]!=0)
+      $fatal(1,"ancestor quality/history must recover naturally even while an upper member's local statistics remain reset");
     $display("TB_PASS hierarchy_depth_transport originalT=250000 deadline=1250000 depth=8 root_bytes=12884901885");$finish;
   end
 endmodule
