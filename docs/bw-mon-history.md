@@ -107,3 +107,13 @@ and consumed source are in `tests/scale/history_evidence/`; its hash/row verifie
 passes. These are actual full long-window results, independently of prior small
 resource pilots. Other cells remain running/queued/unadmitted until individually
 completed and checked; this first row does not complete the matrix.
+
+`tests/scale/history_evidence/matrix.json` records the12 new cells and reused29/30
+rows with a dated status snapshot and exact independent expected counts. Original
+final manifests and verified bundles are authoritative. The common operator queue
+admits at most four simultaneous common jobs, with isolated source/build/output
+roots; this is host scheduling rather than a monitor capacity. Max jobs require
+separate coordinator admission. Failed/interrupted attempts are preserved and
+block further queued launches for review. No queued/running/unadmitted row counts
+as completion, and the overall ticket remains open until all required actual
+rows and version-qualified reused evidence are verified.

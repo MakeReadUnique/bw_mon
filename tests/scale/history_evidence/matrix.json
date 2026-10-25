@@ -1,0 +1,399 @@
+{
+  "new_cells": [
+    {
+      "basis": "ns",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 102400000,
+      "expected_window_checks": 51200000,
+      "groups": 256,
+      "original_manifest": "/tmp/bw-mon-spec13/history-common-ns-short-dense/runs/history-common-ns-short-dense/20261025T082916-3056523/manifest.json",
+      "points": 1024,
+      "profile": "history-common-ns-short-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "RUNNING_NOT_PASSED",
+      "stride": 1,
+      "variant": "baseline",
+      "width": 10
+    },
+    {
+      "basis": "cycle",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 102400000,
+      "expected_window_checks": 51198720,
+      "groups": 256,
+      "original_manifest": "/tmp/bw-mon-spec13/history-common-cycle-short-dense/runs/history-common-cycle-short-dense/20261025T082916-3056530/manifest.json",
+      "points": 1024,
+      "profile": "history-common-cycle-short-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "RUNNING_NOT_PASSED",
+      "stride": 2,
+      "variant": "baseline",
+      "width": 20
+    },
+    {
+      "basis": "ns",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 102400000,
+      "expected_window_checks": 51200000,
+      "groups": 256,
+      "original_manifest": "/tmp/bw-mon-spec13/history-31-common-ns-long/runs/history-common-ns-long-dense/20261025T080510-3025473/manifest.json",
+      "points": 1024,
+      "profile": "history-common-ns-long-dense",
+      "source_head": "ee69484e46d34ff83e89425dd822eb7017e2d0eb",
+      "status": "VERIFIED",
+      "stride": 1,
+      "variant": "baseline",
+      "verified_bundle": "tests/scale/history_evidence/history-common-ns-long-dense/bundle.json",
+      "width": 40000
+    },
+    {
+      "basis": "cycle",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 102400000,
+      "expected_window_checks": 102398720,
+      "groups": 256,
+      "original_manifest": "/tmp/bw-mon-spec13/history-common-cycle-long-dense/runs/history-common-cycle-long-dense/20261025T082916-3056521/manifest.json",
+      "points": 1024,
+      "profile": "history-common-cycle-long-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "RUNNING_NOT_PASSED",
+      "stride": 1,
+      "variant": "baseline",
+      "width": 80000
+    },
+    {
+      "basis": "ns",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 79850,
+      "expected_raw_checks": 102208000,
+      "expected_window_checks": 17066239,
+      "groups": 256,
+      "original_manifest": "/tmp/bw-mon-spec13/history-common-ns-control-clock/runs/history-common-ns-control-clock/20261025T082916-3056526/manifest.json",
+      "points": 1024,
+      "profile": "history-common-ns-control-clock",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "RUNNING_NOT_PASSED",
+      "stride": 3,
+      "variant": "group-clock",
+      "width": 7
+    },
+    {
+      "basis": "cycle",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 79850,
+      "expected_raw_checks": 102208000,
+      "expected_window_checks": 34068478,
+      "groups": 256,
+      "points": 1024,
+      "profile": "history-common-cycle-control-clock",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "QUEUED",
+      "stride": 3,
+      "variant": "group-clock",
+      "width": 7
+    },
+    {
+      "basis": "ns",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 1638400000,
+      "expected_window_checks": 819200000,
+      "groups": 4096,
+      "points": 16384,
+      "profile": "history-max-ns-short-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "AWAITING_MAX_ADMISSION",
+      "stride": 1,
+      "variant": "baseline",
+      "width": 10
+    },
+    {
+      "basis": "cycle",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 1638400000,
+      "expected_window_checks": 819179520,
+      "groups": 4096,
+      "points": 16384,
+      "profile": "history-max-cycle-short-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "AWAITING_MAX_ADMISSION",
+      "stride": 2,
+      "variant": "baseline",
+      "width": 20
+    },
+    {
+      "basis": "ns",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 1638400000,
+      "expected_window_checks": 819200000,
+      "groups": 4096,
+      "points": 16384,
+      "profile": "history-max-ns-long-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "AWAITING_MAX_ADMISSION",
+      "stride": 1,
+      "variant": "baseline",
+      "width": 40000
+    },
+    {
+      "basis": "cycle",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 80000,
+      "expected_raw_checks": 1638400000,
+      "expected_window_checks": 1638379520,
+      "groups": 4096,
+      "points": 16384,
+      "profile": "history-max-cycle-long-dense",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "AWAITING_MAX_ADMISSION",
+      "stride": 1,
+      "variant": "baseline",
+      "width": 80000
+    },
+    {
+      "basis": "ns",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 79850,
+      "expected_raw_checks": 1635328000,
+      "expected_window_checks": 273059839,
+      "groups": 4096,
+      "points": 16384,
+      "profile": "history-max-ns-control-clock",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "AWAITING_MAX_ADMISSION",
+      "stride": 3,
+      "variant": "group-clock",
+      "width": 7
+    },
+    {
+      "basis": "cycle",
+      "duration_ticks": 40000000000,
+      "expected_frames_per_scope": 79850,
+      "expected_raw_checks": 1635328000,
+      "expected_window_checks": 545095678,
+      "groups": 4096,
+      "points": 16384,
+      "profile": "history-max-cycle-control-clock",
+      "source_head": "0c662affa3af6e220123eebbe53530e85f38f72e",
+      "status": "AWAITING_MAX_ADMISSION",
+      "stride": 3,
+      "variant": "group-clock",
+      "width": 7
+    }
+  ],
+  "notes": "Status snapshot only; actual final manifest/verified archive is authoritative. Max31 admission pending. Reused rows retain original versions/configs.",
+  "reused_rows": [
+    {
+      "bundle": "tests/scale/evidence/common-ns/bundle.json",
+      "configuration": {
+        "basis": "ns",
+        "duration_ns": 40000,
+        "roots": 32,
+        "stride": 10,
+        "topology": "common",
+        "variant": "baseline",
+        "width": 100
+      },
+      "profile": "common-ns",
+      "source_head": "074c77103bc8c135106facad00dbc21995f2d92f",
+      "status": "VERIFIED_ORIGINAL_VERSION",
+      "ticket": 29,
+      "verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 5120000,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 5120000,
+        "observed_scopes": 1280,
+        "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      }
+    },
+    {
+      "bundle": "tests/scale/evidence/common-cycle/bundle.json",
+      "configuration": {
+        "basis": "cycle",
+        "duration_ns": 40000,
+        "roots": 32,
+        "stride": 20,
+        "topology": "common",
+        "variant": "baseline",
+        "width": 200
+      },
+      "profile": "common-cycle",
+      "source_head": "074c77103bc8c135106facad00dbc21995f2d92f",
+      "status": "VERIFIED_ORIGINAL_VERSION",
+      "ticket": 29,
+      "verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 5118720,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 5118720,
+        "observed_scopes": 1280,
+        "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      }
+    },
+    {
+      "bundle": "tests/scale/evidence/common-ns-unknown/bundle.json",
+      "configuration": {
+        "basis": "ns",
+        "duration_ns": 40000,
+        "roots": 32,
+        "stride": 10,
+        "topology": "common",
+        "variant": "unknown",
+        "width": 100
+      },
+      "profile": "common-ns-unknown",
+      "source_head": "074c77103bc8c135106facad00dbc21995f2d92f",
+      "status": "VERIFIED_ORIGINAL_VERSION",
+      "ticket": 29,
+      "verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 5120000,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 5120000,
+        "observed_scopes": 1280,
+        "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      }
+    },
+    {
+      "bundle": "tests/scale/evidence/common-ns-reset/bundle.json",
+      "configuration": {
+        "basis": "ns",
+        "duration_ns": 40000,
+        "roots": 32,
+        "stride": 10,
+        "topology": "common",
+        "variant": "reset",
+        "width": 100
+      },
+      "profile": "common-ns-reset",
+      "source_head": "074c77103bc8c135106facad00dbc21995f2d92f",
+      "status": "VERIFIED_ORIGINAL_VERSION",
+      "ticket": 29,
+      "verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 5119999,
+        "difference_count": 0,
+        "episode_records": 1281,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 5119999,
+        "observed_scopes": 1280,
+        "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15372
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15372"
+          }
+        ]
+      }
+    },
+    {
+      "basis": "ns",
+      "groups": 4096,
+      "points": 16384,
+      "profile": "max-ns",
+      "status": "PENDING_VERIFIED_UPSTREAM_EVIDENCE",
+      "stride": 10,
+      "ticket": 30,
+      "variant": "baseline",
+      "width": 100
+    },
+    {
+      "basis": "cycle",
+      "groups": 4096,
+      "points": 16384,
+      "profile": "max-cycle",
+      "status": "PENDING_VERIFIED_UPSTREAM_EVIDENCE",
+      "stride": 20,
+      "ticket": 30,
+      "variant": "baseline",
+      "width": 200
+    },
+    {
+      "basis": "ns",
+      "groups": 4096,
+      "points": 16384,
+      "profile": "max-ns-short-unknown",
+      "status": "PENDING_VERIFIED_UPSTREAM_EVIDENCE",
+      "stride": 10,
+      "ticket": 30,
+      "variant": "unknown",
+      "width": 10
+    },
+    {
+      "basis": "cycle",
+      "groups": 4096,
+      "points": 16384,
+      "profile": "max-cycle-short-reset",
+      "status": "PENDING_VERIFIED_UPSTREAM_EVIDENCE",
+      "stride": 20,
+      "ticket": 30,
+      "variant": "reset",
+      "width": 20
+    }
+  ],
+  "snapshot_utc": "2026-10-25T08:39:20.640371Z",
+  "ticket_complete": false
+}
