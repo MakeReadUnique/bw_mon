@@ -2,6 +2,8 @@
 
 Automated **42/42PASS**; **human T6 ledger status: PENDING**. Agent image inspection is separate.
 
+Fixed data bundle: [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance), asset fingerprint `863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee`. Later documentation/review-status commits do not change that data identity.
+
 Human status covers only the ledger's named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.
 
 Independent totals: {'raw': 161472, 'windows': 86375, 'receipts': 161472}; analysis: {'episodes': 518, 'phases': 1350, 'variations': 1868}. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).

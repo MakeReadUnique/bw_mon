@@ -8,6 +8,10 @@ byte for byte. All42 original inputs/cfg and independent numeric references are
 unchanged, and all33 real Verdi images were freshly regenerated. **Actual human
 T6 review remains PENDING**; agent image inspection is separate.
 
+The fixed data bundle is [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance),
+with the [Chinese human-review guide](bw-mon-wave-review-zh.md) and exact fingerprint
+in the current checklist. Later documentation/status edits retain that data identity.
+
 Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), which links
 the original FSDBs, portable public views, fresh images, independent tables and
 per-scene commands. The [current runtime/native freeze](../artifacts/acceptance/runtime-source.json)

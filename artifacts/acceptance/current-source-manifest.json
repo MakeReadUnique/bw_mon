@@ -1,7 +1,7 @@
 {
   "runtime_head": "cd07c77fcb706022069a9496bcf72d4354c1d2f8",
-  "metadata_baseline_revision": "b36fa853a231cbf815f7e91aa198060a2e419a4a",
-  "scope": "Current handoff working-tree source inventory, not execution coverage. Actual simulation used immutable cd07 scene archives; post-run evidence/publish wrappers were changed only after all42 simulations exited. Component execution scope is its independent467/427 proof.",
+  "metadata_baseline_revision": "4d52640ba1fd207f44cb02b7f32cf6aa1b319369",
+  "scope": "Current handoff working-tree source inventory, not execution coverage. Actual simulation used immutable cd07 scene archives; post-run evidence/publish wrappers changed only after all42 simulations exited. Component execution scope is the independent467/427 proof.",
   "files": {
     "rtl/bw_analysis_public.svh": {
       "bytes": 14806,
@@ -163,17 +163,29 @@
       "bytes": 4160,
       "sha256": "7ce56aa13d4fb8691fa7bb25d622d0e1d1594a1d108b15f9aaf33d239b83a897"
     },
+    "tests/scale/evidence/final-runtime-467b722/native-postrun-supplement/survey.py": {
+      "bytes": 6020,
+      "sha256": "389e50d439abb2a24cdafa0d755b4d58f7eb2c779f3eb537625928d7e9442b35"
+    },
+    "tests/scale/evidence/final-runtime-467b722/verify.py": {
+      "bytes": 293,
+      "sha256": "260ad7129c441b517ef4f9299cd182eb3a0c84099183a0701dd83f3de67327a5"
+    },
     "tests/scale/evidence/package.py": {
       "bytes": 2188,
       "sha256": "e11b85f628b7df9e116f33352791b0ba3ebee2063b273c981188d9a109236104"
     },
     "tests/scale/evidence/repaired-source-3bba72c/verify.py": {
-      "bytes": 7199,
-      "sha256": "1604131af4e4cd5b6a8204f381e353839438d8eda12c9aec7e1e4fc3ca6ccff6"
+      "bytes": 293,
+      "sha256": "260ad7129c441b517ef4f9299cd182eb3a0c84099183a0701dd83f3de67327a5"
     },
     "tests/scale/evidence/verify.py": {
-      "bytes": 2597,
-      "sha256": "dfcec67d98e0335cf1a8b39e06a9e9b93e4ecb586a5cee40a4e7101b567ee40b"
+      "bytes": 2752,
+      "sha256": "4bdefbafb94abacecf43b1ff96bfedb2bf69b0df3accd5dac315de9b62493cb2"
+    },
+    "tests/scale/evidence/verify_campaign.py": {
+      "bytes": 11088,
+      "sha256": "6ed4bd122c04906720bf07fe8c88e5dda81cbb721886c4f9abbbae48f67c339a"
     },
     "tests/scale/generate.py": {
       "bytes": 19290,

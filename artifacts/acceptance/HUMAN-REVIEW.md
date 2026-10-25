@@ -21,6 +21,10 @@ must name this committed bundle and `review.json`'s asset fingerprint. It does n
 approve future assets. The source of truth for exact values is the integer interval
 and raw-input reference; numeric display is Scientific10, not interpolated curves.
 
+Fixed actual data commit: [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance).
+Later guide/review-status commits do not change the named data identity. Record
+this data commit and the exact fingerprint when supplying an actual attestation.
+
 Common objects: p0...p11 (including freep10/p11), die0/die1, all_dmc and mixed at
 fixed public instance paths. Most scenes use NS W10/S1 or cycle W20/S2; clock first
 edge0.5ns. NS and cycle publication axes differ by0.5ns initially; consult each

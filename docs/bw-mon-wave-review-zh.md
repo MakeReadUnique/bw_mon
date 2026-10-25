@@ -8,6 +8,8 @@
 863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee
 ```
 
+固定数据提交为 [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance)。本说明及人工状态记录的后续编辑不改变这份数据身份；实际查看时请同时核对上面的资产指纹。
+
 [证据总索引](../artifacts/acceptance/INDEX.md)列出原始 FSDB、保存的公开信号视图、真实 Verdi 截图和独立预期/实际值表；[人工/代理记录](../artifacts/acceptance/review.json)分别记录两类查看。本文只索引这些现有对象，不扩大待签认范围。上一轮来源与代理记录保存在[历史记录](../artifacts/acceptance/review-history/README.md)；旧指纹不覆盖本轮。
 
 本轮停钟和变频的 `clock` 图末尾还显示了 die0、die1、mixed 的 `bytes_per_cycle` 三行，便于同时核对组的周期口径；NS 图这些行均为 0，cycle 图按实际周期计量。原对象、光标时刻和数值目标未变。
@@ -154,7 +156,7 @@ BW_VIEW=overview verdi -nWave -ssf waves.fsdb -play open-view.tcl
 ```text
 评审人/别名：
 实际查看日期（含时区）：
-实际查看的资产提交/交接链接：（填写本次打开的版本）
+实际查看的资产提交/交接链接：59fc046a154945b6a6ae60220e663f7d5ee12bb6（请确认本次确实打开此数据版本）
 冻结运行源码：cd07c77fcb706022069a9496bcf72d4354c1d2f8
 资产指纹：863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee
 

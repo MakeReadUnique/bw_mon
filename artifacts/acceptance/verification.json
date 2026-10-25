@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "asset_commit": null,
+  "asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
   "asset_fingerprint": "863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee",
   "production_base": "cd07c77fcb706022069a9496bcf72d4354c1d2f8",
   "production_sources": [
