@@ -999,7 +999,11 @@ increments produce exactly 12,884,901,885 B at the root; the real tolerance 1e-4
 GB/s is below 8e-15 relative. The matching missing case terminates at the original
 deadline rather than adding a timeout per level. Clock-stop known/unknown point
 controls, their expiry and a reset of a middle group with existing history are
-also checked.
+also checked. A sampled observation gap retains the other points' known bytes
+and events through all eight levels, with both completeness flags false. A later
+actual edge while a middle group remains held in statistics reset still advances
+its own raw source, core receipt and input acknowledgement. Its ancestors recover
+a complete window independently of that group's reset local statistics.
 
 Startup cases cover typed equal-text IDs, duplicate direct subgroup rules,
 point/subgroup/sibling/diamond overlap with both paths, conflicts beyond 32/64-bit
@@ -1014,3 +1018,19 @@ positions per direct edge, separate from local statistics history.
 Run named cases with `python3 tests/run.py <case>...`; `tests/cases.json` contains
 the complete `hierarchy_*` matrix. Shared T4 fixture compilation units participate
 in the same cache digest as recursive RTL headers, source paths and runner flags.
+
+
+Hierarchy integration validation: **188/188 contract cases passed** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8: all 146 prior cases
+and 42 hierarchy cases. All 110 compiled tops have no Warning-/Error- diagnostics.
+The source, recursive-header, explicit-fixture and runner fingerprints are current;
+every runtime log follows its current compilation stamp. `git diff --check` passed.
+This includes the final forward-reference, sampled-gap and held-upper-reset
+fixtures. Full group analysis parameters/aliases, real waveform review and scale
+execution remain separate acceptance work.
+
+An additional malformed-configuration startup probe creates a 4,096-group chain
+and correctly terminates at time zero with `GROUP_DEPTH`, depth9, maximum8 and a
+nine-group path. This VCS build reported automatic stack growth to 50,084,512 bytes
+during that invalid graph traversal. This is startup diagnostic resource behavior;
+it is not maximum-scale functional/runtime evidence or a maximum-RSS measurement.
