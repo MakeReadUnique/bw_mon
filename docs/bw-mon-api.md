@@ -5,11 +5,17 @@ from [绑定观测点并发布 ns 滑窗带宽](https://github.com/MakeReadUniqu
 and [cycle 滑窗、停钟与变频](https://github.com/MakeReadUnique/bw_mon/issues/16),
 and three-protocol accounting from
 [三类接口的逐传输计量与观测缺口](https://github.com/MakeReadUnique/bw_mon/issues/15).
-The remaining implementation tickets extend this same public contract.
+Scene-specific single-point e2e checks are described in
+[Expectation configuration and reports](bw-mon-expectations.md). The remaining
+implementation tickets extend this same public contract.
 
 ## Compile and start
 
-Compile `rtl/bw_mon_pkg.sv` before the other `rtl/*.sv` files. All production
+Compile `rtl/bw_mon_pkg.sv`, then `rtl/bw_check_report.sv`, then the other
+`rtl/*.sv` files. The report package must precede `bw_mon_setup.sv`. All production
+builds need `+incdir+rtl` and `-assert svaext` for the package headers and deferred
+deadline assertions, including point-only setups. Headers are included by the
+package and are not standalone compilation units. All production
 scopes use `timeunit 1fs; timeprecision 1fs`; timestamps are unsigned 64-bit integer
 femtosecond ticks, read directly with `$time` in that scope. A nanosecond is
 1,000,000 ticks. Do not override production time units or precision.
@@ -780,9 +786,10 @@ can be connected as an ordinary output. The synchronous function receives every
 final record, including multiple records drained in one time slot and final-block
 truncations; a toggle pulse is not its delivery guarantee. The package is a
 bridge, and episode arithmetic stays in the core. The dedicated check/report
-owner extends this bridge for scene expectations in the reporting tickets. At
-this stage `BW_EPISODE` logs final statistics and reasons without a performance
-comparison, and no user-side read/ack or timing action is required.
+owner receives this bridge synchronously for scene expectations.
+`BW_EPISODE` logs final statistics and reasons; configured metrics also produce
+`BW_CHECK` conclusions and one final `BW_SUMMARY`. No user-side read/ack or timing
+action is required. See the [complete supported cfg keys and report API](bw-mon-expectations.md).
 
 At the normalized group/core boundary, pending source progress also gates ns
 window and Q publication. A delayed earlier frame cannot be mistaken for zero
