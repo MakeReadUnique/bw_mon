@@ -117,19 +117,27 @@ are preserved separately. Native object/binary and before/after source/header/
 link-input hashes accompany the exact compile/link commands. Vendor header text
 and binaries are not redistributed.
 
-At this preparation checkpoint all four final-source nominal profiles remain
-**not launched**. They require the new common-source qualification and explicit
-resource admission. The four `prepared-max-*.json` receipts retain unchanged
-16,384-point/4,096-group/40us inputs and independent expected counts; they are
-plans, not actual results. Each full row will create20,480 native reset observer
-contexts, plus the coalesced pending settlement callback.
+At the archived preparation checkpoint, all four nominal inputs were
+**PREPARED_NOT_LAUNCHED**. Those immutable receipts keep their original status;
+the archive supplies small preparation evidence only. After final-runtime COMMON
+qualification and staged resource admission, `max-ns`, `max-cycle`,
+`max-ns-short-unknown` and `max-cycle-short-reset` are now **SIMULATION_RUNNING**
+(observed 2026-10-25 17:26 UTC) from immutable builder
+`31ce03c16af62911985ee9191da51c7534396ebf`. All four have reached Ready and produced
+progress without a recorded fatal/mismatch at this observation. No full profile
+has completed acceptance, and the maximum-topology ticket remains **OPEN**.
 
-The archived resource plan considers four topology MAX rows and six later
-history MAX rows. Prior8e-source partial MAX kernels used about1.6GiB each;
-current final-source maximum peak and throughput are unmeasured. Start with one
-MAX, inspect real kernel/Ready/RSS/progress, then admit a second. Later increases
-need fresh host/worker/RSS observations, rather than starting all ten blindly.
-These scheduling choices impose no product memory or wall-time acceptance cap.
+The full jobs retain the original16,384-point/4,096-group/40us inputs and expected
+counts. Each creates20,480 native reset observer contexts plus the coalesced
+pending settlement callback. Ongoing progress does not replace the required
+final raw/window/quality/ACK/report comparisons or measured final resource record.
+
+The archived resource plan covers four topology MAX rows and six later history
+MAX rows. Prior8e-source partial kernels used about1.6GiB each; current full-run
+peak/resource qualification remains incomplete. Four topology rows have since
+been admitted using recorded live host/RSS/progress checks. Further admission
+requires fresh observations. These scheduling choices impose no product memory
+or wall-time acceptance cap.
 
 ## Historical preparation and superseded attempts
 
