@@ -7,18 +7,15 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/truncated_cycle/capture-episode.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-mbmflvf8",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-pa98dpk9",
   "display": ":87",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "cb6ba0df48f24b505180cffeeba70ad225796cb24b542866914fe95fa5ea7a38",
+  "fsdb_sha256": "f7406332b26bfa44904313da41e0a9d41bdbdf439306018225b3bd1da4605607",
   "png_sha256": "2a752249b1f9a8572d88f37d0e1d6ba7f9ea26483f26441d0987d771ffcea5e2",
   "agent_visual_review": "PENDING",
-  "human_review": "PENDING",
-  "actual_tcl_sha256": "f46b9b2d383d5cfbc7f0414c74795f2cb83d9bf3516a3d411249b6707fb0bf8e",
-  "portable_sav_sha256": "03fdb3d39a07ab8b793da8c31bf564b667dd979919b2b5f83751f227cac3528b",
-  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+  "human_review": "PENDING"
 }

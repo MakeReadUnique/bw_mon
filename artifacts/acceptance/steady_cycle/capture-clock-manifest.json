@@ -7,18 +7,15 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/steady_cycle/capture-clock.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-_j1u9ba8",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-rx6qgfmv",
   "display": ":87",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "e17a41b050cb29232a51839c00792b66be3a9e6162be6fe61f0ccf0648b724b7",
+  "fsdb_sha256": "a6689b0e24e0fea8149c236b3bba7ad868b96ccc405ca84a8bfbd71631614dab",
   "png_sha256": "4d1774deeba1bfeec85836537a8a634c6601549b7d30479161ce9947936100e3",
   "agent_visual_review": "PENDING",
-  "human_review": "PENDING",
-  "actual_tcl_sha256": "c7ca9ffe323548180cd8be7ce5f158bce906edff576f94bba05e1b9675a70db3",
-  "portable_sav_sha256": "7b312c08168003953981c457caaab3da60708a1d7a01bb939e59bdc0c09a749a",
-  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+  "human_review": "PENDING"
 }

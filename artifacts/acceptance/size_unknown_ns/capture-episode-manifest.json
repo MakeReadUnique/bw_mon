@@ -7,18 +7,15 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/size_unknown_ns/capture-episode.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-yostubzi",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-ynjatdmb",
   "display": ":87",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "9819615d40b103aeeb27ea8e410547d84e37e7c3fa8cdfa534eca1f37f8f8300",
+  "fsdb_sha256": "b542f49dd89932b962b775b2373cacc31f990e2f39c0f68491ac2c58732bbf34",
   "png_sha256": "39d64c84554218394cad4232f075cdc44fadb948d60b07ec03c922088279a5b7",
   "agent_visual_review": "PENDING",
-  "human_review": "PENDING",
-  "actual_tcl_sha256": "7369d1812f067cbc7bd1f8112b496bf1c18d4f93d6d024518902e5ab9ef5a411",
-  "portable_sav_sha256": "e85c9c9d1dcd788f3d2d736c00f5ce1c7386b0f4ed9acd55c907e7891412b5c6",
-  "formatting": "Fresh cleanRC [Wave] analogFmtPrecision=Scientific10; numeric digitalreal rows; no raster/data modification"
+  "human_review": "PENDING"
 }
