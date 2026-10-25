@@ -2189,6 +2189,43 @@
     ]
   },
   {
+    "name": "metrics_first_boundary",
+    "top": "tb_metrics_first_boundary",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_first_boundary.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK scope_kind=0 scope=metrics.first_boundary .*metric=steady_bw .*conclusion=FAIL reason=NONE",
+      "BW_CHECK scope_kind=1 scope=metrics.first_boundary_group .*metric=steady_stddev .*conclusion=PASS reason=NONE",
+      "BW_SUMMARY status=FAIL pass=2 fail=2 warning=0 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "metrics_first_boundary_known_start",
+    "top": "tb_metrics_first_boundary",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_first_boundary.cfg",
+      "+KNOWN_START"
+    ],
+    "expect_log": [
+      "BW_CHECK scope_kind=0 scope=metrics.first_boundary .*metric=steady_bw .*conclusion=FAIL reason=NONE",
+      "BW_CHECK scope_kind=1 scope=metrics.first_boundary_group .*metric=steady_stddev .*conclusion=PASS reason=NONE",
+      "BW_SUMMARY status=FAIL pass=2 fail=2 warning=0 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
+    "name": "metrics_first_boundary_unknown_end",
+    "top": "tb_metrics_first_boundary",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_first_boundary.cfg",
+      "+UNKNOWN_END"
+    ],
+    "expect_log": [
+      "BW_LAST_STEADY.*scope=metrics.first_boundary .*selection_valid=0.*reason=BOUNDARY_UNKNOWN",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=4 scopes_done=2 scopes_expected=2"
+    ]
+  },
+  {
     "name": "metrics_independent",
     "top": "tb_metrics_independent"
   },
