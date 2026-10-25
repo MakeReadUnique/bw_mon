@@ -10,6 +10,11 @@ LEAVES.update(die0=list(range(4)),die1=list(range(4,8)),all_dmc=list(range(8)),m
 PRIMARY=['protocols','steady','start_stop','varying','point_reset','child_reset','upper_reset','size_unknown','valid_unknown','reset_unknown','clock_stop','frequency','hints','zero','no_episode','truncated','isolated','e2']
 SUPPLEMENTAL=['e3_boundary','e3_delayed','e4_boundary','e4_below','e4_low','e5']
 
+def expected_scope_id(c,name):
+ if c['example_ids'] and name=='p0':return 'tb.top.master0.bw'
+ if c['example_ids'] and name=='all_dmc':return 'memory_all'
+ return {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)
+
 def configuration(scene,basis):
  c={'scene':scene,'basis':basis,'W':10 if basis=='ns' else 20,'S':1 if basis=='ns' else 2,'Q':12 if basis=='ns' else 24,'N':3,'span':2 if basis=='ns' else 4,'K':2,'end_ticks':160*TICKS+1,'top':'tb_acceptance_'+basis,'example_ids':False}
  if scene in ['start_stop']:c['end_ticks']=100*TICKS+1

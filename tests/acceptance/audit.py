@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Recheck portable acceptance archives and genuine assets without simulation."""
-import hashlib,json,subprocess,tarfile,tempfile
+import argparse,hashlib,json,subprocess,tarfile,tempfile
 from pathlib import Path
 from model import configuration
 from analysis import verify,verify_reports
 from run import check_trace
-from evidence import runtime_evidence,scene_runtime_evidence
+from evidence import runtime_evidence,scene_runtime_evidence,dependency_bytes,runtime_sources
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/acceptance'
 sha=lambda b:hashlib.sha256(b).hexdigest()
 def main():
+ parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--current-source',action='store_true',help='also require every scene runtime to equal this checkout');args=parser.parse_args()
  inventory=json.loads((OUT/'SHA256SUMS.json').read_text())
  for name,digest in inventory.items():assert sha((OUT/name).read_bytes())==digest,('asset hash',name)
  runtime=runtime_evidence(ROOT,OUT)
@@ -18,7 +19,8 @@ def main():
  for folder in sorted(OUT.iterdir()):
   if not (folder/'commands.json').exists():continue
   m=json.loads((folder/'commands.json').read_text());c=m['configuration'];assert c==configuration(c['scene'],c['basis'])
-  scene_runtime_evidence(ROOT,OUT,folder,m,runtime)
+  consumed=scene_runtime_evidence(ROOT,OUT,folder,m,runtime)
+  if args.current_source:assert consumed['rtl_sha256']==runtime_sources(ROOT),('recorded runtime differs from current source',folder.name,consumed['head'])
   with tempfile.TemporaryDirectory(prefix='acceptance-audit-') as name:
    work=Path(name)
    with tarfile.open(str(folder/'trace.tar.gz')) as archive:
@@ -33,8 +35,7 @@ def main():
    result=verify(c,rows,frames,windows,log);report=verify_reports(c,rows,frames,windows,log,(folder/'expect.cfg').read_text())
    recorded=json.loads((folder/'comparison.json').read_text());assert result==recorded['analysis_counts'] and report==recorded['report_reference'] and basic['counts']==recorded['counts']
    for path,digest in m['dependency_sha256'].items():
-    target=ROOT/path
-    data=target.read_bytes() if target.exists() else (work/'stimulus.txt').read_bytes() if path.endswith('/stimulus.txt') else None
+    data=dependency_bytes(ROOT,OUT,folder,m,path)
     assert data is not None and sha(data)==digest,('source/input/cfg hash',folder,path)
   assert json.loads((folder/'resolved-signals.json').read_text())['status']=='PASS'
   for picture in folder.glob('*.png'):

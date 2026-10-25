@@ -1,12 +1,12 @@
 """Human-facing expected/actual tables; references are the independent raw model."""
 import json
 from fractions import Fraction
-from model import LEAVES,TICKS,frame_table,window_table
+from model import LEAVES,TICKS,frame_table,window_table,expected_scope_id
 from analysis import episode_reference,phase_reference,interval_quality,packets,sample_set,variation
 
 def write_tables(c,rows,out,comparison):
  frames=frame_table(rows);windows=window_table(c,rows,frames);episodes=episode_reference(c,rows,frames);log=(out/'run.log').read_text();eps=packets(log,'BW_EPISODE');phm=packets(log,'BW_PHASE_METRICS')
- def sid(name):return 'tb.top.master0.bw' if c['example_ids'] and name=='p0' else 'memory_all' if c['example_ids'] and name=='all_dmc' else {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)
+ def sid(name):return expected_scope_id(c,name)
  reference={'episodes':{},'phases':{}}
  for name,es in episodes.items():
   reference['episodes'][name]=[{k:float(v) if isinstance(v,Fraction) else v for k,v in e.items()} for e in es]
