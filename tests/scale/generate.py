@@ -313,3 +313,39 @@ endmodule
     for key,value in {'WIN':win,'HINT':'4' if s.basis=='ns' else '8','ANALYSIS':analysis,'POINT_CONNECTIONS':connections(),
                       'GROUP_CONNECTIONS':connections(True),'CSV_HEADER':','.join(CSV_FIELDS),'TOPOLOGY':'\n'.join(topo)}.items():top=top.replace('@'+key+'@',value)
     (out/'tb_bw_scale.sv').write_text(top)
+    if s.config.get('history_controls'):_add_history_controls(s,out)
+
+
+def _add_history_controls(s,out):
+    """Opt-in public group-reset/clock fixture; legacy generated SV stays identical."""
+    def replace_once(text,old,new):
+        if text.count(old)!=1:raise ValueError('history fixture template drift: '+old)
+        return text.replace(old,new)
+    p=out/'input_pkg.sv';text=p.read_text()
+    text=replace_once(text,'  int variant=0;',"  localparam ref_u64 GROUP_RESET_INDEX=64'd"+str(s.config['group_reset_index'])+';\n  int variant=0;')
+    text=replace_once(text,'  function automatic ref_u64 pre_reset_count();','''  function automatic bit statistics_owner(bit is_group,int index);
+    if(variant==3)return is_group && index==GROUP_RESET_INDEX;
+    return !is_group && index==0;
+  endfunction
+  function automatic ref_u64 pre_reset_count();''')
+    text=text.replace('own && variant==2','own && (variant==2 || variant==3)')
+    text=replace_once(text,'hit && variant==1 && left<=UNKNOWN_TICK','hit && (variant==1 || variant==3) && left<=UNKNOWN_TICK')
+    text=replace_once(text,'r.source_epoch=epoch;','r.source_epoch=(variant==2)?epoch:0;')
+    p.write_text(text)
+    p=out/'checker.sv';text=p.read_text();text=replace_once(text,'own=!is_group && scope_index==0;','own=statistics_owner(is_group,scope_index);');p.write_text(text)
+    p=out/'tb_bw_scale.sv';text=p.read_text()
+    text=replace_once(text,'if(scope_index==0 && variant==1)','if(scope_index==0 && (variant==1 || variant==3))')
+    # Group reset is only its public statistics reset input, never a point control.
+    old='  bit local_done=0;\n  bw_group_mon'
+    new='''  bit local_done=0;logic stats_reset_n=1;
+  initial begin
+    wait(monitor_ready);
+    if(variant==3 && scope_index==GROUP_RESET_INDEX)begin
+      #RESET_START;stats_reset_n=0;#(RESET_END-RESET_START);stats_reset_n=1;
+    end
+  end
+  bw_group_mon'''
+    text=replace_once(text,old,new)
+    text=replace_once(text,"mon(.clk(clk),.reset_n(1'b1));","mon(.clk(clk),.reset_n(stats_reset_n));")
+    text=replace_once(text,'"reset":variant=2;default:', '"reset":variant=2;"group-clock":variant=3;default:')
+    p.write_text(text)

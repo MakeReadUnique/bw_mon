@@ -10,6 +10,8 @@ CELLS={
  'cycle-short-dense':dict(basis='cycle',width=20,stride=2),
  'ns-long-dense':dict(basis='ns',width=40000,stride=1),
  'cycle-long-dense':dict(basis='cycle',width=80000,stride=1),
+ 'ns-control-clock':dict(basis='ns',width=7,stride=3,variant='group-clock',history_controls=True),
+ 'cycle-control-clock':dict(basis='cycle',width=7,stride=3,variant='group-clock',history_controls=True),
 }
 PROFILES={}
 for scale in ('common','max'):
@@ -22,9 +24,19 @@ class HistoryScenario(Scenario):
         super().__init__('common-ns',topology=scale,roots=1 if tracer else 32,duration_ns=240 if tracer else 40000,
                          analysis_min_span=2*options['stride'],**options)
         self.name=name
+        if self.variant=='group-clock':
+            # Inputs remain three disjoint arithmetic progressions, not per-edge arrays.
+            segments=[(250000,500000,20),(10250000,1000000,10),(30250000,500000,420)] if tracer else [(250000,500000,1000),(500250000,1000000,50),(600250000,500000,78800)]
+            from scenario import Clock
+            self.clock=Clock(segments)
+            self.reset_start=70100000 if tracer else 300100000
+            self.reset_end=71100000 if tracer else 301100000
+            self.unknown_tick=40250000 if tracer else 100250000
+            self.unknown_edge=self.clock.lt(self.unknown_tick)+1
+            self.config.update(clock_segments=segments,reset_start_ticks=self.reset_start,reset_end_ticks=self.reset_end,unknown_tick=self.unknown_tick,group_reset_index=0)
     def manifest(self):
         value=super().manifest();value['acceptance_profile']=not PROFILES[self.name]['tracer'];value['acceptance_ticket']=31
-        value['matrix_cell']=self.name;value['coverage']='nominal40us/2GHz baseline' if value['acceptance_profile'] else 'small public tracer only'
+        value['matrix_cell']=self.name;value['coverage']=('nominal40us clock/control variant; regular2GHz baselines separate' if self.variant=='group-clock' else 'nominal40us/2GHz baseline') if value['acceptance_profile'] else 'small public tracer only'
         return value
 
 def main():

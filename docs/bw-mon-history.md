@@ -46,3 +46,45 @@ separate binary64 tolerance. Only per-scope final rows/counts and bounded final
 records/progress are retained. A Python topology/reference result, smoke run,
 resource injection, running job or failed infrastructure attempt is not a passed
 matrix cell. Full common/max and all remaining cells are tracked independently.
+
+## Clock/control input table
+
+`history-{common,max}-{ns,cycle}-control-clock` uses W7/S3, N3/minimumspan6/K4,
+Q30ns or60cycles and the same explicit coefficients/hints/credit/report rules as
+the other profiles. Its original clock input is three arithmetic progressions:
+
+| First edge | Period | Count | Last edge |
+| --- | --- | ---: | --- |
+|0.25ns |0.5ns |1000 |499.75ns |
+|500.25ns |1ns |50 |549.25ns |
+|600.25ns |0.5ns |78800 |39999.75ns |
+
+There are79850 actual frames per scope; no edge or cycle is manufactured during
+the51ns interval between549.25 and600.25ns. These are labelled variable-clock
+variants; the separate baselines retain all80000 frames at2GHz for40us.
+P0 dynamic size is unknown only on its real100.25ns transfer. Group0 statistics
+reset is asserted300.1ns and released301.1ns. It creates no point-origin control,
+physical reset coverage or source epoch change. Its two interrupted local
+sampling opportunities still publish full group raw increments to ancestors.
+The group's own stats epoch becomes1 while raw source epoch remains0; both
+receipt and source sequence keep advancing through every original frame.
+
+For a five-point leaf, the reset's first frame at300.25ns still carries320B/5events
+upstream, while its local live total is0. At40us its post-release local total is
+25359360B/396240events; the32-point parent retains163532736B over the scene,
+including exactly the earlier missing64B known subtotal. Parent episode byte
+quality stays incomplete after its windows recover. The new local group episode
+is complete in bytes; the earlier reset-interrupted episode retains its unknown.
+
+NS [593,600) is a full known-zero window. Cycle publication350 ends at actual
+edge1051/600.25ns and starts at edge1044/543.25ns:448B per point over57ns gives
+448/57GB/s, while B/cycle remains64. The pause exceeds Q30ns, but the last transfer's
+real tail was unknown until resume; it must not create a completed episode during
+that pause. Resumed transfer activity extends the old episode. The final tail is
+again unknown at40us, so final truncation/representative validity remain explicit.
+
+The public32/8/240ns clock/control tracers use an explicitly shortened input table
+(20 half-ns edges,10 one-ns edges, resume30.25ns),450frames/scope, p0 sizeX40.25ns
+and group reset70.1–71.1ns. They passed18000 raw checks each,3199NS/5959cycle windows,
+41episode/41phase records and492 correct WARNING conclusions, zero differences.
+They establish integration sensitivity only, not nominal40us acceptance.

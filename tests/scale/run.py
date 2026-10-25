@@ -88,21 +88,18 @@ def verify(s,attempt):
     for e in episodes:
         sid=e.get('scope');seq=int(e.get('result_seq','0'))
         if sid not in byid:diffs.append(dict(error='unknown_episode_scope',record=e));continue
-        kind,index=byid[sid];m,hit,own=s.meta(kind,index);old=own and s.variant=='reset' and seq==1
+        kind,index=byid[sid]
         expected_seq=len(observed_episodes.get(sid,[]))+1
         if seq!=expected_seq:diffs.append(dict(error='episode_sequence',scope=sid,expected=expected_seq,actual=seq))
         observed_episodes.setdefault(sid,[]).append(e)
-        if old:
-            events=s.clock.lt(s.reset_start);size=64*events;first=s.clock.at(1);last=s.clock.at(events);epoch=0;status=3;bc=ec=1;reset=0
-        else:
-            start=s.reset_end if own and s.variant=='reset' else 0
-            counts=s.interval(kind,index,start,s.end);events=counts['events'];size=counts['bytes'];first=s.clock.at(s.clock.lt(start)+1);last=s.clock.at(s.clock.edges)
-            epoch=int(own and s.variant=='reset');status=4;bc=counts['bytes_complete'];ec=counts['events_complete'];reset=counts['reset']
-        fields=dict(epoch=epoch,episode=seq,scope_kind=int(kind=='group'),status=status,first_ticks=first,last_ticks=last,bytes=size,events=events,first_known=1,last_known=1,tail_known=0,tail_ticks=0,e2e_valid=0,bytes_complete=bc,events_complete=ec,member_reset=reset)
+        references=s.expected_episodes(kind,index)
+        if not 1<=seq<=len(references):
+            diffs.append(dict(error='extra_episode',scope=sid,seq=seq));continue
+        fields=references[seq-1]
         for f,value in fields.items():
             if e.get(f)!=str(value):diffs.append(dict(error='episode',scope=sid,seq=seq,field=f,expected=value,actual=e.get(f)))
     for sid,(kind,index) in byid.items():
-        n=2 if kind=='point' and index==0 and s.variant=='reset' else 1
+        n=len(s.expected_episodes(kind,index))
         if len(observed_episodes.get(sid,[]))!=n:diffs.append(dict(error='episode_count',scope=sid,expected=n,actual=len(observed_episodes.get(sid,[]))))
     required_metrics={'e2e_bw','steady_bw','ramp_time','fall_time','steady_window_min','steady_window_max','steady_stddev','steady_cv','episode_window_min','episode_window_max','episode_stddev','episode_cv'}
     conclusions={}
