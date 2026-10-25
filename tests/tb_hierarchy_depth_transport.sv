@@ -96,6 +96,28 @@ module tb_hierarchy_depth_transport;
     #(5000001-$time);
     for(int g=0;g<8;g++)if(!byte_qualities[g] || !event_qualities[g] || reset_coverages[g])
       $fatal(1,"ancestor quality should recover exactly after unknown/control history expires atg%0d",g);
+    // A sampled observation gap retains every other known contribution through all levels.
+    #(5250000-$time);clk=1;
+    frame='0;frame.record_seq=3;frame.edge_index=3;frame.timestamp_ticks=$time;
+    frame.reset_n=1;frame.source_epoch=1;publish_frame(sources[0],frame);
+    frame.source_epoch=0;frame.byte_inc=64'd4294967295;frame.event_inc=1;
+    frame.bytes_complete=1;frame.events_complete=1;
+    publish_frame(sources[1],frame);publish_frame(sources[2],frame);
+    #1;clk=0;
+    for(int g=0;g<8;g++)begin
+      if(raw_sequences[g]!=3 || raw_edges[g]!=3 || raw_ticks[g]!=5250000 || receipts[g]!=3 ||
+         raw_bytes[g]!=(g==7 ? 64'd8589934590 : 64'd4294967295))
+        $fatal(1,"sampled observation gap must preserve known raw subtotal at ancestorg%0d",g);
+    end
+    if(groups[7].mon.raw_record.bytes_complete || groups[7].mon.raw_record.events_complete ||
+       groups[7].mon.raw_record.event_inc!=2 || groups[7].mon.raw_record.reset_points!=0 ||
+       groups[7].mon.total_bytes!=64'd34359738360)
+      $fatal(1,"unknown member cannot erase known events/bytes or impersonate complete zero at the root");
+    #(6000001-$time);
+    if(groups[7].mon.window_bytes!=64'd8589934590 || groups[7].mon.window_events!=2 ||
+       groups[7].mon.bytes_complete || groups[7].mon.events_complete || groups[7].mon.window_valid ||
+       groups[7].mon.member_reset_coverage)
+      $fatal(1,"partial known raw total and both quality axes must enter the original-time root window");
     $display("TB_PASS hierarchy_depth_transport originalT=250000 deadline=1250000 depth=8 root_bytes=12884901885");$finish;
   end
 endmodule

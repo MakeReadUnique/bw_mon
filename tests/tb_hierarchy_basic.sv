@@ -14,9 +14,9 @@ module tb_hierarchy_basic;
   bw_group_mon #(.GROUP_ID("parent"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) parent
     (.clk(clk),.reset_n(1'b1));
   initial begin
-    define_group("parent",2);define_group("child",1);
+    define_group("parent",2);
     add_group_member("parent","child");add_group_member("parent","child");
-    add_point_member("parent","child");add_point_member("child","leaf");
+    add_point_member("parent","child");define_group("child",1);add_point_member("child","leaf");
     finish_configuration();wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
     if(child.direct_member_count!=1 || child.recursive_point_count!=1 ||
