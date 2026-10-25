@@ -178,7 +178,12 @@ module bw_stats_core #(
     variation_state_t stats;
   } pending_phase_t;
   pending_phase_t pending_phases[$];
-  variation_sample_t episode_pending_samples[$],phase_pending_samples[$];
+  typedef struct {
+    bw_u64_t ticks,last_ticks,count,step_ticks;
+    real value;
+    bit warmup,foreign_activity,unknown_observation,bad_denominator;
+  } variation_run_t;
+  variation_run_t episode_pending_samples[$],phase_pending_samples[$];
   variation_state_t episode_variation,phase_variation;
   bw_phase_result_t last_steady;
   bit last_steady_found=0;
@@ -197,6 +202,7 @@ module bw_stats_core #(
   bw_u64_t retired_episode_id=0,retired_last_ticks=0,retired_last_cycle=0;
 
   `include "bw_history.svh"
+  `include "bw_variation_history.svh"
 
   function automatic bit foreign_activity();
     return retired_activity_valid && retired_episode_id!=episode_id &&
@@ -299,14 +305,9 @@ module bw_stats_core #(
     sample.ticks=window_end_ticks;sample.value=bandwidth_gbps;
     sample.warmup=!window_full;sample.foreign_activity=foreign_activity();
     sample.unknown_observation=!bytes_complete;sample.bad_denominator=!denominator_valid;
-    check_storage_growth(episode_pending_samples.size(),scope_id,"variation.episode",window_end_ticks,last_edge_index,last_record_seq);
+    append_variation_history(episode_pending_samples,sample,"variation.episode");
     if(core_failure_seen)return;
-    episode_pending_samples.push_back(sample);
-    if(PHASE_ENABLE)begin
-      check_storage_growth(phase_pending_samples.size(),scope_id,"variation.phase",window_end_ticks,last_edge_index,last_record_seq);
-      if(core_failure_seen)return;
-      phase_pending_samples.push_back(sample);
-    end
+    if(PHASE_ENABLE)append_variation_history(phase_pending_samples,sample,"variation.phase");
   endtask
 
   // Only samples inside already established coverage and outside the possible
@@ -317,10 +318,12 @@ module bw_stats_core #(
     bw_u64_t phase_through;
     phase_through=closed_through>covered_through ? closed_through : covered_through;
     while(episode_pending_samples.size()!=0 && episode_pending_samples[0].ticks<covered_through)begin
-      sample=episode_pending_samples.pop_front();add_variation_sample(episode_variation,sample);
+      pop_variation_sample(episode_pending_samples,sample);
+      if(core_failure_seen)return;
+      add_variation_sample(episode_variation,sample);
     end
     while(phase_pending_samples.size()!=0 && phase_pending_samples[0].ticks<phase_through)begin
-      sample=phase_pending_samples[0];assigned_sample=0;blocked_sample=0;
+      sample=first_variation_sample(phase_pending_samples[0]);assigned_sample=0;blocked_sample=0;
       foreach(pending_phases[i])begin
         if(sample.ticks>=pending_phases[i].fragment.start_ticks && sample.ticks<pending_phases[i].fragment.end_ticks)begin
           if(sample.ticks<covered_through || (pending_phases[i].fragment.end_known &&
@@ -336,7 +339,8 @@ module bw_stats_core #(
         if(sample.ticks>=covered_through && !finishing)break;
         add_variation_sample(phase_variation,sample);
       end
-      sample=phase_pending_samples.pop_front();
+      pop_variation_sample(phase_pending_samples,sample);
+      if(core_failure_seen)return;
     end
   endtask
 

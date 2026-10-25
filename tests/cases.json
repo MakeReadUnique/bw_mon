@@ -3973,5 +3973,9 @@
     "expect_counts": {
       "BW_SUMMARY ": 0
     }
+  },
+  {
+    "name": "variation_pending_retention",
+    "top": "tb_variation_pending_retention"
   }
 ]
