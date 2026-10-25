@@ -27,7 +27,11 @@ def main():
   with csvpath.open() as f:header=next(csv.reader(f))
   actual={re.sub(r'\[[0-9]+:[0-9]+\]$','',s) for s in header[1:]}
   assert actual==paths,('unresolved public fields',directory.name,sorted(paths-actual),sorted(actual-paths))
-  (directory/'resolved-signals.json').write_text(json.dumps({'status':'PASS','public_signal_count':len(paths),'actual_headers':header,'command':cmd},indent=2)+'\n')
+  resolution={'status':'PASS','public_signal_count':len(paths),'actual_headers':header,'command':cmd}
+  resolution_file=directory/'resolved-signals.json'
+  previous_resolution=json.loads(resolution_file.read_text()) if resolution_file.exists() else {}
+  if any(previous_resolution.get(key)!=resolution[key] for key in ['status','public_signal_count','actual_headers']):
+   resolution_file.write_text(json.dumps(resolution,indent=2)+'\n')
   captured=[]
   for image in directory.glob('*.png'):
    file=directory/('capture-'+image.stem+'-manifest.json')
@@ -37,7 +41,7 @@ def main():
    captured.append(image.name);pictures.append(str(image.relative_to(OUT)))
   for key,value in comparison['counts'].items():totals[key]=totals.get(key,0)+value
   for key,value in comparison['analysis_counts'].items():analysis[key]=analysis.get(key,0)+value
-  scenes.append({'scene':directory.name,'configuration':manifest['configuration'],'counts':comparison['counts'],'analysis_counts':comparison['analysis_counts'],'performance':comparison['report_reference'],'images':captured,'fsdb_sha256':sha(directory/'waves.fsdb'),'human_review':'PENDING'})
+  scenes.append({'scene':directory.name,'configuration':manifest['configuration'],'counts':comparison['counts'],'analysis_counts':comparison['analysis_counts'],'performance':comparison['report_reference'],'images':captured,'fsdb_sha256':sha(directory/'waves.fsdb'),'human_review_at_generation':comparison['human_review']})
   if args.pack:
    files=list(directory.glob('p*.csv'))+[directory/(n+'.csv') for n in ['die0','die1','all_dmc','mixed']]
    files +=[directory/n for n in ['stimulus.txt','compile.log','run.log','fsdb-values.csv','fsdbreport.log','capture.log','capture.tcl','signals.json','capture-manifest.json','capture.ready']]
@@ -59,7 +63,6 @@ def main():
     text=file.read_text().replace('(stimulus.txt)','(trace.tar.gz)').replace('(run.log)','(trace.tar.gz)').replace('(fsdb-values.csv)','(trace.tar.gz)');file.write_text(text)
  for file in (OUT/'component-proof').glob('*.tar.gz'):assert file.stat().st_size>0
  assert len(scenes)==42,len(scenes)
- (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':'8de785c86f513804168eb2b868ab1f967a3b0e8b','harness_revision':'661ef33','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':'PENDING','no_production_changes':True,'python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
  previous_review=json.loads((OUT/'review.json').read_text()) if (OUT/'review.json').exists() else {}
  review_objects=[]
  for directory in OUT.iterdir():
@@ -67,15 +70,19 @@ def main():
   review_objects +=[f for f in directory.iterdir() if f.is_file() and (f.suffix in ['.fsdb','.png','.sav','.cfg'] or f.name in ['expected-actual.md','reference.json','commands.json'] or f.name.startswith('signals-'))]
  fingerprint=hashlib.sha256(json.dumps([(str(f.relative_to(OUT)),sha(f)) for f in sorted(review_objects)],sort_keys=True).encode()).hexdigest()
  review={'human':{'status':'PENDING','reviewer':None,'date':None,'objects_intervals_conclusion':None},'agent':{'status':'SEE IMAGE-SPECIFIC ENTRIES','note':'Agent inspection is not human attestation'},'actual_images':pictures,'instructions':'Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.'}
+ if 'previous_human_record' in previous_review:review['previous_human_record']=previous_review['previous_human_record']
  if previous_review.get('human',{}).get('status','PENDING')!='PENDING':
   if previous_review.get('asset_fingerprint')==fingerprint:review['human']=previous_review['human']
   else:review['previous_human_record']=previous_review['human'];review['human']['reason']='Assets changed; prior attestation does not cover new assets'
  if 'agent' in previous_review:review['agent']=previous_review['agent']
  review['asset_fingerprint']=fingerprint
  (OUT/'review.json').write_text(json.dumps(review,indent=2)+'\n')
- index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **humanT6reviewPENDING**. Agent image inspection is separate.\n\n'
+ human_status=review['human']['status']
+ (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':'8de785c86f513804168eb2b868ab1f967a3b0e8b','harness_revision':'661ef33','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':human_status,'human_review_scope':'Only named objects and intervals in review.json; no per-scene approval inferred','no_production_changes':True,'python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
+ index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **human T6 ledger status: '+human_status+'**. Agent image inspection is separate.\n\n'
+ index+='Human status covers only the ledger\'s named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.\n\n'
  index+='Independent totals: '+str(totals)+'; analysis: '+str(analysis)+'. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).\n\n'
- index+='The durable [408-case component proof](component-proof/verification.json) and [complete log/config archive](component-proof/final-408-proof.tar.gz) are separate from this new scene campaign. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Performance summary|\n|---|---|---|---|---|\n'
+ index+='The durable [408-case component proof](component-proof/verification.json) and [complete log/config archive](component-proof/final-408-proof.tar.gz) are separate from this new scene campaign. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|\n|---|---|---|---|---|\n'
  for s in scenes:
   name=s['scene'];c=s['configuration'];imgs=' '.join('['+i+']('+name+'/'+i+')' for i in s['images']) or 'Portable public views; FSDB directly available'
   index+='|%s|%s %s/%s/%s|[FSDB](%s/waves.fsdb) · [expected/actual](%s/expected-actual.md) · [reference](%s/reference.json) · [cfg](%s/expect.cfg) · [open](%s/open.sh)|%s|%s %s|\n'%(name,c['basis'],c['W'],c['S'],c['Q'],name,name,name,name,name,imgs,s['performance']['summary_status'],s['performance']['expected'])
