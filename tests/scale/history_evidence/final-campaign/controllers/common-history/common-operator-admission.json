@@ -1,0 +1,23 @@
+{
+  "all26_consumed_bytes_match_latest_branch": true,
+  "branch_head": "f30a131c221fb91096861aa2758bfe0e353bd527",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/bw-mon-spec13-resume/history31-final-common-scheduler.py",
+    "--common-admitted"
+  ],
+  "cwd": "/tmp/bw-mon-spec13-resume",
+  "integration_merged": "cf092dca65228ebcd01a4d87ac0bd9499bcef6ad",
+  "log": "/tmp/bw-mon-spec13-resume/history31-final-campaign/common-scheduler.log",
+  "maximum_history_admitted": 0,
+  "native_headers": 50,
+  "production_runtime": "56127495f597d215003000356ac3b5387cc809a1",
+  "root_signal": "final common29 independentlyqualified/mergedcf092dca andCLOSED; cap2COMMON,0MAXhistory",
+  "scheduler_pid": 3902179,
+  "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+  "source_root": "/tmp/bw-mon-spec13-resume/history31-final-frozen-04ce34a",
+  "started_utc": "2026-10-25T16:18:02.160136Z",
+  "state": "ROOT_ADMITTED_COMMON_SCHEDULER_STARTED",
+  "status": "/tmp/bw-mon-spec13-resume/history31-final-campaign/common-scheduler-status.json"
+}

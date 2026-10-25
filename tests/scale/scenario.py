@@ -80,9 +80,11 @@ class Scenario:
         self.points,self.groups=maximum_topology() if c['topology']=='max' else common_topology(c['roots'])
         self.topology,self.leaves=topology_summary(self.points,self.groups)
         self.clock=Clock(c.get('clock_segments',[(250000,500000,c['duration_ns']*2)]))
-        self.reset_start=100100000;self.reset_end=101100000;self.unknown_tick=100250000
+        if self.clock.at(self.clock.edges)>self.end:raise ValueError('clock extends past declared observation')
+        self.reset_start=c.get('reset_start_ticks',100100000);self.reset_end=c.get('reset_end_ticks',101100000);self.unknown_tick=c.get('unknown_tick',100250000)
         self.unknown_edge=self.clock.lt(self.unknown_tick)+1
         if self.variant!='baseline' and self.end<=self.reset_end:raise ValueError('variant duration must include interventions')
+        if self.variant in ('unknown','group-clock') and self.clock.at(self.unknown_edge)!=self.unknown_tick:raise ValueError('unknown-size intervention must lie on an actual input edge')
     def point_id(self,p):return 'tb_bw_scale.points[{}].slot.mon'.format(p)
     def group_id(self,g):return 'scale.g'+str(g)
     def scopes(self):
@@ -95,16 +97,17 @@ class Scenario:
     def interval(self,kind,index,left,right):
         m,affected,own=self.meta(kind,index)
         n=self.clock.between(left,right);events=m*n;size=64*events;bc=ec=1;reset=0
-        if affected and self.variant=='unknown' and left<=self.unknown_tick<right:size-=64;bc=0
+        if affected and self.variant in ('unknown','group-clock') and left<=self.unknown_tick<right:size-=64;bc=0
         if affected and self.variant=='reset':
             overlap_left=max(left,self.reset_start);overlap_right=min(right,self.reset_end)
             if overlap_right>overlap_left:
                 missing=self.clock.between(overlap_left,overlap_right);size-=64*missing;events-=missing
                 reset=int(not own)
         return dict(bytes=size,events=events,bytes_complete=bc,events_complete=ec,reset=reset)
+    def reset_owner(self,kind,index):
+        return (self.variant=='reset' and kind=='point' and index==0) or (self.variant=='group-clock' and kind=='group' and index==self.config['group_reset_index'])
     def counts(self,kind,index):
-        _,_,own=self.meta(kind,index)
-        if own and self.variant=='reset':
+        if self.reset_owner(kind,index):
             if self.basis=='ns':return self.reset_start//(self.stride*NS),max(0,(self.end-self.reset_end)//(self.stride*NS))
             pre=(self.clock.lt(self.reset_start)-1)//self.stride
             origin=self.clock.lt(self.reset_end)+1
@@ -112,8 +115,8 @@ class Scenario:
         return (self.end//(self.stride*NS) if self.basis=='ns' else (self.clock.edges-1)//self.stride),0
     def window_count(self,kind,index):return sum(self.counts(kind,index))
     def window(self,kind,index,seq):
-        pre,post=self.counts(kind,index);_,_,own=self.meta(kind,index)
-        after=own and self.variant=='reset' and seq>pre
+        pre,post=self.counts(kind,index)
+        after=self.reset_owner(kind,index) and seq>pre
         rank=seq-pre if after else seq;origin=self.reset_end if after else 0
         if self.basis=='ns':
             right=origin+rank*self.stride*NS;left=max(origin,right-self.width*NS);lc=rc=cc=0;full=right-origin>=self.width*NS
@@ -126,7 +129,7 @@ class Scenario:
                     gbps=F(data['bytes']*NS,right-left) if right>left else F(0),bpc=F(data['bytes'],cc) if cc else F(0))
         return data
     def raw(self,kind,index,edge_index):
-        m,affected,own=self.meta(kind,index);t=self.clock.at(edge_index);epoch=int(own and self.variant=='reset' and t>=self.reset_start)
+        m,affected,own=self.meta(kind,index);t=self.clock.at(edge_index);epoch=int(self.reset_owner(kind,index) and t>=self.reset_start)
         left=self.reset_end if epoch else 0
         if epoch and t<self.reset_end:total=dict(bytes=0,events=0)
         else:total=self.interval(kind,index,left,t+1)
@@ -134,6 +137,16 @@ class Scenario:
         return dict(seq=edge_index,epoch=epoch,tick=t,edge_index=edge_index,byte_inc=current['bytes'],event_inc=current['events'],
                     bytes_complete=current['bytes_complete'],events_complete=current['events_complete'],reset_points=int(affected and self.variant=='reset' and self.reset_start<=t<self.reset_end),
                     total_bytes=total['bytes'],total_events=total['events'],source_epoch=int(own and self.variant=='reset' and t>=self.reset_start))
+    def expected_episodes(self,kind,index):
+        intervals=[(0,self.reset_start,0,3),(self.reset_end,self.end,1,4)] if self.reset_owner(kind,index) else [(0,self.end,0,4)]
+        result=[]
+        for seq,(left,right,epoch,status) in enumerate(intervals,1):
+            counts=self.interval(kind,index,left,right)
+            result.append(dict(epoch=epoch,episode=seq,scope_kind=int(kind=='group'),status=status,
+                first_ticks=self.clock.at(self.clock.lt(left)+1),last_ticks=self.clock.at(self.clock.lt(right)),
+                bytes=counts['bytes'],events=counts['events'],first_known=1,last_known=1,tail_known=0,tail_ticks=0,
+                e2e_valid=0,bytes_complete=counts['bytes_complete'],events_complete=counts['events_complete'],member_reset=counts['reset']))
+        return result
     def final_scope(self,kind,index):
         m,_,_=self.meta(kind,index);count=self.window_count(kind,index)
         row=dict(kind=kind,index=index,scope=self.identity(kind,index),cardinality=m,direct_members=0 if kind=='point' else len(self.groups[index]),
@@ -149,7 +162,7 @@ class Scenario:
                     protocol_by_point='index % 3: valid-only,valid-ready,credit',dynamic_by_point='even indexes dynamic; odd fixed64B',
                     bytes_per_transfer=64,credit=dict(enable='credit points',capacity=16,initial=16,initial_known=1,return_timing='NEXT_CYCLE',send=1,return_every_edge=1),
                     hints=dict(backpressure_enable='valid-ready points',shortage_enable='credit points',basis=self.basis,threshold=4 if self.basis=='ns' else 8,expected_hits=0),
-                    analysis=dict(episode_enable=1,phase_enable=1,Q=30 if self.basis=='ns' else 60,N=3,min_span=20 if self.basis=='ns' else 40,K=4,
+                    analysis=dict(episode_enable=1,phase_enable=1,Q=30 if self.basis=='ns' else 60,N=3,min_span=self.config.get('analysis_min_span',20 if self.basis=='ns' else 40),K=4,
                       steady_enter_abs=0,steady_enter_rel=0,steady_exit_abs=0,steady_exit_rel=0,rms_enter_abs=1e-6,rms_enter_rel=0,rms_exit_abs=1e-6,rms_exit_rel=0,trend_abs=1,trend_rel=0),
                     report=dict(enabled=True,metrics=12,targets='explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS'),
                     numeric_tolerance=dict(absolute=1e-9,relative=1e-12),acceptance_profile=self.name.startswith('common-') and self.config['roots']==32 and self.config['topology']=='common' and self.config['duration_ns']==40000)

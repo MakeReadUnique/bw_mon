@@ -1,0 +1,123 @@
+{
+  "active_max30": 4,
+  "admission": {
+    "allowed_profiles": [
+      "max-ns",
+      "max-cycle",
+      "max-ns-short-unknown",
+      "max-cycle-short-reset"
+    ],
+    "authority": "Root16:20capacity signal explicitly admits serial unknown thenreset MAX30 after each native/RSS health; total30cap4 and combinedMAXcap6 with31reserved2; nootherheavy",
+    "max_active_max30": 4,
+    "no_elapsed_auto_admission": true,
+    "other_max_reserved": 2,
+    "pause_new_launches": false,
+    "staging": "All4explicitlyadmitted profiles nowfreshcompiled/native50verified and actualkernelCPU/RSShealthy; no unlaunched profiles in queue; monitor only until completion/failure",
+    "total_heavy_cap": 6,
+    "updated_utc": "2026-10-25T16:24:51.953822Z"
+  },
+  "checked_utc": "2026-10-25T17:19:32.167758Z",
+  "monitor_pid": 3908922,
+  "production_runtime": "56127495f597d215003000356ac3b5387cc809a1",
+  "profiles": [
+    {
+      "active": true,
+      "fatal_or_mismatch_count": 0,
+      "manifest": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-ns-f28c355b0536b079888f/runs/max-ns/20261025T161717-3899317/manifest.json",
+      "output_root": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-ns-f28c355b0536b079888f",
+      "profile": "max-ns",
+      "progress": [
+        "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000"
+      ],
+      "ready": [
+        "BW_READY time_ticks=0 points=16384 groups=4096",
+        "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=0 W=100 S=10 variant=baseline waves=0"
+      ],
+      "receipt": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-ns-launch.json",
+      "runner_pid": 3899317,
+      "simulation_wrapper_pid": 3901048,
+      "simulator": {
+        "cpu_seconds": 3559.26,
+        "pid": 3901049,
+        "rss_kib": 2058020,
+        "state": "R"
+      },
+      "state": "SIMULATION_RUNNING"
+    },
+    {
+      "active": true,
+      "fatal_or_mismatch_count": 0,
+      "manifest": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-cycle-34cb69a9c8d48e69718b/runs/max-cycle/20261025T161848-3904671/manifest.json",
+      "output_root": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-cycle-34cb69a9c8d48e69718b",
+      "profile": "max-cycle",
+      "progress": [
+        "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000"
+      ],
+      "ready": [
+        "BW_READY time_ticks=0 points=16384 groups=4096",
+        "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=1 W=200 S=20 variant=baseline waves=0"
+      ],
+      "receipt": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-cycle-launch.json",
+      "runner_pid": 3904671,
+      "simulation_wrapper_pid": 3905974,
+      "simulator": {
+        "cpu_seconds": 3442.94,
+        "pid": 3905975,
+        "rss_kib": 2036800,
+        "state": "R"
+      },
+      "state": "SIMULATION_RUNNING"
+    },
+    {
+      "active": true,
+      "fatal_or_mismatch_count": 0,
+      "manifest": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-ns-short-unknown-27d87a77b00bceafb40f/runs/max-ns-short-unknown/20261025T162205-3910187/manifest.json",
+      "output_root": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-ns-short-unknown-27d87a77b00bceafb40f",
+      "profile": "max-ns-short-unknown",
+      "progress": [
+        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000"
+      ],
+      "ready": [
+        "BW_READY time_ticks=0 points=16384 groups=4096",
+        "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=0 W=10 S=10 variant=unknown waves=0"
+      ],
+      "receipt": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-ns-short-unknown-launch.json",
+      "runner_pid": 3910187,
+      "simulation_wrapper_pid": 3911067,
+      "simulator": {
+        "cpu_seconds": 3240.42,
+        "pid": 3911068,
+        "rss_kib": 2064048,
+        "state": "R"
+      },
+      "state": "SIMULATION_RUNNING"
+    },
+    {
+      "active": true,
+      "fatal_or_mismatch_count": 0,
+      "manifest": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-cycle-short-reset-5531b20997f56ddbe11f/runs/max-cycle-short-reset/20261025T162308-3913352/manifest.json",
+      "output_root": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-cycle-short-reset-5531b20997f56ddbe11f",
+      "profile": "max-cycle-short-reset",
+      "progress": [
+        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000"
+      ],
+      "ready": [
+        "BW_READY time_ticks=0 points=16384 groups=4096",
+        "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=1 W=20 S=20 variant=reset waves=0"
+      ],
+      "receipt": "/tmp/bw-mon-spec13-resume/max30-final-complete-campaign/max-cycle-short-reset-launch.json",
+      "runner_pid": 3913352,
+      "simulation_wrapper_pid": 3914766,
+      "simulator": {
+        "cpu_seconds": 3178.38,
+        "pid": 3914767,
+        "rss_kib": 2038096,
+        "state": "R"
+      },
+      "state": "SIMULATION_RUNNING"
+    }
+  ],
+  "source_still_current": true,
+  "state": "MONITORING",
+  "ticket_complete": false
+}

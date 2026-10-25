@@ -1,0 +1,137 @@
+{
+  "files": {
+    "actual.csv": {
+      "gzip_bytes": 697,
+      "gzip_file": "actual.csv.gz",
+      "gzip_sha256": "b632bd501af331a2915328b5759ca8cde889ef22b7fa14eff22b9f70bdf5427b",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/actual.csv",
+      "uncompressed_bytes": 7176,
+      "uncompressed_sha256": "41ad285d6d5e96eb01632ee1e2c51a70cf44e077e0b44d50df5e4888de3b60de"
+    },
+    "checker.sv": {
+      "gzip_bytes": 1639,
+      "gzip_file": "checker.sv.gz",
+      "gzip_sha256": "55c1e10c1796587b8cef1d0ac98b06d53f659d21833fff5a6740202f2f035473",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/checker.sv",
+      "uncompressed_bytes": 6935,
+      "uncompressed_sha256": "1d9d8a22560c3e712e525016741171403cc1ec3ea77869ed7898feb31a5f8f2f"
+    },
+    "compile-success.json": {
+      "gzip_bytes": 773,
+      "gzip_file": "compile-success.json.gz",
+      "gzip_sha256": "a668f2b5e628ab0859f04e139eae5343eb0970e14601e10c06cf79bc64d1f015",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/builds/7c5c29136592b06bb7011ecca357d6ede54f89b5febf1f6752c31cebc9b28bbe/compile-success.json",
+      "uncompressed_bytes": 4860,
+      "uncompressed_sha256": "51573408b37610f762462d7ddb7b25dffb25a2622640e376a66f40afe72738fd"
+    },
+    "compile.log": {
+      "gzip_bytes": 1710,
+      "gzip_file": "compile.log.gz",
+      "gzip_sha256": "5d14787905d97a7490575b7327ba8e226f90a46bda73f557196f9457e99a48d7",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/builds/7c5c29136592b06bb7011ecca357d6ede54f89b5febf1f6752c31cebc9b28bbe/compile-attempt-1/compile.log",
+      "uncompressed_bytes": 13252,
+      "uncompressed_sha256": "fea43e2f510a58c0605bd8cb8500fa6161b06598fa0a588054eeec122b4a3018"
+    },
+    "compile.time-v.txt": {
+      "gzip_bytes": 763,
+      "gzip_file": "compile.time-v.txt.gz",
+      "gzip_sha256": "5806046adc3dbb80bd5bf343385d188356ba9298590f35cfdcb8cfbf816c29ef",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/builds/7c5c29136592b06bb7011ecca357d6ede54f89b5febf1f6752c31cebc9b28bbe/compile-attempt-1/time-v.txt",
+      "uncompressed_bytes": 3915,
+      "uncompressed_sha256": "bc98bdeb6a651d6e03eb0ec2ceea6fa65429969a6759124ae690f544f2d87e2d"
+    },
+    "diffs.json": {
+      "gzip_bytes": 23,
+      "gzip_file": "diffs.json.gz",
+      "gzip_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/diffs.json",
+      "uncompressed_bytes": 3,
+      "uncompressed_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "expect.cfg": {
+      "gzip_bytes": 425,
+      "gzip_file": "expect.cfg.gz",
+      "gzip_sha256": "0474ce49f36ed6f9cd927db99e8cc6a660c5bb3b5d590d1f19bf41786b5aafa6",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/expect.cfg",
+      "uncompressed_bytes": 13731,
+      "uncompressed_sha256": "c44645263751508daa2584e751cca97cb8abdd5859708923725953f9b0d14b35"
+    },
+    "expected.csv": {
+      "gzip_bytes": 711,
+      "gzip_file": "expected.csv.gz",
+      "gzip_sha256": "5057cbdd58c197183c840bcb79a81b5a45188d8243a1470b5bd5cada424679d5",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/expected.csv",
+      "uncompressed_bytes": 7217,
+      "uncompressed_sha256": "6b3d4ad148fdaab5e06859f66d7c6f56f1e5dc75c5c1ee5e7bac3777b8715d4a"
+    },
+    "input.json": {
+      "gzip_bytes": 1370,
+      "gzip_file": "input.json.gz",
+      "gzip_sha256": "0099edee19dcdd16263de718a6689739537358ed3c92720851748fb6f8bf899d",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/input.json",
+      "uncompressed_bytes": 5321,
+      "uncompressed_sha256": "dd75b1c9dc796121b60e97979a3ebcb47dcd4d570da6a4c8395db3a11e8a948d"
+    },
+    "input_pkg.sv": {
+      "gzip_bytes": 1918,
+      "gzip_file": "input_pkg.sv.gz",
+      "gzip_sha256": "3f3c4259b64f6dcffefcd1c159d4fa6ae4fdde0962dfcdfc659b91a0c57d47b1",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/input_pkg.sv",
+      "uncompressed_bytes": 6654,
+      "uncompressed_sha256": "c04a87ac33087c21435fe3b5f48970622bef1ecb341b2063202aba005bcc874e"
+    },
+    "manifest.json": {
+      "gzip_bytes": 5215,
+      "gzip_file": "manifest.json.gz",
+      "gzip_sha256": "cc8904557e4d8068bb419e4601e2e42da91dc3d0f1ce89286784b4f2ec6c7ccd",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/manifest.json",
+      "uncompressed_bytes": 19353,
+      "uncompressed_sha256": "41e7ec2605628bac4d6b046282afffe28d190473644fbcb9568a7ee2bc131692"
+    },
+    "native-dependencies.d": {
+      "gzip_bytes": 247,
+      "gzip_file": "native-dependencies.d.gz",
+      "gzip_sha256": "6ab95e3a212e06f8fd9689534a3942af182a062b1bb6b58f7147d6b98c46b752",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/builds/7c5c29136592b06bb7011ecca357d6ede54f89b5febf1f6752c31cebc9b28bbe/csrc/bw_slot_settlement.d",
+      "uncompressed_bytes": 359,
+      "uncompressed_sha256": "8262afc0f8c571f08c500adf9452c775bb333043dbc8a4fa17fb4f5e98c2ccdf"
+    },
+    "simulation.log": {
+      "gzip_bytes": 10420,
+      "gzip_file": "simulation.log.gz",
+      "gzip_sha256": "5052f96c83a132a870aa34d2b8b35ff18bfea892801b5afc215c1695022291a1",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/simulation.log",
+      "uncompressed_bytes": 670214,
+      "uncompressed_sha256": "3da899690281791f85a43a020b6715e2ffdbe60183cf08e778769155f44e63e9"
+    },
+    "simulation.time-v.txt": {
+      "gzip_bytes": 602,
+      "gzip_file": "simulation.time-v.txt.gz",
+      "gzip_sha256": "af0ec9af63b91056d3ac8edcc1183254984ac2a5c77a44dcfb4a2320636f28d6",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/simulation.time-v.txt",
+      "uncompressed_bytes": 1319,
+      "uncompressed_sha256": "36f23dfabc698850607b294a9d977cae40536b92033f6fea14962231fc2528ce"
+    },
+    "tb_bw_scale.sv": {
+      "gzip_bytes": 2833,
+      "gzip_file": "tb_bw_scale.sv.gz",
+      "gzip_sha256": "426d6aaa914c21e30c9bbe5983f5df907442ee60e17ca57fe537dbad2e47d213",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/tb_bw_scale.sv",
+      "uncompressed_bytes": 12032,
+      "uncompressed_sha256": "298456a39dbb8c3325b6e597391348ff57a70ca3cf52f6300ec072b0ab1e3a45"
+    },
+    "verification.json": {
+      "gzip_bytes": 236,
+      "gzip_file": "verification.json.gz",
+      "gzip_sha256": "e8f2a2c9fb13ad5802f32239cf8052b0b65e03fce1583343d9da3642320a8c0d",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/verification.json",
+      "uncompressed_bytes": 458,
+      "uncompressed_sha256": "4ee7265b9c4c45b00aa94175305b283ac6af5575c133ff9536bcd351bf759bca"
+    }
+  },
+  "original_checked_pass": true,
+  "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/manifest.json",
+  "scenario": "history-tracer-cycle-control-clock",
+  "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+  "source_tree": "d17f768abf30967d8c1ee8d1ec986d2ed5bdc174"
+}

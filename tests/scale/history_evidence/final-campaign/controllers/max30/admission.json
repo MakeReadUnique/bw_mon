@@ -1,0 +1,16 @@
+{
+  "allowed_profiles": [
+    "max-ns",
+    "max-cycle",
+    "max-ns-short-unknown",
+    "max-cycle-short-reset"
+  ],
+  "authority": "Root16:20capacity signal explicitly admits serial unknown thenreset MAX30 after each native/RSS health; total30cap4 and combinedMAXcap6 with31reserved2; nootherheavy",
+  "max_active_max30": 4,
+  "no_elapsed_auto_admission": true,
+  "other_max_reserved": 2,
+  "pause_new_launches": false,
+  "staging": "All4explicitlyadmitted profiles nowfreshcompiled/native50verified and actualkernelCPU/RSShealthy; no unlaunched profiles in queue; monitor only until completion/failure",
+  "total_heavy_cap": 6,
+  "updated_utc": "2026-10-25T16:24:51.953822Z"
+}

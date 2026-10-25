@@ -1,0 +1,192 @@
+{
+  "finished_utc": "2026-10-25T16:02:36.963070Z",
+  "profiles": [
+    {
+      "compile_peak_kib": 350684,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-ns-short-dense-ccd6144781c9457f65dc/runs/history-tracer-ns-short-dense/20261025T160120-3849433/manifest.json",
+      "profile": "history-tracer-ns-short-dense",
+      "simulation_peak_kib": 127128,
+      "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+      "verification": {
+        "checked_raw": 19200,
+        "checked_windows": 9600,
+        "difference_count": 0,
+        "episode_records": 40,
+        "expected_raw": 19200,
+        "expected_scopes": 40,
+        "expected_windows": 9600,
+        "observed_scopes": 40,
+        "phase_records": 40,
+        "report_conclusions": {
+          "WARNING": 480
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "40",
+            "scopes_expected": "40",
+            "status": "WARNING",
+            "warning": "480"
+          }
+        ]
+      }
+    },
+    {
+      "compile_peak_kib": 350684,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-short-dense-5549966d6434a3cc902f/runs/history-tracer-cycle-short-dense/20261025T160133-3850880/manifest.json",
+      "profile": "history-tracer-cycle-short-dense",
+      "simulation_peak_kib": 127216,
+      "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+      "verification": {
+        "checked_raw": 19200,
+        "checked_windows": 9560,
+        "difference_count": 0,
+        "episode_records": 40,
+        "expected_raw": 19200,
+        "expected_scopes": 40,
+        "expected_windows": 9560,
+        "observed_scopes": 40,
+        "phase_records": 40,
+        "report_conclusions": {
+          "WARNING": 480
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "40",
+            "scopes_expected": "40",
+            "status": "WARNING",
+            "warning": "480"
+          }
+        ]
+      }
+    },
+    {
+      "compile_peak_kib": 350684,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-ns-long-dense-1c23a45afd7d325d5eed/runs/history-tracer-ns-long-dense/20261025T160145-3852692/manifest.json",
+      "profile": "history-tracer-ns-long-dense",
+      "simulation_peak_kib": 125884,
+      "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+      "verification": {
+        "checked_raw": 19200,
+        "checked_windows": 9600,
+        "difference_count": 0,
+        "episode_records": 40,
+        "expected_raw": 19200,
+        "expected_scopes": 40,
+        "expected_windows": 9600,
+        "observed_scopes": 40,
+        "phase_records": 0,
+        "report_conclusions": {
+          "WARNING": 480
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "40",
+            "scopes_expected": "40",
+            "status": "WARNING",
+            "warning": "480"
+          }
+        ]
+      }
+    },
+    {
+      "compile_peak_kib": 350684,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-long-dense-5624d4ec7450fbc7128f/runs/history-tracer-cycle-long-dense/20261025T160159-3855130/manifest.json",
+      "profile": "history-tracer-cycle-long-dense",
+      "simulation_peak_kib": 122816,
+      "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+      "verification": {
+        "checked_raw": 19200,
+        "checked_windows": 19160,
+        "difference_count": 0,
+        "episode_records": 40,
+        "expected_raw": 19200,
+        "expected_scopes": 40,
+        "expected_windows": 19160,
+        "observed_scopes": 40,
+        "phase_records": 0,
+        "report_conclusions": {
+          "WARNING": 480
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "40",
+            "scopes_expected": "40",
+            "status": "WARNING",
+            "warning": "480"
+          }
+        ]
+      }
+    },
+    {
+      "compile_peak_kib": 350684,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-ns-control-clock-e73411d3c707e0d2c0a1/runs/history-tracer-ns-control-clock/20261025T160212-3856655/manifest.json",
+      "profile": "history-tracer-ns-control-clock",
+      "simulation_peak_kib": 125348,
+      "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+      "verification": {
+        "checked_raw": 18000,
+        "checked_windows": 3199,
+        "difference_count": 0,
+        "episode_records": 41,
+        "expected_raw": 18000,
+        "expected_scopes": 40,
+        "expected_windows": 3199,
+        "observed_scopes": 40,
+        "phase_records": 41,
+        "report_conclusions": {
+          "WARNING": 492
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "40",
+            "scopes_expected": "40",
+            "status": "WARNING",
+            "warning": "492"
+          }
+        ]
+      }
+    },
+    {
+      "compile_peak_kib": 350676,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-tracer-cycle-control-clock-bfebb1405e2752d94dcf/runs/history-tracer-cycle-control-clock/20261025T160224-3858600/manifest.json",
+      "profile": "history-tracer-cycle-control-clock",
+      "simulation_peak_kib": 125444,
+      "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+      "verification": {
+        "checked_raw": 18000,
+        "checked_windows": 5959,
+        "difference_count": 0,
+        "episode_records": 41,
+        "expected_raw": 18000,
+        "expected_scopes": 40,
+        "expected_windows": 5959,
+        "observed_scopes": 40,
+        "phase_records": 41,
+        "report_conclusions": {
+          "WARNING": 492
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "40",
+            "scopes_expected": "40",
+            "status": "WARNING",
+            "warning": "492"
+          }
+        ]
+      }
+    }
+  ],
+  "state": "ALL_SIX_SMALL_TRACERS_PASSED_NOMINAL_NOT_LAUNCHED"
+}

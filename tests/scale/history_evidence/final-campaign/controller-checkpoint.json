@@ -1,0 +1,119 @@
+{
+  "common_cap": 2,
+  "controllers": {
+    "common-history": {
+      "alive_at_checkpoint": true,
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/bw-mon-spec13-resume/history31-final-common-scheduler.py",
+        "--common-admitted"
+      ],
+      "cwd": "/tmp/bw-mon-spec13-resume",
+      "executable": "/usr/libexec/platform-python3.6",
+      "files": {
+        "common-operator-admission.json": {
+          "bytes": 1047,
+          "file": "controllers/common-history/common-operator-admission.json",
+          "sha256": "7e9cf3c9169e53fcf965a6be1061120e0b29145d19bb03022a58103e330c2b6f"
+        },
+        "common-scheduler-launch.json": {
+          "bytes": 912,
+          "file": "controllers/common-history/common-scheduler-launch.json",
+          "sha256": "0324541d396446150f9628932c8c343dcd00b641af25bbcdaa76279180190ce5"
+        },
+        "common-scheduler-status.json": {
+          "bytes": 1745,
+          "file": "controllers/common-history/common-scheduler-status.json",
+          "sha256": "5cf23a8c6a5f2ddf8c3f0245be3366a69272f35f551d11236682381ccd510904"
+        }
+      },
+      "pid": 3902179,
+      "script": {
+        "bytes": 5910,
+        "file": "controllers/common-history/controller.py",
+        "sha256": "e434757d6c1312dec75c73033aea7459ea83160d6d13ac02b5be7a1aa5667e41"
+      },
+      "start_ticks": 20579205,
+      "state": "S",
+      "stime_ticks": 79,
+      "utime_ticks": 100
+    },
+    "max-history": {
+      "alive_at_checkpoint": true,
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/bw-mon-spec13-resume/history31-final-max-scheduler.py",
+        "--max-admitted"
+      ],
+      "cwd": "/tmp/bw-mon-spec13-resume",
+      "executable": "/usr/libexec/platform-python3.6",
+      "files": {
+        "max-operator-admission.json": {
+          "bytes": 1682,
+          "file": "controllers/max-history/max-operator-admission.json",
+          "sha256": "d75701b9fb5fdaa0bb6375d4519e9348137232af8fc7d2c3c9b51ae7b2279861"
+        },
+        "max-scheduler-launch.json": {
+          "bytes": 757,
+          "file": "controllers/max-history/max-scheduler-launch.json",
+          "sha256": "19723ff685c594ddcdd16e76c927f31f3992be60f2109a88d1a0c516cb4efe68"
+        },
+        "max-scheduler-status.json": {
+          "bytes": 3570,
+          "file": "controllers/max-history/max-scheduler-status.json",
+          "sha256": "547dcbb9ad0d8b6dd63d39ede612d29f72b5fe0c8ccfc3690c574482b94c6403"
+        }
+      },
+      "pid": 3919284,
+      "script": {
+        "bytes": 11948,
+        "file": "controllers/max-history/controller.py",
+        "sha256": "9ff3e97e6e5a2ff0e83fd809578ba8dbc21bcb615a1e80ab5ba653588a3bd867"
+      },
+      "start_ticks": 20650521,
+      "state": "S",
+      "stime_ticks": 138,
+      "utime_ticks": 1134
+    },
+    "max30": {
+      "alive_at_checkpoint": true,
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/bw-mon-spec13-resume/max30-monitor.py"
+      ],
+      "cwd": "/home/eda/bw_cal",
+      "executable": "/usr/libexec/platform-python3.6",
+      "files": {
+        "admission.json": {
+          "bytes": 680,
+          "file": "controllers/max30/admission.json",
+          "sha256": "e6d475ff3bb9e8a892c49277c0ea9c78ce07de1031d136700b17c738dcc1ba3a"
+        },
+        "monitor-status.json": {
+          "bytes": 5235,
+          "file": "controllers/max30/monitor-status.json",
+          "sha256": "a34a001ee8671b82334be6fde59515661ae97a71dd6bccc8c215579b68c94d03"
+        }
+      },
+      "pid": 3908922,
+      "script": {
+        "bytes": 4884,
+        "file": "controllers/max30/controller.py",
+        "sha256": "c81292fe8594e073a4de04136dd6ddcf11e5c426371e86f4c408df718675fb9f"
+      },
+      "start_ticks": 20595965,
+      "state": "S",
+      "stime_ticks": 826,
+      "utime_ticks": 1759
+    }
+  },
+  "global_heavy_cap": 6,
+  "max30_cap": 4,
+  "max_history_cap": 2,
+  "no_consumed_source_edits": true,
+  "no_elapsed_auto_increase": true,
+  "snapshot_utc": "2026-10-25T17:19:55.878185Z"
+}
