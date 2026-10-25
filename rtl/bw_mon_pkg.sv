@@ -187,6 +187,7 @@ package bw_mon_pkg;
   virtual class bw_report_sink;
     pure virtual function void on_ready();
     pure virtual function void submit_episode(string scope_id,bw_episode_result_t result);
+    pure virtual function void submit_phase(string scope_id,bw_phase_result_t result);
     pure virtual function void scope_done(bw_scope_t kind,string scope_id,bw_u64_t stats_epoch);
     pure virtual function bw_report_summary_t summary();
   endclass
@@ -338,6 +339,7 @@ package bw_mon_pkg;
       result.end_unknown_event_records,result.start_unknown_ticks,result.end_unknown_ticks);
     emit_variation_context(scope_id,"PHASE",result.scope_kind,result.stats_epoch,result.episode_id,result.phase_id,
       result.result_seq,result.start_ticks,result.end_ticks,result.variation);
+    if(report_sink!=null) report_sink.submit_phase(scope_id,result);
   endfunction
 
   function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,
