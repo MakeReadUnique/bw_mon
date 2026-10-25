@@ -911,6 +911,10 @@ module bw_stats_core #(
         if (!core_failure_pending()) finish_episode(BW_EPISODE_TRUNCATED,$time);
       end else check_monitor_time($time,scope_id);
     end
+    if(monitor_ready && !core_failure_pending()) begin
+      if(monitor_time_supported($time)) report_scope_done(scope_kind,scope_id,stats_epoch);
+      else check_monitor_time($time,scope_id);
+    end
   end
 endmodule
 
