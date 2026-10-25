@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Actual public12-point scenes, exact raw-table oracle, FSDB and durable evidence."""
-import argparse,csv,hashlib,json,re,subprocess
+import argparse,csv,hashlib,json,re,shutil,subprocess
 from pathlib import Path
 from model import configuration,stimulus,frame_table,window_table,PRIMARY,SUPPLEMENTAL,LEAVES,TICKS,expectations
 from summarize import write_tables
@@ -50,10 +50,16 @@ def one(scene,basis):
  (out/'expect.cfg').write_text(expectations(c))
  rows=stimulus(c);(out/'stimulus.txt').write_text(''.join(' '.join(str(x) for x in row)+'\n' for row in rows))
  top=c['top'];build=ROOT/'.build/acceptance'/top;build.mkdir(parents=True,exist_ok=True)
- sources=sorted((ROOT/'rtl').glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))+[ROOT/'tests/acceptance/scene.sv']
- deps=sources+sorted(p for p in (ROOT/'rtl').rglob('*') if p.suffix in ['.svh','.vh'])
+ sources=sorted((ROOT/'rtl').glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))+sorted((ROOT/'rtl').glob('*.c'))+[ROOT/'tests/acceptance/scene.sv']
+ deps=sources+sorted(p for p in (ROOT/'rtl').rglob('*') if p.suffix in ['.svh','.vh','.h'])
  digest=hashlib.sha256(str(ROOT).encode()+(ROOT/'tests/acceptance/run.py').read_bytes()+top.encode()+b''.join(str(p.relative_to(ROOT)).encode()+p.read_bytes() for p in deps)).hexdigest()
- cmd=['vcs','-full64','-sverilog','-debug_access+all','-kdb','+incdir+'+str(ROOT/'rtl'),'-assert','svaext','-top',top,'-o',build/'simv']+sources
+ snapshot=build/('source-'+digest);snapshot.mkdir(exist_ok=True)
+ for source in deps:
+  target=snapshot/source.relative_to(ROOT);target.parent.mkdir(parents=True,exist_ok=True)
+  if target.exists():assert target.read_bytes()==source.read_bytes(),('immutable source snapshot differs',target)
+  else:shutil.copyfile(str(source),str(target))
+ vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
+ cmd=['vcs','-full64','-sverilog','+vpi','-debug_access+all','-kdb','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(snapshot/'rtl'),'-assert','svaext','-top',top,'-o',build/'simv']+[snapshot/p.relative_to(ROOT) for p in sources]
  stamp=build/'source.sha256'
  if not stamp.exists() or stamp.read_text()!=digest:
   command(cmd,build,build/'compile.log');assert not re.search(r'(?:Warning|Error)-\[',(build/'compile.log').read_text());stamp.write_text(digest)
@@ -106,7 +112,7 @@ def one(scene,basis):
  assert (out/'waves.fsdb').stat().st_size>0
  (out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n')
  write_tables(c,rows,out,result)
- manifest={'configuration':c,'top':top,'compile':[str(x) for x in cmd],'run':[str(x) for x in sim],'base_revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=str(ROOT),universal_newlines=True).strip(),'dependency_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in deps+[ROOT/'tests/acceptance/run.py',ROOT/'tests/acceptance/model.py',ROOT/'tests/acceptance/analysis.py',ROOT/'tests/acceptance/summarize.py',out/'stimulus.txt',out/'expect.cfg']},'compiler':'VCS W-2024.09-SP1_Full64','actual_observation_end_ticks':c['end_ticks'],'human_review':'PENDING'}
+ manifest={'configuration':c,'top':top,'compile':[str(x) for x in cmd],'run':[str(x) for x in sim],'source_snapshot':str(snapshot),'base_revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=str(ROOT),universal_newlines=True).strip(),'dependency_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in deps+[ROOT/'tests/acceptance/run.py',ROOT/'tests/acceptance/model.py',ROOT/'tests/acceptance/analysis.py',ROOT/'tests/acceptance/summarize.py',out/'stimulus.txt',out/'expect.cfg']},'compiler':'VCS W-2024.09-SP1_Full64','actual_observation_end_ticks':c['end_ticks'],'human_review':'PENDING'}
  (out/'commands.json').write_text(json.dumps(manifest,indent=2)+'\n')
  print('PASS',scene,basis,result['counts'],'realFSDB',out/'waves.fsdb',flush=True)
 

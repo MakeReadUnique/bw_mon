@@ -133,8 +133,17 @@ module bw_point_mon #(
   bit window_warmup,window_full,bytes_complete,events_complete;
   bit denominator_valid,window_valid,member_reset_coverage;
   `include "bw_analysis_public.svh"
+  bit reset_observer_ready=0;
+  localparam bit external_reset_capture=0;
+  function automatic void observe_own_reset(logic value,bw_u64_t ticks);
+    recorder.observe_reset(value,ticks);core.enqueue_reset(value,ticks);hints.observe_reset(value,ticks);
+  endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);observe_own_reset(value,ticks);endfunction
+  `include "bw_reset_capture.svh"
 
   initial begin
+    recorder.use_external_reset_capture();recorder.use_publication_receipts();
+    core.use_external_reset_capture();hints.use_external_reset_capture();
     monitor_path=$sformatf("%m");
     scope_id=(POINT_ID=="__BW_AUTO__") ? monitor_path : POINT_ID;
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
@@ -149,14 +158,25 @@ module bw_point_mon #(
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
       PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
       PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+    validate_window(WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
+    initialize_reset_capture(monitor_path,"reset_n");
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
     transport_source=point_source_handle(source_handle);
+    wait(monitor_ready && recorder.scope_id==scope_id && core.scope_id==scope_id && hints.configured &&
+      hints.backpressure_hint.reset_capture_ready && hints.credit_shortage_hint.reset_capture_ready);
+    reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
   end
   always @(record_toggle)
-    if (monitor_ready && raw_record.record_seq!=0) publish_frame(transport_source,raw_record);
+    if (monitor_ready && raw_record.record_seq!=0)begin
+      publish_frame(transport_source,raw_record);
+      if(!core_failure_seen)recorder.note_record_published(raw_record.record_seq);
+    end
   always @(control_toggle)
-    if (monitor_ready && raw_control.control_seq!=0) publish_control(transport_source,raw_control);
+    if (monitor_ready && raw_control.control_seq!=0)begin
+      publish_control(transport_source,raw_control);
+      if(!core_failure_seen)recorder.note_control_published(raw_control.control_seq);
+    end
   bw_point_recorder #(.FIXED_BYTES(FIXED_BYTES),.PROTOCOL(PROTOCOL),
                        .DYNAMIC_BYTES(DYNAMIC_BYTES)) recorder
     (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.flitv(flitv),.lcrdv(lcrdv),

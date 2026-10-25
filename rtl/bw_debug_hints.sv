@@ -48,6 +48,23 @@ module bw_debug_hints #(
   import bw_mon_pkg::*;
   bit configured = 0;
   bit in_reset = 0;
+  bit external_reset_capture=0;
+  bit reset_observer_ready=0,reset_observed=0;
+  logic observed_reset;
+  function void use_external_reset_capture();
+    external_reset_capture=1;
+    backpressure_hint.use_external_reset_capture();
+    credit_shortage_hint.use_external_reset_capture();
+  endfunction
+  function automatic void observe_reset(logic value,bw_u64_t ticks);
+    if(!configured || (reset_observed && observed_reset===value))return;
+    reset_observed=1;observed_reset=value;
+    dispatch(value,ticks);
+    backpressure_hint.observe_reset(value,ticks);
+    credit_shortage_hint.observe_reset(value,ticks);
+  endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);observe_reset(value,ticks);endfunction
+  `include "bw_reset_capture.svh"
 
   // Current usable-credit shortage is independent of send demand. A known
   // positive stored balance proves availability even if live return is unknown.
@@ -66,7 +83,7 @@ module bw_debug_hints #(
     end
   end
 
-  task automatic seed_ledger();
+  function automatic void seed_ledger();
     credit_anomaly=0;
     credit_permission_known=0;credit_send_permitted=1'bx;
     credit_available_before='x;credit_attempted_balance='x;
@@ -78,9 +95,9 @@ module bw_debug_hints #(
       credit_balance='x;credit_last_trusted_balance='x;
       credit_trusted=0;credit_state=BW_CREDIT_UNKNOWN;credit_reason=BW_CREDIT_INITIAL_UNKNOWN;
     end
-  endtask
+  endfunction
 
-  task automatic lose_trust(bw_credit_reason_t reason,bw_u64_t at_ticks);
+  function automatic void lose_trust(bw_credit_reason_t reason,bw_u64_t at_ticks);
     credit_balance='x;credit_trusted=0;credit_state=BW_CREDIT_UNKNOWN;
     // Once the ledger is lost, further sends cannot establish a new balance.
     // Preserve the first diagnostic until an explicit known reset restores it.
@@ -91,16 +108,16 @@ module bw_debug_hints #(
         scope_id,at_ticks,credit_record_seq,credit_reason_name(reason),credit_last_trusted_balance,
         sampled_view.flitv,sampled_view.lcrdv,credit_attempted_balance);
     end
-  endtask
+  endfunction
 
-  task automatic dispatch();
+  function automatic void dispatch(logic reset_value,bw_u64_t control_ticks);
     bit new_frame;
     bw_u64_t at_ticks;
     bit [64:0] available;
     bit signed [65:0] candidate;
     if(!configured) return;
     new_frame=(record.record_seq!=0 && record.record_seq!=credit_record_seq);
-    at_ticks=new_frame ? record.timestamp_ticks : bw_u64_t'($time);
+    at_ticks=new_frame ? record.timestamp_ticks : control_ticks;
     if(new_frame) credit_record_seq=record.record_seq;
     credit_update_ticks=at_ticks;
     credit_result_seq=checked_add(credit_result_seq,1,{scope_id," credit result"});
@@ -112,7 +129,7 @@ module bw_debug_hints #(
     end
     // Live reset controls the ledger even with no sampling clock. It has
     // priority over a same-time sampled frame, which remains raw byte evidence.
-    if(reset_n===1'b0) begin
+    if(reset_value===1'b0) begin
       if(!in_reset) begin
         credit_epoch=checked_add(credit_epoch,1,{scope_id," credit epoch"});
         seed_ledger();
@@ -121,7 +138,7 @@ module bw_debug_hints #(
       credit_permission_known=0;credit_send_permitted=1'bx;
       return;
     end
-    if(reset_n!==1'b1) begin
+    if(reset_value!==1'b1) begin
       in_reset=0;
       lose_trust(BW_CREDIT_RESET_UNKNOWN,at_ticks);
       return;
@@ -153,7 +170,7 @@ module bw_debug_hints #(
       lose_trust(BW_CREDIT_OVERFLOW,at_ticks);return;
     end
     credit_balance=candidate[63:0];credit_last_trusted_balance=candidate[63:0];
-  endtask
+  endfunction
 
   wire backpressure_condition=valid & ~ready;
   // Duration consumes the current usable-credit predicate. Unrelated live
@@ -164,21 +181,46 @@ module bw_debug_hints #(
     bw_hint_duration #(.HINT_NAME("backpressure"),.SUPPORTED(1),.ENABLED(1),
       .BASIS(BACKPRESSURE_BASIS),.THRESHOLD(BACKPRESSURE_THRESHOLD)) duration
       (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.raw_condition(backpressure_condition),.result(backpressure_result));
-  end else assign backpressure_result=inactive_hint_result(PROTOCOL==BW_VALID_READY,BACKPRESSURE_ENABLE);
+    function void use_external_reset_capture();duration.use_external_reset_capture();endfunction
+    function void observe_reset(logic value,bw_u64_t ticks);duration.enqueue_status(value,ticks);endfunction
+    wire reset_capture_ready=duration.configured;
+  end else begin : backpressure_hint
+    assign backpressure_result=inactive_hint_result(PROTOCOL==BW_VALID_READY,BACKPRESSURE_ENABLE);
+    function void use_external_reset_capture();endfunction
+    function void observe_reset(logic value,bw_u64_t ticks);endfunction
+    wire reset_capture_ready=1'b1;
+  end
   if((PROTOCOL===BW_CREDIT) && SHORTAGE_ENABLE) begin : credit_shortage_hint
     bw_hint_duration #(.HINT_NAME("credit_shortage"),.SUPPORTED(1),.ENABLED(1),
       .BASIS(SHORTAGE_BASIS),.THRESHOLD(SHORTAGE_THRESHOLD)) duration
       (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.raw_condition(shortage_condition),.result(shortage_result));
-  end else assign shortage_result=inactive_hint_result(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE);
+    function void use_external_reset_capture();duration.use_external_reset_capture();endfunction
+    function void observe_reset(logic value,bw_u64_t ticks);duration.enqueue_status(value,ticks);endfunction
+    wire reset_capture_ready=duration.configured;
+  end else begin : credit_shortage_hint
+    assign shortage_result=inactive_hint_result(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE);
+    function void use_external_reset_capture();endfunction
+    function void observe_reset(logic value,bw_u64_t ticks);endfunction
+    wire reset_capture_ready=1'b1;
+  end
 
   initial begin
+    backpressure_hint.use_external_reset_capture();credit_shortage_hint.use_external_reset_capture();
     wait(scope_id.len()!=0);
     if(credit_supported && credit_enabled) begin
       validate_credit_config(PROTOCOL,CREDIT_ENABLE,CREDIT_CAPACITY,CREDIT_INITIAL,
                              CREDIT_INITIAL_KNOWN,CREDIT_RETURN_TIMING,scope_id);
       seed_ledger();
     end
-    configured=1;dispatch();
+    initialize_reset_capture($sformatf("%m"),"reset_n");
+    configured=1;observe_reset(reset_n,$time);
   end
-  always @(record_toggle or reset_n) dispatch();
+  initial begin
+    wait(configured && monitor_ready);
+    if(!external_reset_capture)begin
+      wait(reset_capture_handle!=null && backpressure_hint.reset_capture_ready && credit_shortage_hint.reset_capture_ready);
+      reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    end
+  end
+  always @(record_toggle) dispatch(reset_n,$time);
 endmodule

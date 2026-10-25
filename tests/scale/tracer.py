@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Run the tiny public integration slice and its intentional reference-error red."""
-import datetime,json,re,subprocess,sys
+import datetime,json,re,shutil,subprocess,sys
 from pathlib import Path
 from run import REPO,HERE,execute,save,sha
 
@@ -8,10 +8,16 @@ def main():
     output=REPO/'.build/scale-tracer'/datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S')
     output.mkdir(parents=True)
     sources=sorted((REPO/'rtl').glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))
+    sources+=sorted((REPO/'rtl').glob('*.c'))
     files=sources+[HERE/'tb_scale_tracer.sv']
-    manifest=dict(kind='small_vertical_tracer',source_sha256={str(p.relative_to(REPO)):sha(p) for p in files+list((REPO/'rtl').glob('*.svh'))},state='PREPARED')
+    dependencies=files+sorted(p for p in (REPO/'rtl').rglob('*') if p.suffix in {'.svh','.vh','.h'})+[HERE/'tracer.py',HERE/'run.py']
+    snapshot=output/'source'
+    for source in dependencies:
+        target=snapshot/source.relative_to(REPO);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(str(source),str(target))
+    manifest=dict(kind='small_vertical_tracer',source_snapshot=str(snapshot),source_sha256={str(p.relative_to(REPO)):sha(p) for p in dependencies},state='PREPARED')
     path=output/'manifest.json'
-    cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','-debug_access+all','+incdir+'+str(REPO/'rtl'),'-assert','svaext','-top','tb_scale_tracer','-o',str(output/'simv')]+list(map(str,files))
+    vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
+    cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(snapshot/'rtl'),'-assert','svaext','-top','tb_scale_tracer','-o',str(output/'simv')]+[str(snapshot/p.relative_to(REPO)) for p in files]
     result=execute(cmd,output,output/'compile.log',output/'compile.time-v.txt',path,manifest,'compile')
     if result['returncode'] or re.search(r'(?:Warning|Error)-\[',(output/'compile.log').read_text()):return 1
     passed=True

@@ -151,22 +151,28 @@ def run(s,output,force=False):
     gen=[attempt/n for n in ('input_pkg.sv','checker.sv','tb_bw_scale.sv')]
     digest=hashlib.sha256(json.dumps(inventory,sort_keys=True).encode()+b''.join(p.read_bytes() for p in gen)).hexdigest()
     build=output/'builds'/digest;build.mkdir(parents=True,exist_ok=True)
+    consumed=build/'source';consumed.mkdir(exist_ok=True)
+    for source in inputs:
+        target=consumed/source.relative_to(REPO);target.parent.mkdir(parents=True,exist_ok=True)
+        if target.exists():
+            if sha(target)!=inventory[str(source.relative_to(REPO))]:raise RuntimeError('immutable source snapshot differs: '+str(target))
+        else:shutil.copyfile(str(source),str(target))
     manifest=dict(scenario=s.name,configuration=s.manifest(),source_head=capture(['git','rev-parse','HEAD']),source_tree=capture(['git','rev-parse','HEAD^{tree}']),
                   source_status=capture(['git','status','--short']),source_sha256=inventory,generated_sha256={p.name:sha(p) for p in gen},
                   input_sha256=sha(attempt/'input.json'),cfg_sha256=sha(attempt/'expect.cfg'),expected_sha256=sha(attempt/'expected.csv'),
-                  compile_digest=digest,started_utc=utc(),state='PREPARED',waveform=False,memory_or_speed_acceptance_cap=None,
+                  compile_digest=digest,source_snapshot=str(consumed),started_utc=utc(),state='PREPARED',waveform=False,memory_or_speed_acceptance_cap=None,
                   host=dict(uname=capture(['uname','-a']),memory=capture(['free','-m']),cpus=capture(['getconf','_NPROCESSORS_ONLN'])),
                   tools=dict(python=sys.version,vcs=capture(['vcs','-ID']),time=capture(['/usr/bin/time','--version'])))
     manifest_path=attempt/'manifest.json';save(manifest_path,manifest)
     cache=build/'compile-success.json'
     if force or not cache.exists() or not (build/'simv').exists():
-        rtl=build/'rtl';rtl.mkdir(exist_ok=True)
-        for p in (REPO/'rtl').iterdir():
-            if p.is_file():shutil.copyfile(str(p),str(rtl/p.name))
+        rtl=consumed/'rtl'
         for p in gen:shutil.copyfile(str(p),str(build/p.name))
         sources=sorted(rtl.glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))
+        sources+=sorted(rtl.glob('*.c'))
+        vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
         n=len(list(build.glob('compile-attempt-*')))+1;compile_dir=build/('compile-attempt-'+str(n));compile_dir.mkdir()
-        cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','-debug_access+all','+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
+        cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
         cmd+=list(map(str,sources))+[str(build/p.name) for p in gen]
         print('COMPILE '+s.name+' '+str(compile_dir),flush=True)
         result=execute(cmd,build,compile_dir/'compile.log',compile_dir/'time-v.txt',manifest_path,manifest,'compile')
