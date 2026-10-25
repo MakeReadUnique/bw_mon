@@ -1,0 +1,19 @@
+{
+  "command": "python3 tests/run.py",
+  "compiled_tops": 160,
+  "compiler_diagnostics": [],
+  "contract_cases": 408,
+  "cwd": "repository root",
+  "infrastructure_retries": [],
+  "integration_commit": "8de785c86f513804168eb2b868ab1f967a3b0e8b",
+  "integration_tree": "639888b7009ea180967fcea5172b5407f8b9e0d1",
+  "mode": "full_current_tree_exact_merge",
+  "original_build_paths_preserved": true,
+  "runtime_predicates": "expect_log and expect_counts from cases.json verified",
+  "scope": "Functional/numeric/source-retention regression. This is not waveform/human/common/max-scale acceptance.",
+  "source_manifest": "source-manifest.json",
+  "source_paths": 250,
+  "tested_commit": "7cadf21f9e8a2d026846a56f27efe208328680a5",
+  "tested_tree": "639888b7009ea180967fcea5172b5407f8b9e0d1",
+  "ticket": 27
+}

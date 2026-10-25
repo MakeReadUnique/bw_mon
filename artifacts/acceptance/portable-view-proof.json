@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "actual_relocated_directory": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/portable-view-h1sdmldn",
+  "no_build_or_source_dependencies": true,
+  "restored_public_signal_count": 31,
+  "exact_restored_paths_match": true,
+  "fsdb_unchanged": true,
+  "human_review": "PENDING"
+}

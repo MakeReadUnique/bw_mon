@@ -1,0 +1,34 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+viewPort 10 10 1500 850 760 180
+openDirFile -d / "" "waves.fsdb"
+signalSpacing 5
+windowTimeUnit 1ns
+zoom 59.0 66.0 1n
+cursor 61.000001
+marker 0
+top 0
+addGroup "G1"
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/valid
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/ready
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/sampled_valid
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/sampled_ready
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/total_events
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/window_events
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/bytes_complete
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/events_complete
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/backpressure_hit_count
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[1]/dut/mon/backpressure_duration_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/valid
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/flitv
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/lcrdv
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/mon/credit_balance
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/mon/credit_trusted
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/mon/credit_anomaly
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/mon/total_events
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/mon/window_events
+addSignal -w digital -h 15 /tb_acceptance_cycle/scene/ports[2]/dut/mon/bandwidth_gbps
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/all_dmc/window_bytes
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/all_dmc/bytes_complete
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_cycle/scene/all_dmc/events_complete
+addGroup "G2"

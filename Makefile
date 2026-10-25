@@ -5,3 +5,7 @@ test:
 
 clean:
 	rm -rf .build
+
+.PHONY: acceptance
+acceptance:
+	python3 tests/acceptance/run.py --all

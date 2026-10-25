@@ -2,9 +2,9 @@
 
 用于 SoC 仿真验证的通用带宽监测器（bandwidth monitor）。目标是提供可复用的 SystemVerilog `module`，观察 master、memory 接口与 NoC 链路，统计带宽并辅助定位传输间隙和长时间反压。
 
-仓库包含已确认架构及正在实现的纯仿真 SystemVerilog 监测器。当前可运行路径支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和 ns/cycle 持续反压、信用不足提示。其余能力按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/13)的关联 ticket 交付；规划需求不表示已通过全部验收。
+仓库包含已确认架构及正在实现的纯仿真 SystemVerilog 监测器。当前可运行路径支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和 ns/cycle 持续反压、信用不足提示。已实现独立过程/阶段/最终指标和按点/组身份检查；其余验收按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/13)的关联 ticket 交付；规划需求不表示已通过全部验收。
 
-运行 `make test`，使用 VCS 编译执行组件与公开入口测试。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
+运行 `make test`，使用 VCS 编译执行组件与公开入口测试；`make acceptance` 运行十二点/四组原始输入到真实 FSDB 的独立对照。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 
 单点与聚合组可通过 `+BW_EXPECT=FILE` 按完整类型/身份配置全程与最后稳定段原始带宽、每段爬坡/下降时间及 min/max/标准差/CV 预期，逐指标输出非终止的 PASS / FAIL / WARNING 与一次最终汇总；见[键表与结算接口](docs/bw-mon-expectations.md)。
 
@@ -32,3 +32,7 @@
 [EDA 验证用 bandwidth monitor 开源调研](docs/bandwidth-monitor-research.md) 汇总了已有实现、统计口径差异和可参考的设计方式。
 
 分层聚合入口已实现：每组一个 `bw_group_mon`，支持显式点/子组混合成员、多父 DAG、统一配置完成及循环/递归重叠检查。各层自动进行同沿原始汇总、持久发布、独立消费确认、复位隔离和缺帧检测。配置与复现见[集成说明](docs/bw-mon-api.md)；组分析与单点共享独立的过程/阶段/指标算法及公开标量；波形人工检查与规模验收仍按对应 ticket 交付。
+
+当前可复现交接见[端到端验收与证据索引](docs/bw-mon-acceptance.md)：配置/键表、
+固定公开信号、独立预期/实际/差异、真实 Verdi 视图和工具命令。自动检查、agent
+图像检查、人工 T6 记录及规模验收分别标记；人工记录尚未完成时不表示人工通过。

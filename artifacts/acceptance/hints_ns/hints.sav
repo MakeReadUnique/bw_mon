@@ -1,0 +1,33 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+viewPort 10 10 1500 850 760 180
+openDirFile -d / "" "waves.fsdb"
+signalSpacing 5
+windowTimeUnit 1ns
+zoom 78.0 103.0 1n
+cursor 90.000001
+marker 0
+top 0
+addGroup "G1"
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/clk
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/valid
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/ready
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_supported
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_enabled
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_trusted
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_active
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_hit
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_start_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_trigger_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_end_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_duration_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_hit_count
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_interval_count
+addSignal -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_end_reason
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/result_seq
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/accepted_record_seq
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/total_bytes
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/window_start_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/window_end_ticks
+addSignal -w digital -h 15 /tb_acceptance_ns/scene/ports[1]/dut/mon/bandwidth_gbps
+addGroup "G2"

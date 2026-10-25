@@ -1,0 +1,3 @@
+@verdi rc file Version 1.0
+[Wave]
+analogFmtPrecision = Scientific 10

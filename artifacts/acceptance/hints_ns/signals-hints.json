@@ -1,0 +1,27 @@
+{
+  "public_paths": [
+    "/tb_acceptance_ns/scene/ports[1]/dut/clk",
+    "/tb_acceptance_ns/scene/ports[1]/dut/valid",
+    "/tb_acceptance_ns/scene/ports[1]/dut/ready",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_supported",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_enabled",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_trusted",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_active",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_hit",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_start_ticks",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_trigger_ticks",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_end_ticks",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_duration_ticks",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_hit_count",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_interval_count",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/backpressure_end_reason",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/result_seq",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/accepted_record_seq",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/total_bytes",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/window_start_ticks",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/window_end_ticks",
+    "/tb_acceptance_ns/scene/ports[1]/dut/mon/bandwidth_gbps"
+  ],
+  "view": "hints",
+  "prepared": true
+}
