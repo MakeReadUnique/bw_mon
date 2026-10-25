@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify only archived completed nominal rows; pending matrix rows never pass."""
 import argparse
+import csv
 import gzip
 import hashlib
 import json
@@ -39,6 +40,7 @@ def main():
     controller_raw = (HERE / 'controller-checkpoint.json').read_bytes()
     assert sha(matrix_raw) == proof['matrix_sha256'] and sha(controller_raw) == proof['controller_checkpoint_sha256']
     matrix = json.loads(matrix_raw.decode())
+    long_contracts = json.loads(check_file(proof['supplemental_files']['long-window-contracts']).decode()) if 'long-window-contracts' in proof['supplemental_files'] else None
     completed = set(proof['completed_profiles'])
     assert proof['status'] == matrix['status'] == 'PARTIAL_NOMINAL_CAMPAIGN'
     assert not proof['nominal_acceptance_passed'] and not matrix['nominal_acceptance_passed']
@@ -104,6 +106,33 @@ def main():
             assert result['observed_scopes'] == expected['final_scope_rows'] and result['difference_count'] == 0
             config = manifest['configuration']
             assert config['acceptance_profile'] and config['acceptance_ticket'] == 31 and config['end_ticks'] == 40000000000
+            if long_contracts and profile in long_contracts['profiles']:
+                facts = long_contracts['profiles'][profile]
+                point = next(row for row in csv.DictReader(content['actual.csv'].decode().splitlines())
+                             if row['kind'] == 'point' and row['index'] == '0')
+                reference = next(row for row in csv.DictReader(content['expected.csv'].decode().splitlines())
+                                 if row['kind'] == 'point' and row['index'] == '0')
+                assert facts['actual_point0'] == point and facts['reference_point0'] == reference
+                assert facts['checked_scopes'] == result['observed_scopes'] and facts['actual_edges_per_scope'] == 80000
+                assert facts['actual_end_ticks'] == config['end_ticks'] == 40000000000
+                assert facts['checked_publications_per_scope'] == int(point['checked_windows'])
+                cycle_long = profile.endswith('cycle-long-dense')
+                assert point['window_seq'] == ('79999' if cycle_long else '40000')
+                assert point['window_coverage_cycles'] == ('79999' if cycle_long else '0')
+                assert point['window_warmup'] == ('1' if cycle_long else '0')
+                assert point['window_full'] == point['window_window_valid'] == ('0' if cycle_long else '1')
+                assert facts['first_full_publication_ticks'] == (None if cycle_long else 40000000000)
+                assert facts['full_publication_count'] == (0 if cycle_long else 1)
+                assert result['phase_records'] == facts['phase_records'] == 0
+                assert not facts['tail_known'] and not facts['e2e_valid']
+                packets = [dict(re.findall(r'(\w+)=([^\s]+)', line))
+                           for line in content['simulation.log'].decode().splitlines()
+                           if line.startswith('BW_EPISODE ')]
+                packet = next(row for row in packets if row['scope'] == point['scope'])
+                assert facts['actual_point0_episode'] == packet
+                assert packet['status'] == '4' and packet['reason'] == 'OBSERVATION_TRUNCATED'
+                assert packet['tail_known'] == packet['e2e_valid'] == '0'
+                assert packet['confirm_ticks'] == '40000000000' and point['raw_tick'] == '39999750000'
             assert manifest['source_sha256'] == identity['source_sha256']
             for name, expected_hash in manifest['source_sha256'].items():
                 assert snapshot['files'][name]['uncompressed_sha256'] == expected_hash, name
@@ -182,6 +211,11 @@ if scenario.variant=='baseline':
             check_file(entry)
     for entry in proof['supplemental_files'].values():
         check_file(entry)
+    if 'prior-short-bundle-hashes' in proof['supplemental_files']:
+        prior = json.loads(check_file(proof['supplemental_files']['prior-short-bundle-hashes']).decode())
+        assert set(prior['original_completed_profiles']) <= completed
+        for name, expected_hash in prior['file_sha256'].items():
+            assert sha((HERE / name).read_bytes()) == expected_hash, name
     reuse = matrix['external_common29_reuse']
     raw = (REPO / reuse['path']).read_bytes()
     assert sha(raw) == reuse['sha256'] and not reuse['contributes_to_twelve_new_profile_count']

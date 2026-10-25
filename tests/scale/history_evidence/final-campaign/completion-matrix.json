@@ -1,7 +1,9 @@
 {
-  "completed_profile_count": 2,
+  "completed_profile_count": 4,
   "completed_profiles": [
+    "history-common-cycle-long-dense",
     "history-common-cycle-short-dense",
+    "history-common-ns-long-dense",
     "history-common-ns-short-dense"
   ],
   "external_common29_reuse": {
@@ -29,9 +31,7 @@
   "nominal_acceptance_passed": false,
   "pending_profiles": [
     "history-common-cycle-control-clock",
-    "history-common-cycle-long-dense",
     "history-common-ns-control-clock",
-    "history-common-ns-long-dense",
     "history-max-cycle-control-clock",
     "history-max-cycle-long-dense",
     "history-max-cycle-short-dense",
@@ -154,7 +154,7 @@
         "variant": "group-clock",
         "window_basis": "cycle"
       },
-      "original_manifest": null,
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/manifest.json",
       "required_enabled_features": {
         "analysis": {
           "K": 4,
@@ -215,12 +215,35 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "PREPARED_NOT_LAUNCHED",
+      "state": "SIMULATION_RUNNING",
       "verified": false,
       "verified_bundle": null
     },
     "history-common-cycle-long-dense": {
-      "actual_verification": null,
+      "actual_verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 102398720,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 102398720,
+        "observed_scopes": 1280,
+        "phase_records": 0,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      },
       "expected_counts": {
         "configured_metrics_per_scope": 12,
         "episode_final_records": 1280,
@@ -335,9 +358,10 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "SIMULATION_RUNNING",
-      "verified": false,
-      "verified_bundle": null
+      "simulation_peak_kib": 254784,
+      "state": "VERIFIED_AUDITED",
+      "verified": true,
+      "verified_bundle": "history-common-cycle-long-dense/bundle.json"
     },
     "history-common-cycle-short-dense": {
       "actual_verification": {
@@ -597,7 +621,7 @@
         "variant": "group-clock",
         "window_basis": "ns"
       },
-      "original_manifest": null,
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-ns-control-clock-7eeb0029c9840fcaf438/runs/history-common-ns-control-clock/20261025T180220-3989525/manifest.json",
       "required_enabled_features": {
         "analysis": {
           "K": 4,
@@ -658,12 +682,35 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "PREPARED_NOT_LAUNCHED",
+      "state": "SIMULATION_RUNNING",
       "verified": false,
       "verified_bundle": null
     },
     "history-common-ns-long-dense": {
-      "actual_verification": null,
+      "actual_verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 51200000,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 51200000,
+        "observed_scopes": 1280,
+        "phase_records": 0,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      },
       "expected_counts": {
         "configured_metrics_per_scope": 12,
         "episode_final_records": 1280,
@@ -778,9 +825,10 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "SIMULATION_RUNNING",
-      "verified": false,
-      "verified_bundle": null
+      "simulation_peak_kib": 286812,
+      "state": "VERIFIED_AUDITED",
+      "verified": true,
+      "verified_bundle": "history-common-ns-long-dense/bundle.json"
     },
     "history-common-ns-short-dense": {
       "actual_verification": {
@@ -1808,6 +1856,6 @@
     }
   },
   "required_profile_count": 12,
-  "snapshot_utc": "2026-10-25T17:19:55.878185Z",
+  "snapshot_utc": "2026-10-25T18:25:08.155019Z",
   "status": "PARTIAL_NOMINAL_CAMPAIGN"
 }

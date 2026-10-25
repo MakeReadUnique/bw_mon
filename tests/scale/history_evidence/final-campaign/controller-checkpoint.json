@@ -23,9 +23,9 @@
           "sha256": "0324541d396446150f9628932c8c343dcd00b641af25bbcdaa76279180190ce5"
         },
         "common-scheduler-status.json": {
-          "bytes": 1745,
+          "bytes": 2294,
           "file": "controllers/common-history/common-scheduler-status.json",
-          "sha256": "5cf23a8c6a5f2ddf8c3f0245be3366a69272f35f551d11236682381ccd510904"
+          "sha256": "dd2ae6f13f91b3077b30004f164f1d52801ca32bb66698c465e9cec6669acfa4"
         }
       },
       "pid": 3902179,
@@ -36,8 +36,8 @@
       },
       "start_ticks": 20579205,
       "state": "S",
-      "stime_ticks": 79,
-      "utime_ticks": 100
+      "stime_ticks": 150,
+      "utime_ticks": 213
     },
     "max-history": {
       "alive_at_checkpoint": true,
@@ -61,9 +61,9 @@
           "sha256": "19723ff685c594ddcdd16e76c927f31f3992be60f2109a88d1a0c516cb4efe68"
         },
         "max-scheduler-status.json": {
-          "bytes": 3570,
+          "bytes": 3850,
           "file": "controllers/max-history/max-scheduler-status.json",
-          "sha256": "547dcbb9ad0d8b6dd63d39ede612d29f72b5fe0c8ccfc3690c574482b94c6403"
+          "sha256": "c17b2900a861f01ba053adaa3864a4af7260dc23dba05f2facce36e26af07298"
         }
       },
       "pid": 3919284,
@@ -74,8 +74,8 @@
       },
       "start_ticks": 20650521,
       "state": "S",
-      "stime_ticks": 138,
-      "utime_ticks": 1134
+      "stime_ticks": 192,
+      "utime_ticks": 2734
     },
     "max30": {
       "alive_at_checkpoint": true,
@@ -93,9 +93,9 @@
           "sha256": "e6d475ff3bb9e8a892c49277c0ea9c78ce07de1031d136700b17c738dcc1ba3a"
         },
         "monitor-status.json": {
-          "bytes": 5235,
+          "bytes": 5236,
           "file": "controllers/max30/monitor-status.json",
-          "sha256": "a34a001ee8671b82334be6fde59515661ae97a71dd6bccc8c215579b68c94d03"
+          "sha256": "ae6482881a95a7df805461ccc10b654ee244801782ebbace493fa77e12861921"
         }
       },
       "pid": 3908922,
@@ -106,8 +106,8 @@
       },
       "start_ticks": 20595965,
       "state": "S",
-      "stime_ticks": 826,
-      "utime_ticks": 1759
+      "stime_ticks": 1693,
+      "utime_ticks": 3673
     }
   },
   "global_heavy_cap": 6,
@@ -115,5 +115,5 @@
   "max_history_cap": 2,
   "no_consumed_source_edits": true,
   "no_elapsed_auto_increase": true,
-  "snapshot_utc": "2026-10-25T17:19:55.878185Z"
+  "snapshot_utc": "2026-10-25T18:25:08.155019Z"
 }

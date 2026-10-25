@@ -1,9 +1,9 @@
 # History matrix evidence
 
-The [current nominal campaign checkpoint](final-campaign/README.md) records two
+The [current nominal campaign checkpoint](final-campaign/README.md) records four
 completed/audited final-source40us profiles out of twelve required new rows,
-with204800000 raw receipts and102398720 new windows, zero differences. Its full
-matrix explicitly leaves ten running/prepared profiles unaccepted. This is a
+with409600000 raw receipts and255997440 new windows, zero differences. Its full
+matrix explicitly leaves eight running/prepared profiles unaccepted. This is a
 partial checkpoint, not ticket31 completion.
 
 Root per-profile bundles retain completed verified historical profiles. Each bundle includes the

@@ -1,6 +1,45 @@
 {
-  "completed_profile_count": 2,
+  "completed_profile_count": 4,
   "completed_profiles": {
+    "history-common-cycle-long-dense": {
+      "compile_peak_kib": 350988,
+      "complete_build_identity": "a47955bebc7cd9bf05d2608d8d845fcbc732be3f47c3168b45831e23c7d277d3",
+      "launch": {
+        "bytes": 21155,
+        "file": "history-common-cycle-long-dense/launch.json",
+        "sha256": "91027e11704abd6cd13365405e46000bec363bf7d57631645f98ac5c4473a937"
+      },
+      "recorded_audit": {
+        "bytes": 13065,
+        "file": "history-common-cycle-long-dense/recorded-audit.json",
+        "sha256": "a0b2ea67add820606c4f480b776941b9bf86f52d4377322ae99e79111954b27f"
+      },
+      "simulation_peak_kib": 254784,
+      "verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 102398720,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 102398720,
+        "observed_scopes": 1280,
+        "phase_records": 0,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      }
+    },
     "history-common-cycle-short-dense": {
       "compile_peak_kib": 350684,
       "complete_build_identity": "34ed4195e842731bb72c8c6456e04a879a024064a11a24d9ac9b20a554932b06",
@@ -25,6 +64,45 @@
         "expected_windows": 51198720,
         "observed_scopes": 1280,
         "phase_records": 1280,
+        "report_conclusions": {
+          "WARNING": 15360
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15360"
+          }
+        ]
+      }
+    },
+    "history-common-ns-long-dense": {
+      "compile_peak_kib": 350684,
+      "complete_build_identity": "a817d8b7df44d614725699e8e4114fb312c05ccc7e3b789700f6ec7733f7ced9",
+      "launch": {
+        "bytes": 21139,
+        "file": "history-common-ns-long-dense/launch.json",
+        "sha256": "6cb0fb61001b48ab4339aa72438d8af509c35244ca565ce03c57f75923bb48a6"
+      },
+      "recorded_audit": {
+        "bytes": 13042,
+        "file": "history-common-ns-long-dense/recorded-audit.json",
+        "sha256": "3f493f7438963751334c960733f912646f11dc2efcb946c57e3de4f5163f849e"
+      },
+      "simulation_peak_kib": 286812,
+      "verification": {
+        "checked_raw": 102400000,
+        "checked_windows": 51200000,
+        "difference_count": 0,
+        "episode_records": 1280,
+        "expected_raw": 102400000,
+        "expected_scopes": 1280,
+        "expected_windows": 51200000,
+        "observed_scopes": 1280,
+        "phase_records": 0,
         "report_conclusions": {
           "WARNING": 15360
         },
@@ -80,8 +158,8 @@
       }
     }
   },
-  "controller_checkpoint_sha256": "f546f67d3c1977c9b631856333fa3823b303da30b8bcbbe73a83c21d918130f1",
-  "matrix_sha256": "281922914e3064edbaa574978a643fb7b79e1069f8b545b1ed53c034b08e9fe3",
+  "controller_checkpoint_sha256": "35cd653302ba4d27eddf5df136607e82ac35f0479e7362f2ae6511c935922bdf",
+  "matrix_sha256": "1ea398b9c6dbe554d6844201968b508d5d74b811ce7a152ec72f4f58dde88587",
   "native_header_count": 50,
   "nominal_acceptance_passed": false,
   "production_runtime": "56127495f597d215003000356ac3b5387cc809a1",
@@ -106,16 +184,16 @@
     "rtl/bw_variation_history.svh": "6c9099eb7996be712f61480784b3404b6e4eaeaaf183c98c20f845ba0a98ba1e"
   },
   "required_profile_count": 12,
-  "snapshot_utc": "2026-10-25T17:19:55.878185Z",
+  "snapshot_utc": "2026-10-25T18:25:08.155019Z",
   "source_count": 26,
   "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
   "source_tree": "d17f768abf30967d8c1ee8d1ec986d2ed5bdc174",
   "status": "PARTIAL_NOMINAL_CAMPAIGN",
   "supplemental_files": {
     "archive-checkpoint": {
-      "bytes": 12008,
+      "bytes": 13159,
       "file": "recipes/archive-checkpoint.py",
-      "sha256": "412be3810af41e8361b855c9c0415e695a70eaecd1ef1d84f02f64de79186262"
+      "sha256": "11f3d7bbb235d87de65d31a26bf1e6d6a3b7d07d8d17e0305e5d618df00753bd"
     },
     "auditor": {
       "bytes": 9102,
@@ -126,13 +204,23 @@
       "bytes": 9622,
       "file": "recipes/launcher.py",
       "sha256": "e736825fd84a90265d98630b651633e035fd38eeaaef61e910499f1b6b314aa2"
+    },
+    "long-window-contracts": {
+      "bytes": 8501,
+      "file": "long-window-contracts.json",
+      "sha256": "404f3afd134547ac8b6d1acfa5f14d231e95af035aed5e14da9647652ff8d904"
+    },
+    "prior-short-bundle-hashes": {
+      "bytes": 5022,
+      "file": "prior-short-bundle-hashes.json",
+      "sha256": "6f035e2e86b04e17627addc334c1096206f4312548338afc34cb246acba1a99e"
     }
   },
   "totals": {
-    "checked_raw": 204800000,
-    "checked_windows": 102398720,
+    "checked_raw": 409600000,
+    "checked_windows": 255997440,
     "difference_count": 0,
-    "episode_records": 2560,
+    "episode_records": 5120,
     "phase_records": 2560
   }
 }

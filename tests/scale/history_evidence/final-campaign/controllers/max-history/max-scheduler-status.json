@@ -8,7 +8,7 @@
   "failures": {},
   "family_max_concurrency_cap": 2,
   "host_admission_reserve_kib": 3145728,
-  "mem_available_kib": 7335684,
+  "mem_available_kib": 7265892,
   "profiles": {
     "history-max-cycle-control-clock": {
       "state": "QUEUED"
@@ -19,9 +19,11 @@
       "markers": [
         "BW_READY time_ticks=0 points=16384 groups=4096",
         "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=1 W=80000 S=1 variant=baseline waves=0",
-        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000"
+        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000",
+        "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000",
+        "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000"
       ],
-      "mem_available_kib": 7335684,
+      "mem_available_kib": 7265892,
       "native_build_verified": true,
       "process_family": [
         {
@@ -30,8 +32,8 @@
           "rss_kib": 45012,
           "start_ticks": 20648467,
           "state": "S",
-          "stime_ticks": 1867,
-          "utime_ticks": 3750
+          "stime_ticks": 4201,
+          "utime_ticks": 8127
         },
         {
           "pid": 3919790,
@@ -48,8 +50,8 @@
           "rss_kib": 1934980,
           "start_ticks": 20652811,
           "state": "R",
-          "stime_ticks": 180,
-          "utime_ticks": 281083
+          "stime_ticks": 228,
+          "utime_ticks": 656486
         }
       ],
       "runner_pid": 3918443,
@@ -64,14 +66,16 @@
       "state": "QUEUED"
     },
     "history-max-ns-long-dense": {
-      "family_rss_kib": 2094008,
+      "family_rss_kib": 2095124,
       "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-max-ns-long-dense-351847286c8587999347/runs/history-max-ns-long-dense/20261025T162303-3912471/manifest.json",
       "markers": [
         "BW_READY time_ticks=0 points=16384 groups=4096",
         "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=0 W=40000 S=1 variant=baseline waves=0",
-        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000"
+        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000",
+        "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000",
+        "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000"
       ],
-      "mem_available_kib": 7335684,
+      "mem_available_kib": 7265892,
       "native_build_verified": true,
       "process_family": [
         {
@@ -80,8 +84,8 @@
           "rss_kib": 44820,
           "start_ticks": 20609293,
           "state": "S",
-          "stime_ticks": 2131,
-          "utime_ticks": 4129
+          "stime_ticks": 4458,
+          "utime_ticks": 8443
         },
         {
           "pid": 3914543,
@@ -95,11 +99,11 @@
         {
           "pid": 3914544,
           "ppid": 3914543,
-          "rss_kib": 2048168,
+          "rss_kib": 2049284,
           "start_ticks": 20613301,
           "state": "R",
-          "stime_ticks": 193,
-          "utime_ticks": 319604
+          "stime_ticks": 249,
+          "utime_ticks": 693373
         }
       ],
       "runner_pid": 3912471,
@@ -112,5 +116,5 @@
     }
   },
   "state": "RUNNING",
-  "updated_utc": "2026-10-25T17:19:42.050986Z"
+  "updated_utc": "2026-10-25T18:24:55.085413Z"
 }

@@ -12,7 +12,7 @@ windows, zero differences. The [portable preparation archive](../tests/scale/his
 contains actual inputs/configs, expected/actual/differences, source/native/tool/link
 fingerprints and measured small-run RSS. Its recorded-data verifier works without
 VCS or former temporary worktrees. The [current nominal checkpoint](../tests/scale/history_evidence/final-campaign/README.md)
-records two completed/audited COMMON short-dense profiles and ten still-pending
+records four completed/audited COMMON short/long-dense profiles and eight still-pending
 new rows. Small preparation and this partial checkpoint are not full nominal
 acceptance.
 Earlier completed runs, interrupted attempts and dated matrix files retain their
@@ -119,17 +119,31 @@ Later resource admission permits at most two COMMON and two MAX history jobs,
 alongside four MAX30 jobs, with no automatic cap increase. Neither a prepared
 receipt nor a queued/running row is a pass.
 
-At2026-10-25 17:19:55UTC, both complete40us COMMON short-dense rows are verified
-and independently audited: NS W10/S1 checks102400000 raw receipts/51200000 new
-windows at284984KiB simulator peak; cycle W20/S2 checks102400000 raw/51198720
-windows at280856KiB peak. All1280 scopes per row match exactly, with zero
-differences. The expected final tail is unknown, so all15360 configured metric
-conclusions per row are legitimate WARNINGs rather than invented valid e2e.
+At2026-10-25 18:25:08UTC, four complete40us COMMON dense rows are verified and
+independently audited. Each checks102400000 raw receipts across1280 scopes, with
+zero differences:
+
+| Actual profile | W/S | Checked windows | Simulator peak RSS,KiB |
+| --- | --- | ---: | ---: |
+| NS short |10ns/1ns |51200000 |284984 |
+| Cycle short |20cycles/2cycles |51198720 |280856 |
+| NS full-scene long |40000ns/1ns |51200000 |286812 |
+| Cycle full-scene long |80000cycles/1cycle |102398720 |254784 |
+
+The NS long point's only full publication is at40us: [0,40000ns),5120000B/
+80000events, full/known/valid,128GB/s. The cycle long point has79999
+publications and complete cycles; its final5119936B/79999event window stays
+warmup/full0/valid0 even though its known rate remains128GB/s/64Bcycle. Raw totals
+still include all80000 real edges/5120000B. Both long rows have no confirmed
+phase and finish with an unknown actual tail, TRUNCATED status and invalid e2e.
+No extra edge or positive-time drain was added. A valid full NS window does not
+repair the missing episode tail; all15360 configured metric conclusions per row
+are legitimate WARNINGs rather than invented valid e2e.
 The [portable nominal evidence](../tests/scale/history_evidence/final-campaign/README.md)
 retains original inputs, commands, source/native/tool/link hashes, expected/actual/
 differences, final streams and measured RSS. Its matrix records all twelve fixed
-new targets; only these two actual completed/audited rows are accepted. COMMON
-and MAX long rows remain running and the remaining six rows prepared at that
+new targets; only these four actual completed/audited rows are accepted. COMMON
+control/clock and MAX long rows remain running and the remaining four MAX rows prepared at that
 dated snapshot. Existing common29 middle-window evidence is version-qualified;
 the still-running MAX30 rows cannot yet supply accepted middle-window reuse.
 
