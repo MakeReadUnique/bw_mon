@@ -36,6 +36,7 @@
     int members[$];
     bw_member_rule_t rules[$];
     bit [16383:0] recursive_points='0;
+    int traversal_state=0, depth=0; // unvisited, active, resolved; nested group count
     bw_notification notification;
     function new();
       notification=new;

@@ -1736,5 +1736,408 @@
       "BW_CHECK scope_kind=1 ": 0,
       "BW_SUMMARY ": 1
     }
+  },
+  {
+    "name": "hierarchy_basic",
+    "top": "tb_hierarchy_basic",
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_self_cycle",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=self_cycle"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CYCLE.*path=group:A -> group:A"
+  },
+  {
+    "name": "hierarchy_cycle",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=cycle"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CYCLE.*path=group:A -> group:B -> group:C -> group:A"
+  },
+  {
+    "name": "hierarchy_point_overlap",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=point_overlap"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OVERLAP.*point=p0.*path1=group:top -> group:left -> point:p0.*path2=group:top -> point:p0"
+  },
+  {
+    "name": "hierarchy_overlap32",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=overlap32"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OVERLAP.*point=p32.*path1=.*point:p32.*path2=.*point:p32"
+  },
+  {
+    "name": "hierarchy_overlap64",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=overlap64"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OVERLAP.*point=p64.*path1=.*point:p64.*path2=.*point:p64"
+  },
+  {
+    "name": "hierarchy_siblings",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=siblings"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OVERLAP.*path1=group:top -> group:left -> point:p0.*path2=group:top -> group:right -> point:p0"
+  },
+  {
+    "name": "hierarchy_diamond",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=diamond"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OVERLAP.*path1=.*group:left -> group:base -> point:p0.*path2=.*group:right -> group:base -> point:p0"
+  },
+  {
+    "name": "hierarchy_missing_group",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=missing_group"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_REFERENCE.*missing group=p0.*path=group:root -> group:p0"
+  },
+  {
+    "name": "hierarchy_missing_point",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=missing_point"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_REFERENCE.*missing point=child"
+  },
+  {
+    "name": "hierarchy_context",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=context"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CONTEXT.*member=child"
+  },
+  {
+    "name": "hierarchy_group_prefix",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=group_prefix"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_RULE"
+  },
+  {
+    "name": "hierarchy_unknown_kind",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=unknown_kind"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_RULE"
+  },
+  {
+    "name": "hierarchy_depth9",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=depth9"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_DEPTH.*depth=9 maximum=8 path=group:g8 -> group:g7.*group:g0"
+  },
+  {
+    "name": "hierarchy_fanout17",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=fanout17"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=TOPOLOGY_LIMIT.*source has more than 16 direct parents: p0"
+  },
+  {
+    "name": "hierarchy_hot_group",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=hot_group"
+    ],
+    "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  },
+  {
+    "name": "hierarchy_depth8",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=depth8"
+    ]
+  },
+  {
+    "name": "hierarchy_fanout16",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=fanout16"
+    ]
+  },
+  {
+    "name": "hierarchy_t4_ns_normal",
+    "top": "tb_hierarchy_t4_ns",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=normal"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_ns_child_reset",
+    "top": "tb_hierarchy_t4_ns",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=child_reset"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_ns_point_reset",
+    "top": "tb_hierarchy_t4_ns",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=point_reset"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_ns_size_unknown",
+    "top": "tb_hierarchy_t4_ns",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=size_unknown"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_ns_parent_reset",
+    "top": "tb_hierarchy_t4_ns",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=parent_reset"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_cycle_normal",
+    "top": "tb_hierarchy_t4_cycle",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=normal"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_cycle_child_reset",
+    "top": "tb_hierarchy_t4_cycle",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=child_reset"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_cycle_point_reset",
+    "top": "tb_hierarchy_t4_cycle",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=point_reset"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_cycle_size_unknown",
+    "top": "tb_hierarchy_t4_cycle",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=size_unknown"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_t4_cycle_parent_reset",
+    "top": "tb_hierarchy_t4_cycle",
+    "sources": [
+      "hierarchy_t4_fixture.sv"
+    ],
+    "plusargs": [
+      "+MODE=parent_reset"
+    ],
+    "expect_log": [
+      "BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=16 scopes_expected=16"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "hierarchy_depth_transport",
+    "top": "tb_hierarchy_depth_transport"
+  },
+  {
+    "name": "hierarchy_retention_all_first",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=all_first"
+    ]
+  },
+  {
+    "name": "hierarchy_retention_mixed_first",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=mixed_first"
+    ]
+  },
+  {
+    "name": "hierarchy_t4_overlap",
+    "top": "tb_hierarchy_t4_overlap",
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OVERLAP.*point=p0 path1=group:combined -> group:all_dmc -> group:die0_dmc -> point:p0 path2=group:combined -> group:mixed -> group:die0_dmc -> point:p0"
+  },
+  {
+    "name": "hierarchy_edge_limit_exact",
+    "top": "tb_hierarchy_edge_limit"
+  },
+  {
+    "name": "hierarchy_edge_limit_excess",
+    "top": "tb_hierarchy_edge_limit",
+    "plusargs": [
+      "+EXTRA=1"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=TOPOLOGY_LIMIT.*more than 65536 direct-member edges"
+  },
+  {
+    "name": "hierarchy_depth_missing",
+    "top": "tb_hierarchy_depth_transport",
+    "plusargs": [
+      "+MISSING=1"
+    ],
+    "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250000[^\\n]*expected_ticks=250000 deadline_ticks=1250000"
+  },
+  {
+    "name": "hierarchy_invalid_kind",
+    "top": "tb_hierarchy_config",
+    "plusargs": [
+      "+MODE=invalid_kind"
+    ],
+    "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_RULE"
+  },
+  {
+    "name": "hierarchy_retention_all_first_child_reset",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=all_first",
+      "+MODE=child_reset"
+    ]
+  },
+  {
+    "name": "hierarchy_retention_all_first_point_reset",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=all_first",
+      "+MODE=point_reset"
+    ]
+  },
+  {
+    "name": "hierarchy_retention_all_first_size_unknown",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=all_first",
+      "+MODE=size_unknown"
+    ]
+  },
+  {
+    "name": "hierarchy_retention_mixed_first_child_reset",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=mixed_first",
+      "+MODE=child_reset"
+    ]
+  },
+  {
+    "name": "hierarchy_retention_mixed_first_point_reset",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=mixed_first",
+      "+MODE=point_reset"
+    ]
+  },
+  {
+    "name": "hierarchy_retention_mixed_first_size_unknown",
+    "top": "tb_hierarchy_retention",
+    "plusargs": [
+      "+ORDER=mixed_first",
+      "+MODE=size_unknown"
+    ]
   }
 ]

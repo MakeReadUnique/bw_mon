@@ -554,7 +554,7 @@ known reset0 or unknown reset cannot become a transfer after NBA release; its
 Active-release case still counts. The credit-ledger stimulus now explicitly uses
 integer-fs testbench time and checks actual raw timestamps against its event table.
 
-## Single-level aggregation and startup
+## Aggregation and startup
 
 Instantiate one `bw_group_mon` per Group ID and use the shared configuration
 entry points. Points register only their own identity/configuration; they need no
@@ -581,8 +581,13 @@ separate namespaces. `BW_EXACT` is the default match kind. `BW_PREFIX` matches a
 complete dot-delimited hierarchy prefix, including that prefix itself; `noc1`
 cannot match `noc10`. A prefix ending with a dot already supplies the delimiter.
 No matches, an empty group, or a deduplicated member-count mismatch is fatal.
-This ticket supports point members and peer-group reuse; nested group membership
-is the separate hierarchy extension.
+Groups can also contain explicitly named subgroups, alone or mixed with points.
+Use `add_group_member(parent, child)` for an exact Group ID; a Point ID with the
+same text remains a different source. The generic entry
+`add_member(parent, BW_POINT|BW_GROUP, id, match)` makes the kind explicit and
+validates its four-state 2-bit value before narrowing. Group prefixes are rejected.
+Duplicate rules selecting the same typed direct source count once; overlapping
+recursive paths through different direct members are errors.
 
 | Entry/configuration | Type / default | Contract |
 | --- | --- | --- |
@@ -593,14 +598,20 @@ is the separate hierarchy extension.
 | group `GROUP_ID` | string, required | Nonempty unique group owner; equal Point ID text is legal |
 | group clock/window parameters | same basis/W/S/context as points | Every direct member must share clock context, basis, width and stride |
 | `define_group(id, expected_members)` | four-state unsigned 64-bit count | Known 1..16,384 direct members after deduplication |
-| `add_point_member(group,id,match)` | exact ID or segment prefix | May be called only before configuration is sealed |
+| `add_point_member(group,id,match)` | exact Point ID or segment prefix | May be called only before configuration is sealed |
+| `add_group_member(group,child)` | exact Group ID | Subgroup may be declared later before configuration is sealed |
+| `add_member(group,kind,id,match)` | explicit `BW_POINT` / `BW_GROUP`; match defaults `BW_EXACT` | Unknown/invalid kind, or group prefix, is fatal |
 | `finish_configuration()` | explicit one-time action | Seals definitions/rules; still waits for required point registrations and group owners |
 
 Counts are validated before narrowing to internal bounded indices. Partial X/Z and
 values such as 2^32+1 cannot silently become a valid count of one. Registration,
 configuration, reference, owner, context, edge/fanout and member-count checks finish
-before ready. Up to 65,536 direct edges and sixteen direct parents per source are
-checked at startup; their actual maximum-scale execution is a later acceptance
+before ready. A tri-color traversal rejects cycles, computes recursive point sets
+and checks at most eight nested group levels. Each direct member must contribute
+a disjoint recursive point set; point/subgroup, sibling and diamond overlaps fail
+with the conflicting Point ID and both typed paths. No path is automatically
+removed. Reuse between independent scopes is allowed. Up to 65,536 deduplicated
+direct edges and sixteen direct parents per point or group source are checked; their actual maximum-scale execution is a later acceptance
 step. Missing owner/point/configuration completion reaches a bounded startup error,
 with IDs/counts in the log. Same-deadline NBA registration chains participate
 before that decision.
@@ -641,7 +652,7 @@ holds a logical publication watermark: a window including unreceived data cannot
 appear as complete zero. Upon complete delivery, the published window retains its
 original scheduled endpoint. The collector merges controls and frames in original
 timestamp order; same-time controls precede the frame. Pending source progress is
-propagated toward direct parent groups for the hierarchy extension.
+propagated through direct parent groups at every hierarchy level.
 
 Missing-frame deadlines use original expected T plus the configured physical
 interval, including when an earlier frame completed while a newer one was
@@ -661,6 +672,7 @@ for reporting; accessing them before ready is an error.
 
 Core diagnostics include `GROUP_COUNT`, `GROUP_REFERENCE`, `GROUP_DEFINITION`,
 `DUPLICATE_OWNER`, `EMPTY_GROUP`, `MEMBER_COUNT`, `MEMBER_RULE`, `GROUP_CONTEXT`,
+`GROUP_CYCLE`, `GROUP_OVERLAP`, `GROUP_DEPTH`,
 `TOPOLOGY_LIMIT`, `CONFIG_FROZEN`, `RECORD_SEQUENCE`, `EDGE_SEQUENCE`,
 `RECORD_TIME`, `FRAME_ALIGNMENT`, `UNEXPECTED_FRAME`, `FRAME_TIMEOUT`,
 `CONTROL_SEQUENCE`, `CONTROL_ORIGIN`, `ACK_SEQUENCE` and unexpected premature
@@ -675,8 +687,9 @@ the `group_fault_*` and `group_config_*` cases in `tests/cases.json`. The wide
 case independently checks 8,589,934,590 B per edge; its real tolerance is 1e-5
 GB/s (about 1.2e-15 relative), while integer values remain exact and small-vector
 real checks use 1e-10. These are numeric calculation tolerances, not performance
-acceptance tolerances. The tests do not claim hierarchy, FSDB/human or scale
-acceptance.
+acceptance tolerances. The original single-level cases are supplemented by the
+hierarchy cases below; FSDB/human and complete scale execution remain separate
+acceptance work.
 
 Transport resource accounting is separate from scope statistics history. Logical
 packed payload sizes are 451 bits per raw frame, 225 per point control and 289 per
@@ -927,10 +940,120 @@ compilation-unit paths/content, explicitly listed `case.sources` fixtures, the
 selected top, and all recursive RTL `.svh`/`.vh` content. This includes nested
 library headers and invalidates stale binaries after flag/fixture/header edits.
 
-Aggregation integration validation: **146/146 contract cases passed** on
-2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including all101
-previous integration cases and45 aggregation/deferred-final cases. All102 compile
+Ticket18 baseline integration validation: **146/146 contract cases passed** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8, including all 101
+previous integration cases and 45 aggregation/deferred-final cases. All 102 compile
 logs contain no Warning-/Error- diagnostics; source/fixture/header/runner cache
-fingerprints match the current tree. `git diff --check` passed. This remains
-single-level functional evidence; hierarchy, full group analysis, real waveform
-review and scale/history acceptance are separate tickets.
+fingerprints match the current tree. `git diff --check` passed. That run established
+single-level functional evidence. The hierarchy validation below extends it; full
+group analysis, real waveform review and scale/history acceptance remain separate
+tickets.
+
+
+## Typed hierarchy and independent statistics
+
+The T4 topology uses twelve registered points, including ungrouped p10/p11, and
+four group owners. Its definitions are explicit:
+
+```systemverilog
+define_group("die0_dmc", 4); // add points p0...p3
+define_group("die1_dmc", 4); // add points p4...p7
+define_group("all_dmc", 2);
+add_group_member("all_dmc", "die0_dmc");
+add_group_member("all_dmc", "die1_dmc");
+define_group("mixed", 3);
+add_group_member("mixed", "die0_dmc");
+add_point_member("mixed", "p8");
+add_point_member("mixed", "p9");
+// finish_configuration() follows all point-membership rules.
+```
+
+`all_dmc` has two direct members and eight recursive points; `mixed` has three
+and six. Combining both into one further group fails because p0...p3 occur on two
+paths. The same `die0_dmc` source supplies both parents with independent durable
+acknowledgements. Its completed point input records can be released while its
+single group record waits for the slower parent. Ancestors consume only direct
+source records; they do not receive copies of every leaf stream.
+
+A local point/group statistics reset clears only that scope's history and epoch.
+The group collector, original-time raw sequence, publication, core receipt and
+input acknowledgements continue while its statistics reset is held. Parent and
+other-parent histories continue independently, including when the reset group
+rewarmups. A group statistics reset sends no actual-point reset notification.
+Actual point controls preserve the originating point, control sequence, source
+epoch and original timestamp across every level, including clock stop. Known
+reset coverage remains distinct from unknown byte/event quality.
+
+The `hierarchy_t4_{ns,cycle}_{normal,child_reset,point_reset,size_unknown}` cases
+instantiate twelve public points using all three protocols and fixed/dynamic
+bytes, plus four automatic groups. At T=104 ns / edge208, the literal E1 raw
+vectors are respectively 256/4, 512/8, 384/6 for child/all/mixed; known p0 reset
+changes these to 192/3, 448/7, 320/5 with complete bytes and reset coverage;
+unknown p0 size gives 192/4, 448/8, 320/6 with incomplete bytes and complete
+events. The child-reset case preserves the normal vector. Additional parent-reset
+cases check that the shared child and its other parent retain their statistics.
+At 2 GHz and 64 B/point, full-window GB/s are 128 per point, 512 per die, 1024 for
+all and 768 for mixed; cycle B/cycle values are 64, 256, 512 and 384. Integers are
+exact; small-vector real calculations use absolute tolerance 1e-10.
+
+`hierarchy_retention_{all_first,mixed_first}` changes lawful parent completion
+order on consecutive original edges for all four E1 scenarios, and verifies
+retained frames, independent quality and final sums through the controlled
+package seam. `hierarchy_depth_transport` sends a leaf at the exact
+original T+1 ns deadline through two NBAs and eight group levels; all levels keep
+T/edge and complete in that same physical slot. Its three maximum-size point
+increments produce exactly 12,884,901,885 B at the root; the real tolerance 1e-4
+GB/s is below 8e-15 relative. The matching missing case terminates at the original
+deadline rather than adding a timeout per level. Clock-stop known/unknown point
+controls, their expiry and a reset of a middle group with existing history are
+also checked. A sampled observation gap retains the other points' known bytes
+and events through all eight levels, with both completeness flags false. A later
+actual edge while a middle group remains held in statistics reset still advances
+its own raw source, core receipt and input acknowledgement. Its ancestors recover
+a complete window independently of that group's local statistics held in reset.
+
+Startup cases cover typed equal-text IDs, duplicate direct subgroup rules,
+point/subgroup/sibling/diamond overlap with both paths, conflicts beyond 32/64-bit
+point-index boundaries, cycle paths, missing typed references, depth 8/9 and
+fanout 16/17. `hierarchy_edge_limit_{exact,excess}` accepts 65,536 edges and rejects
+65,537 with 4,096 groups/points. This proves startup validation only; it does not
+claim the maximum-duration or maximum-point scale workload. Recursive membership
+still uses one 16,384-bit mask per group (8 MiB at 4,096 groups), plus bounded
+traversal/depth metadata. Transport keeps one source backlog and independent
+positions per direct edge, separate from local statistics history.
+
+Run named cases with `python3 tests/run.py <case>...`; `tests/cases.json` contains
+the complete `hierarchy_*` matrix. Shared T4 fixture compilation units participate
+in the same cache digest as recursive RTL headers, source paths and runner flags.
+
+
+Before merging ticket 25, hierarchy validation passed **188/188 contract cases** on
+2026-10-24 with VCS W-2024.09-SP1_Full64 and Python 3.6.8: all 146 prior cases
+and 42 hierarchy cases at integration 6ad39d9. All 110 compiled tops had no
+Warning-/Error- diagnostics. The source, recursive-header, explicit-fixture and
+runner fingerprints matched that tree;
+every runtime log follows its current compilation stamp. `git diff --check` passed.
+This includes the final forward-reference, sampled-gap and held-upper-reset
+fixtures. Full group analysis parameters/aliases, real waveform review and scale
+execution remain separate acceptance work.
+
+An additional malformed-configuration startup probe creates a 4,096-group chain
+and correctly terminates at time zero with `GROUP_DEPTH`, depth 9, maximum 8 and a
+nine-group path. This VCS build reported automatic stack growth to 50,084,512 bytes
+during that invalid graph traversal. This is startup diagnostic resource behavior;
+it is not maximum-scale functional/runtime evidence or a maximum-RSS measurement.
+
+
+After merging integration d9fad43 (the point report owner), **250/250 current
+contract cases passed** across **119 compiled tops**: all 208 integration cases
+and 42 hierarchy cases. The full invocation passed 238 cases; three initial
+compile targets could not connect to the license server, affecting twelve cases.
+Only those twelve cases were retried, and all twelve passed with unchanged source.
+Their original infrastructure logs and retry transcript are retained separately.
+All final compile logs have no Warning-/Error- diagnostics, all source/header/
+fixture/runner fingerprints match, and every runtime log follows its current
+compilation stamp. The audit rechecks the current `expect_log` and `expect_counts`
+predicates, including exactly one final summary with 16/16 scopes in every T4
+mode and 5/5 in the equal-text point/group identity case. A focused three-case
+report-barrier run also passed. Group analysis aliases/comparisons, real waveform
+review and nominal scale execution remain later acceptance work.

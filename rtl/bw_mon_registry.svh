@@ -76,13 +76,86 @@
     return prefix.getc(length-1)==8'h2e || id.getc(length)==8'h2e;
   endfunction
 
-  function automatic void select_point_member(bw_group_state group,int point_handle,ref bit selected[int]);
-    int source_handle;
-    source_handle=point_source_handle(point_handle);
+  function automatic void select_member(bw_group_state group,int source_handle,ref bit selected[int]);
     if (!selected.exists(source_handle)) begin
       selected[source_handle]=1;group.members.push_back(source_handle);
-      group.recursive_points[point_handle]=1;
     end
+  endfunction
+
+  function automatic bit [16383:0] source_point_mask(int source_handle);
+    bit [16383:0] mask;
+    bw_source_state source;
+    source=registered_sources[source_handle];mask='0;
+    if (source.kind==BW_POINT) mask[source.point_handle]=1;
+    else mask=registered_groups[source.group_handle].recursive_points;
+    return mask;
+  endfunction
+
+  function automatic string source_point_path(int source_handle,int point_handle);
+    bw_source_state source;
+    bw_group_state group;
+    bit [16383:0] mask;
+    source=registered_sources[source_handle];
+    if (source.kind==BW_POINT) return {"point:",source.id};
+    group=registered_groups[source.group_handle];
+    foreach (group.members[m]) begin
+      mask=source_point_mask(group.members[m]);
+      if (mask[point_handle])
+        return {"group:",source.id," -> ",source_point_path(group.members[m],point_handle)};
+    end
+    core_error("TOPOLOGY_STATE",source.id,"recursive point path is absent");
+    return "";
+  endfunction
+
+  function automatic string group_depth_path(int group_handle);
+    bw_group_state group;
+    bw_source_state member;
+    group=registered_groups[group_handle];
+    foreach (group.members[m]) begin
+      member=registered_sources[group.members[m]];
+      if (member.kind==BW_GROUP && registered_groups[member.group_handle].depth+1==group.depth)
+        return {"group:",group.id," -> ",group_depth_path(member.group_handle)};
+    end
+    return {"group:",group.id};
+  endfunction
+
+  function automatic void validate_group_tree(int group_handle,string path);
+    bw_group_state group;
+    bw_source_state member;
+    bit [16383:0] mask,overlap;
+    int point_handle,prior_source;
+    group=registered_groups[group_handle];
+    if (group.traversal_state==1)
+      core_error("GROUP_CYCLE",group.id,{"path=",path});
+    if (group.traversal_state==2) return;
+    group.traversal_state=1;group.depth=1;group.recursive_points='0;
+    foreach (group.members[m]) begin
+      member=registered_sources[group.members[m]];
+      if (member.kind==BW_GROUP) begin
+        validate_group_tree(member.group_handle,{path," -> group:",member.id});
+        if (registered_groups[member.group_handle].depth+1>group.depth)
+          group.depth=registered_groups[member.group_handle].depth+1;
+      end
+      mask=source_point_mask(group.members[m]);overlap=group.recursive_points & mask;
+      if (overlap!='0) begin
+        point_handle=0;
+        while (!overlap[point_handle]) point_handle++;
+        prior_source=-1;
+        for (int p=0;p<m;p++) begin
+          mask=source_point_mask(group.members[p]);
+          if (mask[point_handle]) begin prior_source=group.members[p];break;end
+        end
+        core_error("GROUP_OVERLAP",group.id,
+          {"point=",registered_points[point_handle].id,
+           " path1=group:",group.id," -> ",source_point_path(prior_source,point_handle),
+           " path2=group:",group.id," -> ",source_point_path(group.members[m],point_handle)});
+      end
+      group.recursive_points|=source_point_mask(group.members[m]);
+    end
+    if (group.depth>8)
+      core_error("GROUP_DEPTH",group.id,
+        $sformatf("depth=%0d maximum=8 path=%s",group.depth,group_depth_path(group_handle)));
+    group.traversal_state=2;
   endfunction
 
   function automatic void freeze_routing();
@@ -91,24 +164,28 @@
     bw_member_rule_t rule;
     bit selected[int];
     bw_u64_t edge_count;
-    int point_handle,source_handle,match_count;
+    int source_handle,match_count,child_handle;
     edge_count=0;
+    // Resolve the entire typed graph before traversing forward subgroup rules.
     foreach (registered_groups[g]) begin
-      group=registered_groups[g];owner=registered_sources[group.source_handle];
+      group=registered_groups[g];
       group.members.delete();group.recursive_points='0;selected.delete();
       foreach (group.rules[r]) begin
         rule=group.rules[r];
-        if (rule.kind!=BW_POINT)
-          core_error("MEMBER_RULE",group.id,"nested group members require the hierarchy extension");
-        if (rule.match_kind==BW_EXACT) begin
+        if (rule.kind==BW_GROUP) begin
+          if (!group_by_id.exists(rule.id))
+            core_error("GROUP_REFERENCE",group.id,{"missing group=",rule.id," path=group:",group.id," -> group:",rule.id});
+          child_handle=group_by_id[rule.id];
+          select_member(group,group_source_handle(child_handle),selected);
+        end else if (rule.match_kind==BW_EXACT) begin
           if (!point_by_id.exists(rule.id))
-            core_error("GROUP_REFERENCE",group.id,{"missing point=",rule.id});
-          select_point_member(group,point_by_id[rule.id],selected);
+            core_error("GROUP_REFERENCE",group.id,{"missing point=",rule.id," path=group:",group.id," -> point:",rule.id});
+          select_member(group,point_source_handle(point_by_id[rule.id]),selected);
         end else begin
           match_count=0;
           foreach (registered_points[p]) begin
             if (point_prefix_matches(registered_points[p].id,rule.id)) begin
-              select_point_member(group,p,selected);match_count++;
+              select_member(group,point_source_handle(p),selected);match_count++;
             end
           end
           if (match_count==0) core_error("GROUP_REFERENCE",group.id,{"point prefix matched no points: ",rule.id});
@@ -120,7 +197,14 @@
         core_error("MEMBER_COUNT",group.id,
           $sformatf("expected=%0d actual=%0d after deduplication",group.expected_members,group.members.size()));
       edge_count=checked_add(edge_count,bw_u64_t'(group.members.size()),group.id);
-      if (edge_count>65536) core_error("TOPOLOGY_LIMIT",group.id,"more than 65536 direct-member edges");
+      if (edge_count>65536) core_error("TOPOLOGY_LIMIT",group.id,
+        $sformatf("more than 65536 direct-member edges: direct_edges=%0d maximum=65536",edge_count));
+    end
+    foreach (registered_groups[g])
+      validate_group_tree(g,{"group:",registered_groups[g].id});
+    // Install direct-consumer positions only after the graph is validated.
+    foreach (registered_groups[g]) begin
+      group=registered_groups[g];owner=registered_sources[group.source_handle];
       foreach (group.members[m]) begin
         source_handle=group.members[m];member=registered_sources[source_handle];
         if (member.clock_context!=owner.clock_context || member.basis!=owner.basis ||
@@ -130,7 +214,9 @@
              member.id,member.clock_context,owner.clock_context,member.basis,owner.basis,
              member.width,owner.width,member.stride,owner.stride));
         if (member.parents.size()>=16)
-          core_error("TOPOLOGY_LIMIT",group.id,{"source has more than 16 direct parents: ",member.id});
+          core_error("TOPOLOGY_LIMIT",group.id,
+            $sformatf("source has more than 16 direct parents: %s kind=%s direct_parents=%0d maximum=16",
+              member.id,source_kind_name(source_handle),member.parents.size()+1));
         member.parents.push_back(g);member.frame_acks[g]=0;member.control_acks[g]=0;
       end
     end
@@ -230,17 +316,28 @@
     declared_group_count++;configuration_seq=checked_add(configuration_seq,1,"configuration");
   endfunction
 
-  function automatic void add_point_member(string group_id,string point_id,bw_match_t match_kind=BW_EXACT);
+  function automatic void add_member(string group_id,logic [1:0] member_kind,string member_id,
+      bw_match_t match_kind=BW_EXACT);
     int handle;
     bw_member_rule_t rule;
     require_configuration_open(group_id);
     handle=group_handle_for_id(group_id);
-    if (point_id.len()==0 || $isunknown(match_kind) || !(match_kind inside {BW_EXACT,BW_PREFIX}))
-      core_error("MEMBER_RULE",group_id,"empty point match or invalid match kind");
-    rule.kind=BW_POINT;rule.match_kind=match_kind;rule.id=point_id;
+    if (member_id.len()==0 || $isunknown(member_kind) || !(member_kind inside {BW_POINT,BW_GROUP}) ||
+        $isunknown(match_kind) || !(match_kind inside {BW_EXACT,BW_PREFIX}) ||
+        (member_kind==BW_GROUP && match_kind!=BW_EXACT))
+      core_error("MEMBER_RULE",group_id,"member requires an explicit point/group type and a legal point match or exact Group ID");
+    rule.kind=bw_scope_t'(member_kind);rule.match_kind=match_kind;rule.id=member_id;
     check_queue_growth(registered_groups[handle].rules.size(),group_id);
     registered_groups[handle].rules.push_back(rule);
     configuration_seq=checked_add(configuration_seq,1,"configuration");
+  endfunction
+
+  function automatic void add_point_member(string group_id,string point_id,bw_match_t match_kind=BW_EXACT);
+    add_member(group_id,BW_POINT,point_id,match_kind);
+  endfunction
+
+  function automatic void add_group_member(string group_id,string child_group_id);
+    add_member(group_id,BW_GROUP,child_group_id,BW_EXACT);
   endfunction
 
   function automatic void finish_configuration();
