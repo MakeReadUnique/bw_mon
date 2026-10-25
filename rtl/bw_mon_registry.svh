@@ -1,17 +1,38 @@
-  function automatic string source_name(int handle);
-    if (handle<0 || handle>=registered_sources.size())
-      core_error("SOURCE_REFERENCE","transport",$sformatf("source_handle=%0d",handle));
-    return registered_sources[handle].id;
+  function automatic int checked_source_index(logic [63:0] handle,string operation="transport");
+    if($isunknown(handle))begin core_error("INTEGER_UNKNOWN","transport",{operation,$sformatf(" source_handle=%h",handle)});return 0;end
+    if(handle>=registered_sources.size())begin core_error("SOURCE_REFERENCE","transport",{operation,$sformatf(" source_handle=%0d",handle)});return 0;end
+    return int'(handle);
   endfunction
 
-  function automatic string source_kind_name(int handle);
-    return registered_sources[handle].kind==BW_POINT ? "point" : "group";
+  function automatic int checked_group_index(logic [63:0] handle,string operation="transport");
+    if($isunknown(handle))begin core_error("INTEGER_UNKNOWN","transport",{operation,$sformatf(" group_handle=%h",handle)});return 0;end
+    if(handle>=registered_groups.size())begin core_error("GROUP_REFERENCE","transport",{operation,$sformatf(" group_handle=%0d",handle)});return 0;end
+    return int'(handle);
+  endfunction
+
+  function automatic int checked_point_index(logic [63:0] handle,string operation="transport");
+    if($isunknown(handle))begin core_error("INTEGER_UNKNOWN","transport",{operation,$sformatf(" point_handle=%h",handle)});return 0;end
+    if(handle>=registered_points.size())begin core_error("POINT_REFERENCE","transport",{operation,$sformatf(" point_handle=%0d",handle)});return 0;end
+    return int'(handle);
+  endfunction
+
+  function automatic string source_name(logic [63:0] handle);
+    int index;index=checked_source_index(handle,"source_name");
+    return core_failure_seen ? "" : registered_sources[index].id;
+  endfunction
+
+  function automatic string source_kind_name(logic [63:0] handle);
+    int index;index=checked_source_index(handle,"source_kind");
+    if(core_failure_seen)return "";
+    return registered_sources[index].kind==BW_POINT ? "point" : "group";
   endfunction
 
   function automatic int create_source(bw_scope_t kind,string id);
     bw_source_state source;
     if (registered_sources.size()>=20480)
       core_error("TOPOLOGY_LIMIT",id,"more than 20480 point/group sources");
+    check_storage_growth(registered_sources.size(),id,"registry.source",$time);
+    if(core_failure_seen)return 0;
     source=new;
     source.kind=kind;source.id=id;
     registered_sources.push_back(source);
@@ -26,6 +47,8 @@
     if (!create) core_error("GROUP_REFERENCE",id,"group is not declared");
     if (registered_groups.size()>=4096)
       core_error("TOPOLOGY_LIMIT",id,"more than 4096 groups");
+    check_storage_growth(registered_groups.size(),id,"registry.groups",$time);
+    if(core_failure_seen)return 0;
     group=new;group.id=id;
     group.source_handle=create_source(BW_GROUP,id);
     handle=registered_groups.size();
@@ -40,27 +63,31 @@
     return -1;
   endfunction
 
-  function automatic int point_source_handle(int point_handle);
-    if (point_handle<0 || point_handle>=registered_points.size())
-      core_error("POINT_REFERENCE","transport",$sformatf("point_handle=%0d",point_handle));
-    return registered_points[point_handle].transport_source;
+  function automatic int point_source_handle(logic [63:0] handle);
+    int index;index=checked_point_index(handle,"point_source");
+    return core_failure_seen ? 0 : registered_points[index].transport_source;
   endfunction
 
-  function automatic int group_source_handle(int group_handle);
-    if (group_handle<0 || group_handle>=registered_groups.size())
-      core_error("GROUP_REFERENCE","transport",$sformatf("group_handle=%0d",group_handle));
-    return registered_groups[group_handle].source_handle;
+  function automatic int group_source_handle(logic [63:0] handle);
+    int index;index=checked_group_index(handle,"group_source");
+    return core_failure_seen ? 0 : registered_groups[index].source_handle;
   endfunction
 
-  function automatic int registered_scope_count(bw_scope_t kind);
+  function automatic int registered_scope_count(logic [1:0] kind);
     if (!monitor_ready) core_error("NOT_READY","registry","scope query before ready");
+    if($isunknown(kind))begin core_error("INTEGER_UNKNOWN","registry",$sformatf("scope_kind=%b",kind));return 0;end
+    if(!(kind inside {BW_POINT,BW_GROUP}))begin core_error("SCOPE_REFERENCE","registry",$sformatf("scope_kind=%0d",kind));return 0;end
     return kind==BW_POINT ? registered_points.size() : registered_groups.size();
   endfunction
 
-  function automatic string registered_scope_id(bw_scope_t kind,int index);
-    if (index<0 || index>=registered_scope_count(kind))
+  function automatic string registered_scope_id(logic [1:0] kind,logic [63:0] index);
+    int count;
+    count=registered_scope_count(kind);
+    if(core_failure_seen)return "";
+    if($isunknown(index))begin core_error("INTEGER_UNKNOWN","registry",$sformatf("scope_index=%h",index));return "";end
+    if (index>=count)
       core_error("SCOPE_REFERENCE","registry",$sformatf("kind=%0d index=%0d",kind,index));
-    return kind==BW_POINT ? registered_points[index].id : registered_groups[index].id;
+    return kind==BW_POINT ? registered_points[int'(index)].id : registered_groups[int'(index)].id;
   endfunction
 
   function automatic void require_configuration_open(string id);
@@ -78,6 +105,8 @@
 
   function automatic void select_member(bw_group_state group,int source_handle,ref bit selected[int]);
     if (!selected.exists(source_handle)) begin
+      check_storage_growth(group.members.size(),group.id,"registry.members",$time);
+      if(core_failure_seen)return;
       selected[source_handle]=1;group.members.push_back(source_handle);
     end
   endfunction
@@ -217,6 +246,8 @@
           core_error("TOPOLOGY_LIMIT",group.id,
             $sformatf("source has more than 16 direct parents: %s kind=%s direct_parents=%0d maximum=16",
               member.id,source_kind_name(source_handle),member.parents.size()+1));
+        check_storage_growth(member.parents.size(),member.id,"registry.parents",$time);
+        if(core_failure_seen)return;
         member.parents.push_back(g);member.frame_acks[g]=0;member.control_acks[g]=0;
       end
     end
@@ -261,8 +292,8 @@
     try_ready();
   endfunction
 
-  function automatic int register_point(string id,string monitor_path,bw_basis_t basis,
-      bw_u64_t width,bw_u64_t stride,string clock_context);
+  function automatic int register_point(string id,string monitor_path,logic [1:0] basis,
+      logic [63:0] width,logic [63:0] stride,string clock_context);
     bw_point_registration_t entry;
     bw_source_state source;
     int handle,transport;
@@ -277,16 +308,18 @@
     transport=create_source(BW_POINT,id);handle=registered_points.size();
     source=registered_sources[transport];source.point_handle=handle;
     source.monitor_path=monitor_path;source.clock_context=clock_context;
-    source.basis=basis;source.width=width;source.stride=stride;
-    entry.id=id;entry.monitor_path=monitor_path;entry.basis=basis;entry.width=width;
+    source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
+    entry.id=id;entry.monitor_path=monitor_path;entry.basis=bw_basis_t'(basis);entry.width=width;
     entry.stride=stride;entry.clock_context=clock_context;entry.transport_source=transport;
+    check_storage_growth(registered_points.size(),id,"registry.points",$time);
+    if(core_failure_seen)return 0;
     registered_points.push_back(entry);point_by_id[id]=handle;
     registration_seq=checked_add(registration_seq,1,"registration");try_ready();
     return handle;
   endfunction
 
-  function automatic int register_group_owner(string id,string monitor_path,bw_basis_t basis,
-      bw_u64_t width,bw_u64_t stride,string clock_context);
+  function automatic int register_group_owner(string id,string monitor_path,logic [1:0] basis,
+      logic [63:0] width,logic [63:0] stride,string clock_context);
     int handle;
     bw_group_state group;
     bw_source_state source;
@@ -299,7 +332,7 @@
       core_error("DUPLICATE_OWNER",id,$sformatf("first=%s second=%s",group.owner_path,monitor_path));
     group.owner_registered=1;group.owner_path=monitor_path;source=registered_sources[group.source_handle];
     source.monitor_path=monitor_path;source.clock_context=clock_context;
-    source.basis=basis;source.width=width;source.stride=stride;
+    source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
     registration_seq=checked_add(registration_seq,1,"registration");try_ready();
     return handle;
   endfunction
@@ -327,7 +360,8 @@
         (member_kind==BW_GROUP && match_kind!=BW_EXACT))
       core_error("MEMBER_RULE",group_id,"member requires an explicit point/group type and a legal point match or exact Group ID");
     rule.kind=bw_scope_t'(member_kind);rule.match_kind=match_kind;rule.id=member_id;
-    check_queue_growth(registered_groups[handle].rules.size(),group_id);
+    check_storage_growth(registered_groups[handle].rules.size(),group_id,"registry.rules",$time);
+    if(core_failure_seen)return;
     registered_groups[handle].rules.push_back(rule);
     configuration_seq=checked_add(configuration_seq,1,"configuration");
   endfunction

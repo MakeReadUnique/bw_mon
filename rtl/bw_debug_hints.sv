@@ -1,14 +1,14 @@
 module bw_debug_hints #(
   parameter bw_mon_pkg::bw_protocol_t PROTOCOL = bw_mon_pkg::BW_VALID_ONLY,
-  parameter bit CREDIT_ENABLE = 0,
+  parameter logic [1:0] CREDIT_ENABLE = 0,
   parameter logic [63:0] CREDIT_CAPACITY = 64'bx,
   parameter logic [63:0] CREDIT_INITIAL = 64'bx,
-  parameter bit CREDIT_INITIAL_KNOWN = 0,
+  parameter logic [1:0] CREDIT_INITIAL_KNOWN = 0,
   parameter bw_mon_pkg::bw_credit_return_t CREDIT_RETURN_TIMING = bw_mon_pkg::BW_RETURN_NEXT_CYCLE,
-  parameter bit BACKPRESSURE_ENABLE = 0,
+  parameter logic [1:0] BACKPRESSURE_ENABLE = 0,
   parameter logic [1:0] BACKPRESSURE_BASIS = 2'bxx,
   parameter logic [63:0] BACKPRESSURE_THRESHOLD = 64'bx,
-  parameter bit SHORTAGE_ENABLE = 0,
+  parameter logic [1:0] SHORTAGE_ENABLE = 0,
   parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
   parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx
 ) (

@@ -73,13 +73,13 @@ package bw_mon_pkg;
   // This is a per-edge record, including idle/unknown/reset edges. Time, edge,
   // record sequence and source epoch remain distinct quantities.
   typedef struct packed {
-    bw_u64_t timestamp_ticks;
-    bw_u64_t edge_index;
-    bw_u64_t record_seq;
-    bw_u64_t source_epoch;
-    bw_u64_t byte_inc;
-    bw_u64_t event_inc;
-    bw_u64_t reset_points;
+    logic [63:0] timestamp_ticks;
+    logic [63:0] edge_index;
+    logic [63:0] record_seq;
+    logic [63:0] source_epoch;
+    logic [63:0] byte_inc;
+    logic [63:0] event_inc;
+    logic [63:0] reset_points;
     bit events_complete;
     bit bytes_complete;
     logic reset_n;
@@ -88,10 +88,10 @@ package bw_mon_pkg;
   // Actual point-reset controls are not sampling frames: no edge is invented.
   // point_handle identifies the registered Point ID without copying strings.
   typedef struct packed {
-    bw_u64_t timestamp_ticks;
-    bw_u64_t control_seq;
-    bw_u64_t source_epoch;
-    int unsigned point_handle;
+    logic [63:0] timestamp_ticks;
+    logic [63:0] control_seq;
+    logic [63:0] source_epoch;
+    logic [31:0] point_handle;
     logic reset_n;
   } bw_control_t;
 
@@ -342,17 +342,27 @@ package bw_mon_pkg;
     if(report_sink!=null) report_sink.submit_phase(scope_id,result);
   endfunction
 
-  function automatic void validate_point_protocol(bw_protocol_t protocol, bit dynamic_bytes,
+  function automatic bit known_binary(logic [1:0] value);
+    return !$isunknown(value) && (value inside {2'd0,2'd1});
+  endfunction
+
+  function automatic void validate_point_protocol(bw_protocol_t protocol, logic [1:0] dynamic_bytes,
                                                   logic [63:0] fixed_bytes,string id);
     if($isunknown(protocol) || !(protocol inside {BW_VALID_ONLY,BW_VALID_READY,BW_CREDIT}))
       core_error("PROTOCOL_CONFIG",id,"unsupported protocol");
+    if(!known_binary(dynamic_bytes))
+      core_error("BYTE_CONFIG",id,"dynamic-byte policy must be known 0 or 1");
     if(!dynamic_bytes && ($isunknown(fixed_bytes) || fixed_bytes>64'hffffffff))
       core_error("BYTE_CONFIG",id,"fixed byte count must be known and at most 2^32-1");
   endfunction
 
-  function automatic void validate_credit_config(bw_protocol_t protocol,bit enable,
-      logic [63:0] capacity,logic [63:0] initial_balance,bit initial_known,
+  function automatic void validate_credit_config(bw_protocol_t protocol,logic [1:0] enable,
+      logic [63:0] capacity,logic [63:0] initial_balance,logic [1:0] initial_known,
       bw_credit_return_t return_timing,string id);
+    if($isunknown(protocol) || !(protocol inside {BW_VALID_ONLY,BW_VALID_READY,BW_CREDIT}))
+      core_error("PROTOCOL_CONFIG",id,"unsupported protocol");
+    if(!known_binary(enable) || !known_binary(initial_known))
+      core_error("CREDIT_CONFIG",id,"enable and initial-known policy must be known 0 or 1");
     if(protocol!=BW_CREDIT || !enable) return;
     if($isunknown(capacity)) core_error("CREDIT_CONFIG",id,"explicit known credit capacity required");
     if($isunknown(return_timing) || !(return_timing inside {BW_RETURN_NEXT_CYCLE,BW_RETURN_SAME_CYCLE}))
@@ -361,28 +371,72 @@ package bw_mon_pkg;
       core_error("CREDIT_CONFIG",id,"known initial balance must be specified and within capacity");
   endfunction
 
-  function automatic bw_u64_t checked_add(bw_u64_t a, bw_u64_t b, string scope_context);
+  function automatic bw_u64_t checked_add(logic [63:0] a, logic [63:0] b, string scope_context);
     bit [64:0] wide;
+    if ($isunknown({a,b})) begin
+      core_error("INTEGER_UNKNOWN",scope_context,$sformatf("addition a=%h b=%h",a,b));
+      return 0;
+    end
     wide = {1'b0,a} + {1'b0,b};
-    if (wide[64]) core_error("INTEGER_OVERFLOW", scope_context,
-                            $sformatf("addition a=%0d b=%0d", a, b));
+    if (wide[64]) begin
+      core_error("INTEGER_OVERFLOW", scope_context,$sformatf("addition a=%0d b=%0d", a, b));
+      return 0;
+    end
     return wide[63:0];
   endfunction
 
-  function automatic bw_u64_t checked_mul(bw_u64_t a, bw_u64_t b, string scope_context);
+  function automatic bw_u64_t checked_mul(logic [63:0] a, logic [63:0] b, string scope_context);
     bit [127:0] wide;
+    if ($isunknown({a,b})) begin
+      core_error("INTEGER_UNKNOWN",scope_context,$sformatf("multiplication a=%h b=%h",a,b));
+      return 0;
+    end
     wide = {64'b0,a} * {64'b0,b};
-    if (wide[127:64] != 0) core_error("INTEGER_OVERFLOW", scope_context,
-                                    $sformatf("multiplication a=%0d b=%0d", a, b));
+    if (wide[127:64] != 0) begin
+      core_error("INTEGER_OVERFLOW", scope_context,$sformatf("multiplication a=%0d b=%0d", a, b));
+      return 0;
+    end
     return wide[63:0];
   endfunction
 
-  function automatic bw_u64_t ns_to_ticks(bw_u64_t ns, string scope_context = "time");
+  function automatic bw_u64_t checked_sub(logic [63:0] a,logic [63:0] b,string scope_context);
+    if($isunknown({a,b}))begin
+      core_error("INTEGER_UNKNOWN",scope_context,$sformatf("subtraction a=%h b=%h",a,b));
+      return 0;
+    end
+    if(b>a)begin
+      core_error("INTEGER_UNDERFLOW",scope_context,$sformatf("subtraction a=%0d b=%0d",a,b));
+      return 0;
+    end
+    return a-b;
+  endfunction
+
+  function automatic bw_u64_t ns_to_ticks(logic [63:0] ns, string scope_context = "time");
     return checked_mul(ns, BW_TICKS_PER_NS, scope_context);
   endfunction
 
-  function automatic void validate_hint_config(bit supported,bit enabled,
+  // Numeric metadata must remain four-state until this boundary. Unknown raw
+  // reset levels are legitimate quality; known partial increments stay numeric.
+  function automatic void validate_record_numeric(bw_record_t value,string id);
+    if($isunknown({value.timestamp_ticks,value.edge_index,value.record_seq,value.source_epoch,
+                   value.byte_inc,value.event_inc,value.reset_points}))
+      core_error("INTEGER_UNKNOWN",id,
+        $sformatf("record ticks=%h edge=%h sequence=%h epoch=%h bytes=%h events=%h reset_points=%h",
+          value.timestamp_ticks,value.edge_index,value.record_seq,value.source_epoch,
+          value.byte_inc,value.event_inc,value.reset_points));
+  endfunction
+
+  function automatic void validate_control_numeric(bw_control_t value,string id);
+    if($isunknown({value.timestamp_ticks,value.control_seq,value.source_epoch,value.point_handle}))
+      core_error("INTEGER_UNKNOWN",id,
+        $sformatf("control ticks=%h sequence=%h epoch=%h point=%h",
+          value.timestamp_ticks,value.control_seq,value.source_epoch,value.point_handle));
+  endfunction
+
+  function automatic void validate_hint_config(logic [1:0] supported,logic [1:0] enabled,
       logic [1:0] basis,logic [63:0] threshold,string id,string hint_name);
+    if(!known_binary(supported) || !known_binary(enabled))
+      core_error("HINT_CONFIG",id,{hint_name," support and enable policy must be known 0 or 1"});
     if(!supported || !enabled) return;
     if($isunknown(basis) || !(basis inside {2'd0,2'd1}))
       core_error("HINT_CONFIG",id,{hint_name," requires explicit BW_NS/BW_CYCLE basis"});
@@ -391,9 +445,12 @@ package bw_mon_pkg;
     if(basis==BW_NS) void'(ns_to_ticks(threshold,{id," ",hint_name}));
   endfunction
 
-  function automatic void validate_episode_config(bit enable, logic [63:0] silence,
-                                                   bw_basis_t basis, string id);
+  function automatic void validate_episode_config(logic [1:0] enable, logic [63:0] silence,
+                                                   logic [1:0] basis, string id);
+    if(!known_binary(enable))core_error("EPISODE_CONFIG",id,"episode enable policy must be known 0 or 1");
     if (!enable) return;
+    if($isunknown(basis) || !(basis inside {BW_NS,BW_CYCLE}))
+      core_error("EPISODE_CONFIG",id,"episode basis must be known BW_NS/BW_CYCLE");
     if ($isunknown(silence) || silence==0)
       core_error("EPISODE_CONFIG",id,"enabled episode analysis requires explicit positive Q");
     if (basis==BW_NS) void'(ns_to_ticks(silence,id));
@@ -405,13 +462,17 @@ package bw_mon_pkg;
     return representation[62:52]!=11'h7ff && value>=0.0;
   endfunction
 
-  function automatic void validate_phase_config(bit enable,bit episode_enable,bw_basis_t basis,
+  function automatic void validate_phase_config(logic [1:0] enable,logic [1:0] episode_enable,logic [1:0] basis,
     logic [63:0] n,logic [63:0] span,logic [63:0] k,
     real steady_enter_abs,real steady_enter_rel,real steady_exit_abs,real steady_exit_rel,
     real rms_enter_abs,real rms_enter_rel,real rms_exit_abs,real rms_exit_rel,
     real trend_abs,real trend_rel,string id);
+    if(!known_binary(enable))core_error("PHASE_CONFIG",id,"phase enable policy must be known 0 or 1");
     if(!enable)return;
-    if(!episode_enable)core_error("PHASE_CONFIG",id,"phase analysis requires episode analysis");
+    if($isunknown(basis) || !(basis inside {BW_NS,BW_CYCLE}))
+      core_error("PHASE_CONFIG",id,"phase basis must be known BW_NS/BW_CYCLE");
+    if(!known_binary(episode_enable) || !episode_enable)
+      core_error("PHASE_CONFIG",id,"phase analysis requires known enabled episode analysis");
     if($isunknown({n,span,k}) || n<3 || span==0 || k==0)
       core_error("PHASE_CONFIG",id,"require explicit N>=3, positive minimum span and K");
     if(n>64'd2147483647)core_error("STORAGE_RANGE",id,
@@ -430,13 +491,17 @@ package bw_mon_pkg;
       core_error("PHASE_CONFIG",id,"trend must exceed steady exit tolerance for every nonnegative mean");
   endfunction
 
-  function automatic bit monitor_time_supported(bw_u64_t at_ticks);
+  function automatic bit monitor_time_supported(logic [63:0] at_ticks);
+    if($isunknown(at_ticks))return 0;
     if(!monitor_configured) return 1;
     if(at_ticks<monitor_start_ticks) return 0;
     return at_ticks-monitor_start_ticks<=BW_MONITOR_LIMIT_TICKS;
   endfunction
 
-  function automatic void check_monitor_time(bw_u64_t at_ticks, string scope_context);
+  function automatic void check_monitor_time(logic [63:0] at_ticks, string scope_context);
+    if($isunknown(at_ticks))begin
+      core_error("INTEGER_UNKNOWN",scope_context,$sformatf("time_ticks=%h",at_ticks));return;
+    end
     if(monitor_time_supported(at_ticks)) return;
     if(at_ticks<monitor_start_ticks)
       core_error("SIM_TIME_LIMIT",scope_context,
@@ -453,8 +518,34 @@ package bw_mon_pkg;
         $sformatf("queue_entries=%0d next entry cannot be represented",current_size));
   endfunction
 
-  function automatic void validate_window(bw_basis_t basis, bw_u64_t width,
-                                          bw_u64_t stride, string id);
+`ifdef BW_MON_TEST_FAULTS
+  // One-shot semantic allocation rejection for contract tests only. It is not
+  // a capacity limit, module parameter or ordinary-build configuration API.
+  bit injected_growth_failures[string][string];
+  function automatic void inject_growth_failure(string id,string resource);
+    injected_growth_failures[id][resource]=1;
+  endfunction
+`endif
+
+  function automatic void check_storage_growth(int current_size,string id,string resource,
+      bw_u64_t at_ticks=0,bw_u64_t edge_index=0,bw_u64_t record_number=0);
+    if(core_failure_seen)return;
+    check_queue_growth(current_size,{id," ",resource});
+    if(core_failure_seen)return;
+`ifdef BW_MON_TEST_FAULTS
+    if(injected_growth_failures.exists(id) && injected_growth_failures[id].exists(resource))begin
+      injected_growth_failures[id].delete(resource);
+      core_error("STORAGE_FAILURE",id,
+        $sformatf("resource=%s entries=%0d requested=1 edge=%0d record_seq=%0d original_ticks=%0d injected=1",
+          resource,current_size,edge_index,record_number,at_ticks));
+    end
+`endif
+  endfunction
+
+  function automatic void validate_window(logic [1:0] basis, logic [63:0] width,
+                                          logic [63:0] stride, string id);
+    if ($isunknown({basis,width,stride}) || !(basis inside {BW_NS,BW_CYCLE}))
+      core_error("WINDOW_CONFIG",id,"basis, W and S must be known; basis must be BW_NS/BW_CYCLE");
     if (width == 0 || stride == 0 || stride > width)
       core_error("WINDOW_CONFIG", id,
                  $sformatf("require 0<S<=W; W=%0d S=%0d", width, stride));

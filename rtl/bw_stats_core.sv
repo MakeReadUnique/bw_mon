@@ -1,10 +1,10 @@
 module bw_stats_core #(
-  parameter bw_mon_pkg::bw_basis_t WINDOW_BASIS = bw_mon_pkg::BW_NS,
-  parameter bw_mon_pkg::bw_u64_t WINDOW_WIDTH = 0,
-  parameter bw_mon_pkg::bw_u64_t UPDATE_STRIDE = 0,
-  parameter bit EPISODE_ENABLE = 0,
+  parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
+  parameter logic [63:0] WINDOW_WIDTH = 0,
+  parameter logic [63:0] UPDATE_STRIDE = 0,
+  parameter logic [1:0] EPISODE_ENABLE = 0,
   parameter logic [63:0] SILENCE_THRESHOLD = 0,
-  parameter bit PHASE_ENABLE = 0,
+  parameter logic [1:0] PHASE_ENABLE = 0,
   parameter logic [63:0] PHASE_N = 0,
   parameter logic [63:0] PHASE_MIN_SPAN = 0,
   parameter logic [63:0] PHASE_K = 0,
@@ -20,11 +20,11 @@ module bw_stats_core #(
   parameter real PHASE_TREND_REL = -1.0
 ) (
   input string scope_id,
-  input bw_mon_pkg::bw_scope_t scope_kind = bw_mon_pkg::BW_POINT,
+  input logic scope_kind = bw_mon_pkg::BW_POINT,
   input bw_mon_pkg::bw_record_t record,
   input bit record_toggle,
   input logic stats_reset_n = 1'b1,
-  input bw_mon_pkg::bw_u64_t progress_watermark_ticks = bw_mon_pkg::BW_U64_MAX,
+  input logic [63:0] progress_watermark_ticks = bw_mon_pkg::BW_U64_MAX,
   input bw_mon_pkg::bw_control_t member_control = '0,
   input bit member_control_toggle = 1'b0,
   output bw_mon_pkg::bw_u64_t accepted_record_seq = 0,
@@ -99,7 +99,16 @@ module bw_stats_core #(
 );
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_record_t history[$];
+  typedef struct packed {
+    bw_u64_t first_ticks,first_edge,last_ticks,last_edge,count,step_ticks,step_edges;
+    bw_u64_t byte_inc,event_inc;
+    bit bytes_complete,events_complete,has_reset;
+  } event_run_t;
+  typedef struct packed {
+    bw_u64_t first_ticks,first_edge,last_ticks,count,step_ticks;
+  } clock_run_t;
+  event_run_t history[$];
+  clock_run_t clock_runs[$];
   bw_record_t pending_frames[$];
   bw_u64_t pending_timers[$];
   typedef struct packed {
@@ -135,8 +144,7 @@ module bw_stats_core #(
   bw_u64_t last_frame_ticks = 0, last_edge_index = 0;
   // Idle edges are physical cycle boundaries too. Keep their integer times
   // separately from the sparse event/quality history used by both bases.
-  bw_u64_t cycle_boundary_ticks[$];
-  bw_u64_t boundary_first_cycle, cycle_origin, next_update_cycle;
+  bw_u64_t cycle_origin, next_update_cycle;
   bit cycle_initialized = 0;
   bit initialized = 0;
 
@@ -170,7 +178,12 @@ module bw_stats_core #(
     variation_state_t stats;
   } pending_phase_t;
   pending_phase_t pending_phases[$];
-  variation_sample_t episode_pending_samples[$],phase_pending_samples[$];
+  typedef struct {
+    bw_u64_t ticks,last_ticks,count,step_ticks;
+    real value;
+    bit warmup,foreign_activity,unknown_observation,bad_denominator;
+  } variation_run_t;
+  variation_run_t episode_pending_samples[$],phase_pending_samples[$];
   variation_state_t episode_variation,phase_variation;
   bw_phase_result_t last_steady;
   bit last_steady_found=0;
@@ -187,6 +200,9 @@ module bw_stats_core #(
   // including a zero-byte event. Unknown evidence has a separate quality gate.
   bit retired_activity_valid=0;
   bw_u64_t retired_episode_id=0,retired_last_ticks=0,retired_last_cycle=0;
+
+  `include "bw_history.svh"
+  `include "bw_variation_history.svh"
 
   function automatic bit foreign_activity();
     return retired_activity_valid && retired_episode_id!=episode_id &&
@@ -213,7 +229,7 @@ module bw_stats_core #(
   endtask
 
   function automatic bw_variation_result_t empty_variation_result();
-    return '{window_basis:WINDOW_BASIS,window_width:WINDOW_WIDTH,update_stride:UPDATE_STRIDE,
+    return '{window_basis:bw_basis_t'(WINDOW_BASIS),window_width:WINDOW_WIDTH,update_stride:UPDATE_STRIDE,
       minmax_reason:BW_METRIC_NO_SAMPLES,stddev_reason:BW_METRIC_TOO_FEW_SAMPLES,
       cv_reason:BW_METRIC_TOO_FEW_SAMPLES,default:0};
   endfunction
@@ -223,7 +239,7 @@ module bw_stats_core #(
   endfunction
 
   function automatic bw_phase_result_t empty_phase_result();
-    return '{scope_kind:scope_kind,phase_kind:BW_PHASE_UNDETERMINED,end_reason:BW_PHASE_CHANGE,
+    return '{scope_kind:bw_scope_t'(scope_kind),phase_kind:BW_PHASE_UNDETERMINED,end_reason:BW_PHASE_CHANGE,
       episode_status:BW_EPISODE_NONE,duration_reason:BW_METRIC_BOUNDARY_UNKNOWN,
       bandwidth_reason:BW_METRIC_BOUNDARY_UNKNOWN,variation:empty_variation_result(),default:0};
   endfunction
@@ -289,14 +305,9 @@ module bw_stats_core #(
     sample.ticks=window_end_ticks;sample.value=bandwidth_gbps;
     sample.warmup=!window_full;sample.foreign_activity=foreign_activity();
     sample.unknown_observation=!bytes_complete;sample.bad_denominator=!denominator_valid;
-    check_queue_growth(episode_pending_samples.size(),scope_id);
+    append_variation_history(episode_pending_samples,sample,"variation.episode");
     if(core_failure_seen)return;
-    episode_pending_samples.push_back(sample);
-    if(PHASE_ENABLE)begin
-      check_queue_growth(phase_pending_samples.size(),scope_id);
-      if(core_failure_seen)return;
-      phase_pending_samples.push_back(sample);
-    end
+    if(PHASE_ENABLE)append_variation_history(phase_pending_samples,sample,"variation.phase");
   endtask
 
   // Only samples inside already established coverage and outside the possible
@@ -307,10 +318,12 @@ module bw_stats_core #(
     bw_u64_t phase_through;
     phase_through=closed_through>covered_through ? closed_through : covered_through;
     while(episode_pending_samples.size()!=0 && episode_pending_samples[0].ticks<covered_through)begin
-      sample=episode_pending_samples.pop_front();add_variation_sample(episode_variation,sample);
+      pop_variation_sample(episode_pending_samples,sample);
+      if(core_failure_seen)return;
+      add_variation_sample(episode_variation,sample);
     end
     while(phase_pending_samples.size()!=0 && phase_pending_samples[0].ticks<phase_through)begin
-      sample=phase_pending_samples[0];assigned_sample=0;blocked_sample=0;
+      sample=first_variation_sample(phase_pending_samples[0]);assigned_sample=0;blocked_sample=0;
       foreach(pending_phases[i])begin
         if(sample.ticks>=pending_phases[i].fragment.start_ticks && sample.ticks<pending_phases[i].fragment.end_ticks)begin
           if(sample.ticks<covered_through || (pending_phases[i].fragment.end_known &&
@@ -326,7 +339,8 @@ module bw_stats_core #(
         if(sample.ticks>=covered_through && !finishing)break;
         add_variation_sample(phase_variation,sample);
       end
-      sample=phase_pending_samples.pop_front();
+      pop_variation_sample(phase_pending_samples,sample);
+      if(core_failure_seen)return;
     end
   endtask
 
@@ -400,7 +414,7 @@ module bw_stats_core #(
     pending_phase_t pending;
     if(!PHASE_ENABLE || !phase_active || core_failure_seen)return;
     if(end_known && end_tick<=phase_start_ticks)begin phase_active=0;return;end
-    fragment.scope_kind=scope_kind;fragment.stats_epoch=stats_epoch;
+    fragment.scope_kind=bw_scope_t'(scope_kind);fragment.stats_epoch=stats_epoch;
     fragment.episode_id=episode_id;fragment.phase_id=phase_id;fragment.result_seq=0;
     fragment.phase_kind=phase_current;fragment.end_reason=reason;fragment.episode_status=BW_EPISODE_ACTIVE;
     fragment.start_ticks=phase_start_ticks;fragment.end_ticks=end_tick;
@@ -413,7 +427,7 @@ module bw_stats_core #(
     fragment.start_reset_records=phase_start_reset_records;fragment.end_reset_records=end_reset_records;
     fragment.start_unknown_ticks=phase_start_unknown_ticks;fragment.end_unknown_ticks=end_unknown_ticks;
     fragment.confirmation_delta=phase_confirmation_delta;fragment.confirmation_rms=phase_confirmation_rms;
-    check_queue_growth(pending_phases.size(),scope_id);
+    check_storage_growth(pending_phases.size(),scope_id,"phase.pending",end_tick,last_edge_index,last_record_seq);
     if(core_failure_seen)return;
     pending.fragment=fragment;pending.stats=phase_variation;
     pending_phases.push_back(pending);phase_variation=empty_variation();phase_active=0;
@@ -529,7 +543,9 @@ module bw_stats_core #(
     if(phase_samples.size()>=PHASE_N)discarded=phase_samples.pop_front();
     sample.ticks=window_end_ticks;sample.basis_position=(WINDOW_BASIS==BW_NS) ?
       window_end_ticks : window_end_cycle;sample.value=bandwidth_gbps;
-    check_queue_growth(phase_samples.size(),scope_id);phase_samples.push_back(sample);
+    check_storage_growth(phase_samples.size(),scope_id,"phase.fit",window_end_ticks,last_edge_index,last_record_seq);
+    if(core_failure_seen)return;
+    phase_samples.push_back(sample);
     phase_evidence_count=phase_samples.size();
     phase_evidence_span=sample.basis_position-phase_samples[0].basis_position;
     phase_evidence_sufficient=(phase_evidence_count==PHASE_N) &&
@@ -642,7 +658,7 @@ module bw_stats_core #(
       real'(episode_bytes)*real'(BW_TICKS_PER_NS)/real'(episode_duration_ticks) : 0.0;
     episode_result_seq=checked_add(episode_result_seq,1,scope_id);
     if (core_failure_seen) return;
-    episode_result.scope_kind=scope_kind;
+    episode_result.scope_kind=bw_scope_t'(scope_kind);
     episode_result.stats_epoch=stats_epoch; episode_result.result_seq=episode_result_seq;
     episode_result.episode_id=episode_id; episode_result.status=status;
     episode_result.first_ticks=episode_first_ticks; episode_result.last_ticks=episode_last_ticks;
@@ -796,10 +812,12 @@ module bw_stats_core #(
         interval.start_ticks=active.start_ticks; interval.end_ticks=at_ticks;
         interval.unknown_reset=$isunknown(active.reset_n);
         interval.known_reset=(active.reset_n === 1'b0);
-        check_queue_growth(quality_intervals.size(),scope_id);
+        check_storage_growth(quality_intervals.size(),scope_id,"quality.window",at_ticks,last_edge_index,last_record_seq);
+        if(core_failure_seen)return;
         quality_intervals.push_back(interval);
         if (EPISODE_ENABLE && episode_active && interval.known_reset) begin
-          check_queue_growth(episode_quality_intervals.size(),scope_id);
+          check_storage_growth(episode_quality_intervals.size(),scope_id,"quality.episode",at_ticks,last_edge_index,last_record_seq);
+          if(core_failure_seen)return;
           episode_quality_intervals.push_back(interval);
         end
       end
@@ -844,7 +862,6 @@ module bw_stats_core #(
   endtask
 
   task automatic publish_window(bw_u64_t at_ticks, bw_u64_t at_cycle = 0);
-    bw_record_t expired;
     bw_u64_t width_ticks, left, left_cycle;
     if (WINDOW_BASIS == BW_NS) begin
       width_ticks = ns_to_ticks(WINDOW_WIDTH,scope_id);
@@ -854,22 +871,15 @@ module bw_stats_core #(
     end else begin
       left_cycle = (at_cycle-cycle_origin >= WINDOW_WIDTH) ? at_cycle-WINDOW_WIDTH
                                                          : cycle_origin;
-      left=cycle_boundary_ticks[0];
+      left=left_clock_tick();
       window_start_cycle=left_cycle; window_end_cycle=at_cycle;
       coverage_cycles=at_cycle-left_cycle;
       window_full=(at_cycle-cycle_origin>=WINDOW_WIDTH);
     end
     advance_raw_quality(at_ticks);
     // Rolling exact totals avoid an O(window-history) scan on each update.
-    while (history.size() != 0 && ((WINDOW_BASIS == BW_NS && history[0].timestamp_ticks < left) ||
-           (WINDOW_BASIS == BW_CYCLE && history[0].edge_index < left_cycle))) begin
-      expired=history.pop_front();
-      retained_bytes -= expired.byte_inc;
-      retained_events -= expired.event_inc;
-      if (!expired.bytes_complete) unknown_bytes--;
-      if (!expired.events_complete) unknown_events--;
-      if (expired.reset_points != 0) reset_entries--;
-    end
+    expire_event_history(left,left_cycle);
+    if(core_failure_seen)return;
     window_start_ticks=left; window_end_ticks=at_ticks;
     coverage_ticks=at_ticks-left;
     window_bytes=retained_bytes; window_events=retained_events;
@@ -909,7 +919,7 @@ module bw_stats_core #(
     episode_duration_valid=0; episode_e2e_valid=0; episode_e2e_gbps=0.0;
     stats_epoch=checked_add(stats_epoch,1,scope_id);
     stats_start_ticks=at_ticks;
-    history.delete(); cycle_boundary_ticks.delete();
+    history.delete(); clock_runs.delete();
     quality_intervals.delete(); active_quality.delete(-1);
     retained_bytes=0; retained_events=0;
     unknown_bytes=0; unknown_events=0; reset_entries=0;
@@ -936,7 +946,8 @@ module bw_stats_core #(
     observed_reset_n=stats_reset_n;
     reset_enqueued=1;
     action.timestamp_ticks=$time; action.reset_n=stats_reset_n;
-    check_queue_growth(pending_resets.size(),scope_id);
+    check_storage_growth(pending_resets.size(),scope_id,"core.resets",action.timestamp_ticks,last_edge_index,last_record_seq);
+    if(core_failure_seen)return;
     pending_resets.push_back(action);
     requested_actions=checked_add(requested_actions,1,scope_id);
   endtask
@@ -1023,7 +1034,7 @@ module bw_stats_core #(
   // publishes all due [left,T) results before accounting T's event; a timer
   // arriving first advances the same schedule, so either order gives one result.
   task automatic dispatch(bit is_frame, bw_record_t incoming, bw_u64_t now_ticks);
-    bw_u64_t left_cycle, discarded_boundary;
+    bw_u64_t left_cycle;
     if (!monitor_ready) return;
     if (is_frame) begin
       if (incoming.record_seq != checked_add(last_record_seq,1,scope_id))
@@ -1045,18 +1056,14 @@ module bw_stats_core #(
       if (WINDOW_BASIS == BW_CYCLE) begin
         if (!cycle_initialized) begin
           cycle_origin=incoming.edge_index;
-          boundary_first_cycle=cycle_origin;
           next_update_cycle=checked_add(cycle_origin,UPDATE_STRIDE,scope_id);
           cycle_initialized=1;
         end
-        check_queue_growth(cycle_boundary_ticks.size(),scope_id);
-        cycle_boundary_ticks.push_back(incoming.timestamp_ticks);
+        append_clock_boundary(incoming.timestamp_ticks,incoming.edge_index);
         left_cycle=(incoming.edge_index-cycle_origin>=WINDOW_WIDTH) ?
                     incoming.edge_index-WINDOW_WIDTH : cycle_origin;
-        while (boundary_first_cycle<left_cycle) begin
-          discarded_boundary=cycle_boundary_ticks.pop_front();
-          boundary_first_cycle=checked_add(boundary_first_cycle,1,scope_id);
-        end
+        expire_clock_boundaries(left_cycle);
+        if(core_failure_seen)return;
         if (incoming.edge_index == next_update_cycle) begin
           publish_window(now_ticks,incoming.edge_index);
           next_update_cycle=checked_add(next_update_cycle,UPDATE_STRIDE,scope_id);
@@ -1083,27 +1090,39 @@ module bw_stats_core #(
     if (incoming.reset_points!=0) reset_entries=checked_add(reset_entries,1,scope_id);
     if (incoming.byte_inc!=0 || incoming.event_inc!=0 || !incoming.bytes_complete ||
         !incoming.events_complete || incoming.reset_points!=0) begin
-      check_queue_growth(history.size(),scope_id);
-      history.push_back(incoming);
+      append_event_history(incoming);
     end
     accepted_record_seq=incoming.record_seq;
   endtask
 
   always @(record_toggle) begin
-    if (monitor_ready && record.record_seq != 0) begin
+    if(monitor_ready)validate_record_numeric(record,scope_id);
+    if (monitor_ready && !core_failure_seen && record.record_seq != 0) begin
       if (record.timestamp_ticks>$time)
         core_error("RECORD_TIME",scope_id,"record timestamp is in the future");
-      check_queue_growth(pending_frames.size(),scope_id);
-      pending_frames.push_back(record);
-      requested_actions=checked_add(requested_actions,1,scope_id);
+      check_storage_growth(pending_frames.size(),scope_id,"core.frames",record.timestamp_ticks,record.edge_index,record.record_seq);
+      if(!core_failure_seen)begin
+        pending_frames.push_back(record);
+        requested_actions=checked_add(requested_actions,1,scope_id);
+      end
     end
   end
   always @(stats_reset_n) if (monitor_ready) enqueue_reset();
+  always @(scope_kind or progress_watermark_ticks or monitor_ready)begin
+    if(monitor_ready && scope_id.len()!=0)begin
+      if($isunknown(scope_kind))core_error("SCOPE_KIND",scope_id,"scope kind must be known BW_POINT/BW_GROUP");
+      if($isunknown(progress_watermark_ticks))
+        core_error("INTEGER_UNKNOWN",scope_id,$sformatf("progress_watermark=%h",progress_watermark_ticks));
+    end
+  end
   always @(member_control_toggle) begin
-    if (monitor_ready && member_control.control_seq!=0) begin
-      check_queue_growth(pending_member_controls.size(),scope_id);
-      pending_member_controls.push_back(member_control);
-      requested_actions=checked_add(requested_actions,1,scope_id);
+    if(monitor_ready)validate_control_numeric(member_control,scope_id);
+    if (monitor_ready && !core_failure_seen && member_control.control_seq!=0) begin
+      check_storage_growth(pending_member_controls.size(),scope_id,"core.controls",member_control.timestamp_ticks,last_edge_index,last_record_seq);
+      if(!core_failure_seen)begin
+        pending_member_controls.push_back(member_control);
+        requested_actions=checked_add(requested_actions,1,scope_id);
+      end
     end
   end
 
@@ -1135,7 +1154,7 @@ module bw_stats_core #(
 
   bw_stats_core_scheduler scheduler();
 
-  initial begin
+  initial begin : core_timer_worker
     bw_u64_t observed_schedule, due_tick, request_number;
     wait(monitor_ready);
     enqueue_reset();
@@ -1160,7 +1179,8 @@ module bw_stats_core #(
           end
           if (timer_schedule_seq == observed_schedule && $time >= due_tick &&
               due_tick<=progress_watermark_ticks) begin
-            check_queue_growth(pending_timers.size(),scope_id);
+            check_storage_growth(pending_timers.size(),scope_id,"core.timers",$time,last_edge_index,last_record_seq);
+            if(core_failure_seen)disable core_timer_worker;
             pending_timers.push_back($time);
             timer_requests=checked_add(timer_requests,1,scope_id);
             request_number=timer_requests;
@@ -1174,6 +1194,7 @@ module bw_stats_core #(
 
   initial begin
     wait(scope_id.len()!=0);
+    validate_window(WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
     validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
     validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
@@ -1190,7 +1211,7 @@ module bw_stats_core #(
       end else check_monitor_time($time,scope_id);
     end
     if(monitor_ready && !core_failure_pending()) begin
-      if(monitor_time_supported($time)) report_scope_done(scope_kind,scope_id,stats_epoch);
+      if(monitor_time_supported($time)) report_scope_done(bw_scope_t'(scope_kind),scope_id,stats_epoch);
       else check_monitor_time($time,scope_id);
     end
   end

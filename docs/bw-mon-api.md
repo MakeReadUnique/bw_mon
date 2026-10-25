@@ -1241,3 +1241,12 @@ is not a measurement: inspect its validity/reason. `window_mean` is variation
 context and is distinct from raw interval BW. Full supported target keys, evidence
 requirements, stream deduplication and final barrier are in
 [Expectation configuration and reports](bw-mon-expectations.md).
+
+
+## Exact numeric boundaries and automatic retention
+
+See [numeric/storage contracts](bw-mon-numeric-storage.md) for raw-before-narrowing
+configuration and metadata validation, checked unsigned arithmetic, exact event/
+clock/publication runs, independent source ACK retention, contextual test-only
+allocation rejection and reproducible resource evidence. Public names and numeric
+widths remain stable; malformed policies cannot become known-zero accounting.

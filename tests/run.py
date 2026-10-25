@@ -31,23 +31,25 @@ def main():
         files = sources + [ROOT / "tests" / name for name in case.get("sources", [])] + [ROOT / "tests" / (top + ".sv")]
         dependencies = files + sorted(path for path in (ROOT / "rtl").rglob("*")
                                       if path.suffix in {".svh", ".vh"})
-        build_fingerprint = str(ROOT).encode() + Path(__file__).resolve().read_bytes()
+        defines = case.get("defines", [])
+        build_fingerprint = (str(ROOT).encode() + Path(__file__).resolve().read_bytes() +
+                             json.dumps(defines).encode())
         digest = hashlib.sha256(build_fingerprint + b"".join(str(path).encode() + path.read_bytes()
                                                            for path in dependencies)).hexdigest()
         stamp = build / "source.sha256"
-        if top not in compiled:
+        if top not in compiled or compiled[top][0] != digest:
             if args.no_cache or not (build / "simv").exists() or not stamp.exists() or stamp.read_text() != digest:
                 cmd = ["vcs", "-full64", "-sverilog", "-timescale=1ns/1fs", "-debug_access+all",
                        "+incdir+" + str(ROOT / "rtl"), "-assert", "svaext",
-                       "-top", top, "-o", str(build / "simv")] + [str(path) for path in files]
+                       "-top", top, "-o", str(build / "simv")] + ["+define+" + name for name in defines] + [str(path) for path in files]
                 with (build / "compile.log").open("w") as log:
                     result = subprocess.run(cmd, cwd=build, stdout=log, stderr=subprocess.STDOUT)
-                compiled[top] = result.returncode == 0
-                if compiled[top]:
+                compiled[top] = (digest, result.returncode == 0)
+                if compiled[top][1]:
                     stamp.write_text(digest)
             else:
-                compiled[top] = True
-        if not compiled[top]:
+                compiled[top] = (digest, True)
+        if not compiled[top][1]:
             print(f"FAIL {case['name']}: compilation; {build / 'compile.log'}")
             failures.append(case["name"])
             continue
