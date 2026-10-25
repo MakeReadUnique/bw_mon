@@ -12,9 +12,10 @@ repo=Path(sys.argv[1]).resolve()
 manifest_path=Path(sys.argv[2]).resolve()
 m=json.loads(manifest_path.read_text());attempt=manifest_path.parent;errors=[]
 build=Path(m['compile']['cwd'])
+consumed=Path(m.get('source_snapshot',str(build)))
 for name,expected in m['source_sha256'].items():
     if digest(repo/name)!=expected:errors.append(dict(error='current_source_hash',file=name))
-    if name.startswith('rtl/') and digest(build/name)!=expected:errors.append(dict(error='build_snapshot_hash',file=name))
+    if name.startswith('rtl/') and digest(consumed/name)!=expected:errors.append(dict(error='build_snapshot_hash',file=name))
 for name,expected in m['generated_sha256'].items():
     if digest(attempt/name)!=expected or digest(build/name)!=expected:errors.append(dict(error='generated_hash',file=name))
 compile_log=Path(m['compile']['log']).read_text()
