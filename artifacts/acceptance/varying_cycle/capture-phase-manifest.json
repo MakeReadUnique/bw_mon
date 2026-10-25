@@ -7,14 +7,14 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/varying_cycle/capture-phase.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-zc_9xp53",
-  "display": ":87",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-0o3a4x1h",
+  "display": ":88",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "2f1780f80dfaef848ea624d966a9c79eb5f871a9decba51bbd1da5ac4aaca972",
+  "fsdb_sha256": "2ddffc4bb2976f850d2d74721b3a3f9963dbc3165926fdffe31efe7a96deb1fc",
   "png_sha256": "f940f69f90e2d8c751b673df0c4a6f1a6126953cbec34743d22be6964c7836b2",
   "agent_visual_review": "PENDING",
   "human_review": "PENDING"
