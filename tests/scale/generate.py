@@ -202,7 +202,7 @@ endmodule
     analysis='''.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(@Q@),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(@SPAN@),.PHASE_K(4),
     .PHASE_STEADY_ENTER_ABS(0),.PHASE_STEADY_ENTER_REL(0),.PHASE_STEADY_EXIT_ABS(0),.PHASE_STEADY_EXIT_REL(0),
     .PHASE_RMS_ENTER_ABS(1e-6),.PHASE_RMS_ENTER_REL(0),.PHASE_RMS_EXIT_ABS(1e-6),.PHASE_RMS_EXIT_REL(0),
-    .PHASE_TREND_ABS(1),.PHASE_TREND_REL(0)'''.replace('@Q@','30' if s.basis=='ns' else '60').replace('@SPAN@','20' if s.basis=='ns' else '40')
+    .PHASE_TREND_ABS(1),.PHASE_TREND_REL(0)'''.replace('@Q@','30' if s.basis=='ns' else '60').replace('@SPAN@',str(s.config.get('analysis_min_span',20 if s.basis=='ns' else 40)))
     win='.WINDOW_BASIS(bw_mon_pkg::bw_basis_t\'(bw_scale_input_pkg::BASIS)),.WINDOW_WIDTH(bw_scale_input_pkg::WIDTH),.UPDATE_STRIDE(bw_scale_input_pkg::STRIDE)'
     def connections(group=False):
         parts=['.is_group(1\'b'+str(int(group))+')']
