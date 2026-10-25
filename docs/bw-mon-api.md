@@ -993,7 +993,11 @@ Settled samples accumulate online using mean and centered second moment,
 count and extrema. Samples whose ownership may change under K backdating or
 whose inclusion may change under final tail clipping remain retained exactly.
 A later definite transfer can settle an earlier internal pause; trailing
-confirmation samples remain excluded. This does not retain every result for the
+confirmation samples remain excluded. For an already closed fragment while the
+tail is unknown, accounted observation through min(current physical time, input
+progress watermark) proves no earlier next edge can cut it. This lower bound
+settles that closed fragment's samples only; it never creates a tail/e2e endpoint
+or closes an otherwise still-open phase at observation end. This does not retain every result for the
 whole simulation. Queue growth, counters, quality-time arithmetic and real
 representation are checked; failures are terminal `METRIC_TIME`,
 `METRIC_ARITHMETIC` or the common checked-storage/arithmetic diagnostic. Final
@@ -1041,6 +1045,7 @@ real calculations use numerical tolerance1e-10 GB/s or percentage points):
 | `metrics_quality`, `metrics_independent` |Unknown raw bytes and unknown selected window coverage have independent effects; definite unknown-size transfers keep event counts complete |
 | `metrics_controls`, `metrics_exclusions` |No-edge unknown versus known member-reset controls; later independently complete stages; old zero-byte residue/left equality and normal warmup versus actual unknown publication coverage |
 | `metrics_late_recovery` |Original unknown control2.5/recovery3.5 delivered with raw frame10: old ambiguous episode completes at originalQ7.5 using saved quiet quality prefix; new[10,11) episode remains complete8 GB/s; reset modes distinguish pre-epoch/equal-left recovery from actual member or own-control gaps after release |
+| `metrics_stopped_history` |Clock stops after last transfer6; closed ramp[6,8) retains duration2/raw20 and selected30/40 sigma5, while tail/e2e/current phase remain unavailable at truncation |
 | `metrics_interrupted` |Settled ramp[6,8) has raw40 GB/s and duration2 ns, selected30/40 windows give sigma5 despite fitRMS0; later reset/truncation leaves it valid and representative selection unavailable |
 
 Reproduce with `python3 tests/run.py` or pass any listed case name. These

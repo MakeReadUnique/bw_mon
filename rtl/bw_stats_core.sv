@@ -301,22 +301,31 @@ module bw_stats_core #(
 
   // Only samples inside already established coverage and outside the possible
   // backdated candidate suffix can enter irreversible online summaries.
-  task automatic settle_variation(bw_u64_t covered_through,bit finishing=0);
+  task automatic settle_variation(bw_u64_t covered_through,bit finishing=0,bw_u64_t closed_through=0);
     variation_sample_t sample;
-    bit assigned_sample;
+    bit assigned_sample,blocked_sample;
+    bw_u64_t phase_through;
+    phase_through=closed_through>covered_through ? closed_through : covered_through;
     while(episode_pending_samples.size()!=0 && episode_pending_samples[0].ticks<covered_through)begin
       sample=episode_pending_samples.pop_front();add_variation_sample(episode_variation,sample);
     end
-    while(phase_pending_samples.size()!=0 && phase_pending_samples[0].ticks<covered_through)begin
-      sample=phase_pending_samples[0];assigned_sample=0;
+    while(phase_pending_samples.size()!=0 && phase_pending_samples[0].ticks<phase_through)begin
+      sample=phase_pending_samples[0];assigned_sample=0;blocked_sample=0;
       foreach(pending_phases[i])begin
         if(sample.ticks>=pending_phases[i].fragment.start_ticks && sample.ticks<pending_phases[i].fragment.end_ticks)begin
-          add_variation_sample(pending_phases[i].stats,sample);assigned_sample=1;break;
+          if(sample.ticks<covered_through || (pending_phases[i].fragment.end_known &&
+              pending_phases[i].fragment.end_ticks<=closed_through))begin
+            add_variation_sample(pending_phases[i].stats,sample);assigned_sample=1;
+          end else blocked_sample=1;
+          break;
         end
       end
+      if(blocked_sample)break;
       if(!assigned_sample && phase_candidate_count!=0 && sample.ticks>=phase_candidate_ticks && !finishing)break;
-      if(!assigned_sample && phase_active && sample.ticks>=phase_start_ticks)
+      if(!assigned_sample && phase_active && sample.ticks>=phase_start_ticks)begin
+        if(sample.ticks>=covered_through && !finishing)break;
         add_variation_sample(phase_variation,sample);
+      end
       sample=phase_pending_samples.pop_front();
     end
   endtask
@@ -412,12 +421,17 @@ module bw_stats_core #(
 
   task automatic flush_safe_phases();
     pending_phase_t pending;
-    bw_u64_t known_covered_through;
+    bw_u64_t known_covered_through,closed_covered_through;
     if(!episode_active)return;
     known_covered_through=episode_tail_known ? episode_tail_ticks : episode_last_ticks;
-    settle_variation(known_covered_through);
+    // A real next edge has not occurred before the accounted observation
+    // horizon. This proves an already-closed fragment lies inside the current
+    // transfer cycle, without inventing that cycle's tail or closing a phase.
+    closed_covered_through=episode_tail_known ? episode_tail_ticks :
+      (($time<progress_watermark_ticks) ? $time : progress_watermark_ticks);
+    settle_variation(known_covered_through,0,closed_covered_through);
     while(pending_phases.size()!=0 && pending_phases[0].fragment.end_known &&
-          pending_phases[0].fragment.end_ticks<=known_covered_through)begin
+          pending_phases[0].fragment.end_ticks<=closed_covered_through)begin
       pending=pending_phases.pop_front();deliver_phase(pending.fragment,pending.stats);
     end
   endtask

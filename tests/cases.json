@@ -957,5 +957,12 @@
     "plusargs": [
       "+MODE=4"
     ]
+  },
+  {
+    "name": "metrics_stopped_history",
+    "top": "tb_metrics_stopped_history",
+    "expect_log": [
+      "BW_PHASE_METRICS.*scope=metrics.stopped0 .*start_ticks=6000000 end_ticks=8000000.*duration_valid=1.*bandwidth_gbps=20 .*duration_reason=NONE"
+    ]
   }
 ]
