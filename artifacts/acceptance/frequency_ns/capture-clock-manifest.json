@@ -7,14 +7,14 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/frequency_ns/capture-clock.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-imw95dk6",
-  "display": ":87",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-sto5xypx",
+  "display": ":88",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "c97050f8fccdcecc57cbb9429f23a12cab853226f29b04a8e0d9883fc92d4f71",
+  "fsdb_sha256": "d92665dc1a1b94bbc6adc8ae4e50367f902c9a7ac01ae5ad1fba76e802082e30",
   "png_sha256": "3745c1b124782d27c993ab83b47ea8dd90ed45e31021f79dff0a7eb77e3822b0",
   "agent_visual_review": "PENDING",
   "human_review": "PENDING"

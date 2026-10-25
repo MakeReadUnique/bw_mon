@@ -1,14 +1,19 @@
 # Concrete human T6 review checklist — frozen objects
 
 **Human review is PENDING.** These are actual generated objects, not future work.
-This bundle was freshly rerun/captured on runtime `8e818394` with42 unchanged
+This bundle was freshly rerun/captured on actual scene checkout `cd07c77fcb706022069a9496bcf72d4354c1d2f8`
+(production18 byte-identical to fix56127495, independently qualified by427 cases/168 tops
+at component checkout467b722; see final-component-proof) with42 unchanged
 original input/configuration scenes and33 real Verdi images. Object names,
 intervals and numeric targets below are unchanged. Its asset fingerprint is
-`65f318be688aa05ca26231cda061d011f936e41c94f0f52857d773e9d8f3ae98`;
+`863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee`;
 earlier bundle signatures do not cover these regenerated objects.
 Stopped/frequency clock views now also show die0/die1/mixed B/cycle rows; these
 are0 in NS mode. Existing objects, time intervals and targets stay unchanged.
-Automation passed42 scenes; agent image inspection is separately recorded. Open
+Automation passed42 scenes; twelve new images were separately inspected by an agent.
+The original42 independent reference files also remain byte-identical. Historical
+ledgers and qualification retain their original identities in review-history and
+Git history; no prior record supplies approval for this new fingerprint. Open
 the linked original FSDB and nearby public `.sav` with `./open.sh <view>`, inspect
 actual images/values against the independent expected/actual table, then record
 reviewer/date, named intervals, conclusion and any difference. A real attestation

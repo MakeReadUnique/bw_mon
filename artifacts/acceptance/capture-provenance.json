@@ -1,274 +1,286 @@
 {
-  "runtime_head": "8e81839423ab7db335365a5e577e25b2ebe5dcb0",
+  "status": "PASS",
+  "runtime_head": "cd07c77fcb706022069a9496bcf72d4354c1d2f8",
+  "production_milestone": "56127495f597d215003000356ac3b5387cc809a1",
   "fresh_actual_captures": 33,
   "capture_retries": 0,
+  "display": ":88",
+  "own_xvfb_and_metacity": true,
   "prior_scene_directories_removed_before_regeneration": true,
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/bw-mon-spec13/wt-28/tests/acceptance/views.py",
+    "--capture",
+    "--display",
+    ":88"
+  ],
+  "started_utc": "2026-10-25T16:02:43.225701Z",
+  "ended_utc": "2026-10-25T16:07:57.854454Z",
   "entries": [
     {
       "image": "child_reset_ns/quality.png",
       "sha256": "39854b5d60142e914efa31d0cb3dc90d9c150eb89754416bc9f990fec61c8493",
-      "source_fsdb_sha256": "4346b5561e5d2966393d33191976f981fe0ca1eaac209aa6bba63858bca241d2",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:02.026522Z",
+      "source_fsdb_sha256": "7803f0dc35d312d2bd9de8b43f3dae4d8e95e75d118c43daf781554fbb8ea2d6",
       "fresh_tool_manifest": "child_reset_ns/capture-quality-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:02:52.861614Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "clock_stop_cycle/clock.png",
       "sha256": "dd04f1c6ec598a582d74097299e74b36aaceb6ba4aa624126a1193ce9a7d6754",
-      "source_fsdb_sha256": "8c7e79b4acfe024daa42b6089c26edbf6f4b322d12f932f1b0d882dcec436e84",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:11.050396Z",
+      "source_fsdb_sha256": "845f36985df20e9c1b800c6489f92e5f81d784907799b2ad8b9f1ae2093c4fb2",
       "fresh_tool_manifest": "clock_stop_cycle/capture-clock-manifest.json",
-      "rendering_equals_historical_png": false
+      "actual_capture_mtime_utc": "2026-10-25T16:03:03.276465Z",
+      "rendering_equals_historical_png": true
     },
     {
       "image": "clock_stop_ns/clock.png",
       "sha256": "aea13c99bbb62e071372572c71698e041ad5dc74678079a4a9b087bdf746eb3c",
-      "source_fsdb_sha256": "35cbeaf2a105176d1db0595b8c9313327da66a18e96b573b14fc09a6f26b0fab",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:19.067283Z",
+      "source_fsdb_sha256": "d3a395ccf59118f6cf3f063bd70f4c6b9f020c08aec84df1cbe585adfd687ecf",
       "fresh_tool_manifest": "clock_stop_ns/capture-clock-manifest.json",
-      "rendering_equals_historical_png": false
+      "actual_capture_mtime_utc": "2026-10-25T16:03:12.347336Z",
+      "rendering_equals_historical_png": true
     },
     {
       "image": "e2_ns/overview.png",
       "sha256": "6c4d113f7f134dad1b4318b1418458ca11c640c24dfc318775520e99db9ce4a1",
-      "source_fsdb_sha256": "72cfdb3e0b1b324008d4e37291c65ca65e8a3ec51cc7c8479720b732ce7a2217",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:27.986158Z",
+      "source_fsdb_sha256": "6f6d20139ad7c6c356a3bd2857d3bac8a5faf1f37e5ec00cb20dec669cab97ba",
       "fresh_tool_manifest": "e2_ns/capture-overview-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:03:21.104212Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e3_boundary_ns/episode.png",
       "sha256": "35866d05483a8680168e25279f71a08f0272d4e786ddc89b8222020de23b1e75",
-      "source_fsdb_sha256": "93a7657d3f77738b802f22b86e96d709f88f59bf232036240e4e7a21d4e19095",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:35.877048Z",
+      "source_fsdb_sha256": "e24b6245d0085db55025fec02ba8fc7fe4f302f6a16425aa6c046fb9e00ac0ad",
       "fresh_tool_manifest": "e3_boundary_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:03:30.702075Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e3_delayed_ns/episode.png",
       "sha256": "65c2f255a46f3ae12e4362e16d0d2c1e8476efc28ee4e64ff08e24d20e7b4444",
-      "source_fsdb_sha256": "5e4b788c82c2f0cc3ec6c50e2c1ce67900418072cba70dd923cb7d9cd09bacfc",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:52.669812Z",
+      "source_fsdb_sha256": "4f7283a02f215e380029d1eebe7bb7893272dc15bf8dc4274340b7312ea17a59",
       "fresh_tool_manifest": "e3_delayed_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:03:48.859817Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e3_delayed_ns/phase.png",
       "sha256": "a6f263dcba2725272f4056288b31b9288b48bcd36d8cff2748e37bb64155721c",
-      "source_fsdb_sha256": "5e4b788c82c2f0cc3ec6c50e2c1ce67900418072cba70dd923cb7d9cd09bacfc",
-      "actual_capture_mtime_utc": "2026-10-25T13:54:43.825936Z",
+      "source_fsdb_sha256": "4f7283a02f215e380029d1eebe7bb7893272dc15bf8dc4274340b7312ea17a59",
       "fresh_tool_manifest": "e3_delayed_ns/capture-phase-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:03:40.278939Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e4_below_ns/episode.png",
       "sha256": "a5a38ce358be07ae04ee8372bcdea17736e6c25daa5f201705d3a8910ca7e7ad",
-      "source_fsdb_sha256": "452326a059bc5df649dbe0cc0f9e3204c43e18338d6b85ff697f52aca9311683",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:00.792698Z",
+      "source_fsdb_sha256": "5e8d6784ce07af23f67b0915fee38d335e0f82100421b9021ff8619228db151e",
       "fresh_tool_manifest": "e4_below_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:03:58.465681Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e4_boundary_ns/episode.png",
       "sha256": "6ee118da6d785e2a122990f180ef4b6f3ef298d544f4dc748eec419da3efecc9",
-      "source_fsdb_sha256": "17238d872b4b501f44a9cf8a948d9307592c0586c24addc37bf2d2f24799db64",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:08.661588Z",
+      "source_fsdb_sha256": "b66e3b1e59134b7aab8f35a8e75aa9c4e5d020b5610c8b1efc1f6da3aa94b7dc",
       "fresh_tool_manifest": "e4_boundary_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:04:07.166557Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e4_low_ns/episode.png",
       "sha256": "6504fa8594e657df446437fddc8dfe85c5e5d8bf41fe18cb253a01c082d18582",
-      "source_fsdb_sha256": "e937e7971d59f912106c2d61f67ee5972664308bbd431bcbec18efb48f24c123",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:17.529463Z",
+      "source_fsdb_sha256": "4659c8ad83e6e47ac6385a27edd9f6f31dcf91acc6a5f60837403d64dcef5038",
       "fresh_tool_manifest": "e4_low_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:04:16.845419Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "e5_ns/episode.png",
       "sha256": "fa293cbc0d4cc87d689b70061a9a45acf0b879c0d5146f4758ebdd735d48e803",
-      "source_fsdb_sha256": "a84c765fb1dfd1fa9e09619c22246ed74a76fb21de0cfe4c4692b5d9018d297f",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:25.383353Z",
+      "source_fsdb_sha256": "a4c234561950f1da5d217e6b0486bd649a677195fc69fb363cb165020c86fbaa",
       "fresh_tool_manifest": "e5_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:04:26.752279Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "frequency_cycle/clock.png",
       "sha256": "82ba08b6792196f312a0d50256e112b762b52df5f511d767d2cf82ed2cf39669",
-      "source_fsdb_sha256": "80d57b13b8facbb056dc59219c4a72f752b44f5eacd5449f78f66db73ee9b2c7",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:33.382241Z",
+      "source_fsdb_sha256": "8563c2aaa8a9fb96f565af771d9e26b51ffeb3565483512101b0cde7e8a7af55",
       "fresh_tool_manifest": "frequency_cycle/capture-clock-manifest.json",
-      "rendering_equals_historical_png": false
+      "actual_capture_mtime_utc": "2026-10-25T16:04:36.981133Z",
+      "rendering_equals_historical_png": true
     },
     {
       "image": "frequency_ns/clock.png",
       "sha256": "3745c1b124782d27c993ab83b47ea8dd90ed45e31021f79dff0a7eb77e3822b0",
-      "source_fsdb_sha256": "c97050f8fccdcecc57cbb9429f23a12cab853226f29b04a8e0d9883fc92d4f71",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:41.414128Z",
+      "source_fsdb_sha256": "d92665dc1a1b94bbc6adc8ae4e50367f902c9a7ac01ae5ad1fba76e802082e30",
       "fresh_tool_manifest": "frequency_ns/capture-clock-manifest.json",
-      "rendering_equals_historical_png": false
+      "actual_capture_mtime_utc": "2026-10-25T16:04:47.326986Z",
+      "rendering_equals_historical_png": true
     },
     {
       "image": "hints_cycle/hints.png",
       "sha256": "3cc5bc9ce6f138bac9f166f1975ae1294905a74b1364352e1089fe441216425c",
-      "source_fsdb_sha256": "9b34f8169d3bb904c794525ce19b432c6a7f83d4c277565d0bf7c51ce79e731a",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:49.179019Z",
+      "source_fsdb_sha256": "660be1cc00df126df0038a3af703fb8de327f76a7c996107cf6388f755663ccf",
       "fresh_tool_manifest": "hints_cycle/capture-hints-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:04:57.383843Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "isolated_ns/overview.png",
       "sha256": "aaf6c000fb6ec622092bb5230e76a88720f648ffcf9fab78836661ea732d6886",
-      "source_fsdb_sha256": "7fa4ecc71b13566f6f98150942a1395d8694cb8eb1e971084c7d25b89a17d2d6",
-      "actual_capture_mtime_utc": "2026-10-25T13:55:58.217893Z",
+      "source_fsdb_sha256": "53d8f2cf5c85d2c89b80c1075f10fafdbc6946e8a92e5d7f39f8eadc6254b781",
       "fresh_tool_manifest": "isolated_ns/capture-overview-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:05:07.996692Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "no_episode_ns/episode.png",
       "sha256": "8fb56f7e71e721939fad4b4271beec8837d235220d4b49b42aadc004b3685037",
-      "source_fsdb_sha256": "a324cb49d40c5a96b937f54668d960dc244959ca4664d630088477e56aa7d4ae",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:06.122782Z",
+      "source_fsdb_sha256": "3835235f8865f4133be08f30592cc1b83dfced46c10eb6fca09319c42fabc064",
       "fresh_tool_manifest": "no_episode_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:05:18.129548Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "point_reset_ns/quality.png",
       "sha256": "6aae68fe4012cb975a75a2a257318253e9f1529d9694e10ebd8cf4d5e22ddd0f",
-      "source_fsdb_sha256": "eeba698c5cbc9d64c370d028401047c28c8b6913f47a9149e631051dd4e12991",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:14.030671Z",
+      "source_fsdb_sha256": "b2d05a9a7be2a21d8c73f12e5c73588179f8a6ac0807efc21aeb58da69a8b033",
       "fresh_tool_manifest": "point_reset_ns/capture-quality-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:05:28.381402Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "protocols_ns/protocols.png",
       "sha256": "4bcd3907514de0785a5257a97802f49e42523277f65a16c6416ba874dcbdf1c1",
-      "source_fsdb_sha256": "7bc4f32868b71dde124207d292ad7106dd3b3e99dd0b6c22252c719943596c5f",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:22.197556Z",
+      "source_fsdb_sha256": "04dc5a1e22d076d64326835f34ad4a5ad15af2bcd596dda5c15c00655e08daf3",
       "fresh_tool_manifest": "protocols_ns/capture-protocols-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:05:38.586257Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "reset_unknown_ns/quality.png",
       "sha256": "3e1987775a2f54669b6ebd30e6e872a1e76f57337b345e7d2dccdbbb218c0298",
-      "source_fsdb_sha256": "7a6eb68ba906b01cf4096ddd21454bf49fe212eade1d0888d40a2c187052c9a9",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:30.109445Z",
+      "source_fsdb_sha256": "eb3fed31ef28214206e560035fec76b27d180858a3cdf32645b012fed4e24a96",
       "fresh_tool_manifest": "reset_unknown_ns/capture-quality-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:05:47.642129Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "size_unknown_ns/episode.png",
       "sha256": "39d64c84554218394cad4232f075cdc44fadb948d60b07ec03c922088279a5b7",
-      "source_fsdb_sha256": "b542f49dd89932b962b775b2373cacc31f990e2f39c0f68491ac2c58732bbf34",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:46.106221Z",
+      "source_fsdb_sha256": "d30c8eba70136a007dab9030e2f631c2c68ca145396c73d7ed1d4e0cc48671c4",
       "fresh_tool_manifest": "size_unknown_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:06.235864Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "size_unknown_ns/quality.png",
       "sha256": "72e18159b36167530beb22f3820e89dec6dbed06c88383ae9a273052b3a53bd2",
-      "source_fsdb_sha256": "b542f49dd89932b962b775b2373cacc31f990e2f39c0f68491ac2c58732bbf34",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:38.266331Z",
+      "source_fsdb_sha256": "d30c8eba70136a007dab9030e2f631c2c68ca145396c73d7ed1d4e0cc48671c4",
       "fresh_tool_manifest": "size_unknown_ns/capture-quality-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:05:56.624001Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "start_stop_cycle/overview.png",
       "sha256": "f6794809c3a49136ecaf68d00a0870eb1c899d80299383b9bbd7d6f3088f7e91",
-      "source_fsdb_sha256": "9983f65bd66d3ff3234e853fb2f616ef8634b4822dd2dde239b933c679db7ee9",
-      "actual_capture_mtime_utc": "2026-10-25T13:56:55.121094Z",
+      "source_fsdb_sha256": "04121159b2ec94c3ae4756669b254597fc1afb5939556b7bc9e6d89c670d8136",
       "fresh_tool_manifest": "start_stop_cycle/capture-overview-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:15.015740Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "start_stop_ns/overview.png",
       "sha256": "e2fe31e0cad7eaab2bc21b842fab5b21f028b3cb9a5b1115ae0e82dbddbbcedf",
-      "source_fsdb_sha256": "d4cd8839829dfec36d00888a8a8d2aebdd4c64aa293018c7130ff580c9683a0d",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:03.133982Z",
+      "source_fsdb_sha256": "eb7d63c67b09f1569a41cfe8407b805fc0674f1d20d4e85e165cb4f023dcdd8e",
       "fresh_tool_manifest": "start_stop_ns/capture-overview-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:23.819614Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "steady_cycle/clock.png",
       "sha256": "4d1774deeba1bfeec85836537a8a634c6601549b7d30479161ce9947936100e3",
-      "source_fsdb_sha256": "a6689b0e24e0fea8149c236b3bba7ad868b96ccc405ca84a8bfbd71631614dab",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:19.054759Z",
+      "source_fsdb_sha256": "7ffc1af94eb735298a2c2653d82f271fe498ec8d08262b6547ebb46c188a573a",
       "fresh_tool_manifest": "steady_cycle/capture-clock-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:42.203353Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "steady_cycle/overview.png",
       "sha256": "606901ec9f5e2e19d7e4e8ee19805526115e6cc8388c3ec7e234db478d01769b",
-      "source_fsdb_sha256": "a6689b0e24e0fea8149c236b3bba7ad868b96ccc405ca84a8bfbd71631614dab",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:11.070871Z",
+      "source_fsdb_sha256": "7ffc1af94eb735298a2c2653d82f271fe498ec8d08262b6547ebb46c188a573a",
       "fresh_tool_manifest": "steady_cycle/capture-overview-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:33.494477Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "steady_ns/overview.png",
       "sha256": "ff1edbe0d2cd4c2e5e328cd091aef0593eb15c5c115752285cfd4a007dd4f39d",
-      "source_fsdb_sha256": "cd8651234f9f1883d03e0625f427224288982fe7538ee1a994ec103a740474cb",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:28.207630Z",
+      "source_fsdb_sha256": "ed3712e53339789700383a18002730c6561fb673c35aec1add40d590c379cfdb",
       "fresh_tool_manifest": "steady_ns/capture-overview-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:50.874230Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "truncated_cycle/episode.png",
       "sha256": "2a752249b1f9a8572d88f37d0e1d6ba7f9ea26483f26441d0987d771ffcea5e2",
-      "source_fsdb_sha256": "f7406332b26bfa44904313da41e0a9d41bdbdf439306018225b3bd1da4605607",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:37.317503Z",
+      "source_fsdb_sha256": "1ffd6b7dc4fff7ea5500a5e3dc4a4b389d351c5532f652d15d6d878c96d9e586",
       "fresh_tool_manifest": "truncated_cycle/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:06:59.627105Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "upper_reset_ns/quality.png",
       "sha256": "4a8decd5e0a4f24d45132e6d04f0dd6c949e22997260d1c8c78b488332382bba",
-      "source_fsdb_sha256": "0f481741eb974c0a79b7893dcb923eef15af44b0c6c28afdb989106da74b7434",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:46.277377Z",
+      "source_fsdb_sha256": "21d4c88575063318777aa46ec4566fc44fa4a496274d5d53af8fe17d3626a46d",
       "fresh_tool_manifest": "upper_reset_ns/capture-quality-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:07:09.642963Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "valid_unknown_ns/quality.png",
       "sha256": "d03d7c503896085be71adc68e07cc15c05410506bfd2d8bffe261745e2e9d10c",
-      "source_fsdb_sha256": "0243074111b29d7583193f800e0aa1d8ab51172739ab0276c31cc038f581aa7e",
-      "actual_capture_mtime_utc": "2026-10-25T13:57:54.202266Z",
+      "source_fsdb_sha256": "97528fbed8ff54260a28ae25c41ffeb5c86be7aa8f05c20535b1011765aafe39",
       "fresh_tool_manifest": "valid_unknown_ns/capture-quality-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:07:18.821833Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "varying_cycle/phase.png",
       "sha256": "f940f69f90e2d8c751b673df0c4a6f1a6126953cbec34743d22be6964c7836b2",
-      "source_fsdb_sha256": "2f1780f80dfaef848ea624d966a9c79eb5f871a9decba51bbd1da5ac4aaca972",
-      "actual_capture_mtime_utc": "2026-10-25T13:58:02.211154Z",
+      "source_fsdb_sha256": "2ddffc4bb2976f850d2d74721b3a3f9963dbc3165926fdffe31efe7a96deb1fc",
       "fresh_tool_manifest": "varying_cycle/capture-phase-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:07:29.259684Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "varying_ns/episode.png",
       "sha256": "099e8e71e11498497ba86ca45a4d53821c25aaee78e2dbb5ac84573f2e2aee6c",
-      "source_fsdb_sha256": "8a1d0e1c91014174a1b4a39c72b4cf8ca547e3e4711473988c42bb5fa4ffdfbe",
-      "actual_capture_mtime_utc": "2026-10-25T13:58:18.070931Z",
+      "source_fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
       "fresh_tool_manifest": "varying_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:07:49.675394Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "varying_ns/phase.png",
       "sha256": "28f8d8320ae3365e189fa4d6c53803dd554962223c28564ccd34b80afbe0bb18",
-      "source_fsdb_sha256": "8a1d0e1c91014174a1b4a39c72b4cf8ca547e3e4711473988c42bb5fa4ffdfbe",
-      "actual_capture_mtime_utc": "2026-10-25T13:58:10.236041Z",
+      "source_fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
       "fresh_tool_manifest": "varying_ns/capture-phase-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:07:39.651537Z",
       "rendering_equals_historical_png": true
     },
     {
       "image": "zero_ns/episode.png",
       "sha256": "7e529cc1ea7d5f0969812653d14aaa4a97aa5defa648fb3e98f50624aacf5eff",
-      "source_fsdb_sha256": "26196587baf09d77de7caf47e062a58d69e97b23616f182ffc07d4d9ac9760ca",
-      "actual_capture_mtime_utc": "2026-10-25T13:58:25.986820Z",
+      "source_fsdb_sha256": "ce2f653fc91d8bad90da6f439e4ca5aec37c8f53d8fc0dcdeb9a0c967f82836a",
       "fresh_tool_manifest": "zero_ns/capture-episode-manifest.json",
+      "actual_capture_mtime_utc": "2026-10-25T16:07:57.741280Z",
       "rendering_equals_historical_png": true
     }
   ],
-  "note": "Each original PNG was deleted with its old scene directory, then regenerated by real Verdi. Identical public values/layouts can yield byte-identical renderings; no old image was copied. Human review remains PENDING.",
-  "visible_view_update": "Four stopped-clock/frequency views now show the existing die0/die1/mixed bytes_per_cycle rows, as specified by the already checked-in capture script. This accounts for the four non-identical PNGs; all original scenario targets/intervals remain unchanged."
+  "human_review": "PENDING"
 }

@@ -7,14 +7,14 @@
     "-play",
     "/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/hints_cycle/capture-hints.tcl"
   ],
-  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-nm1eepe5",
-  "display": ":87",
+  "cwd": "/tmp/bw-mon-spec13/wt-28/.build/acceptance/verdi-qf6_w5q7",
+  "display": ":88",
   "fresh": true,
   "pixels": [
     1500,
     850
   ],
-  "fsdb_sha256": "9b34f8169d3bb904c794525ce19b432c6a7f83d4c277565d0bf7c51ce79e731a",
+  "fsdb_sha256": "660be1cc00df126df0038a3af703fb8de327f76a7c996107cf6388f755663ccf",
   "png_sha256": "3cc5bc9ce6f138bac9f166f1975ae1294905a74b1364352e1089fe441216425c",
   "agent_visual_review": "PENDING",
   "human_review": "PENDING"

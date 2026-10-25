@@ -45,20 +45,43 @@ def runtime_sources(root):
 
 
 def runtime_evidence(root, out):
-    # This is explicitly the retained historical proof, never a proof for new source.
     freeze = json.loads((out / 'runtime-source.json').read_text())
-    assert freeze['head'] == HISTORICAL_RUNTIME_HEAD, ('unexpected historical runtime freeze', freeze['head'])
-    files = archive_files(out / HISTORICAL_SOURCE)
-    for name, digest in freeze['rtl_sha256'].items():
-        assert hashlib.sha256(files[name]).hexdigest() == digest, ('historical runtime source changed', name)
+    declaration = freeze.get('component_proof')
+    if declaration is None:
+        # Retained historical bundles keep their original424-case contract.
+        assert freeze['head'] == HISTORICAL_RUNTIME_HEAD, ('unexpected historical runtime freeze', freeze['head'])
+        files = archive_files(out / HISTORICAL_SOURCE)
+        for name, digest in freeze['rtl_sha256'].items():
+            assert hashlib.sha256(files[name]).hexdigest() == digest, ('historical runtime source changed', name)
+        proof = out / 'current-component-proof'
+        current = json.loads((proof / 'verification.json').read_text())
+        assert current['source_head'] == freeze['head'] and current['cases'] == current['runtime_contracts_verified']
+    else:
+        # The scene checkout and component-proof checkout may differ; exact
+        # consumed production bytes establish their common qualification scope.
+        directory = declaration['directory']
+        assert Path(directory).name == directory, 'component proof must be beside its campaign'
+        proof = out / directory
+        assert sha(proof / 'verification.json') == declaration['verification_sha256'], 'component verification changed'
+        current = json.loads((proof / 'verification.json').read_text())
+        assert current['source_head'] == declaration['source_head']
+        assert current['cases'] == current['runtime_contracts_verified'] == declaration['cases']
+        entry = current['archive']
+        assert entry['sha256'] == declaration['archive_sha256']
+        assert sha(proof / entry['file']) == entry['sha256'], 'component archive changed'
+        files = archive_files(proof / entry['file'])
+        expected = freeze['rtl_sha256']
+        production = {name[7:] for name in files if name.startswith('source/rtl/')}
+        assert production == set(expected), 'incomplete qualified runtime source'
+        for name, digest in expected.items():
+            assert hashlib.sha256(files['source/' + name]).hexdigest() == digest, ('component proof consumed different production', name)
+        native_receipt = json.loads(files[declaration['native_header_receipt']].decode())
+        assert freeze['native_header_dependencies']['header_sha256'] == native_receipt['header_sha256'], 'native header changed'
     native = freeze['native_header_dependencies']
     assert {Path(name).name for name in native['vendor_headers']} == {'svdpi.h', 'vpi_user.h'}
-    proof = out / 'current-component-proof'
-    current = json.loads((proof / 'verification.json').read_text())
-    assert current['source_head'] == freeze['head'] and current['cases'] == current['runtime_contracts_verified']
     result = subprocess.run([sys.executable, str(proof / 'verify.py')], stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, universal_newlines=True)
-    assert result.returncode == 0, ('historical component proof', result.stdout)
+    assert result.returncode == 0, ('recorded component proof', result.stdout)
     return freeze
 
 
@@ -103,12 +126,14 @@ def scene_runtime_evidence(root, out, folder, manifest, freeze):
     assert '-CFLAGS' in command and any(name.endswith('/rtl/bw_slot_settlement.c') for name in command)
     assert len(manifest['base_revision']) == 40, ('missing actual checkout revision', folder.name)
     if native.get('schema_version', 1) == 1:
+        freeze_path = out / ('historical-runtime-source-8e81839.json' if freeze.get('component_proof') else 'runtime-source.json')
+        freeze = json.loads(freeze_path.read_text())
         for name, digest in freeze['rtl_sha256'].items():
             assert sources.get(name) == digest, ('scene consumed a different runtime', folder.name, name)
         sdk = freeze['native_header_dependencies']['vendor_headers']
         assert native['native_dependencies_sha256'] == {name: freeze['native_header_dependencies']['header_sha256'][name] for name in sdk}, ('native header changed', folder.name)
         assert native['runtime_head'] == freeze['head']
-        assert native['freeze_sha256'] == sha(out / 'runtime-source.json')
+        assert native['freeze_sha256'] == sha(freeze_path)
         assert native['source_snapshot_sha256'] == sources, ('compiled snapshot changed', folder.name)
         assert len(dependencies) == 3 and set(dependencies[1:]) == set(sdk)
         assert '-I' + str(Path(sdk[0]).parent) in command
