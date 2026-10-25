@@ -5,21 +5,20 @@ from pathlib import Path
 from model import configuration
 from analysis import verify,verify_reports
 from run import check_trace
+from evidence import runtime_evidence,scene_runtime_evidence
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/acceptance'
 sha=lambda b:hashlib.sha256(b).hexdigest()
 def main():
  inventory=json.loads((OUT/'SHA256SUMS.json').read_text())
  for name,digest in inventory.items():assert sha((OUT/name).read_bytes())==digest,('asset hash',name)
- assert not subprocess.check_output(['git','diff','8de785c','--','rtl'],cwd=str(ROOT)), 'activeproduction changed'
- proof=json.loads((OUT/'component-proof/source-manifest.json').read_text())
- for name,value in proof.items():
-  if name.startswith('rtl/'):assert sha((ROOT/name).read_bytes())==value['sha256'],('component source',name)
+ runtime=runtime_evidence(ROOT,OUT)
  assert sha((OUT/'component-proof/final-408-proof.tar.gz').read_bytes())=='4eb443a37683d7be6dc669caab4121089a13cd5b751a2da9855434042b6cc6e7'
  total={};metrics={};images=0;scenes=0
  for folder in sorted(OUT.iterdir()):
   if not (folder/'commands.json').exists():continue
   m=json.loads((folder/'commands.json').read_text());c=m['configuration'];assert c==configuration(c['scene'],c['basis'])
+  scene_runtime_evidence(ROOT,OUT,folder,m,runtime)
   with tempfile.TemporaryDirectory(prefix='acceptance-audit-') as name:
    work=Path(name)
    with tarfile.open(str(folder/'trace.tar.gz')) as archive:

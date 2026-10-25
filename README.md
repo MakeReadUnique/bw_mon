@@ -6,6 +6,8 @@
 
 运行 `make test`，使用 VCS 编译执行组件与公开入口测试；`make acceptance` 运行十二点/四组原始输入到真实 FSDB 的独立对照。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 
+自行集成 VCS 工程时还需编译私有 `rtl/bw_slot_settlement.c`，启用 `+vpi`、`-debug_access`（波形可用 `-debug_access+all`）并提供已安装 VCS 的 SDK 头目录；具体命令见[调度与构建说明](docs/bw-mon-scheduling.md)。公开集成仍为点、组和 setup 三个入口，计量与分析保留在 SV。
+
 单点与聚合组可通过 `+BW_EXPECT=FILE` 按完整类型/身份配置全程与最后稳定段原始带宽、每段爬坡/下降时间及 min/max/标准差/CV 预期，逐指标输出非终止的 PASS / FAIL / WARNING 与一次最终汇总；见[键表与结算接口](docs/bw-mon-expectations.md)。
 
 ## 已确认需求

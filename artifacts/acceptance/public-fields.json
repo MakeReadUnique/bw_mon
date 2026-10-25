@@ -321,7 +321,7 @@
     },
     "phase_evidence_span": {
       "declaration": "bw_u64_t ",
-      "unit": "fs in BW_NS; complete local cycles in BW_CYCLE",
+      "unit": "enum/identity/count/flag",
       "scopes": [
         "point",
         "group"

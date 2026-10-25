@@ -1265,6 +1265,6 @@ never reads monitor code as a golden model. See the checked-in source
 public views and expected/actual tables under `artifacts/acceptance`.
 
 The earlier per-ticket run counts above are historical, explicitly scoped proof.
-The durable408-case numeric/component proof and separate new scene evidence are
+The current424-case proof, historical408-case numeric/component proof and fresh42-scene evidence are
 indexed by the acceptance handoff. Actual human review remains separate from
 agent image inspection; maximum-scale evidence is owned by its scale tickets.

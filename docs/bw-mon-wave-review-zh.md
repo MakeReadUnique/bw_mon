@@ -2,13 +2,15 @@
 
 先打开下方的稳态截图，按“时间区间 → 完整性 → 字节数 → 带宽”的顺序读；再逐项查看完整清单中的开始停止、重复阶段和独立异常场景。无需先运行仿真，也可以先用截图和数值表查看。
 
-本文对应已经生成并冻结的 [T6 原始清单](../artifacts/acceptance/HUMAN-REVIEW.md)，帮助说明“应该怎么看”。**当前人工验收仍为 PENDING（待完成）**；请求查看方法、自动检查通过、代理查看图片，都不构成人工验收。冻结资产来自提交 `779837df4534fb8263a67797eb13ba90f0c04561`，资产指纹为：
+本文对应已经生成并冻结的 [T6 原始清单](../artifacts/acceptance/HUMAN-REVIEW.md)，帮助说明“应该怎么看”。**当前人工验收仍为 PENDING（待完成）**；请求查看方法、自动检查通过、代理查看图片，都不构成人工验收。本轮已用冻结运行源码 `8e81839423ab7db335365a5e577e25b2ebe5dcb0` 重新运行原 42 份输入与配置，并重新生成 33 张真实 Verdi 图；清单对象、区间和预期数值保持原目标。当前资产指纹为：
 
 ```text
-7d5ec87e4779cdf54fcde49d1d9c516a4afa6d752ceaab30eb2debc5ee27884c
+65f318be688aa05ca26231cda061d011f936e41c94f0f52857d773e9d8f3ae98
 ```
 
 [证据总索引](../artifacts/acceptance/INDEX.md)列出原始 FSDB、保存的公开信号视图、真实 Verdi 截图和独立预期/实际值表；[人工/代理记录](../artifacts/acceptance/review.json)分别记录两类查看。本文只索引这些现有对象，不扩大待签认范围。
+
+本轮停钟和变频的 `clock` 图末尾还显示了 die0、die1、mixed 的 `bytes_per_cycle` 三行，便于同时核对组的周期口径；NS 图这些行均为 0，cycle 图按实际周期计量。原对象、光标时刻和数值目标未变。
 
 ## 先跟着一个例子读图
 
@@ -152,8 +154,9 @@ BW_VIEW=overview verdi -nWave -ssf waves.fsdb -play open-view.tcl
 ```text
 评审人/别名：
 实际查看日期（含时区）：
-冻结资产提交：779837df4534fb8263a67797eb13ba90f0c04561
-资产指纹：7d5ec87e4779cdf54fcde49d1d9c516a4afa6d752ceaab30eb2debc5ee27884c
+实际查看的资产提交/交接链接：（填写本次打开的版本）
+冻结运行源码：8e81839423ab7db335365a5e577e25b2ebe5dcb0
+资产指纹：65f318be688aa05ca26231cda061d011f936e41c94f0f52857d773e9d8f3ae98
 
 已看对象与区间（逐项写 NS/cycle、文件/视图、时间范围）：
 1.
