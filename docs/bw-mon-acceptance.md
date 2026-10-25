@@ -5,7 +5,9 @@ contains408/408 VCS cases on the numeric/storage27 production tree; the separate
 public12-point integration campaign checks42 original-input scenes. These are
 automated results. **Human T6 review is pending** until an actual person reviews
 and records the completed bundle. Agent inspection never supplies that attestation.
-Scale/common/max results belong to the scale tickets and their exact manifests.
+The [common-scale guide](bw-mon-scale.md) records four verified29 profiles.
+Maximum topology and the additional matrix remain30/31 work with separate exact
+manifests; small wave scenes never substitute for those targets.
 
 Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), not the
 architecture HTML's illustrative curves. It links original FSDBs, public signal
@@ -133,7 +135,9 @@ real rows avoid interpolation, and integer bytes/bounds independently establish
 values. No simulation data or raster was altered. Scientific formatting exposes
 exact distinctions such as152 versus151.99. Saved views reference nearby FSDBs.
 
-The [machine and human review ledger](../artifacts/acceptance/review.json) separates
+The [concrete T6 checklist](../artifacts/acceptance/HUMAN-REVIEW.md) names actual
+objects, intervals and expected observations across both bases and independent
+variants. The [machine and human review ledger](../artifacts/acceptance/review.json) separates
 automation, agent image inspection and **pending actual human review**. A human
 entry must identify reviewer/date, actual objects/intervals, expected versus seen,
 conclusion and discrepancies. One later attestation cannot retroactively claim

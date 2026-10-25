@@ -1,50 +1,25 @@
-# Steady NS reading checkpoint
+# Steady NS review entry
 
-Automated reference check PASS; **human review PENDING**. Agent image inspection
-is recorded separately in capture-manifest.json. This checkpoint is not the full
-T6 scene bundle or an attestation for later variants.
+Automated original-input checks PASS. **Human review PENDING.** Agent image
+inspection is separate. This is one scene in the [complete42-scene index](../INDEX.md).
 
-Twelve real DUT wrappers, one module-type bind, all three protocols, fixed and
-adapter-decoded dynamic bytes; four groups with independent full analysis. Common
-clock first edge0.5ns, period0.5ns; data64B/edge before120ns, then idle. W10ns/S1ns,
-N3/span2ns/K2/Q12ns and explicit fit/hint parameters are in scene.sv/commands.json.
-Expected rates follow64B/0.5ns and the unique4/4/8/6 member sets; p10/p11 are free.
-All checked snapshots are full, byte/event complete, positive denominator and
-without member reset. Small arithmetic tolerance1e-10GB/s is not a performance
-cfg tolerance. This first checkpoint has no performance cfg.
+T4 at2GHz/64B, W10ns/S1ns, first edge0.5ns: every point including p10/p11 measures
+128GB/s, die0/die1 each512, all_dmc1024 and mixed768. Snapshot[92,102)ns has
+1280B/20events per point and10240B/160events for all_dmc; full/byte/event quality
+is known, with no reset coverage. Source/receipt/window/episode/phase/variance and
+configured performance checks are independently validated.
 
-|Scope|Interval|Expected GB/s|Actual GB/s|Difference|
-|---|---|---:|---:|---:|
-|p0|[92,102)ns|128|128|0|
-|p1|[92,102)ns|128|128|0|
-|p2|[92,102)ns|128|128|0|
-|p3|[92,102)ns|128|128|0|
-|p4|[92,102)ns|128|128|0|
-|p5|[92,102)ns|128|128|0|
-|p6|[92,102)ns|128|128|0|
-|p7|[92,102)ns|128|128|0|
-|p8|[92,102)ns|128|128|0|
-|p9|[92,102)ns|128|128|0|
-|p10|[92,102)ns|128|128|0|
-|p11|[92,102)ns|128|128|0|
-|die0|[92,102)ns|512|512|0|
-|die1|[92,102)ns|512|512|0|
-|all_dmc|[92,102)ns|1024|1024|0|
-|mixed|[92,102)ns|768|768|0|
+[Fresh real1500x850 Verdi image](overview.png) · [original FSDB](waves.fsdb) ·
+[expected/actual tables](expected-actual.md) · [public view](overview.sav) ·
+[all-scope independent reference](reference.json) · [source/input/config hashes](commands.json).
 
-Open the original [FSDB](waves.fsdb) with [open.sh](open.sh) from a machine with
-Verdi and X11. [overview.sav](overview.sav) uses relative FSDB references and fixed
-public paths. The [fresh1500x850 screenshot](overview.png) uses numeric real rows,
-not interpolated analog curves; cursor102.000001ns shows [92,102)ns. Engineering
-formatter rounds1024 to1.02K in the picture; the full exact real in
-[comparison.json](comparison.json)/[FSDB export](fsdb-values.csv) is1024. Raw public
-window bytes/bounds provide the same independent arithmetic. UI names/colors are
-presentation only; no image or FSDB data was modified.
+`./open.sh overview` opens the portable original waveform from this directory.
+Scientific10 numeric display exposes exact1024 and integer bytes/bounds separately.
+No data or raster was modified. The [trace archive](trace.tar.gz) contains original
+raw input, CSV, compilation/runtime/capture logs. Actual source/tool paths recorded
+inside are provenance; no former worktree/build is required to inspect the FSDB.
 
-Provenance: [commands and source/header/driver hashes](commands.json),
-[actual capture manifest](capture-manifest.json), [public paths](signals.json),
-[simulation log](run.log), [original raw input table](stimulus.txt). Reproduce with
-`python3 tests/acceptance/run.py --scene steady --basis ns`; recapture with
-`python3 tests/acceptance/capture.py steady_ns --display "$DISPLAY"` using an
-available X11 display. Exact local tool executable/config paths in manifests are
-provenance; commands/scripts resolve source and output from their checkout.
+The intentional performance goal160GB/s with5% tolerance requires152, so measured
+128 is a genuine nonfatal FAIL. The scene continues through later windows and its
+one final summary. This performance result is expected test behavior, not a failed
+automation check. Human review is not supplied by automated PASS or agent inspection.

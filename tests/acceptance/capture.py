@@ -28,6 +28,7 @@ def main():
  elif args.view=='clock':
   paths=fields(base+'/ports[0]/dut',['clk','valid'])+fields(point,['result_seq','accepted_record_seq','window_start_ticks','window_end_ticks','coverage_ticks','window_start_cycle','window_end_cycle','coverage_cycles','window_bytes','window_events','bandwidth_gbps','bytes_per_cycle','window_full','bytes_complete'])
   paths+=fields(base+'/all_dmc',['result_seq','window_start_ticks','window_end_ticks','coverage_ticks','coverage_cycles','window_bytes','bandwidth_gbps','bytes_per_cycle','window_full','bytes_complete'])
+  paths +=[base+'/'+g+'/bytes_per_cycle' for g in ['die0','die1','mixed']]
  elif args.view=='hints':
   pp=base+'/ports[1]/dut/mon'
   paths=fields(base+'/ports[1]/dut',['clk','valid','ready'])+fields(pp,['backpressure_supported','backpressure_enabled','backpressure_trusted','backpressure_active','backpressure_hit','backpressure_start_ticks','backpressure_trigger_ticks','backpressure_end_ticks','backpressure_duration_ticks','backpressure_hit_count','backpressure_interval_count','backpressure_end_reason','result_seq','accepted_record_seq','total_bytes','window_start_ticks','window_end_ticks','bandwidth_gbps'])
@@ -95,7 +96,7 @@ def main():
   assert f.read(8)==b'\x89PNG\r\n\x1a\n';size=struct.unpack('>II',f.read(16)[8:16])
  assert size==(1500,850),size
  # Only view-file references are made portable. Image and FSDB stay untouched.
- sav.write_text(sav.read_text().replace(str(fsdb),'waves.fsdb'))
+ sav.write_text(sav.read_text().replace(str(fsdb),'waves.fsdb').rstrip()+'\n')
  (out/('signals-'+args.view+'.json')).write_text(json.dumps({'public_paths':paths},indent=2)+'\n')
  (out/('capture-'+args.view+'-manifest.json')).write_text(json.dumps({'command':command,'cwd':str(work),'display':args.display,'fresh':True,'pixels':list(size),'fsdb_sha256':hashlib.sha256(fsdb.read_bytes()).hexdigest(),'png_sha256':hashlib.sha256(png.read_bytes()).hexdigest(),'agent_visual_review':'PENDING','human_review':'PENDING'},indent=2)+'\n')
  print('Fresh actual Verdi capture',png,size)

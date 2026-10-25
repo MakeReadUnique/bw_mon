@@ -1,0 +1,40 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+viewPort 10 10 1500 850 760 180
+openDirFile -d / "" "waves.fsdb"
+signalSpacing 5
+windowTimeUnit 1ns
+zoom 100.0 110.000001 1n
+cursor 110.000001
+marker 0
+top 0
+addGroup "G1"
+addSignal -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/scope_id
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_id
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_active
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_first_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_bytes
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_episode_id
+addSignal -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_status
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_first_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_last_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_tail_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_confirmation_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_byte_count
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_event_count
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_duration_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_tail_known
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_bytes_complete
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_e2e_valid
+addSignal -w digital -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_e2e_gbps
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_result_result_seq
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_selection_valid
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_start_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_end_ticks
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_bandwidth_valid
+addSignal -w digital -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_bandwidth_gbps
+addSignal -w digital -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_variation_mean_gbps
+addSignal -w digital -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_last_steady_variation_stddev_gbps
+addSignal -UNSIGNED -UDEC -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_variation_cv_valid
+addSignal -w digital -h 15 /tb_acceptance_ns/scene/ports[0]/dut/mon/episode_variation_cv_pct
+addGroup "G2"

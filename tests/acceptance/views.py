@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[2]
 CAPTURE=ROOT/'tests/acceptance/capture.py'
 def choices(name):
  scene,basis=name.rsplit('_',1);cursor=102.000001 if basis=='ns' else 102.500001;begin,end=88,112;extra=[]
+ if scene=='steady' and basis=='cycle':extra=[('clock',88,112,102.500001)]
  if scene=='start_stop':begin,end,cursor=10,80,61.000001 if basis=='ns' else 61.500001
  if scene in ['varying','e5']:begin,end,cursor=20,155,153.000001;extra=[('phase',20,155,153.000001),('episode',125,155,153.000001)]
  if scene in ['point_reset','child_reset','upper_reset','size_unknown','valid_unknown','reset_unknown']:
@@ -23,7 +24,7 @@ def choices(name):
  if scene=='e3_delayed':begin,end,cursor=90,196.000001,196.000001;extra=[('phase',90,160,150.000001),('episode',110,196.000001,196.000001)]
  if scene.startswith('e4_'):begin,end,cursor=45,118,114.000001;extra=[('episode',45,118,114.000001)]
  return [('overview',begin,end,cursor)]+extra
-SELECTED={'steady_ns':['overview'],'steady_cycle':['overview'],'protocols_ns':['protocols'],'start_stop_ns':['overview'],'start_stop_cycle':['overview'],'varying_ns':['phase','episode'],'varying_cycle':['phase'],'point_reset_ns':['quality'],'child_reset_ns':['quality'],'upper_reset_ns':['quality'],'size_unknown_ns':['quality','episode'],'valid_unknown_ns':['quality'],'reset_unknown_ns':['quality'],'clock_stop_ns':['clock'],'clock_stop_cycle':['clock'],'frequency_ns':['clock'],'frequency_cycle':['clock'],'hints_cycle':['hints'],'zero_ns':['episode'],'no_episode_ns':['episode'],'truncated_cycle':['episode'],'isolated_ns':['overview'],'e2_ns':['overview'],'e3_boundary_ns':['episode'],'e3_delayed_ns':['phase','episode'],'e4_boundary_ns':['episode'],'e4_below_ns':['episode'],'e4_low_ns':['episode'],'e5_ns':['episode']}
+SELECTED={'steady_ns':['overview'],'steady_cycle':['overview','clock'],'protocols_ns':['protocols'],'start_stop_ns':['overview'],'start_stop_cycle':['overview'],'varying_ns':['phase','episode'],'varying_cycle':['phase'],'point_reset_ns':['quality'],'child_reset_ns':['quality'],'upper_reset_ns':['quality'],'size_unknown_ns':['quality','episode'],'valid_unknown_ns':['quality'],'reset_unknown_ns':['quality'],'clock_stop_ns':['clock'],'clock_stop_cycle':['clock'],'frequency_ns':['clock'],'frequency_cycle':['clock'],'hints_cycle':['hints'],'zero_ns':['episode'],'no_episode_ns':['episode'],'truncated_cycle':['episode'],'isolated_ns':['overview'],'e2_ns':['overview'],'e3_boundary_ns':['episode'],'e3_delayed_ns':['phase','episode'],'e4_boundary_ns':['episode'],'e4_below_ns':['episode'],'e4_low_ns':['episode'],'e5_ns':['episode']}
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--capture',action='store_true');p.add_argument('--display',default=':87');args=p.parse_args()
  for directory in sorted((ROOT/'artifacts/acceptance').iterdir()):

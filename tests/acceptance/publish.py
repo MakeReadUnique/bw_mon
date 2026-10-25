@@ -61,7 +61,11 @@ def main():
  assert len(scenes)==42,len(scenes)
  (OUT/'verification.json').write_text(json.dumps({'status':'PASS','production_base':'8de785c86f513804168eb2b868ab1f967a3b0e8b','harness_revision':'661ef33','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':'PENDING','no_production_changes':True,'python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
  previous_review=json.loads((OUT/'review.json').read_text()) if (OUT/'review.json').exists() else {}
- fingerprint=hashlib.sha256(json.dumps([(s['scene'],s['fsdb_sha256']) for s in scenes]+[(n,sha(OUT/n)) for n in pictures],sort_keys=True).encode()).hexdigest()
+ review_objects=[]
+ for directory in OUT.iterdir():
+  if not (directory/'commands.json').exists():continue
+  review_objects +=[f for f in directory.iterdir() if f.is_file() and (f.suffix in ['.fsdb','.png','.sav','.cfg'] or f.name in ['expected-actual.md','reference.json','commands.json'] or f.name.startswith('signals-'))]
+ fingerprint=hashlib.sha256(json.dumps([(str(f.relative_to(OUT)),sha(f)) for f in sorted(review_objects)],sort_keys=True).encode()).hexdigest()
  review={'human':{'status':'PENDING','reviewer':None,'date':None,'objects_intervals_conclusion':None},'agent':{'status':'SEE IMAGE-SPECIFIC ENTRIES','note':'Agent inspection is not human attestation'},'actual_images':pictures,'instructions':'Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.'}
  if previous_review.get('human',{}).get('status','PENDING')!='PENDING':
   if previous_review.get('asset_fingerprint')==fingerprint:review['human']=previous_review['human']
@@ -70,7 +74,7 @@ def main():
  review['asset_fingerprint']=fingerprint
  (OUT/'review.json').write_text(json.dumps(review,indent=2)+'\n')
  index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **humanT6reviewPENDING**. Agent image inspection is separate.\n\n'
- index+='Independent totals: '+str(totals)+'; analysis: '+str(analysis)+'. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).\n\n'
+ index+='Independent totals: '+str(totals)+'; analysis: '+str(analysis)+'. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).\n\n'
  index+='The durable [408-case component proof](component-proof/verification.json) and [complete log/config archive](component-proof/final-408-proof.tar.gz) are separate from this new scene campaign. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Performance summary|\n|---|---|---|---|---|\n'
  for s in scenes:
   name=s['scene'];c=s['configuration'];imgs=' '.join('['+i+']('+name+'/'+i+')' for i in s['images']) or 'Portable public views; FSDB directly available'

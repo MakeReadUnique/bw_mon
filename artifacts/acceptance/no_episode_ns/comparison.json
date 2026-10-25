@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "human_review": "PENDING",
+  "counts": {
+    "raw": 1904,
+    "windows": 960,
+    "receipts": 1904
+  },
+  "numeric_tolerance_gbps": 1e-10,
+  "checks": [],
+  "analysis_counts": {
+    "episodes": 0,
+    "phases": 0,
+    "variations": 0
+  },
+  "report_reference": {
+    "expected": {
+      "PASS": 0,
+      "FAIL": 0,
+      "WARNING": 2
+    },
+    "summary_status": "WARNING"
+  },
+  "performance_checks": [
+    "BW_CHECK scope_kind=1 scope=all_dmc epoch=0 episode=0 result_seq=0 kind=scope_final phase=0 metric=e2e_bw unit=GB/s start_ticks=0 end_ticks=0 actual=UNAVAILABLE has_min=1 min=0 has_max=0 max=0 abs_tol=0 rel_tol_pct=0 effective_min=0 effective_max=0 bytes=0 events=0 duration_ticks=0 bytes_complete=0 events_complete=0 first_known=0 last_known=0 tail_known=0 duration_valid=0 member_reset=0 phase_kind=0 phase_result_seq=0 basis=0 W=0 S=0 samples=0 first_sample_ticks=0 last_sample_ticks=0 sample_span_ticks=0 mean_gbps=0 interval_known=0 coverage_complete=0 minmax_valid=0 stddev_valid=0 cv_valid=0 minmax_reason=NO_QUALIFIED_SAMPLES stddev_reason=NO_QUALIFIED_SAMPLES cv_reason=NO_QUALIFIED_SAMPLES excluded_warmup=0 excluded_foreign=0 unknown_samples=0 excluded_denominator=0 cfg_file=/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/no_episode_ns/expect.cfg min_line=4 max_line=0 abs_line=0 rel_line=0 conclusion=WARNING reason=NO_EPISODE",
+    "BW_CHECK scope_kind=0 scope=p0 epoch=0 episode=0 result_seq=0 kind=scope_final phase=0 metric=e2e_bw unit=GB/s start_ticks=0 end_ticks=0 actual=UNAVAILABLE has_min=1 min=0 has_max=0 max=0 abs_tol=0 rel_tol_pct=0 effective_min=0 effective_max=0 bytes=0 events=0 duration_ticks=0 bytes_complete=0 events_complete=0 first_known=0 last_known=0 tail_known=0 duration_valid=0 member_reset=0 phase_kind=0 phase_result_seq=0 basis=0 W=0 S=0 samples=0 first_sample_ticks=0 last_sample_ticks=0 sample_span_ticks=0 mean_gbps=0 interval_known=0 coverage_complete=0 minmax_valid=0 stddev_valid=0 cv_valid=0 minmax_reason=NO_QUALIFIED_SAMPLES stddev_reason=NO_QUALIFIED_SAMPLES cv_reason=NO_QUALIFIED_SAMPLES excluded_warmup=0 excluded_foreign=0 unknown_samples=0 excluded_denominator=0 cfg_file=/tmp/bw-mon-spec13/wt-28/artifacts/acceptance/no_episode_ns/expect.cfg min_line=2 max_line=0 abs_line=0 rel_line=0 conclusion=WARNING reason=NO_EPISODE"
+  ],
+  "summary": "BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=16 scopes_expected=16"
+}

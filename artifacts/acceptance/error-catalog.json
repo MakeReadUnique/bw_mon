@@ -1,0 +1,738 @@
+{
+  "ACK_SEQUENCE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:175",
+      "rtl/bw_mon_transport.svh:194"
+    ]
+  },
+  "BYTE_CONFIG": {
+    "cases": [
+      "byte_config_error",
+      "fixed_unknown_config",
+      "numeric_dynamic_policy",
+      "numeric_policy_dynamic_x",
+      "numeric_policy_dynamic_2"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:354",
+      "rtl/bw_mon_pkg.sv:356"
+    ]
+  },
+  "CLOCK_CONTEXT": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_registry.svh:306",
+      "rtl/bw_mon_registry.svh:329"
+    ]
+  },
+  "COLLECTOR_STATE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_group_mon.sv:120"
+    ]
+  },
+  "CONFIG_FROZEN": {
+    "cases": [
+      "startup_reconfigure",
+      "group_config_member_after_seal",
+      "group_config_hot_member",
+      "group_config_repeat_finish",
+      "hierarchy_hot_group"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:95",
+      "rtl/bw_mon_registry.svh:281"
+    ]
+  },
+  "CONSUMER_REFERENCE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:140",
+      "rtl/bw_mon_transport.svh:156"
+    ]
+  },
+  "CONTROL_ORIGIN": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:104",
+      "rtl/bw_mon_transport.svh:106"
+    ]
+  },
+  "CONTROL_RELEASE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:160",
+      "rtl/bw_mon_transport.svh:163"
+    ]
+  },
+  "CONTROL_SEQUENCE": {
+    "cases": [
+      "member_control_error"
+    ],
+    "locations": [
+      "rtl/bw_mon_transport.svh:110",
+      "rtl/bw_stats_core.sv:993"
+    ]
+  },
+  "CONTROL_TIME": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:115",
+      "rtl/bw_stats_core.sv:986",
+      "rtl/bw_stats_core.sv:996"
+    ]
+  },
+  "CREDIT_CONFIG": {
+    "cases": [
+      "credit_config_error",
+      "credit_initial_error",
+      "credit_return_error",
+      "numeric_policy_credit_x",
+      "numeric_policy_credit_2",
+      "numeric_policy_initial_x",
+      "numeric_policy_initial_2"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:365",
+      "rtl/bw_mon_pkg.sv:367",
+      "rtl/bw_mon_pkg.sv:369",
+      "rtl/bw_mon_pkg.sv:371"
+    ]
+  },
+  "DUPLICATE_OWNER": {
+    "cases": [
+      "group_config_duplicate_owner"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:332"
+    ]
+  },
+  "DUPLICATE_POINT": {
+    "cases": [
+      "startup_duplicate"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:303"
+    ]
+  },
+  "EDGE_SEQUENCE": {
+    "cases": [
+      "cycle_edge_error",
+      "group_fault_wrong_edge"
+    ],
+    "locations": [
+      "rtl/bw_mon_transport.svh:66",
+      "rtl/bw_stats_core.sv:1046"
+    ]
+  },
+  "EMPTY_GROUP": {
+    "cases": [
+      "group_config_empty_group"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:224"
+    ]
+  },
+  "EPISODE_CONFIG": {
+    "cases": [
+      "episode_config_error",
+      "episode_unknown_q",
+      "group_analysis_config_unknown_q",
+      "group_analysis_config_unknown_episode_enable",
+      "group_analysis_config_invalid_episode_enable",
+      "numeric_policy_episode_x",
+      "numeric_policy_episode_2"
+    ],
+    "locations": [
+      "rtl/bw_group_mon.sv:62",
+      "rtl/bw_mon_pkg.sv:450",
+      "rtl/bw_mon_pkg.sv:453",
+      "rtl/bw_mon_pkg.sv:455"
+    ]
+  },
+  "FRAME_ALIGNMENT": {
+    "cases": [
+      "group_fault_wrong_time"
+    ],
+    "locations": [
+      "rtl/bw_group_mon.sv:165"
+    ]
+  },
+  "FRAME_TIMEOUT": {
+    "cases": [
+      "group_fault_missing_first",
+      "group_fault_missing_second",
+      "group_unknown_timeout",
+      "group_deferred_final_missing",
+      "hierarchy_depth_missing"
+    ],
+    "locations": [
+      "rtl/bw_group_mon.sv:203"
+    ]
+  },
+  "FRAME_TIMEOUT_CONFIG": {
+    "cases": [
+      "group_unknown_timeout"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:286"
+    ]
+  },
+  "GROUP_CLOCK": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_group_mon.sv:90"
+    ]
+  },
+  "GROUP_CONTEXT": {
+    "cases": [
+      "group_config_clock",
+      "group_config_window",
+      "group_config_stride",
+      "hierarchy_context"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:241"
+    ]
+  },
+  "GROUP_COUNT": {
+    "cases": [
+      "group_config_extra_group",
+      "group_unknown_count",
+      "group_wide_count"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:263",
+      "rtl/bw_mon_registry.svh:284"
+    ]
+  },
+  "GROUP_CYCLE": {
+    "cases": [
+      "hierarchy_self_cycle",
+      "hierarchy_cycle"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:158"
+    ]
+  },
+  "GROUP_DEFINITION": {
+    "cases": [
+      "group_config_duplicate_definition"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:267",
+      "rtl/bw_mon_registry.svh:347"
+    ]
+  },
+  "GROUP_DEPTH": {
+    "cases": [
+      "hierarchy_depth9"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:185"
+    ]
+  },
+  "GROUP_ID": {
+    "cases": [
+      "group_config_empty_id"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:45",
+      "rtl/bw_mon_registry.svh:327"
+    ]
+  },
+  "GROUP_OVERLAP": {
+    "cases": [
+      "hierarchy_point_overlap",
+      "hierarchy_overlap32",
+      "hierarchy_overlap64",
+      "hierarchy_siblings",
+      "hierarchy_diamond",
+      "hierarchy_t4_overlap"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:177"
+    ]
+  },
+  "GROUP_REFERENCE": {
+    "cases": [
+      "group_config_missing_reference",
+      "group_config_prefix_empty",
+      "hierarchy_missing_group",
+      "hierarchy_missing_point"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:9",
+      "rtl/bw_mon_registry.svh:47",
+      "rtl/bw_mon_registry.svh:206",
+      "rtl/bw_mon_registry.svh:211",
+      "rtl/bw_mon_registry.svh:220"
+    ]
+  },
+  "HINT_CLOCK": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_hint_duration.sv:110"
+    ]
+  },
+  "HINT_CONFIG": {
+    "cases": [
+      "hint_missing_basis",
+      "hint_missing_threshold",
+      "hint_zero_threshold",
+      "hint_bad_basis",
+      "numeric_policy_hint_x",
+      "numeric_policy_hint_2"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:439",
+      "rtl/bw_mon_pkg.sv:442",
+      "rtl/bw_mon_pkg.sv:444"
+    ]
+  },
+  "HINT_TIME": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_hint_duration.sv:54"
+    ]
+  },
+  "HISTORY_STATE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_history.svh:37",
+      "rtl/bw_history.svh:108",
+      "rtl/bw_variation_history.svh:39",
+      "rtl/bw_variation_history.svh:46"
+    ]
+  },
+  "INTEGER_OVERFLOW": {
+    "cases": [
+      "hint_time_overflow",
+      "numeric_add_overflow",
+      "numeric_mul_overflow"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:382",
+      "rtl/bw_mon_pkg.sv:396"
+    ]
+  },
+  "INTEGER_UNDERFLOW": {
+    "cases": [
+      "numeric_subtract_underflow"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:408"
+    ]
+  },
+  "INTEGER_UNKNOWN": {
+    "cases": [
+      "numeric_add_unknown",
+      "numeric_mul_unknown",
+      "numeric_frame_bytes_unknown",
+      "numeric_frame_ticks_unknown",
+      "numeric_frame_sequence_unknown",
+      "numeric_control_sequence_unknown",
+      "numeric_control_origin_unknown",
+      "numeric_subtract_unknown",
+      "numeric_transport_publish_handle",
+      "numeric_transport_ack_frame",
+      "numeric_transport_ack_control",
+      "numeric_transport_group_handle",
+      "numeric_transport_member_index",
+      "numeric_transport_progress",
+      "numeric_query_time",
+      "numeric_query_scope_kind",
+      "numeric_query_scope_index",
+      "numeric_core_frame_bytes",
+      "numeric_core_frame_time",
+      "numeric_core_control_sequence",
+      "numeric_core_progress"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:377",
+      "rtl/bw_mon_pkg.sv:391",
+      "rtl/bw_mon_pkg.sv:404",
+      "rtl/bw_mon_pkg.sv:423",
+      "rtl/bw_mon_pkg.sv:431",
+      "rtl/bw_mon_pkg.sv:503",
+      "rtl/bw_mon_registry.svh:2",
+      "rtl/bw_mon_registry.svh:8",
+      "rtl/bw_mon_registry.svh:14",
+      "rtl/bw_mon_registry.svh:78",
+      "rtl/bw_mon_registry.svh:87",
+      "rtl/bw_mon_transport.svh:27",
+      "rtl/bw_mon_transport.svh:38",
+      "rtl/bw_mon_transport.svh:173",
+      "rtl/bw_mon_transport.svh:192",
+      "rtl/bw_stats_core.sv:1115"
+    ]
+  },
+  "MEMBER_COUNT": {
+    "cases": [
+      "group_config_zero_members",
+      "group_config_member_count",
+      "group_config_unknown_member_count",
+      "group_config_wide_member_count"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:226",
+      "rtl/bw_mon_registry.svh:344"
+    ]
+  },
+  "MEMBER_REFERENCE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:29"
+    ]
+  },
+  "MEMBER_RULE": {
+    "cases": [
+      "group_config_unknown_rule",
+      "hierarchy_group_prefix",
+      "hierarchy_unknown_kind",
+      "hierarchy_invalid_kind"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:361"
+    ]
+  },
+  "METRIC_ARITHMETIC": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_stats_core.sv:265",
+      "rtl/bw_stats_core.sv:298",
+      "rtl/bw_stats_core.sv:383",
+      "rtl/bw_stats_core.sv:400"
+    ]
+  },
+  "METRIC_TIME": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_stats_core.sv:215"
+    ]
+  },
+  "NOT_READY": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_registry.svh:77",
+      "rtl/bw_mon_transport.svh:56",
+      "rtl/bw_mon_transport.svh:96"
+    ]
+  },
+  "PHASE_CONFIG": {
+    "cases": [
+      "phase_config_n",
+      "phase_config_span",
+      "phase_config_k",
+      "phase_config_negative",
+      "phase_config_exit",
+      "phase_config_overlap",
+      "phase_config_nan",
+      "phase_config_episode",
+      "phase_config_missing",
+      "phase_config_unknown",
+      "phase_config_infinite",
+      "group_analysis_config_requires_episode",
+      "group_analysis_config_unknown_n",
+      "group_analysis_config_infinity",
+      "group_analysis_config_unknown_phase_enable",
+      "group_analysis_config_invalid_phase_enable",
+      "numeric_policy_phase_x",
+      "numeric_policy_phase_2"
+    ],
+    "locations": [
+      "rtl/bw_group_mon.sv:64",
+      "rtl/bw_mon_pkg.sv:470",
+      "rtl/bw_mon_pkg.sv:473",
+      "rtl/bw_mon_pkg.sv:475",
+      "rtl/bw_mon_pkg.sv:477",
+      "rtl/bw_mon_pkg.sv:486",
+      "rtl/bw_mon_pkg.sv:489",
+      "rtl/bw_mon_pkg.sv:491"
+    ]
+  },
+  "PHASE_FIT": {
+    "cases": [
+      "phase_fit_error"
+    ],
+    "locations": [
+      "rtl/bw_stats_core.sv:513",
+      "rtl/bw_stats_core.sv:525",
+      "rtl/bw_stats_core.sv:563"
+    ]
+  },
+  "PHASE_STATE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_stats_core.sv:360"
+    ]
+  },
+  "POINT_COUNT": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_registry.svh:259",
+      "rtl/bw_mon_registry.svh:283",
+      "rtl/bw_mon_registry.svh:307"
+    ]
+  },
+  "POINT_ID": {
+    "cases": [
+      "startup_empty"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:301"
+    ]
+  },
+  "POINT_INCREMENT": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:77"
+    ]
+  },
+  "POINT_REFERENCE": {
+    "cases": [
+      "member_control_reference_error"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:15",
+      "rtl/bw_mon_registry.svh:62",
+      "rtl/bw_mon_transport.svh:102",
+      "rtl/bw_stats_core.sv:988"
+    ]
+  },
+  "PROTOCOL_CONFIG": {
+    "cases": [
+      "protocol_config_error",
+      "hint_unknown_protocol"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:352",
+      "rtl/bw_mon_pkg.sv:363"
+    ]
+  },
+  "RECORD_RELEASE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:144",
+      "rtl/bw_mon_transport.svh:147"
+    ]
+  },
+  "RECORD_SEQUENCE": {
+    "cases": [
+      "group_fault_duplicate",
+      "group_fault_record_gap",
+      "group_fault_reverse"
+    ],
+    "locations": [
+      "rtl/bw_mon_transport.svh:62",
+      "rtl/bw_stats_core.sv:1041"
+    ]
+  },
+  "RECORD_TIME": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:71",
+      "rtl/bw_stats_core.sv:1044",
+      "rtl/bw_stats_core.sv:1102"
+    ]
+  },
+  "REGISTRATION_FROZEN": {
+    "cases": [
+      "startup_late",
+      "group_config_late_registration"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:300",
+      "rtl/bw_mon_registry.svh:326"
+    ]
+  },
+  "REPORT_DEFERRED": {
+    "cases": [
+      "report_scope_deferred"
+    ],
+    "locations": []
+  },
+  "REPORT_FINAL_DEFERRED": {
+    "cases": [
+      "report_final_deferred"
+    ],
+    "locations": []
+  },
+  "REPORT_HINT_DEFERRED": {
+    "cases": [
+      "report_hint_deferred"
+    ],
+    "locations": []
+  },
+  "REPORT_OWNER": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:291"
+    ]
+  },
+  "SCOPE_KIND": {
+    "cases": [
+      "numeric_core_kind"
+    ],
+    "locations": [
+      "rtl/bw_stats_core.sv:1113"
+    ]
+  },
+  "SCOPE_REFERENCE": {
+    "cases": [
+      "numeric_query_scope_invalid"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:79",
+      "rtl/bw_mon_registry.svh:89"
+    ]
+  },
+  "SIM_TIME_LIMIT": {
+    "cases": [
+      "reset_time_budget",
+      "hint_time_budget",
+      "hint_final_budget",
+      "episode_final_budget",
+      "report_final_budget",
+      "report_result_budget",
+      "report_phase_result_budget"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:507",
+      "rtl/bw_mon_pkg.sv:510"
+    ]
+  },
+  "SOURCE_EPOCH": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_transport.svh:75",
+      "rtl/bw_mon_transport.svh:117"
+    ]
+  },
+  "SOURCE_REFERENCE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_registry.svh:3"
+    ]
+  },
+  "STARTUP_TIMEOUT": {
+    "cases": [
+      "startup_missing",
+      "group_config_missing_owner",
+      "group_config_missing_finish",
+      "group_missing_ungrouped"
+    ],
+    "locations": [
+      "rtl/bw_mon_setup.sv:33"
+    ]
+  },
+  "STARTUP_TIMEOUT_CONFIG": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_setup.sv:18"
+    ]
+  },
+  "STORAGE_FAILURE": {
+    "cases": [
+      "storage_failure_history",
+      "storage_failure_core_frames",
+      "storage_failure_core_controls",
+      "storage_failure_core_resets",
+      "storage_failure_core_timers",
+      "storage_failure_quality_window",
+      "storage_failure_quality_episode",
+      "storage_failure_phase_fit",
+      "storage_failure_phase_pending",
+      "storage_failure_variation_episode",
+      "storage_failure_variation_phase",
+      "storage_failure_recorder_samples",
+      "storage_failure_recorder_controls",
+      "storage_failure_transport_frames",
+      "storage_failure_transport_controls",
+      "storage_failure_transport_origins",
+      "storage_failure_group_expected",
+      "storage_failure_hint_backpressure_status",
+      "storage_failure_hint_backpressure_edges",
+      "storage_failure_hint_backpressure_timers",
+      "storage_failure_report_scopes",
+      "storage_failure_report_rules",
+      "storage_failure_report_cfg-line",
+      "storage_failure_report_token",
+      "storage_failure_clock",
+      "storage_failure_final_phase",
+      "storage_failure_registry_source",
+      "storage_failure_registry_points",
+      "storage_failure_registry_groups",
+      "storage_failure_registry_rules",
+      "storage_failure_registry_members",
+      "storage_failure_registry_parents"
+    ],
+    "locations": [
+      "rtl/bw_mon_pkg.sv:538"
+    ]
+  },
+  "STORAGE_RANGE": {
+    "cases": [
+      "phase_config_storage",
+      "numeric_queue_range"
+    ],
+    "locations": [
+      "rtl/bw_check_report.sv:289",
+      "rtl/bw_mon_pkg.sv:478",
+      "rtl/bw_mon_pkg.sv:517"
+    ]
+  },
+  "TOPOLOGY_LIMIT": {
+    "cases": [
+      "hierarchy_fanout17",
+      "hierarchy_edge_limit_excess"
+    ],
+    "locations": [
+      "rtl/bw_mon_registry.svh:33",
+      "rtl/bw_mon_registry.svh:49",
+      "rtl/bw_mon_registry.svh:229",
+      "rtl/bw_mon_registry.svh:246"
+    ]
+  },
+  "TOPOLOGY_STATE": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_mon_registry.svh:135"
+    ]
+  },
+  "TRANSFER_BYTES": {
+    "cases": [
+      "dynamic_size_error"
+    ],
+    "locations": [
+      "rtl/bw_point_recorder.sv:140"
+    ]
+  },
+  "UNEXPECTED_FRAME": {
+    "cases": [],
+    "locations": [
+      "rtl/bw_group_mon.sv:198"
+    ]
+  },
+  "WINDOW_CONFIG": {
+    "cases": [
+      "startup_bad_width",
+      "startup_bad_stride",
+      "startup_ns_width_limit",
+      "startup_cycle_width_limit",
+      "startup_cycle_bad_stride",
+      "numeric_window_unknown",
+      "numeric_policy_basis_x",
+      "numeric_policy_basis_2",
+      "numeric_policy_stride_x"
+    ],
+    "locations": [
+      "rtl/bw_group_mon.sv:59",
+      "rtl/bw_mon_pkg.sv:548",
+      "rtl/bw_mon_pkg.sv:550",
+      "rtl/bw_mon_pkg.sv:554",
+      "rtl/bw_mon_pkg.sv:558"
+    ]
+  }
+}
