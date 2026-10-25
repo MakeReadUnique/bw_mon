@@ -1,7 +1,13 @@
 {
   "status": "PASS",
-  "production_base": "8de785c86f513804168eb2b868ab1f967a3b0e8b",
-  "harness_revision": "661ef33",
+  "production_base": "8e81839423ab7db335365a5e577e25b2ebe5dcb0",
+  "harness_revisions": [
+    "8e81839423ab7db335365a5e577e25b2ebe5dcb0"
+  ],
+  "runtime_source_manifest": "runtime-source.json",
+  "runtime_source_unchanged": true,
+  "current_component_proof": "current-component-proof/verification.json",
+  "historical_component_proof": "component-proof/verification.json",
   "scenes": [
     {
       "scene": "child_reset_cycle",
@@ -37,8 +43,8 @@
         "summary_status": "FAIL"
       },
       "images": [],
-      "fsdb_sha256": "a23c1092166228d25d50125da92597833dc3907187d8d4246cd878a0d40e0c4c",
-      "human_review": "PENDING"
+      "fsdb_sha256": "85529392bf96abf6b20ee884c4b833be964a567b50f772603669cf8dae9da0c2",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "child_reset_ns",
@@ -76,8 +82,8 @@
       "images": [
         "quality.png"
       ],
-      "fsdb_sha256": "64462ae5eb8bbd59d423c7cc927878d0efcfe30a613474752f156a6ae49c74e2",
-      "human_review": "PENDING"
+      "fsdb_sha256": "4346b5561e5d2966393d33191976f981fe0ca1eaac209aa6bba63858bca241d2",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "clock_stop_cycle",
@@ -115,8 +121,8 @@
       "images": [
         "clock.png"
       ],
-      "fsdb_sha256": "a62d43bfef28a7160a61286acc4dfb4beefde984ac467ddb1e805366e78b99e9",
-      "human_review": "PENDING"
+      "fsdb_sha256": "8c7e79b4acfe024daa42b6089c26edbf6f4b322d12f932f1b0d882dcec436e84",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "clock_stop_ns",
@@ -154,8 +160,8 @@
       "images": [
         "clock.png"
       ],
-      "fsdb_sha256": "3b3e46f2c6676415918e1eb6b3ae9f10092268b8f4ce61c89e5df6b9d0384a11",
-      "human_review": "PENDING"
+      "fsdb_sha256": "35cbeaf2a105176d1db0595b8c9313327da66a18e96b573b14fc09a6f26b0fab",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e2_cycle",
@@ -191,8 +197,8 @@
         "summary_status": "PASS"
       },
       "images": [],
-      "fsdb_sha256": "6dff987db5ef17d6c3c32b74bd5cafe032bf43e8a980a92057dd2c91317da958",
-      "human_review": "PENDING"
+      "fsdb_sha256": "ca4e0eb554ca6e0da481415d38c86e6da97296516085aacc3e4f8eee77599c8d",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e2_ns",
@@ -230,8 +236,8 @@
       "images": [
         "overview.png"
       ],
-      "fsdb_sha256": "116f1a7900fd0f71d1a75882d1a02c29173d897aff8dcd76a7114fe166c050e6",
-      "human_review": "PENDING"
+      "fsdb_sha256": "72cfdb3e0b1b324008d4e37291c65ca65e8a3ec51cc7c8479720b732ce7a2217",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e3_boundary_ns",
@@ -269,8 +275,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "fe340a314958589b2412019a2a2347c6fe1b85b5a86d678eb86c0140950e29a1",
-      "human_review": "PENDING"
+      "fsdb_sha256": "93a7657d3f77738b802f22b86e96d709f88f59bf232036240e4e7a21d4e19095",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e3_delayed_ns",
@@ -309,8 +315,8 @@
         "phase.png",
         "episode.png"
       ],
-      "fsdb_sha256": "80822459424c01804a65f70108c702e2fb860b129821b103fd4477b7bdfb1443",
-      "human_review": "PENDING"
+      "fsdb_sha256": "5e4b788c82c2f0cc3ec6c50e2c1ce67900418072cba70dd923cb7d9cd09bacfc",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e4_below_ns",
@@ -348,8 +354,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "1774c6f2de85cf7bc7d4f6103b5d1ce27f194388941ebd36bfed75f6b85d10d3",
-      "human_review": "PENDING"
+      "fsdb_sha256": "452326a059bc5df649dbe0cc0f9e3204c43e18338d6b85ff697f52aca9311683",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e4_boundary_ns",
@@ -387,8 +393,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "28c48bc6ac33a2516ec4333283a56ec6181731f75af94aa2c575ec39e0c65388",
-      "human_review": "PENDING"
+      "fsdb_sha256": "17238d872b4b501f44a9cf8a948d9307592c0586c24addc37bf2d2f24799db64",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e4_low_ns",
@@ -426,8 +432,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "0be583e0ff630bd9b5ab3374436e25041acc9726c9dfe2a27ceaa1604be04439",
-      "human_review": "PENDING"
+      "fsdb_sha256": "e937e7971d59f912106c2d61f67ee5972664308bbd431bcbec18efb48f24c123",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "e5_ns",
@@ -465,8 +471,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "0538a4d2058255476e36a46cdcd98e969a08b9cf7877398ee5872bdbbb59aa16",
-      "human_review": "PENDING"
+      "fsdb_sha256": "a84c765fb1dfd1fa9e09619c22246ed74a76fb21de0cfe4c4692b5d9018d297f",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "frequency_cycle",
@@ -504,8 +510,8 @@
       "images": [
         "clock.png"
       ],
-      "fsdb_sha256": "a61336845cadd57b439e5ddf03f806db6c9d48705dbc86fda7c9f5c62b1bcab4",
-      "human_review": "PENDING"
+      "fsdb_sha256": "80d57b13b8facbb056dc59219c4a72f752b44f5eacd5449f78f66db73ee9b2c7",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "frequency_ns",
@@ -543,8 +549,8 @@
       "images": [
         "clock.png"
       ],
-      "fsdb_sha256": "d0cfedec8eb1283cb9fd7b34cd991f680d207675357dd18d44a191fe814ddff7",
-      "human_review": "PENDING"
+      "fsdb_sha256": "c97050f8fccdcecc57cbb9429f23a12cab853226f29b04a8e0d9883fc92d4f71",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "hints_cycle",
@@ -582,8 +588,8 @@
       "images": [
         "hints.png"
       ],
-      "fsdb_sha256": "5f00f7804b67f6220324dd12e028ec14dbd82a6fa5c9ba60356bd55a069b3b7f",
-      "human_review": "PENDING"
+      "fsdb_sha256": "9b34f8169d3bb904c794525ce19b432c6a7f83d4c277565d0bf7c51ce79e731a",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "hints_ns",
@@ -619,8 +625,8 @@
         "summary_status": "FAIL"
       },
       "images": [],
-      "fsdb_sha256": "374d1b104a1ab83b9812807ec117bcabd2386962ea004d73d7e61ab18dea158b",
-      "human_review": "PENDING"
+      "fsdb_sha256": "3860a8cf25893fbc8fe820cddb2eb6b930b8ca7a90f903af31046463e32e9eb4",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "isolated_cycle",
@@ -656,8 +662,8 @@
         "summary_status": "PASS"
       },
       "images": [],
-      "fsdb_sha256": "0326ef1f098e54fa63f08c50ba7c2a140919a9fda0e12814942c0864a3bcf344",
-      "human_review": "PENDING"
+      "fsdb_sha256": "de1e9563fc12c05b6630342e306925cae21ef8ebc3d79d98144d0f122a4f5665",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "isolated_ns",
@@ -695,8 +701,8 @@
       "images": [
         "overview.png"
       ],
-      "fsdb_sha256": "b32d6dd8120f045ab5ddcb84dd64840d786d0f5fbe85832c0bba6f137feab762",
-      "human_review": "PENDING"
+      "fsdb_sha256": "7fa4ecc71b13566f6f98150942a1395d8694cb8eb1e971084c7d25b89a17d2d6",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "no_episode_cycle",
@@ -732,8 +738,8 @@
         "summary_status": "WARNING"
       },
       "images": [],
-      "fsdb_sha256": "436e43dd484bd17fd2e0645c936fda3382b4c03de18c2233f21fc651aaea6d13",
-      "human_review": "PENDING"
+      "fsdb_sha256": "968e5bb15a033a36a5aa9a0f7e8d2b73b346aa9e95d2f0d06a3e65f26f3fce83",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "no_episode_ns",
@@ -771,8 +777,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "b3804efe3882b9e21876db2573d39a4f1aefa47da00f32904ff2ff9e101bd6d7",
-      "human_review": "PENDING"
+      "fsdb_sha256": "a324cb49d40c5a96b937f54668d960dc244959ca4664d630088477e56aa7d4ae",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "point_reset_cycle",
@@ -808,8 +814,8 @@
         "summary_status": "FAIL"
       },
       "images": [],
-      "fsdb_sha256": "335137005cabf324c4409b101ba02fe8f94192e5deecfc362c9eb3f166d14f97",
-      "human_review": "PENDING"
+      "fsdb_sha256": "9080de5bc53ded3eaf2dc9cef8ba0b851972dfd68315523927bae5e7e8520764",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "point_reset_ns",
@@ -847,8 +853,8 @@
       "images": [
         "quality.png"
       ],
-      "fsdb_sha256": "68a366b290bf9095b5096ea1323b2f49e0ac2dbb82fcfe933418adf08f4ffca6",
-      "human_review": "PENDING"
+      "fsdb_sha256": "eeba698c5cbc9d64c370d028401047c28c8b6913f47a9149e631051dd4e12991",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "protocols_cycle",
@@ -884,8 +890,8 @@
         "summary_status": "FAIL"
       },
       "images": [],
-      "fsdb_sha256": "74a88b6d641b3eb3661892dd163e0e76f9247ef7b8bb49c34fc173b7c12e67da",
-      "human_review": "PENDING"
+      "fsdb_sha256": "5ae69fca8e3bd06e128bef912541c173dfd18b810b1841546e8fb7dc7fe1a8a0",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "protocols_ns",
@@ -923,8 +929,8 @@
       "images": [
         "protocols.png"
       ],
-      "fsdb_sha256": "146253e3259e2176106376444b25d0f6c2eb73c477f42c4c588831d1ca5d459f",
-      "human_review": "PENDING"
+      "fsdb_sha256": "7bc4f32868b71dde124207d292ad7106dd3b3e99dd0b6c22252c719943596c5f",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "reset_unknown_cycle",
@@ -960,8 +966,8 @@
         "summary_status": "WARNING"
       },
       "images": [],
-      "fsdb_sha256": "f9ff49c3622793c8a9a99ad77feef2ec7315ef4977124afca5b7b05a5a02f96d",
-      "human_review": "PENDING"
+      "fsdb_sha256": "cccef6c3abfa2e027e580e29fe2ceec3a90848d3c397e83ca626e507bf802093",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "reset_unknown_ns",
@@ -999,8 +1005,8 @@
       "images": [
         "quality.png"
       ],
-      "fsdb_sha256": "2cda079fe51d585efaea2e6ed4d50ec5d9baf2e4d742e134a2237b9ca04c4a14",
-      "human_review": "PENDING"
+      "fsdb_sha256": "7a6eb68ba906b01cf4096ddd21454bf49fe212eade1d0888d40a2c187052c9a9",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "size_unknown_cycle",
@@ -1036,8 +1042,8 @@
         "summary_status": "WARNING"
       },
       "images": [],
-      "fsdb_sha256": "3fcff4dc201b86e910e80c5091099c19e0238aa3e3858c9dbe55b712382889d0",
-      "human_review": "PENDING"
+      "fsdb_sha256": "526d169ebb359594528c8dad8b41d456bb9842e5cd621d35b68b5d717ce62a1c",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "size_unknown_ns",
@@ -1076,8 +1082,8 @@
         "quality.png",
         "episode.png"
       ],
-      "fsdb_sha256": "9819615d40b103aeeb27ea8e410547d84e37e7c3fa8cdfa534eca1f37f8f8300",
-      "human_review": "PENDING"
+      "fsdb_sha256": "b542f49dd89932b962b775b2373cacc31f990e2f39c0f68491ac2c58732bbf34",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "start_stop_cycle",
@@ -1115,8 +1121,8 @@
       "images": [
         "overview.png"
       ],
-      "fsdb_sha256": "bf706712396e6f1f5982fe59af380bf4d2556e52816e7b1d83b838d2c17e3afc",
-      "human_review": "PENDING"
+      "fsdb_sha256": "9983f65bd66d3ff3234e853fb2f616ef8634b4822dd2dde239b933c679db7ee9",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "start_stop_ns",
@@ -1154,8 +1160,8 @@
       "images": [
         "overview.png"
       ],
-      "fsdb_sha256": "3647bf9e22d43c247863372b23d7471a20945f2df62436b950198e1662b76836",
-      "human_review": "PENDING"
+      "fsdb_sha256": "d4cd8839829dfec36d00888a8a8d2aebdd4c64aa293018c7130ff580c9683a0d",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "steady_cycle",
@@ -1194,8 +1200,8 @@
         "overview.png",
         "clock.png"
       ],
-      "fsdb_sha256": "e17a41b050cb29232a51839c00792b66be3a9e6162be6fe61f0ccf0648b724b7",
-      "human_review": "PENDING"
+      "fsdb_sha256": "a6689b0e24e0fea8149c236b3bba7ad868b96ccc405ca84a8bfbd71631614dab",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "steady_ns",
@@ -1233,8 +1239,8 @@
       "images": [
         "overview.png"
       ],
-      "fsdb_sha256": "9716ed94dcf8eacb7562a5ffc0d170b057612ca96dbcc35d2c51c85c061fd91b",
-      "human_review": "PENDING"
+      "fsdb_sha256": "cd8651234f9f1883d03e0625f427224288982fe7538ee1a994ec103a740474cb",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "truncated_cycle",
@@ -1272,8 +1278,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "cb6ba0df48f24b505180cffeeba70ad225796cb24b542866914fe95fa5ea7a38",
-      "human_review": "PENDING"
+      "fsdb_sha256": "f7406332b26bfa44904313da41e0a9d41bdbdf439306018225b3bd1da4605607",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "truncated_ns",
@@ -1309,8 +1315,8 @@
         "summary_status": "WARNING"
       },
       "images": [],
-      "fsdb_sha256": "2bbf70ca4de3faff3accc6de1cbb23dd8cdd6a2e86380de90e0fd90d06034d82",
-      "human_review": "PENDING"
+      "fsdb_sha256": "e275c04bfe5b49b705bc0582ab226566dc8d727f705d5b1ebe515c7a3bc738c1",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "upper_reset_cycle",
@@ -1346,8 +1352,8 @@
         "summary_status": "FAIL"
       },
       "images": [],
-      "fsdb_sha256": "2efc5f509f7908a1c7949443f8d66a82d2061fdf508e87dc455e51411d129cb5",
-      "human_review": "PENDING"
+      "fsdb_sha256": "5eab4ec024cd3dd39c5bfbde435c72899a65e83390b36b8e96cdea3c88e48098",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "upper_reset_ns",
@@ -1385,8 +1391,8 @@
       "images": [
         "quality.png"
       ],
-      "fsdb_sha256": "e9ed0bfdb06856abbcf04e9f4537accb166208f038e8ea0be4bd31825e50c201",
-      "human_review": "PENDING"
+      "fsdb_sha256": "0f481741eb974c0a79b7893dcb923eef15af44b0c6c28afdb989106da74b7434",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "valid_unknown_cycle",
@@ -1422,8 +1428,8 @@
         "summary_status": "WARNING"
       },
       "images": [],
-      "fsdb_sha256": "f9ead79afa11f064bbb0b86a1211534dc889c504f4e377118ebe882de5578be2",
-      "human_review": "PENDING"
+      "fsdb_sha256": "de077b3c5ffc23a74048929f7194ff6d74cf9e8435180c5241c590a9065f797b",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "valid_unknown_ns",
@@ -1461,8 +1467,8 @@
       "images": [
         "quality.png"
       ],
-      "fsdb_sha256": "bfddf5de668c2fed89e8f498fb66d2316c2f254c0d886722a9377226273a7027",
-      "human_review": "PENDING"
+      "fsdb_sha256": "0243074111b29d7583193f800e0aa1d8ab51172739ab0276c31cc038f581aa7e",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "varying_cycle",
@@ -1500,8 +1506,8 @@
       "images": [
         "phase.png"
       ],
-      "fsdb_sha256": "1683cd5a7da2280c7e45cf4332b81fc52e66d9ed5b7199beff5def45b113bc01",
-      "human_review": "PENDING"
+      "fsdb_sha256": "2f1780f80dfaef848ea624d966a9c79eb5f871a9decba51bbd1da5ac4aaca972",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "varying_ns",
@@ -1540,8 +1546,8 @@
         "phase.png",
         "episode.png"
       ],
-      "fsdb_sha256": "e83dd1fe66b451c88f6a8b6b9e1b6100d6218989dc8fbb1c3c3ae5528c77cd09",
-      "human_review": "PENDING"
+      "fsdb_sha256": "8a1d0e1c91014174a1b4a39c72b4cf8ca547e3e4711473988c42bb5fa4ffdfbe",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "zero_cycle",
@@ -1577,8 +1583,8 @@
         "summary_status": "WARNING"
       },
       "images": [],
-      "fsdb_sha256": "96d9ff9b4c8a09043ce8b0defa9a493132298a9426a6999c2a5631045988860d",
-      "human_review": "PENDING"
+      "fsdb_sha256": "6289c16986be6029f3fc312a948dfa3dc81fe3fe588850bc0458a994abc5ed6a",
+      "human_review_at_generation": "PENDING"
     },
     {
       "scene": "zero_ns",
@@ -1616,8 +1622,8 @@
       "images": [
         "episode.png"
       ],
-      "fsdb_sha256": "ee7171cc4676a01bd562fe744881a29c82a1eeca0929417d64f06d8271c1e991",
-      "human_review": "PENDING"
+      "fsdb_sha256": "26196587baf09d77de7caf47e062a58d69e97b23616f182ffc07d4d9ac9760ca",
+      "human_review_at_generation": "PENDING"
     }
   ],
   "totals": {
@@ -1632,7 +1638,7 @@
   },
   "fresh_actual_pngs": 33,
   "human_review": "PENDING",
-  "no_production_changes": true,
+  "human_review_scope": "Only named objects and intervals in review.json; no per-scene approval inferred",
   "python": "3.6.8",
   "window_real_tolerance_gbps": 1e-10,
   "metric_real_tolerance": 1e-08,

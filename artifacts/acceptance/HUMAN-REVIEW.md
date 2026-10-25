@@ -1,6 +1,13 @@
 # Concrete human T6 review checklist — frozen objects
 
 **Human review is PENDING.** These are actual generated objects, not future work.
+This bundle was freshly rerun/captured on runtime `8e818394` with42 unchanged
+original input/configuration scenes and33 real Verdi images. Object names,
+intervals and numeric targets below are unchanged. Its asset fingerprint is
+`65f318be688aa05ca26231cda061d011f936e41c94f0f52857d773e9d8f3ae98`;
+earlier bundle signatures do not cover these regenerated objects.
+Stopped/frequency clock views now also show die0/die1/mixed B/cycle rows; these
+are0 in NS mode. Existing objects, time intervals and targets stay unchanged.
 Automation passed42 scenes; agent image inspection is separately recorded. Open
 the linked original FSDB and nearby public `.sav` with `./open.sh <view>`, inspect
 actual images/values against the independent expected/actual table, then record

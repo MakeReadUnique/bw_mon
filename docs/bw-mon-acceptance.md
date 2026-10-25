@@ -1,20 +1,29 @@
 # Integration, acceptance evidence and review
 
-The monitor and component contracts are implemented. The durable component proof
-contains408/408 VCS cases on the numeric/storage27 production tree; the separate
-public12-point integration campaign checks42 original-input scenes. These are
+The monitor and component contracts are implemented. The current durable component
+proof contains424/424 VCS cases on frozen runtime `8e818394`; the public12-point
+campaign was rerun against the same18 production files with42 unchanged original
+input/configuration scenes and33 fresh real Verdi captures. These are
 automated results. **Human T6 review is pending** until an actual person reviews
 and records the completed bundle. Agent inspection never supplies that attestation.
-The [common-scale guide](bw-mon-scale.md) records four verified29 profiles.
-Maximum topology and the additional matrix remain30/31 work with separate exact
-manifests; small wave scenes never substitute for those targets.
+The [scale guide](bw-mon-scale.md) retains each campaign's exact source/profile
+manifest; these small wave scenes do not substitute for scale revalidation.
 
 Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), not the
 architecture HTML's illustrative curves. It links original FSDBs, public signal
 views, fresh Verdi images, input/configuration, expected/actual/difference tables
-and provenance. The [component proof](../artifacts/acceptance/component-proof/verification.json)
-and its [portable archive](../artifacts/acceptance/component-proof/final-408-proof.tar.gz)
-retain genuine408 logs/configs/hashes, independent of former temporary worktrees.
+and provenance. The [current424 proof](../artifacts/acceptance/current-component-proof/verification.json)
+and its [portable archives/verifier](../artifacts/acceptance/current-component-proof/README.md)
+cover167 tops and3 minimum-option runs. The unchanged [historical408 proof](../artifacts/acceptance/component-proof/verification.json)
+and [archive](../artifacts/acceptance/component-proof/final-408-proof.tar.gz) retain
+their original numeric/storage27 source scope. The [runtime freeze](../artifacts/acceptance/runtime-source.json)
+records18 RTL/C/local-header hashes and49 transitive native-header hashes; each
+scene's commands also preserve its actual consumed snapshot and native `.d`.
+The [current source/test hashes](../artifacts/acceptance/current-source-manifest.json),
+[original-input/config equality](../artifacts/acceptance/input-equivalence.json),
+[fresh-capture provenance](../artifacts/acceptance/capture-provenance.json) and
+[actual relocated-view proof](../artifacts/acceptance/portable-view-proof.json)
+remain directly accessible after temporary build directories are removed.
 
 ## Three integration entries
 
@@ -110,7 +119,7 @@ precise error code and absence of continuation, not shell status alone.
 ## Commands, artifacts and review
 
 ```sh
-make test                         # component/current408 manifest
+make test                         # component/current424 manifest
 make acceptance                   #42 actual public scenes, FSDB and independent checks
 python3 tests/acceptance/run.py --scene size_unknown --basis cycle
 python3 tests/acceptance/views.py --capture --display "$DISPLAY"
@@ -119,8 +128,13 @@ cd artifacts/acceptance/steady_ns
 ```
 
 VCS/Verdi W-2024.09-SP1_Full64, Python3.6.8 and actual compile/run/capture options
-are preserved. Compile package, report package, other RTL then scene; use
--full64/-sverilog/-debug_access+all/-kdb, +incdir+rtl and -assert svaext. The FSDB
+are preserved. Compile package, report package, other RTL, the private
+`rtl/bw_slot_settlement.c` helper, then scene; use
+-full64/-sverilog/+vpi/-debug_access+all/-kdb, +incdir+rtl, -assert svaext and
+`-CFLAGS -I<VCS>/include` for the installed `svdpi.h`/`vpi_user.h`. Plain
+non-wave builds require `-debug_access` or `-debug_access+all` too. The helper
+settles kernel scheduling; measurement and analysis remain in SV, with the same
+three public integration entries. See [scheduling/build details](bw-mon-scheduling.md). The FSDB
 PLI was automatically linked by the recorded local installation. Other installations
 must provide their normal VCS/Verdi FSDB setup. The simulator uses -no_save. Dump
 scope depth1 includes actual DUT pins/public monitors; no private Core layout is
@@ -150,8 +164,7 @@ revalidates the existing assets and renders the current global human status in
 fingerprint; changed assets return the current status to PENDING. This command
 retains the archived previous record on later pending republication without
 adding duplicate archives, and does not create an attestation. Scene rows describe
-automated results, and
-`human_review_at_generation` records their original generation-time state; neither
+automated results, and `human_review_at_generation` records their original generation-time state; neither
 implies separate human approval of every scene. Original comparison/capture
 manifests and expected/actual tables retain their historical PENDING text and
 bytes. Do not use `--pack` for a review-status refresh.
@@ -163,7 +176,7 @@ byte preservation without touching the real ledger, simulation or capture.
 
 ## Contract to evidence
 
-| Clauses | Component anchors (durable408 proof) | Public scene evidence |
+| Clauses | Component anchors (current424 proof; historical408 retained) | Public scene evidence |
 | --- | --- | --- |
 | D1–D3/T1 | ns_bind, startup_*, group_matching, hierarchy_* | All42 use12 bound wrappers +4 groups/setup; exact IDs/free points/multi-parent mixed DAG. |
 | D4–D5/T3 | protocol_recording, sample_view, credit_* | protocols ns/cycle: validX&ready0 known idle; credit valid0/flitv1/R0 definite send; fixed/dynamic amounts. |
