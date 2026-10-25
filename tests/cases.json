@@ -820,7 +820,7 @@
       "+PASSES=1"
     ],
     "expect_log": [
-      "BW_CFG WARNING .*reason=UNSUPPORTED_SCOPE",
+      "BW_CFG WARNING .*reason=UNREGISTERED_SCOPE scope_kind=group",
       "BW_CFG WARNING .*reason=NO_VALID_SECTION"
     ],
     "expect_counts": {
@@ -1726,14 +1726,14 @@
       "+BW_EXPECT=../../../tests/expect/e2e_typed_scope.cfg"
     ],
     "expect_log": [
-      "BW_CFG WARNING .*scope=tb.noc1.p0 .*reason=UNSUPPORTED_SCOPE scope_kind=group",
       "BW_CHECK scope_kind=0 scope=tb.noc1.p0 .*reason=NO_EPISODE",
-      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=3 scopes_done=5 scopes_expected=5"
+      "BW_CHECK scope_kind=1 scope=tb.noc1.p0 .*reason=NO_EPISODE",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=5 scopes_expected=5"
     ],
     "expect_counts": {
-      "BW_CFG WARNING ": 2,
-      "BW_CHECK ": 1,
-      "BW_CHECK scope_kind=1 ": 0,
+      "BW_CFG WARNING ": 0,
+      "BW_CHECK ": 2,
+      "BW_CHECK scope_kind=1 ": 1,
       "BW_SUMMARY ": 1
     }
   },
@@ -2230,5 +2230,936 @@
     "expect_log": [
       "BW_PHASE_METRICS.*scope=metrics.stopped0 .*start_ticks=6000000 end_ticks=8000000.*duration_valid=1.*bandwidth_gbps=20 .*duration_reason=NONE"
     ]
+  },
+  {
+    "name": "report_metrics_repeated",
+    "top": "tb_report_metrics_repeated",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_repeated.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK .*metric=steady_bw .*actual=20 .*conclusion=PASS",
+      "BW_CHECK .*metric=steady_bw .*actual=30 .*conclusion=PASS",
+      "BW_CHECK .*metric=episode_cv .*conclusion=FAIL",
+      "BW_SUMMARY status=FAIL pass=6 fail=2 warning=0 scopes_done=2 scopes_expected=2"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 8,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_group_metrics_normal",
+    "top": "tb_report_group_metrics",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=normal"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 5
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=normal",
+      "BW_SUMMARY status=PASS pass=5 fail=0 warning=0 scopes_done=5 scopes_expected=5",
+      "BW_CHECK scope_kind=0 scope=shared .*actual=40 .*min=40 .*conclusion=PASS",
+      "BW_CHECK scope_kind=1 scope=shared .*actual=100 .*min=100 .*conclusion=PASS"
+    ]
+  },
+  {
+    "name": "report_group_metrics_child_reset",
+    "top": "tb_report_group_metrics",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=child_reset"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 6
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=child_reset",
+      "BW_SUMMARY status=WARNING pass=5 fail=0 warning=1 scopes_done=5 scopes_expected=5",
+      "BW_CHECK scope_kind=1 scope=parent epoch=0 episode=1 .*metric=e2e_bw .*actual=120 .*conclusion=PASS"
+    ]
+  },
+  {
+    "name": "report_group_metrics_point_reset",
+    "top": "tb_report_group_metrics",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=point_reset"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 6
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=point_reset",
+      "BW_SUMMARY status=FAIL pass=3 fail=2 warning=1 scopes_done=5 scopes_expected=5",
+      "BW_CHECK scope_kind=1 scope=parent .*metric=e2e_bw .*actual=116 .*member_reset=1 .*conclusion=FAIL",
+      "BW_CHECK scope_kind=1 scope=parent .*metric=episode_cv .*member_reset=1 .*conclusion=PASS"
+    ]
+  },
+  {
+    "name": "report_group_metrics_size_unknown",
+    "top": "tb_report_group_metrics",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=size_unknown"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 5
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=size_unknown",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=5 scopes_done=5 scopes_expected=5"
+    ]
+  },
+  {
+    "name": "report_metrics_all",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+EXPECT_PASS=13",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=0"
+    ],
+    "expect_log": [
+      "BW_CHECK .*metric=ramp_time unit=ns .*actual=3 .*effective_min=3 effective_max=5",
+      "BW_CHECK .*metric=steady_bw .*actual=20 .*effective_min=20 effective_max=30",
+      "BW_SUMMARY status=PASS pass=13 fail=0 warning=0"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_bad_duration",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+BAD_DURATION",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "metric=ramp_time .*actual=UNAVAILABLE .*reason=DURATION_UNAVAILABLE"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_raw_independent",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+RAW_INCOMPLETE",
+      "+EXPECT_PASS=11",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=2"
+    ],
+    "expect_log": [
+      "metric=e2e_bw .*conclusion=WARNING reason=BYTES_INCOMPLETE",
+      "metric=steady_bw .*conclusion=WARNING reason=BYTES_INCOMPLETE",
+      "metric=steady_stddev .*conclusion=PASS",
+      "metric=episode_cv .*conclusion=PASS"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_unresolved_selection",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+SELECTION_INCOMPLETE",
+      "+EXPECT_PASS=8",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=5"
+    ],
+    "expect_log": [
+      "metric=steady_bw .*actual=UNAVAILABLE .*reason=OBSERVATION_INCOMPLETE"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_nonfinite",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+NONFINITE_VARIATION",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "metric=episode_stddev .*actual=UNAVAILABLE .*reason=ACTUAL_NONFINITE"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_zero_mean",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+ZERO_MEAN",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "metric=episode_cv .*actual=UNAVAILABLE .*reason=ZERO_MEAN"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_later_truncated",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+LATER_TRUNCATED",
+      "+EXPECT_PASS=13",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=12"
+    ],
+    "expect_log": [
+      "BW_CHECK .*episode=4 .*metric=steady_bw .*actual=UNAVAILABLE .*reason=OBSERVATION_TRUNCATED",
+      "BW_SUMMARY status=WARNING pass=13 fail=0 warning=12"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 25,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_transient",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+TRANSIENT_DEFERRED",
+      "+EXPECT_PASS=13",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=0"
+    ],
+    "expect_log": [],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_phase_result_budget",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+RESULT_BUDGET",
+      "+EXPECT_PASS=13",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=0"
+    ],
+    "expect_log": [],
+    "expect_counts": {
+      "BW_CHECK ": 0,
+      "BW_PHASE ": 0,
+      "BW_EPISODE ": 0,
+      "BW_SUMMARY ": 0
+    },
+    "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  },
+  {
+    "name": "report_metrics_invalid_e2e_bw",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_e2e_bw.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=e2e_bw_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_steady_bw",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_steady_bw.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=steady_bw_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_ramp_time",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_ramp_time.cfg",
+      "+EXPECT_PASS=11",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=ramp_time_min_ns reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 11,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_fall_time",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_fall_time.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=fall_time_min_ns reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_steady_window_min",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_steady_window_min.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=steady_window_min_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_steady_window_max",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_steady_window_max.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=steady_window_max_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_steady_stddev",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_steady_stddev.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=steady_stddev_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_steady_cv",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_steady_cv.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=steady_cv_min_pct reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_episode_window_min",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_episode_window_min.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=episode_window_min_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_episode_window_max",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_episode_window_max.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=episode_window_max_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_episode_stddev",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_episode_stddev.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=episode_stddev_min_gbps reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_invalid_episode_cv",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_invalid_episode_cv.cfg",
+      "+EXPECT_PASS=12",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "BW_CFG WARNING .*key=episode_cv_min_pct reason=INVALID_NUMBER"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 1
+    }
+  },
+  {
+    "name": "report_metrics_mixed",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_mixed.cfg",
+      "+EXPECT_PASS=8",
+      "+EXPECT_FAIL=0",
+      "+EXPECT_WARNING=5"
+    ],
+    "expect_log": [
+      "reason=DUPLICATE_KEY",
+      "reason=CONFLICTING_BOUNDS",
+      "reason=UNKNOWN_KEY",
+      "BW_SUMMARY status=WARNING pass=8 fail=0 warning=5"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 8,
+      "BW_SUMMARY ": 1,
+      "BW_CFG WARNING ": 5
+    }
+  },
+  {
+    "name": "report_metrics_zero",
+    "top": "tb_metrics_zero",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/report_metrics_zero.cfg"
+    ],
+    "expect_log": [
+      "scope=phase.zero0 .*metric=steady_bw .*actual=0 .*conclusion=PASS",
+      "scope=phase.zero0 .*metric=steady_stddev .*actual=UNAVAILABLE .*reason=TOO_FEW_SAMPLES",
+      "scope=phase.zero0 .*metric=episode_stddev .*actual=0 .*conclusion=PASS",
+      "scope=phase.zero0 .*metric=episode_cv .*actual=UNAVAILABLE .*reason=ZERO_MEAN",
+      "scope=phase.zero1 .*metric=steady_bw .*reason=NO_CONFIRMED_STEADY",
+      "scope=phase.zero2 .*metric=e2e_bw .*reason=NO_EPISODE",
+      "BW_SUMMARY status=WARNING pass=8 fail=0 warning=8"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 16,
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_independent",
+    "top": "tb_metrics_independent",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/report_metrics_independent.cfg"
+    ],
+    "expect_log": [
+      "metric=e2e_bw .*reason=BYTES_INCOMPLETE",
+      "metric=episode_stddev .*actual=5 .*conclusion=PASS",
+      "metric=episode_cv .*conclusion=PASS",
+      "BW_SUMMARY status=WARNING pass=4 fail=0 warning=1"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 5,
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_quality",
+    "top": "tb_metrics_quality",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/report_metrics_quality.cfg"
+    ],
+    "expect_log": [
+      "scope=phase.hysteresis1 .*metric=ramp_time .*actual=1.25 .*conclusion=PASS",
+      "scope=phase.hysteresis1 .*metric=steady_bw .*reason=BYTES_INCOMPLETE",
+      "scope=phase.hysteresis1 .*metric=steady_stddev .*conclusion=PASS",
+      "scope=phase.hysteresis1 .*metric=episode_stddev .*reason=OBSERVATION_INCOMPLETE",
+      "BW_SUMMARY status=WARNING pass=7 fail=0 warning=3"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 10,
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_interrupted",
+    "top": "tb_metrics_interrupted",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/report_metrics_interrupted.cfg"
+    ],
+    "expect_log": [
+      "metric=ramp_time .*actual=2 .*conclusion=PASS",
+      "scope=metrics.interrupted0 .*metric=steady_bw .*reason=RESET_INTERRUPTED",
+      "scope=metrics.interrupted1 .*metric=steady_bw .*reason=OBSERVATION_TRUNCATED",
+      "BW_SUMMARY status=WARNING pass=2 fail=0 warning=4"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 6,
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_delayed",
+    "top": "tb_metrics_delayed",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/report_metrics_delayed.cfg"
+    ],
+    "expect_log": [
+      "metric=steady_bw .*actual=0 .*conclusion=PASS",
+      "metric=steady_window_min .*actual=6.4.*conclusion=PASS",
+      "BW_SUMMARY status=PASS pass=4 fail=0 warning=0"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 4,
+      "BW_CFG WARNING ": 0,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_group_cycle_normal",
+    "top": "tb_report_group_metrics_cycle",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=normal"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 5
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=normal",
+      "BW_SUMMARY status=PASS pass=5 fail=0 warning=0 scopes_done=5 scopes_expected=5",
+      "BW_CHECK scope_kind=0 scope=shared .*actual=40 .*min=40 .*conclusion=PASS",
+      "BW_CHECK scope_kind=1 scope=shared .*actual=100 .*min=100 .*conclusion=PASS"
+    ],
+    "sources": [
+      "tb_report_group_metrics.sv"
+    ]
+  },
+  {
+    "name": "report_group_cycle_child_reset",
+    "top": "tb_report_group_metrics_cycle",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=child_reset"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 6
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=child_reset",
+      "BW_SUMMARY status=WARNING pass=5 fail=0 warning=1 scopes_done=5 scopes_expected=5",
+      "BW_CHECK scope_kind=1 scope=parent epoch=0 episode=1 .*metric=e2e_bw .*actual=120 .*conclusion=PASS"
+    ],
+    "sources": [
+      "tb_report_group_metrics.sv"
+    ]
+  },
+  {
+    "name": "report_group_cycle_point_reset",
+    "top": "tb_report_group_metrics_cycle",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=point_reset"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 6
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=point_reset",
+      "BW_SUMMARY status=FAIL pass=3 fail=2 warning=1 scopes_done=5 scopes_expected=5",
+      "BW_CHECK scope_kind=1 scope=parent .*metric=e2e_bw .*actual=116 .*member_reset=1 .*conclusion=FAIL",
+      "BW_CHECK scope_kind=1 scope=parent .*metric=episode_cv .*member_reset=1 .*conclusion=PASS"
+    ],
+    "sources": [
+      "tb_report_group_metrics.sv"
+    ]
+  },
+  {
+    "name": "report_group_cycle_size_unknown",
+    "top": "tb_report_group_metrics_cycle",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups.cfg",
+      "+MODE=size_unknown"
+    ],
+    "expect_counts": {
+      "BW_SUMMARY ": 1,
+      "BW_CHECK ": 5
+    },
+    "expect_log": [
+      "TB_PASS report_group_metrics mode=size_unknown",
+      "BW_SUMMARY status=WARNING pass=0 fail=0 warning=5 scopes_done=5 scopes_expected=5"
+    ],
+    "sources": [
+      "tb_report_group_metrics.sv"
+    ]
+  },
+  {
+    "name": "report_group_full_ns",
+    "top": "tb_report_group_metrics",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups_full.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK scope_kind=1 scope=parent .*metric=steady_bw .*actual=120 .*conclusion=PASS",
+      "BW_SUMMARY status=PASS pass=10 fail=0 warning=0 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 10,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_group_full_cycle",
+    "top": "tb_report_group_metrics_cycle",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups_full.cfg"
+    ],
+    "expect_log": [
+      "BW_CHECK scope_kind=1 scope=parent .*metric=steady_bw .*actual=120 .*conclusion=PASS",
+      "BW_SUMMARY status=PASS pass=10 fail=0 warning=0 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 10,
+      "BW_SUMMARY ": 1
+    },
+    "sources": [
+      "tb_report_group_metrics.sv"
+    ]
+  },
+  {
+    "name": "report_metrics_repeated_full",
+    "top": "tb_report_metrics_repeated",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_repeated_full.cfg",
+      "+FULL_METRICS"
+    ],
+    "expect_log": [
+      "metric=steady_bw .*actual=30 .*conclusion=PASS",
+      "metric=steady_window_max .*actual=20 .*conclusion=PASS",
+      "metric=episode_cv .*conclusion=FAIL",
+      "BW_SUMMARY status=FAIL pass=22 fail=2 warning=0"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 24,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_group_repeat_ns",
+    "top": "tb_report_group_metrics",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups_repeat.cfg",
+      "+REPEAT"
+    ],
+    "expect_log": [
+      "BW_CHECK scope_kind=1 scope=parent epoch=0 episode=2 .*metric=e2e_bw .*actual=120 .*conclusion=PASS",
+      "BW_CHECK scope_kind=1 scope=parent epoch=0 episode=2 .*metric=steady_bw .*actual=UNAVAILABLE .*reason=NO_CONFIRMED_STEADY",
+      "BW_SUMMARY status=WARNING pass=9 fail=0 warning=3 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_group_repeat_cycle",
+    "top": "tb_report_group_metrics_cycle",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_groups_repeat.cfg",
+      "+REPEAT"
+    ],
+    "expect_log": [
+      "BW_CHECK scope_kind=1 scope=parent epoch=0 episode=2 .*metric=e2e_bw .*actual=120 .*conclusion=PASS",
+      "BW_CHECK scope_kind=1 scope=parent epoch=0 episode=2 .*metric=steady_bw .*actual=UNAVAILABLE .*reason=NO_CONFIRMED_STEADY",
+      "BW_SUMMARY status=WARNING pass=9 fail=0 warning=3 scopes_done=5 scopes_expected=5"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1
+    },
+    "sources": [
+      "tb_report_group_metrics.sv"
+    ]
+  },
+  {
+    "name": "report_metrics_stopped",
+    "top": "tb_metrics_stopped_history",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_stopped.cfg"
+    ],
+    "expect_log": [
+      "metric=ramp_time .*actual=2 .*conclusion=PASS",
+      "metric=steady_bw .*reason=OBSERVATION_TRUNCATED",
+      "BW_SUMMARY status=WARNING pass=2 fail=0 warning=4"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 6,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "group_analysis_config_valid",
+    "top": "tb_group_analysis_config_valid",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ]
+  },
+  {
+    "name": "group_analysis_config_requires_episode",
+    "top": "tb_group_analysis_config_requires_episode",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "group_analysis_config_unknown_n",
+    "top": "tb_group_analysis_config_unknown_n",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "group_analysis_config_infinity",
+    "top": "tb_group_analysis_config_infinity",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "group_analysis_config_unknown_q",
+    "top": "tb_group_analysis_config_unknown_q",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=EPISODE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "report_metrics_initial_snapshot",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+INITIAL_SNAPSHOT"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_CHECK .* episode=[0-9]+ result_seq=0 ": 0,
+      "BW_SUMMARY ": 1
+    },
+    "expect_log": [
+      "BW_SUMMARY status=PASS pass=13 fail=0 warning=0"
+    ]
+  },
+  {
+    "name": "report_metrics_reason_priority",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+BAD_VARIATION_REASON",
+      "+EXPECT_PASS=12",
+      "+EXPECT_WARNING=1"
+    ],
+    "expect_log": [
+      "metric=episode_stddev .*actual=UNAVAILABLE .*reason=OBSERVATION_INCOMPLETE"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "group_analysis_config_unknown_episode_enable",
+    "top": "tb_group_analysis_config_unknown_episode_enable",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=EPISODE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "group_analysis_config_invalid_episode_enable",
+    "top": "tb_group_analysis_config_invalid_episode_enable",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=EPISODE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "group_analysis_config_unknown_phase_enable",
+    "top": "tb_group_analysis_config_unknown_phase_enable",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "group_analysis_config_invalid_phase_enable",
+    "top": "tb_group_analysis_config_invalid_phase_enable",
+    "sources": [
+      "group_analysis_config_fixture.sv"
+    ],
+    "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
+    "expect_counts": {
+      "BW_READY ": 0,
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "report_metrics_unknown_steady_kind",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+UNKNOWN_STEADY_KIND",
+      "+EXPECT_PASS=8",
+      "+EXPECT_WARNING=5"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 13,
+      "BW_SUMMARY ": 1
+    }
+  },
+  {
+    "name": "report_metrics_unknown_phase_kind",
+    "top": "tb_report_metrics_records",
+    "plusargs": [
+      "+BW_EXPECT=../../../tests/expect/metrics_all.cfg",
+      "+UNKNOWN_PHASE_KIND",
+      "+EXPECT_PASS=12",
+      "+EXPECT_WARNING=0"
+    ],
+    "expect_counts": {
+      "BW_CHECK ": 12,
+      "BW_SUMMARY ": 1
+    }
   }
 ]

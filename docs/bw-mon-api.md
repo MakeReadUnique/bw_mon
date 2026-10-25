@@ -5,7 +5,7 @@ from [绑定观测点并发布 ns 滑窗带宽](https://github.com/MakeReadUniqu
 and [cycle 滑窗、停钟与变频](https://github.com/MakeReadUnique/bw_mon/issues/16),
 and three-protocol accounting from
 [三类接口的逐传输计量与观测缺口](https://github.com/MakeReadUnique/bw_mon/issues/15).
-Scene-specific single-point e2e checks are described in
+Scene-specific point/group e2e, last-steady, ramp/fall and variation checks are described in
 [Expectation configuration and reports](bw-mon-expectations.md). The remaining
 implementation tickets extend this same public contract.
 
@@ -14,8 +14,8 @@ implementation tickets extend this same public contract.
 Compile `rtl/bw_mon_pkg.sv`, then `rtl/bw_check_report.sv`, then the other
 `rtl/*.sv` files. The report package must precede `bw_mon_setup.sv`. All production
 builds need `+incdir+rtl` and `-assert svaext` for the package headers and deferred
-deadline assertions, including point-only setups. Headers are included by the
-package and are not standalone compilation units. All production
+deadline assertions, including point-only setups. Headers are included by the package or public modules and are not standalone
+compilation units. All production
 scopes use `timeunit 1fs; timeprecision 1fs`; timestamps are unsigned 64-bit integer
 femtosecond ticks, read directly with `$time` in that scope. A nanosecond is
 1,000,000 ticks. Do not override production time units or precision.
@@ -1180,7 +1180,8 @@ Warning-/Error- diagnostics. The source, recursive-header, explicit-fixture and
 runner fingerprints matched that tree;
 every runtime log follows its current compilation stamp. `git diff --check` passed.
 This includes the final forward-reference, sampled-gap and held-upper-reset
-fixtures. Full group analysis parameters/aliases, real waveform review and scale
+fixtures. That hierarchy-only run did not include full group analysis; ticket26 composition
+below adds its parameters/aliases and comparisons. Real waveform review and scale
 execution remain separate acceptance work.
 
 An additional malformed-configuration startup probe creates a 4,096-group chain
@@ -1201,5 +1202,42 @@ fixture/runner fingerprints match, and every runtime log follows its current
 compilation stamp. The audit rechecks the current `expect_log` and `expect_counts`
 predicates, including exactly one final summary with 16/16 scopes in every T4
 mode and 5/5 in the equal-text point/group identity case. A focused three-case
-report-barrier run also passed. Group analysis aliases/comparisons, real waveform
-review and nominal scale execution remain later acceptance work.
+report-barrier run also passed. Group analysis aliases/comparisons are delivered
+below; real waveform review and nominal scale execution remain later acceptance work.
+
+## Group analysis and immutable public aliases
+
+`bw_group_mon` accepts the same explicit `EPISODE_ENABLE`, `SILENCE_THRESHOLD`,
+`PHASE_ENABLE`, N/min-span/K and all ten fit-threshold parameters as
+`bw_point_mon`. The analysis-enable parameters retain a raw four-state2-bit value until validation;
+only known0/1 is legal. Defaults disable both analyses; enabling phases requires enabling
+episodes and supplying the complete valid configuration. Validation occurs before
+registration can advertise Ready. A group has its own core, epoch, episode/phase
+identities and quality. Resetting its local `reset_n` interrupts only its own
+analysis; its raw group source continues serving parents. Known member reset is
+coverage metadata, not automatic group-byte failure.
+
+All episode/phase/metric scalar names documented for points also live directly at
+the public group instance. `rtl/bw_analysis_public.svh` shares declarations at that
+same scope; it creates no extra hierarchy. Scripts must use the public instance,
+not a private `.core` or package queue. Additional immutable aliases keep the latest
+final packet readable while a new episode is live:
+
+| Fields | Meaning |
+| --- | --- |
+| `episode_result_stats_epoch`, `episode_result_episode_id`, `episode_result_result_seq` | Latest immutable episode identity, separate from live fields |
+| `episode_result_first_ticks`, `last_ticks`, `tail_ticks`, `confirmation_ticks` (all with `episode_result_` prefix) | Immutable first/last/actual-tail/confirmation timestamps, fs |
+| `episode_result_byte_count`, `event_count`, `duration_ticks` (same prefix) | Immutable raw totals and physical duration |
+| `episode_result_status`, `episode_result_reason`, `episode_result_e2e_gbps` | Immutable lifecycle/reason/raw BW |
+| `episode_result_first_known`, `last_known`, `tail_known`, `bytes_complete`, `events_complete`, `duration_valid`, `e2e_valid`, `member_reset_coverage` (same prefix) | Independent immutable qualities |
+| `phase_result_stats_epoch`, `phase_result_episode_id`, `phase_result_phase_id`, `phase_result_result_seq` | Original immutable phase identity |
+| `phase_result_kind`, `phase_result_end_reason`, `phase_result_episode_status`, `phase_result_confirmation_ticks` | Final phase type/context/confirmation |
+| `episode_last_steady_*` | Selected original phase identity, start/end/confirmation, raw byte/event counts, duration and validity, BW and validity, start/end knownness, byte/event completeness, member reset, duration/BW reasons |
+| `phase_variation_window_basis/window_width/update_stride`, `episode_variation_*`, `episode_last_steady_variation_*` | Variation configuration alongside the existing sample/value/quality aliases |
+
+All counters/timestamps are unsigned64-bit; flags are ordinary bits; states/reasons
+are enums; BW/sigma/CV/mean are real. A zero backing value for an unavailable metric
+is not a measurement: inspect its validity/reason. `window_mean` is variation
+context and is distinct from raw interval BW. Full supported target keys, evidence
+requirements, stream deduplication and final barrier are in
+[Expectation configuration and reports](bw-mon-expectations.md).
