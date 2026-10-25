@@ -31,6 +31,8 @@
     bw_source_state source;
     if (registered_sources.size()>=20480)
       core_error("TOPOLOGY_LIMIT",id,"more than 20480 point/group sources");
+    check_storage_growth(registered_sources.size(),id,"registry.source",$time);
+    if(core_failure_seen)return 0;
     source=new;
     source.kind=kind;source.id=id;
     registered_sources.push_back(source);
@@ -45,6 +47,8 @@
     if (!create) core_error("GROUP_REFERENCE",id,"group is not declared");
     if (registered_groups.size()>=4096)
       core_error("TOPOLOGY_LIMIT",id,"more than 4096 groups");
+    check_storage_growth(registered_groups.size(),id,"registry.groups",$time);
+    if(core_failure_seen)return 0;
     group=new;group.id=id;
     group.source_handle=create_source(BW_GROUP,id);
     handle=registered_groups.size();
@@ -95,6 +99,8 @@
 
   function automatic void select_member(bw_group_state group,int source_handle,ref bit selected[int]);
     if (!selected.exists(source_handle)) begin
+      check_storage_growth(group.members.size(),group.id,"registry.members",$time);
+      if(core_failure_seen)return;
       selected[source_handle]=1;group.members.push_back(source_handle);
     end
   endfunction
@@ -234,6 +240,8 @@
           core_error("TOPOLOGY_LIMIT",group.id,
             $sformatf("source has more than 16 direct parents: %s kind=%s direct_parents=%0d maximum=16",
               member.id,source_kind_name(source_handle),member.parents.size()+1));
+        check_storage_growth(member.parents.size(),member.id,"registry.parents",$time);
+        if(core_failure_seen)return;
         member.parents.push_back(g);member.frame_acks[g]=0;member.control_acks[g]=0;
       end
     end
@@ -297,6 +305,8 @@
     source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
     entry.id=id;entry.monitor_path=monitor_path;entry.basis=bw_basis_t'(basis);entry.width=width;
     entry.stride=stride;entry.clock_context=clock_context;entry.transport_source=transport;
+    check_storage_growth(registered_points.size(),id,"registry.points",$time);
+    if(core_failure_seen)return 0;
     registered_points.push_back(entry);point_by_id[id]=handle;
     registration_seq=checked_add(registration_seq,1,"registration");try_ready();
     return handle;
@@ -344,7 +354,8 @@
         (member_kind==BW_GROUP && match_kind!=BW_EXACT))
       core_error("MEMBER_RULE",group_id,"member requires an explicit point/group type and a legal point match or exact Group ID");
     rule.kind=bw_scope_t'(member_kind);rule.match_kind=match_kind;rule.id=member_id;
-    check_queue_growth(registered_groups[handle].rules.size(),group_id);
+    check_storage_growth(registered_groups[handle].rules.size(),group_id,"registry.rules",$time);
+    if(core_failure_seen)return;
     registered_groups[handle].rules.push_back(rule);
     configuration_seq=checked_add(configuration_seq,1,"configuration");
   endfunction

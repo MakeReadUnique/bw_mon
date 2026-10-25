@@ -60,7 +60,8 @@ module bw_point_recorder #(
     next_control.source_epoch=source_epoch;
     next_control.point_handle=point_handle_for_id(scope_id);
     next_control.reset_n=reset_n;
-    check_queue_growth(pending_controls.size(),scope_id);
+    check_storage_growth(pending_controls.size(),scope_id,"recorder.controls",next_control.timestamp_ticks,edge_index,record_seq);
+    if(core_failure_seen)return;
     pending_controls.push_back(next_control);
     requested_actions=checked_add(requested_actions,1,scope_id);
   endtask
@@ -89,9 +90,11 @@ module bw_point_recorder #(
       sample.timestamp_ticks=$time;
       sample.edge_index=edge_index;
       sample.record_seq=record_seq;
-      check_queue_growth(pending_samples.size(),scope_id);
-      pending_samples.push_back(sample);
-      requested_actions=checked_add(requested_actions,1,scope_id);
+      check_storage_growth(pending_samples.size(),scope_id,"recorder.samples",sample.timestamp_ticks,sample.edge_index,sample.record_seq);
+      if(!core_failure_seen)begin
+        pending_samples.push_back(sample);
+        requested_actions=checked_add(requested_actions,1,scope_id);
+      end
     end
   end
 

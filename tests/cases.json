@@ -3454,6 +3454,524 @@
     "defines": [
       "BW_MON_TEST_FAULTS"
     ],
-    "expect_error": "BW_CORE_ERROR code=STORAGE_FAILURE scope=fault.point.*resource=history.events.*edge=1 record_seq=1"
+    "expect_error": "BW_CORE_ERROR code=STORAGE_FAILURE scope=fault.point.*resource=history.events.*edge=1 record_seq=1",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "plusargs": [
+      "+RESOURCE=history.events"
+    ]
+  },
+  {
+    "name": "storage_failure_core_frames",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=core.frames"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=core\\.frames)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_core_controls",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=core.controls"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=core\\.controls)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_core_resets",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=core.resets"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=core\\.resets)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_core_timers",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=core.timers"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=core\\.timers)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_quality_window",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=quality.window"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=quality\\.window)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_quality_episode",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=quality.episode"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=quality\\.episode)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_phase_fit",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=phase.fit"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.fit)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_phase_pending",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=phase.pending"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.pending)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_variation_episode",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=variation.episode"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=variation\\.episode)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_variation_phase",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=variation.phase"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=variation\\.phase)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_recorder_samples",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=recorder.samples"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=recorder\\.samples)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_recorder_controls",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=recorder.controls"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=recorder\\.controls)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_transport_frames",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=transport.frames"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=transport\\.frames)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_transport_controls",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=transport.controls"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=transport\\.controls)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_transport_origins",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=transport.origins"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=transport\\.origins)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_group_expected",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=group.expected"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=group\\.expected)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_hint_backpressure_status",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=hint.backpressure.status"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=hint\\.backpressure\\.status)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_hint_backpressure_edges",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=hint.backpressure.edges"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=hint\\.backpressure\\.edges)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_hint_backpressure_timers",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=hint.backpressure.timers"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=hint\\.backpressure\\.timers)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_report_scopes",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=report.scopes"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=report\\.scopes)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_report_rules",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=report.rules"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=report\\.rules)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_report_cfg-line",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=report.cfg-line",
+      "+BW_EXPECT=../../../tests/expect/storage_failure.cfg"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=report\\.cfg\\-line)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_report_token",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=report.token",
+      "+BW_EXPECT=../../../tests/expect/storage_failure.cfg"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=report\\.token)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_clock",
+    "top": "tb_storage_clock_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=history.clock"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=history\\.clock)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_final_phase",
+    "top": "tb_storage_failure",
+    "sources": [
+      "storage_failure_fixture.sv"
+    ],
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=phase.pending",
+      "+FINAL=1"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.pending)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_registry_source",
+    "top": "tb_storage_registry_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=registry.source"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=registry\\.source)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_registry_points",
+    "top": "tb_storage_registry_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=registry.points"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=registry\\.points)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_registry_groups",
+    "top": "tb_storage_registry_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=registry.groups"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=registry\\.groups)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_registry_rules",
+    "top": "tb_storage_registry_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=registry.rules"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=registry\\.rules)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_registry_members",
+    "top": "tb_storage_registry_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=registry.members"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=registry\\.members)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
+  },
+  {
+    "name": "storage_failure_registry_parents",
+    "top": "tb_storage_registry_failure",
+    "defines": [
+      "BW_MON_TEST_FAULTS"
+    ],
+    "plusargs": [
+      "+RESOURCE=registry.parents"
+    ],
+    "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=registry\\.parents)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
+    "expect_counts": {
+      "BW_SUMMARY ": 0
+    }
   }
 ]

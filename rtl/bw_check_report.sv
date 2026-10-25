@@ -159,6 +159,8 @@ package bw_check_report_pkg;
       int pos,before_decimal,first_nonzero,limit;
       bit has_digit,negative_exponent;
       longint decimal_order,exponent_magnitude,exponent_limit;
+      check_storage_growth(token.len(),"report","report.token",$time);
+      if(core_failure_seen)return 0;
       value=0;pos=0;digits="";before_decimal=0;
       first_nonzero=-1;exponent_magnitude=0;negative_exponent=0;has_digit=0;
       exponent_limit=longint'(token.len())+400;
@@ -249,11 +251,14 @@ package bw_check_report_pkg;
           entry.have_phase_seq=0;entry.last_phase_seq=0;
           entry.time_epoch=0;entry.time_episode=0;entry.saw_ramp=0;entry.saw_fall=0;
           entry.ever_ramp=0;entry.ever_fall=0;
-          check_queue_growth(scopes.size(),"report scopes");
+          check_storage_growth(scopes.size(),entry.id,"report.scopes",$time);
+          if(core_failure_seen)return;
           scope_by_id[{entry.kind==BW_POINT ? "point:" : "group:",entry.id}]=scopes.size();
           scopes.push_back(entry);
           for(int m=0;m<METRIC_COUNT;m++) begin
-            check_queue_growth(rules.size(),"report rules");rules.push_back(empty_rule);
+            check_storage_growth(rules.size(),entry.id,"report.rules",$time);
+            if(core_failure_seen)return;
+            rules.push_back(empty_rule);
           end
         end
       end
@@ -276,7 +281,10 @@ package bw_check_report_pkg;
       fd=$fopen(cfg_file,"r");
       if(!fd) begin cfg_warning(0,"-","-","FILE_UNREADABLE","-");return;end
       current=-1;line_no=0;section_id="-";section_kind="-";
-      while($fgets(line,fd)) begin
+      forever begin
+        check_storage_growth(line.len(),"report","report.cfg-line",$time);
+        if(core_failure_seen)return;
+        if(!$fgets(line,fd))break;
         if(line_no==32'sh7fffffff) begin
           core_error("STORAGE_RANGE","expect cfg","line number cannot be represented");break;
         end

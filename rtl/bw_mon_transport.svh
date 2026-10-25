@@ -79,7 +79,9 @@
     source.last_ticks=frame.timestamp_ticks;source.last_epoch=frame.source_epoch;
     if (source.parents.size()!=0) begin
       if (source.frames.size()==0) source.frame_base_seq=frame.record_seq;
-      check_queue_growth(source.frames.size(),source.id);source.frames.push_back(frame);
+      check_storage_growth(source.frames.size(),source.id,"transport.frames",frame.timestamp_ticks,frame.edge_index,frame.record_seq);
+      if(core_failure_seen)return;
+      source.frames.push_back(frame);
     end
     notify_parents(source_handle);
   endfunction
@@ -113,13 +115,19 @@
       core_error("CONTROL_TIME",source.id,$sformatf("point=%s received_ticks=%0d",registered_points[point_handle].id,control.timestamp_ticks));
     if (source.origin_epoch.exists(point_handle) && control.source_epoch<source.origin_epoch[point_handle])
       core_error("SOURCE_EPOCH",source.id,"control generation moved backwards");
+    if(!source.origin_control_seq.exists(point_handle))begin
+      check_storage_growth(source.origin_control_seq.num(),source.id,"transport.origins",control.timestamp_ticks,source.last_edge,source.last_frame_seq);
+      if(core_failure_seen)return;
+    end
     source.origin_control_seq[point_handle]=control.control_seq;
     source.origin_control_ticks[point_handle]=control.timestamp_ticks;source.origin_epoch[point_handle]=control.source_epoch;
     source.last_control_seq=checked_add(source.last_control_seq,1,source.id);
     envelope.transport_seq=source.last_control_seq;envelope.value=control;
     if (source.parents.size()!=0) begin
       if (source.controls.size()==0) source.control_base_seq=envelope.transport_seq;
-      check_queue_growth(source.controls.size(),source.id);source.controls.push_back(envelope);
+      check_storage_growth(source.controls.size(),source.id,"transport.controls",control.timestamp_ticks,source.last_edge,source.last_frame_seq);
+      if(core_failure_seen)return;
+      source.controls.push_back(envelope);
     end
     notify_parents(source_handle);
   endfunction

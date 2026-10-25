@@ -299,11 +299,11 @@ module bw_stats_core #(
     sample.ticks=window_end_ticks;sample.value=bandwidth_gbps;
     sample.warmup=!window_full;sample.foreign_activity=foreign_activity();
     sample.unknown_observation=!bytes_complete;sample.bad_denominator=!denominator_valid;
-    check_queue_growth(episode_pending_samples.size(),scope_id);
+    check_storage_growth(episode_pending_samples.size(),scope_id,"variation.episode",window_end_ticks,last_edge_index,last_record_seq);
     if(core_failure_seen)return;
     episode_pending_samples.push_back(sample);
     if(PHASE_ENABLE)begin
-      check_queue_growth(phase_pending_samples.size(),scope_id);
+      check_storage_growth(phase_pending_samples.size(),scope_id,"variation.phase",window_end_ticks,last_edge_index,last_record_seq);
       if(core_failure_seen)return;
       phase_pending_samples.push_back(sample);
     end
@@ -423,7 +423,7 @@ module bw_stats_core #(
     fragment.start_reset_records=phase_start_reset_records;fragment.end_reset_records=end_reset_records;
     fragment.start_unknown_ticks=phase_start_unknown_ticks;fragment.end_unknown_ticks=end_unknown_ticks;
     fragment.confirmation_delta=phase_confirmation_delta;fragment.confirmation_rms=phase_confirmation_rms;
-    check_queue_growth(pending_phases.size(),scope_id);
+    check_storage_growth(pending_phases.size(),scope_id,"phase.pending",end_tick,last_edge_index,last_record_seq);
     if(core_failure_seen)return;
     pending.fragment=fragment;pending.stats=phase_variation;
     pending_phases.push_back(pending);phase_variation=empty_variation();phase_active=0;
@@ -539,7 +539,9 @@ module bw_stats_core #(
     if(phase_samples.size()>=PHASE_N)discarded=phase_samples.pop_front();
     sample.ticks=window_end_ticks;sample.basis_position=(WINDOW_BASIS==BW_NS) ?
       window_end_ticks : window_end_cycle;sample.value=bandwidth_gbps;
-    check_queue_growth(phase_samples.size(),scope_id);phase_samples.push_back(sample);
+    check_storage_growth(phase_samples.size(),scope_id,"phase.fit",window_end_ticks,last_edge_index,last_record_seq);
+    if(core_failure_seen)return;
+    phase_samples.push_back(sample);
     phase_evidence_count=phase_samples.size();
     phase_evidence_span=sample.basis_position-phase_samples[0].basis_position;
     phase_evidence_sufficient=(phase_evidence_count==PHASE_N) &&
@@ -806,10 +808,12 @@ module bw_stats_core #(
         interval.start_ticks=active.start_ticks; interval.end_ticks=at_ticks;
         interval.unknown_reset=$isunknown(active.reset_n);
         interval.known_reset=(active.reset_n === 1'b0);
-        check_queue_growth(quality_intervals.size(),scope_id);
+        check_storage_growth(quality_intervals.size(),scope_id,"quality.window",at_ticks,last_edge_index,last_record_seq);
+        if(core_failure_seen)return;
         quality_intervals.push_back(interval);
         if (EPISODE_ENABLE && episode_active && interval.known_reset) begin
-          check_queue_growth(episode_quality_intervals.size(),scope_id);
+          check_storage_growth(episode_quality_intervals.size(),scope_id,"quality.episode",at_ticks,last_edge_index,last_record_seq);
+          if(core_failure_seen)return;
           episode_quality_intervals.push_back(interval);
         end
       end
@@ -938,7 +942,8 @@ module bw_stats_core #(
     observed_reset_n=stats_reset_n;
     reset_enqueued=1;
     action.timestamp_ticks=$time; action.reset_n=stats_reset_n;
-    check_queue_growth(pending_resets.size(),scope_id);
+    check_storage_growth(pending_resets.size(),scope_id,"core.resets",action.timestamp_ticks,last_edge_index,last_record_seq);
+    if(core_failure_seen)return;
     pending_resets.push_back(action);
     requested_actions=checked_add(requested_actions,1,scope_id);
   endtask
@@ -1091,18 +1096,22 @@ module bw_stats_core #(
     if (monitor_ready && !core_failure_seen && record.record_seq != 0) begin
       if (record.timestamp_ticks>$time)
         core_error("RECORD_TIME",scope_id,"record timestamp is in the future");
-      check_queue_growth(pending_frames.size(),scope_id);
-      pending_frames.push_back(record);
-      requested_actions=checked_add(requested_actions,1,scope_id);
+      check_storage_growth(pending_frames.size(),scope_id,"core.frames",record.timestamp_ticks,record.edge_index,record.record_seq);
+      if(!core_failure_seen)begin
+        pending_frames.push_back(record);
+        requested_actions=checked_add(requested_actions,1,scope_id);
+      end
     end
   end
   always @(stats_reset_n) if (monitor_ready) enqueue_reset();
   always @(member_control_toggle) begin
     if(monitor_ready)validate_control_numeric(member_control,scope_id);
     if (monitor_ready && !core_failure_seen && member_control.control_seq!=0) begin
-      check_queue_growth(pending_member_controls.size(),scope_id);
-      pending_member_controls.push_back(member_control);
-      requested_actions=checked_add(requested_actions,1,scope_id);
+      check_storage_growth(pending_member_controls.size(),scope_id,"core.controls",member_control.timestamp_ticks,last_edge_index,last_record_seq);
+      if(!core_failure_seen)begin
+        pending_member_controls.push_back(member_control);
+        requested_actions=checked_add(requested_actions,1,scope_id);
+      end
     end
   end
 
@@ -1134,7 +1143,7 @@ module bw_stats_core #(
 
   bw_stats_core_scheduler scheduler();
 
-  initial begin
+  initial begin : core_timer_worker
     bw_u64_t observed_schedule, due_tick, request_number;
     wait(monitor_ready);
     enqueue_reset();
@@ -1159,7 +1168,8 @@ module bw_stats_core #(
           end
           if (timer_schedule_seq == observed_schedule && $time >= due_tick &&
               due_tick<=progress_watermark_ticks) begin
-            check_queue_growth(pending_timers.size(),scope_id);
+            check_storage_growth(pending_timers.size(),scope_id,"core.timers",$time,last_edge_index,last_record_seq);
+            if(core_failure_seen)disable core_timer_worker;
             pending_timers.push_back($time);
             timer_requests=checked_add(timer_requests,1,scope_id);
             request_number=timer_requests;

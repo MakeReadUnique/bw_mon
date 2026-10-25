@@ -27,7 +27,7 @@ module bw_hint_duration #(
 
   function automatic void begin_action(int current_size,string queue_kind);
     check_monitor_time($time,{scope_id," ",HINT_NAME});
-    check_queue_growth(current_size,{scope_id," ",HINT_NAME," ",queue_kind});
+    check_storage_growth(current_size,scope_id,{"hint.",HINT_NAME,".",queue_kind},$time,last_edge_index,0);
   endfunction
 
   function automatic void touch(bw_u64_t at_ticks);
@@ -122,6 +122,7 @@ module bw_hint_duration #(
     status_action_t action;
     if(!configured || !monitor_ready || !SUPPORTED || !ENABLED || core_failure_seen) return;
     begin_action(pending_status.size(),"status");
+    if(core_failure_seen)return;
     action.at_ticks=$time;action.condition_value=raw_condition;action.reset_value=reset_n;
     pending_status.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
   endfunction
@@ -154,10 +155,11 @@ module bw_hint_duration #(
     configured=1;enqueue_status();
   end
   always @(raw_condition or reset_n or monitor_ready) enqueue_status();
-  always @(posedge clk) begin
+  always @(posedge clk) begin : capture_hint_edge
     edge_action_t action;
     if(configured && monitor_ready && $time>measurement_start_ticks && SUPPORTED && ENABLED && !core_failure_seen) begin
       begin_action(pending_edges.size(),"edges");
+      if(core_failure_seen)disable capture_hint_edge;
       edge_sequence=checked_add(edge_sequence,1,scope_id);
       action.at_ticks=$time;action.index=edge_sequence;
       pending_edges.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
@@ -165,7 +167,7 @@ module bw_hint_duration #(
   end
   bw_hint_duration_scheduler scheduler();
   if(SUPPORTED && ENABLED && (BASIS===2'd0)) begin : ns_timer
-    initial begin
+    initial begin : hint_timer_worker
       bw_u64_t schedule,due_ticks,request;
       timer_action_t action;
       wait(configured && monitor_ready);
@@ -181,6 +183,7 @@ module bw_hint_duration #(
         end
         if(timer_schedule_seq==schedule && result.active && !result.hit && $time>=due_ticks) begin
           begin_action(pending_timers.size(),"timers");
+          if(core_failure_seen)disable hint_timer_worker;
           action.at_ticks=due_ticks;action.generation=schedule;pending_timers.push_back(action);
           timer_requests=checked_add(timer_requests,1,scope_id);request=timer_requests;
           requested_actions=checked_add(requested_actions,1,scope_id);

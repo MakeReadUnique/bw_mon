@@ -90,7 +90,9 @@ module bw_group_mon #(
         core_error("GROUP_CLOCK",scope_id,"actual sampling timestamps must strictly increase");
       expected_edge_index=checked_add(expected_edge_index,1,scope_id);last_expected_ticks=$time;
       expected.timestamp_ticks=$time;expected.edge_index=expected_edge_index;
-      check_queue_growth(expected_edges.size(),scope_id);expected_edges.push_back(expected);
+      check_storage_growth(expected_edges.size(),scope_id,"group.expected",expected.timestamp_ticks,expected.edge_index,expected.edge_index);
+      if(core_failure_seen)disable capture_expected_edge;
+      expected_edges.push_back(expected);
       expected_notice=checked_add(expected_notice,1,scope_id);refresh_progress();
     end
   end
