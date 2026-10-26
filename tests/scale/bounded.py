@@ -123,6 +123,15 @@ def execute_stage(command, directory, stage, timeout_seconds):
     finally:
         if process is not None and process.poll() is None:
             _terminate_group(process)
+        # VCS can finish its main kernel just before a native helper finishes
+        # shutdown. Count this drain in the stage budget, without accepting a
+        # persistent orphan merely because its parent exited successfully.
+        if process is not None and result['state'] == 'RUNNING':
+            drain_started = time.monotonic()
+            drain_deadline = min(start + timeout_seconds, drain_started + 1)
+            while _group_has_live_process(process.pid) and time.monotonic() < drain_deadline:
+                time.sleep(0.02)
+            result['descendant_drain_seconds'] = time.monotonic() - drain_started
         if process is not None and _group_has_live_process(process.pid):
             _terminate_group(process)
             result['descendants_terminated'] = True
