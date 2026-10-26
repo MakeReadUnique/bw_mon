@@ -132,10 +132,14 @@ class RevisedTopology(Scenario):
         result=[]
         for seq,(left,right,epoch,status) in enumerate(intervals,1):
             counts=self.interval(kind,index,left,right)
+            first=self.clock.at(self.clock.lt(left)+1)
+            duration=tail-first if status==2 else 0
+            valid=status==2 and counts['bytes_complete']
             result.append(dict(epoch=epoch,episode=seq,scope_kind=int(kind=='group'),status=status,
-                first_ticks=self.clock.at(self.clock.lt(left)+1),last_ticks=self.clock.at(min(self.active_edges,self.clock.lt(right))),
+                first_ticks=first,last_ticks=self.clock.at(min(self.active_edges,self.clock.lt(right))),
                 bytes=counts['bytes'],events=counts['events'],first_known=1,last_known=1,tail_known=int(status==2),
-                tail_ticks=tail if status==2 else 0,e2e_valid=int(status==2 and counts['bytes_complete']),
+                tail_ticks=tail if status==2 else 0,e2e_valid=int(valid),duration_ticks=duration,
+                confirm_ticks=tail+30*NS if status==2 else right,e2e_gbps=F(counts['bytes']*NS,duration) if valid else F(0),
                 bytes_complete=counts['bytes_complete'],events_complete=1,member_reset=counts['reset']))
         return result
 

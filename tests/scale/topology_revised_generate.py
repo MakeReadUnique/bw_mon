@@ -182,8 +182,10 @@ def generate(s,out):
     text=text.replace('    $fdisplay(actual_fd,"kind,', '    resource_fd=$fopen({actual_path,".resources.csv"},"w");\n    $fdisplay(resource_fd,"kind,index,history_peak,clock_peak,episode_pending_peak,phase_pending_peak,frame_peak,control_peak,pending_frames_peak,pending_controls_peak,pending_timers_peak,history_final,clock_final,episode_pending_final,phase_pending_final,frames_final,controls_final");\n    $fdisplay(actual_fd,"kind,')
     text=text.replace('    $display("SCALE_RUN_START ', '    $display("ACCEPTANCE_READY");$fflush();\n    $display("SCALE_RUN_START ')
     text=text.replace('    $fclose(actual_fd);', '    $fclose(actual_fd);$fclose(resource_fd);')
+    text=text.replace('    $fclose(actual_fd);', '    foreach(bw_test_storage_peak[resource])$display("TOPOLOGY_STORAGE resource=%s queue_high_water=%0d",resource,bw_test_storage_peak[resource]);\n    $fclose(actual_fd);')
     text=text.replace('wait(completed_scopes==SCOPES);', 'wait(completed_scopes==SCOPES && resources_done==SCOPES);')
     text=text.replace('      #(clock_tick(k)-$time);clk=1;#1;clk=0;', '      #(clock_tick(k)-$time-1);input_edge=k;#1;clk=1;#1;clk=0;')
+    text=text.replace('input_edge=k;#1;clk=1;#1;clk=0;', 'input_edge=k;#1;clk=1;#1;clk=0;\n      if(k%64==0)begin $display("TOPOLOGY_PROGRESS edge=%0d ticks=%0d",k,$time);$fflush();end')
     pause=r'''
   initial begin : delayed_actual_consumer
     bw_control_frame_t pending;
@@ -238,8 +240,15 @@ def verify(s,out):
                 diffs.append(dict(error='state_not_released',scope=key,field=field,value=row[field]))
     if log.count('TOPOLOGY_INTERACTION_PASS ')!=1 or log.count('TOPOLOGY_BACKLOG ')!=1:
         diffs.append(dict(error='missing_shared_interaction'))
+    peaks={name:int(value) for name,value in re.findall(r'^TOPOLOGY_STORAGE resource=(\S+) queue_high_water=(\d+)$',log,re.M)}
+    for resource,minimum in [('registry.source',s.points+len(s.groups)),('registry.groups',len(s.groups)),
+                             ('registry.points',s.points),('core.controls',1),('core.frames',1),
+                             ('transport.frames',6),('transport.controls',2),('history.events',4)]:
+        if peaks.get(resource,0)<minimum:
+            diffs.append(dict(error='storage_growth_high_water',resource=resource,minimum=minimum,actual=peaks.get(resource)))
     evidence.update(resource_scopes=len(rows),state_high_water_sums=totals,
                     high_water_semantics='sum of per-scope sampled maxima; not a simultaneous global peak',
+                    storage_queue_high_water_by_resource=peaks,
                     shared_interaction='M4/H6 subgroup0 with16parents,5frames+2controls retained while fast consumers advance',
                     difference_count=len(diffs))
     save(out/'diffs.json',diffs);save(out/'verification.json',evidence)

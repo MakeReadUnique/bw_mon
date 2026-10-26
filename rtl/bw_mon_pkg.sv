@@ -527,11 +527,20 @@ package bw_mon_pkg;
   endfunction
 `endif
 
+`ifdef BW_MON_TEST_SCHEDULING
+  // Read-only acceptance telemetry of real growth requests. This records the
+  // largest individual queue of each resource, not a sum or memory estimate.
+  int bw_test_storage_peak[string];
+`endif
   function automatic void check_storage_growth(int current_size,string id,string resource,
       bw_u64_t at_ticks=0,bw_u64_t edge_index=0,bw_u64_t record_number=0);
     if(core_failure_seen)return;
     check_queue_growth(current_size,{id," ",resource});
     if(core_failure_seen)return;
+`ifdef BW_MON_TEST_SCHEDULING
+    if(!bw_test_storage_peak.exists(resource) || current_size+1>bw_test_storage_peak[resource])
+      bw_test_storage_peak[resource]=current_size+1;
+`endif
 `ifdef BW_MON_TEST_FAULTS
     if(injected_growth_failures.exists(id) && injected_growth_failures[id].exists(resource))begin
       injected_growth_failures[id].delete(resource);
