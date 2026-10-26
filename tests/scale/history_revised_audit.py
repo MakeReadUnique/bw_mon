@@ -14,7 +14,10 @@ def verify(s, attempt):
     def require(condition, error, **details):
         if not condition:
             differences.append(dict(error=error, **details))
-    rows = list(csv.DictReader((attempt/'actual.csv').open())) if (attempt/'actual.csv').exists() else []
+    rows = []
+    if (attempt/'actual.csv').exists():
+        with (attempt/'actual.csv').open() as stream:
+            rows = list(csv.DictReader(stream))
     observed = {}
     for row in rows:
         try:
@@ -112,7 +115,9 @@ def verify(s, attempt):
         for sid in ('history.p0', 'history.group'):
             require(any(x.get('bytes_complete') == '0' and x.get('e2e_valid') == '0' for x in by_scope[sid]),
                     'old_episode_remains_incomplete', scope=sid)
-    storage_differences, storage_counts = verify_storage(s.oracle, attempt/'storage-runs.txt')
+    from history_revised_analysis import audit_packets
+    differences.extend(audit_packets(s, lines))
+    storage_differences, storage_counts = verify_storage(s.oracle, attempt/'storage-runs.txt', expected_snapshots(s))
     differences.extend(storage_differences)
     require(storage_counts['snapshots'] >= 3, 'all_scope_storage_snapshots')
     evidence = dict(storage_verification=storage_counts, schema='revised-history-verification-v1', profile=s.name,
@@ -126,7 +131,7 @@ def verify(s, attempt):
     return not differences, evidence
 
 
-def verify_storage(oracle, path):
+def verify_storage(oracle, path, expected=None):
     """Expand observed runs; every expected tuple comes from original inputs.
 
     This is diagnostic instrumentation, not an integration API. Public-output
@@ -135,6 +140,7 @@ def verify_storage(oracle, path):
     differences = []
     counts = dict(snapshots=0, expanded_events=0, expanded_clock_boundaries=0, event_runs=0, clock_runs=0)
     current = None
+    observed_snapshots = {scope: [] for scope in (0, 1, 2)}
     def fail(error, **details):
         differences.append(dict(error=error, **details))
     if not path.exists():
@@ -156,15 +162,16 @@ def verify_storage(oracle, path):
                     if (left, left_cycle) != (reference['left'], reference['left_cycle']):
                         fail('snapshot_independent_left', scope=scope, snapshot=seq)
                     left, left_cycle = reference['left'], reference['left_cycle']
-                    expected = []
+                    observed_snapshots[scope].append((seq, tick, edge))
+                    expected_events = []
                     for i, event in enumerate(oracle.events[:edge]):
                         inc = oracle.increments[scope][i]
                         if (event[0] < left if oracle.basis == 'ns' else i+1 < left_cycle):
                             continue
                         if any(inc):
-                            expected.append((event[0], i+1, inc[0], inc[1], int(inc[2] == 0), int(inc[3] == 0), 0))
+                            expected_events.append((event[0], i+1, inc[0], inc[1], int(inc[2] == 0), int(inc[3] == 0), 0))
                     clocks = [(oracle.ticks[i-1], i) for i in range(max(1, edge-oracle.width), edge+1)] if oracle.basis == 'cycle' else []
-                    current = dict(key=(scope, seq), expected=expected, clocks=clocks, events=[], actual_clocks=[])
+                    current = dict(key=(scope, seq), expected=expected_events, clocks=clocks, events=[], actual_clocks=[])
                     counts['snapshots'] += 1
                 elif current is None or current['key'] != (scope, seq):
                     fail('snapshot_identity', line=number)
@@ -201,6 +208,19 @@ def verify_storage(oracle, path):
                 fail('malformed_storage_record', line=number)
     if current is not None:
         fail('snapshot_not_closed')
+    if expected is not None:
+        for scope in (0, 1, 2):
+            if observed_snapshots[scope] != expected[scope]:
+                fail('required_snapshot_schedule', scope=scope, expected=expected[scope], actual=observed_snapshots[scope])
     if counts['snapshots'] == 0:
         fail('no_storage_snapshots')
     return differences, counts
+
+
+def expected_snapshots(scenario):
+    stride = 0 if scenario.kind == 'deep' else 512 if scenario.kind == 'expiry' else 64
+    edges = len(scenario.oracle.events)
+    checkpoints = list(range(stride, edges+1, stride)) if stride else []
+    planned = [(i+1, scenario.oracle.ticks[edge-1], edge) for i, edge in enumerate(checkpoints)]
+    planned.append((len(planned)+1, scenario.oracle.end, edges))
+    return {scope: list(planned) for scope in (0, 1, 2)}
