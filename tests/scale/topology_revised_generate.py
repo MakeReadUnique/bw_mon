@@ -117,7 +117,7 @@ def replace_once(text, old, new):
 def generate(s,out):
     legacy_generate(s,out)
     p=out/'input_pkg.sv';text=p.read_text()
-    text=text.replace('  int actual_fd=0,completed_scopes=0;', '  int actual_fd=0,resource_fd=0,completed_scopes=0,resources_done=0;\n  ref_u64 input_edge=0;')
+    text=text.replace('  int actual_fd=0,completed_scopes=0;', '  int actual_fd=0,resource_fd=0,edge_fd=0,completed_scopes=0,resources_done=0;\n  ref_u64 input_edge=0;')
     constants=dict(ACTIVE_EDGES=s.active_edges,UNKNOWN_EDGE=s.unknown_edge,GROUP_RESET_START=s.group_reset_start,GROUP_RESET_END=s.group_reset_end,
                    PAUSE_START=s.pause_start,PAUSE_END=s.pause_end)
     text=text.replace('  int variant=0;', ''.join("  localparam ref_u64 {}=64'd{};\n".format(k,v) for k,v in constants.items())+'  int variant=0;')
@@ -166,6 +166,9 @@ def generate(s,out):
   end
   bw_group_mon''')
     text=text.replace("mon(.clk(clk),.reset_n(1'b1));", 'mon(.clk(clk),.reset_n(stats_reset_n));')
+    text=text.replace('    for(int m=0;m<mon.direct_member_count;m++)', '''    for(int m=0;m<mon.direct_member_count;m++)
+      $fdisplay(edge_fd,"%0d,%0d,%s,%s",scope_index,m,source_kind_name(member_source(mon.group_handle,m)),source_name(member_source(mon.group_handle,m)));
+    for(int m=0;m<mon.direct_member_count;m++)''')
     # Observe only public acceptance receipts and consumer positions. This also
     # fails if the automatic collector acknowledges a published but unaccepted frame.
     group_observer=r'''
@@ -181,7 +184,8 @@ def generate(s,out):
     text=text.replace('logic clk=0;bit deadline=0;string variant_name,actual_path;', 'logic clk=0;bit deadline=0;string variant_name,actual_path;\n  bw_test_consumer_gate slow_gate;')
     text=text.replace('    $fdisplay(actual_fd,"kind,', '    resource_fd=$fopen({actual_path,".resources.csv"},"w");\n    $fdisplay(resource_fd,"kind,index,history_peak,clock_peak,episode_pending_peak,phase_pending_peak,frame_peak,control_peak,pending_frames_peak,pending_controls_peak,pending_timers_peak,history_final,clock_final,episode_pending_final,phase_pending_final,frames_final,controls_final");\n    $fdisplay(actual_fd,"kind,')
     text=text.replace('    $display("SCALE_RUN_START ', '    $display("ACCEPTANCE_READY");$fflush();\n    $display("SCALE_RUN_START ')
-    text=text.replace('    $fclose(actual_fd);', '    $fclose(actual_fd);$fclose(resource_fd);')
+    text=text.replace('    resource_fd=$fopen', '    edge_fd=$fopen({actual_path,".edges.csv"},"w");\n    $fdisplay(edge_fd,"group,member,kind,source");\n    resource_fd=$fopen')
+    text=text.replace('    $fclose(actual_fd);', '    $fclose(actual_fd);$fclose(resource_fd);$fclose(edge_fd);')
     text=text.replace('    $fclose(actual_fd);', '    foreach(bw_test_storage_peak[resource])$display("TOPOLOGY_STORAGE resource=%s queue_high_water=%0d",resource,bw_test_storage_peak[resource]);\n    $fclose(actual_fd);')
     text=text.replace('wait(completed_scopes==SCOPES);', 'wait(completed_scopes==SCOPES && resources_done==SCOPES);')
     text=text.replace('      #(clock_tick(k)-$time);clk=1;#1;clk=0;', '      #(clock_tick(k)-$time-1);input_edge=k;#1;clk=1;#1;clk=0;')
@@ -229,6 +233,20 @@ def verify(s,out):
     observed={(r['kind'],int(r['index'])):r for r in rows}
     if len(rows)!=s.points+len(s.groups) or set(observed)!=set(s.scopes()):
         diffs.append(dict(error='resource_scope_completeness'))
+    edge_path=out/'actual.csv.edges.csv'
+    actual_edges=list(csv.DictReader(edge_path.open())) if edge_path.exists() else []
+    expected_edges={(g,m):(kind,s.identity(kind,index)) for g,members in s.groups.items()
+                    for m,(kind,index) in enumerate(members)}
+    observed_edges={}
+    for edge in actual_edges:
+        key=(int(edge['group']),int(edge['member']))
+        if key in observed_edges:
+            diffs.append(dict(error='duplicate_direct_edge',key=key))
+        observed_edges[key]=(edge['kind'],edge['source'])
+    if observed_edges!=expected_edges:
+        diffs.append(dict(error='direct_edge_identity',expected_count=len(expected_edges),observed_count=len(actual_edges),
+                          mismatches=[dict(key=k,expected=v,actual=observed_edges.get(k))
+                                      for k,v in expected_edges.items() if observed_edges.get(k)!=v][:20]))
     totals={field:0 for field in rows[0] if field not in ('kind','index')} if rows else {}
     for key,row in observed.items():
         for field in totals:
@@ -247,6 +265,7 @@ def verify(s,out):
         if peaks.get(resource,0)<minimum:
             diffs.append(dict(error='storage_growth_high_water',resource=resource,minimum=minimum,actual=peaks.get(resource)))
     evidence.update(resource_scopes=len(rows),state_high_water_sums=totals,
+                    direct_edges_checked=len(actual_edges),
                     high_water_semantics='sum of per-scope sampled maxima; not a simultaneous global peak',
                     storage_queue_high_water_by_resource=peaks,
                     shared_interaction='M4/H6 subgroup0 with16parents,5frames+2controls retained while fast consumers advance',

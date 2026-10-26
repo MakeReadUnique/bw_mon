@@ -1,5 +1,12 @@
 # Scale correctness and resource runs
 
+This page retains the original COMMON campaign and its exact historical inputs.
+Current topology/history acceptance uses the serial
+[revised quick/full suites](bw-mon-max-topology.md); those suites enforce the
+new tool budgets and do not restart these long profiles. The old campaign's
+source identity below is historical after the Ready-wait optimization and
+acceptance-only scheduling/resource instrumentation.
+
 The reusable harness in `tests/scale/` drives actual `bw_point_mon`,
 `bw_group_mon` and `bw_mon_setup` instances through their public raw interfaces.
 It checks each raw receipt and each newly published window online, then compares
@@ -36,7 +43,7 @@ so the runner checks terminal diagnostics and durable completion evidence.
 All four prescribed full profiles completed on frozen integration source
 `467b722cde3ea00e8eb8ed0e97dcc72d4dc67aa9`. Its18 production RTL/C/header files
 match the independently reviewed steady-metric fix
-`56127495f597d215003000356ac3b5387cc809a1` and the current checkout. Later evidence
+`56127495f597d215003000356ac3b5387cc809a1` at that frozen checkpoint. Later evidence
 commits do not change the source actually simulated. Each profile instantiated
 1024 public points and256 two-level groups, at2GHz through **40us exactly**, with
 the unchanged complete feature and intervention settings below.

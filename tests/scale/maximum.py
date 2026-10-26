@@ -63,7 +63,10 @@ def main():
     parser.add_argument('profiles', nargs='+', choices=list(PROFILES))
     parser.add_argument('--output-root', type=Path, default=harness.REPO / '.build/max-topology')
     parser.add_argument('--force-compile', action='store_true')
+    parser.add_argument('--legacy-long', action='store_true', help='explicitly select the superseded 40us research matrix')
     args = parser.parse_args()
+    if any('tracer' not in name for name in args.profiles) and not args.legacy_long:
+        parser.error('40us profiles are legacy research; use revised_suite.py, or explicitly add --legacy-long')
     for name in args.profiles:
         if not harness.run(build_scenario(name), args.output_root.resolve(), args.force_compile):
             return 1

@@ -153,6 +153,7 @@ def execute_stage(command, directory, stage, timeout_seconds):
         for signum, handler in old_handlers.items():
             signal.signal(signum, handler)
     result['elapsed_seconds'] = time.monotonic() - start
+    result['finished_utc'] = datetime.datetime.utcnow().isoformat()+'Z'
     if result['state'] == 'RUNNING':
         result['state'] = 'COMPLETED' if result['returncode'] == 0 else 'FAILED'
     if stage == 'simulation':
@@ -186,16 +187,18 @@ def tool_identity():
 
 def run_bounded(scenario, output, force=False):
     started = time.monotonic()
+    started_utc = datetime.datetime.utcnow().isoformat()+'Z'
     budget = scenario.budget_seconds
     module = getattr(scenario, 'source_module', scenario.__class__.__module__)
     if module == '__main__':
         raise ValueError('a standalone scenario must declare source_module for replay')
-    stamp = datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S') + '-' + str(os.getpid())
+    stamp = datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S%f') + '-' + str(os.getpid())
     attempt = output / 'runs' / scenario.name / stamp
     attempt.mkdir(parents=True)
     path = attempt / 'manifest.json'
     manifest = dict(schema='bw-revised-acceptance-v1', scenario=scenario.name, budget_seconds=budget,
                     state='RUNNING', checked_pass=False, configuration=scenario.manifest(), stages={},
+                    started_utc=started_utc,
                     source_head=capture(['git', 'rev-parse', 'HEAD']), source_status=capture(['git', 'status', '--short']),
                     host={'uname': capture(['uname', '-a']), 'load_start': Path('/proc/loadavg').read_text().strip(),
                           'logical_cpus': os.cpu_count(), 'memory': capture(['free', '-m'])},
@@ -212,6 +215,7 @@ def run_bounded(scenario, output, force=False):
         good = bool(good and elapsed <= budget)
         manifest.update(checked_pass=good, state='VERIFIED' if good else reason,
                         elapsed_seconds=elapsed, budget_met=elapsed <= budget,
+                        finished_utc=datetime.datetime.utcnow().isoformat()+'Z',
                         host_load_finish=Path('/proc/loadavg').read_text().strip())
         save(path, manifest)
         save(output / (scenario.name+'-latest.json'), {'manifest': str(path), 'checked_pass': good})
@@ -232,9 +236,9 @@ def run_bounded(scenario, output, force=False):
     options += list(getattr(scenario, 'compile_options', []))
     identity = dict(source=inventory, inputs=inputs, tools=tools, options=options)
     digest = build_identity(identity)
-    build = output / 'builds' / digest
-    build.mkdir(parents=True, exist_ok=True)
-    snapshot = build / 'source'
+    build_cache = output / 'builds' / digest
+    build_cache.mkdir(parents=True, exist_ok=True)
+    snapshot = build_cache / 'source'
     for source in sources:
         target = snapshot / source.relative_to(REPO)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -244,16 +248,21 @@ def run_bounded(scenario, output, force=False):
         else:
             shutil.copyfile(str(source), str(target))
     manifest.update(source_sha256=inventory, input_sha256=inputs, build_identity=identity,
-                    compile_digest=digest, source_snapshot=str(snapshot), build=str(build))
+                    compile_digest=digest, source_snapshot=str(snapshot), build_cache=str(build_cache))
     verify_worker = [sys.executable, str(snapshot/'tests/scale/bounded.py'), 'worker', module, scenario.name]
-    cache = build / 'compile-success.json'
-    binary = build / 'simv'
+    cache = build_cache / 'compile-success.json'
     valid_cache = False
-    if cache.exists() and binary.exists() and not force:
+    if cache.exists() and not force:
         cached = json.loads(cache.read_text())
-        valid_cache = cached.get('digest') == digest and cached.get('artifacts_sha256') == build_artifacts(build)
+        build=build_cache/cached.get('build_attempt','missing-immutable-attempt')
+        valid_cache = (build.is_dir() and cached.get('digest') == digest and
+                       cached.get('artifacts_sha256') == build_artifacts(build))
     manifest['compile_reused'] = valid_cache
     if not valid_cache:
+        build=build_cache/('attempt-'+stamp)
+        build.mkdir()
+        manifest['build']=str(build)
+        binary=build/'simv'
         for name in ('input_pkg.sv', 'checker.sv', 'tb_bw_scale.sv'):
             shutil.copyfile(str(attempt/name), str(build/name))
         rtl = snapshot / 'rtl'
@@ -265,10 +274,15 @@ def run_bounded(scenario, output, force=False):
             return finish(False, 'COMPILE_INCOMPLETE')
         if re.search(r'(?:Warning|Error)-\[', (build/'compile.log').read_text()):
             return finish(False, 'COMPILE_DIAGNOSTIC')
-        save(cache, {'digest': digest, 'binary_sha256': sha(binary), 'artifacts_sha256':build_artifacts(build),
-                     'stage': manifest['stages']['compile']})
+        receipt={'digest':digest,'build_attempt':build.name,'binary_sha256':sha(binary),
+                 'artifacts_sha256':build_artifacts(build),'stage':manifest['stages']['compile']}
+        save(build/'compile-success.json',receipt)
+        save(cache,receipt)
     else:
+        manifest['build']=str(build)
+        binary=build/'simv'
         manifest['stages']['compile'] = dict(state='CACHED', elapsed_seconds=0, original=cached['stage'])
+    manifest['build_receipt_sha256']=sha(build/'compile-success.json')
     args = scenario.simulation_args(attempt) if hasattr(scenario, 'simulation_args') else [
         '+VARIANT='+scenario.variant, '+ACTUAL='+str(attempt/'actual.csv'), '+BW_EXPECT='+str(attempt/'expect.cfg')]
     if not stage('simulation', ['stdbuf', '-oL', str(binary), '-no_save'] + args):
