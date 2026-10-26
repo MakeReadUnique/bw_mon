@@ -7,6 +7,17 @@ budgets and its [portable evidence](../tests/scale/revised_evidence/final-campai
 keeps maximum-scope, deep-history and shared consumer-lag evidence distinct.
 The original canceled MAX matrix cannot satisfy this new completion gate.
 
+The completed [revised campaign](../tests/scale/revised_evidence/final-campaign/README.md)
+uses frozen source `8c8f3d818979479b72fc9ed7f29b905ea9337396`: daily cold/cached
+96.596s/25.528s and complete cold/cached906.636s/829.518s, all within budget.
+Each complete suite checks21,670,663 new raw receipts and16,236,946 windows with
+zero differences, plus15 directed cases and frozen COMMON replay. Both maximum
+cases check every16,384-point/4,096-group scope and all65,536 direct identities.
+The [current compatibility proof](../tests/review/compatibility/README.md) separately
+passes all427 components and42 end-to-end scenes, including exact equality of672
+public scope CSVs and canonical final packets. These are completed measurements;
+PR review and issue closure are tracked separately.
+
 The following earlier production18 proof belongs to the independently reviewed
 final-steady fix `56127495`. The [427-case/168-top proof](../artifacts/acceptance/final-component-proof/verification.json)
 records component checkout `467b722`; the fresh42-scene public-input campaign
@@ -31,7 +42,7 @@ documentation/status edits retain the original data identity.
 
 Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), which links
 the original FSDBs, portable public views, fresh images, independent tables and
-per-scene commands. The [current runtime/native freeze](../artifacts/acceptance/runtime-source.json)
+per-scene commands. The [earlier scene runtime/native freeze](../artifacts/acceptance/runtime-source.json)
 keeps actual scene checkout, production milestone and component checkout distinct.
 Every scene retains version2 source/native receipts and an immutable project
 archive. The actual VCS `.d` lists source+2SDK headers; the separate full survey
@@ -50,7 +61,7 @@ preserves earlier agent observations and pending human records. Fresh campaign
 [detached clean-checkout run](../artifacts/acceptance/clean-checkout-repro.json) and
 [actual relocated-view proof](../artifacts/acceptance/portable-view-proof.json)
 remain directly auditable after temporary builds are removed. The
-[current handoff source inventory](../artifacts/acceptance/current-source-manifest.json)
+[earlier handoff source inventory](../artifacts/acceptance/current-source-manifest.json)
 distinguishes actual consumed scene snapshots from later packaging/audit wrappers.
 The [scale guide](bw-mon-scale.md) retains each scale campaign's exact source and
 profile; these small wave scenes do not substitute for scale qualification.
@@ -267,8 +278,8 @@ byte preservation without touching the real ledger, simulation or capture.
 | D12 | metrics_repeated/zero/quality/independent/first_boundary/stopped_history | Independent exact raw interval counts and population statistics for every delivered phase/episode; last steady PASS while whole CV FAIL, no earlier plateau substitution. |
 | D13/T5-E4–E5 | report_* all48 keys/strict parsing/replays/barrier | e4 actual128/151.99FAIL and152PASS at effective152; e5 exact point/group IDs and only configured family sets; all conclusions/counters independently checked. |
 | D14 | hint_* / credit_* | protocols + hints: NS hit during stopped cycle clock, unknown gap split, independent byte/metric counts. |
-| D15/D17/T6/T8 | public point/group result aliases | Original FSDBs, portable public views, fresh real images, full expected/actual tables and explicit human ledger. Human remains pending. |
-| D16/T7 | numeric_*, history_trace_*, variation_pending_retention, transport_growth, storage_failure_* | Component/resource evidence retains exact scope; full common/max/matrix evidence is a separate scale-ticket deliverable. Twelve-point scenes do not claim it. |
+| D15/D17/T6/T8 | public point/group result aliases | Original FSDBs/views/images and explicit human ledger retain the confirmed named nine-view review. New compatibility FSDBs have automated equality proof and no new human attestation. |
+| D16/T7 | numeric_*, history_trace_*, variation_pending_retention, transport_growth, storage_failure_* | Completed M1–M5/H1–H7 serial cold/cached suites: actual maximum topology, deep/merged history, shared delayed consumers, exact numeric checks and measured resource/budget evidence. |
 
 The scene index states source revisions, configurations, independent counts/results
 and review status. Earlier per-ticket proof counts in API history stay historical;

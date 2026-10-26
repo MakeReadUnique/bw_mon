@@ -2,7 +2,7 @@
 
 用于 SoC 仿真验证的通用带宽监测器（bandwidth monitor）。目标是提供可复用的 SystemVerilog `module`，观察 master、memory 接口与 NoC 链路，统计带宽并辅助定位传输间隙和长时间反压。
 
-仓库包含已确认架构及正在实现的纯仿真 SystemVerilog 监测器。当前可运行路径支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和 ns/cycle 持续反压、信用不足提示。已实现独立过程/阶段/最终指标和按点/组身份检查；其余验收按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/13)的关联 ticket 交付；规划需求不表示已通过全部验收。
+仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](tests/review/compatibility/README.md)及[修订规模/历史验收](tests/scale/revised_evidence/final-campaign/README.md)已实际通过；PR 审查和 issue 关闭与这些测量结果分别记录。
 
 运行 `make test`，使用 VCS 编译执行组件与公开入口测试；`make acceptance` 运行十二点/四组原始输入到真实 FSDB 的独立对照。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 
@@ -10,6 +10,7 @@
 日常入口实际覆盖128点/32组；完整入口真实覆盖16,384点/4,096组、全部拓扑上限及少量范围的80,000沿深历史，串行计时并独立核验。
 预算、固定输入、冷 / 热缓存和可移植证据见[最大拓扑验收](docs/bw-mon-max-topology.md)及[历史验收](docs/bw-mon-history.md)。
 旧的四场 MAX 长跑及历史 MAX 场景保持用户停止 / 未启动身份，不由新入口恢复或计为通过。
+日常回归实测冷构建96.6秒、缓存构建25.5秒；两票共同完整套件为906.6秒和829.5秒，均满足各自预算，独立差异为零。
 
 自行集成 VCS 工程时还需编译私有 `rtl/bw_slot_settlement.c`，启用 `+vpi`、`-debug_access`（波形可用 `-debug_access+all`）并提供已安装 VCS 的 SDK 头目录；具体命令见[调度与构建说明](docs/bw-mon-scheduling.md)。公开集成仍为点、组和 setup 三个入口，计量与分析保留在 SV。
 
@@ -38,7 +39,7 @@
 
 [EDA 验证用 bandwidth monitor 开源调研](docs/bandwidth-monitor-research.md) 汇总了已有实现、统计口径差异和可参考的设计方式。
 
-分层聚合入口已实现：每组一个 `bw_group_mon`，支持显式点/子组混合成员、多父 DAG、统一配置完成及循环/递归重叠检查。各层自动进行同沿原始汇总、持久发布、独立消费确认、复位隔离和缺帧检测。配置与复现见[集成说明](docs/bw-mon-api.md)；组分析与单点共享独立的过程/阶段/指标算法及公开标量；波形人工检查与规模验收仍按对应 ticket 交付。
+分层聚合入口已实现：每组一个 `bw_group_mon`，支持显式点/子组混合成员、多父 DAG、统一配置完成及循环/递归重叠检查。各层自动进行同沿原始汇总、持久发布、独立消费确认、复位隔离和缺帧检测。配置与复现见[集成说明](docs/bw-mon-api.md)；组分析与单点共享独立的过程/阶段/指标算法及公开标量，已由组件、端到端和两基准全规模短序列验证。
 
 当前可复现交接见[端到端验收与证据索引](docs/bw-mon-acceptance.md)：配置/键表、
 固定公开信号、独立预期/实际/差异、真实 Verdi 视图和工具命令。自动检查、agent
