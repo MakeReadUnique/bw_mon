@@ -11,6 +11,7 @@ class PendingScenario:
     name = 'history-revised-pending'
     source_module = 'history_revised'
     budget_seconds = 300
+    source_files = [SOURCE]
 
     def manifest(self):
         return dict(schema='revised-history-pending-v1', properties=['H5'],
