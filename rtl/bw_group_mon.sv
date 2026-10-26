@@ -77,7 +77,8 @@ module bw_group_mon #(
                                       WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
     transport_source=group_source_handle(group_handle);
     raw_record='0;raw_control='0;core_control='0;
-    wait(monitor_ready && core.scope_id==scope_id);
+    wait(monitor_ready);
+    wait(core.scope_id==scope_id);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
   end
 
