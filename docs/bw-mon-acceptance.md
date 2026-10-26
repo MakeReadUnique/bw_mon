@@ -5,12 +5,19 @@ The current production18 matches the independently reviewed final-steady fix
 records component checkout `467b722`; the fresh42-scene public-input campaign
 records its actual simulation checkout `cd07c77`. Their18 production files match
 byte for byte. All42 original inputs/cfg and independent numeric references are
-unchanged, and all33 real Verdi images were freshly regenerated. **Actual human
-T6 review remains PENDING**; agent image inspection is separate.
+unchanged, and all33 original real Verdi images were freshly regenerated.
+**Human review of the nine new analog views is confirmed:** MakeReadUnique
+[confirmed that all meet requirements](https://github.com/MakeReadUnique/bw_mon/issues/33#issuecomment-6411618527)
+on 2026-10-26. This covers the named views and intervals in
+[the review issue](https://github.com/MakeReadUnique/bw_mon/issues/33), distinct
+from automated checks of all42 scenes and scale qualification.
 
 The fixed data bundle is [`59fc046a154945b6a6ae60220e663f7d5ee12bb6`](https://github.com/MakeReadUnique/bw_mon/tree/59fc046a154945b6a6ae60220e663f7d5ee12bb6/artifacts/acceptance),
-with the [Chinese human-review guide](bw-mon-wave-review-zh.md) and exact fingerprint
-in the current checklist. Later documentation/status edits retain that data identity.
+with the exact fingerprint in the original checklist. The new analog views are
+pinned to `23e50de1357afb43b6535ecb9874aa6586889528`. The
+[older Chinese guide](bw-mon-wave-review-zh.md) remains historical context;
+the GitHub review issue is the current review entry point. Later
+documentation/status edits retain the original data identity.
 
 Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), which links
 the original FSDBs, portable public views, fresh images, independent tables and
@@ -197,25 +204,35 @@ real rows avoid interpolation, and integer bytes/bounds independently establish
 values. No simulation data or raster was altered. Scientific formatting exposes
 exact distinctions such as152 versus151.99. Saved views reference nearby FSDBs.
 
-The [concrete T6 checklist](../artifacts/acceptance/HUMAN-REVIEW.md) names actual
+The [original T6 checklist](../artifacts/acceptance/HUMAN-REVIEW.md) names actual
 objects, intervals and expected observations across both bases and independent
-variants. The [machine and human review ledger](../artifacts/acceptance/review.json) separates
-automation, agent image inspection and **pending actual human review**. A human
-entry must identify reviewer/date, actual objects/intervals, expected versus seen,
-conclusion and discrepancies. One later attestation cannot retroactively claim
+variants and retains its generation-time PENDING text. The
+[human ledger](../artifacts/acceptance/review.json) records the user-authored
+confirmation of the nine analog views in [the current review issue](https://github.com/MakeReadUnique/bw_mon/issues/33),
+including confirmation time, exact objects/intervals and hashes. Agent image
+inspection remains separate. The exact viewing time was not separately supplied;
+the recorded time is the GitHub confirmation time. This does not claim human
+inspection of every original scene or older image. One attestation cannot claim
 review of future assets. HTML illustration/probe screenshots and small resource
 pilots do not stand in for real monitor/human/nominal-scale acceptance.
 
 After a genuine named ledger entry is recorded, `python3 tests/acceptance/publish.py`
 revalidates the existing assets and renders the current global human status in
 `verification.json` and INDEX. It retains the entry only for the same asset
-fingerprint; changed assets return the current status to PENDING. This command
+fingerprint and matching `artifact_sha256` bindings for any separately named
+review assets; changed assets return the current status to PENDING. This command
 retains the archived previous record on later pending republication without
 adding duplicate archives, and does not create an attestation. Scene rows describe
 automated results, and `human_review_at_generation` records their original generation-time state; neither
 implies separate human approval of every scene. Original comparison/capture
 manifests and expected/actual tables retain their historical PENDING text and
 bytes. Do not use `--pack` for a review-status refresh.
+
+`python3 artifacts/review-analog/verify.py` permits the four publisher summaries
+(`review.json`, `verification.json`, INDEX and SHA256SUMS) to reflect current
+status while checking their complete current inventory. It still checks all922
+other historical files against the capture-generation inventory, all nine
+analog capture receipts, and the named human review's artifact hashes.
 
 `python3 tests/acceptance/test_reproduce.py` runs real VCS scene generation,
 publication/packing and portable audit in a disposable committed checkout. It
