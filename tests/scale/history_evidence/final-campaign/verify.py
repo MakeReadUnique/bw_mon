@@ -201,14 +201,45 @@ if scenario.variant=='baseline':
             print('PASS', profile, result['observed_scopes'], 'scopes;', result['checked_raw'], 'raw;', result['checked_windows'], 'windows; original/native/RSS hashes +independent regeneration')
     assert totals == proof['totals']
     controllers = json.loads(controller_raw.decode())
-    assert controllers['global_heavy_cap'] == 6 and controllers['common_cap'] == 2
-    assert controllers['max30_cap'] == 4 and controllers['max_history_cap'] == 2 and controllers['no_elapsed_auto_increase']
+    assert controllers['common_cap'] == 2 and controllers['max30_cap'] == 4
+    assert controllers['max_history_cap'] in (2, 3) and controllers['no_elapsed_auto_increase']
+    assert controllers['global_heavy_cap'] == 4 + controllers['max_history_cap']
     assert len(controllers['controllers']) == 3
-    for record in controllers['controllers'].values():
-        assert record['alive_at_checkpoint'] and record['state'] != 'Z'
+    for label, record in controllers['controllers'].items():
+        if record['alive_at_checkpoint']:
+            assert record['state'] != 'Z'
+        else:
+            assert label == 'common-history' and record['state'] == 'EXITED_AFTER_ALL_SIX_COMMON_AUDITED'
+            assert record['process_exit_not_used_as_acceptance']
+            assert record['previous_live_process']['pid'] == record['pid']
+            finished = json.loads(check_file(record['files'][record['completion_status_file']]).decode())
+            required_common = {name for name in required if name.startswith('history-common-')}
+            assert finished['state'] == 'ALL_SIX_COMMON_AUDITED'
+            assert set(finished['profiles']) == set(finished['audited_profiles']) == required_common
+            assert not finished['active_profiles'] and not finished['failures']
+            assert required_common <= completed
+            assert all(finished['profiles'][name]['state'] == 'VERIFIED' for name in required_common)
         check_file(record['script'])
         for entry in record['files'].values():
             check_file(entry)
+    if controllers['max_history_cap'] == 3:
+        preserved = {name: check_file(entry) for name, entry in controllers['cap3_transition_files'].items()}
+        transition = json.loads(preserved['transition.json'].decode())
+        postlaunch = json.loads(preserved['postlaunch.json'].decode())
+        assert transition['new_cap'] == 3 and transition['global_heavy_cap'] == 7
+        assert transition['host_reserve_kib'] == postlaunch['host_admission_reserve_kib'] == 3145728
+        assert transition['old_scheduler_gone'] and transition['existing_two_job_identities_preserved']
+        assert transition['old_scheduler_pid'] != transition['new_scheduler_pid']
+        assert transition['new_scheduler_pid'] == controllers['controllers']['max-history']['pid'] == postlaunch['scheduler_pid']
+        assert transition['new_scheduler_sha256'] == controllers['controllers']['max-history']['script']['sha256']
+        assert postlaunch['existing_two_receipts_unchanged'] and postlaunch['all_six_build_identities_unchanged']
+        assert postlaunch['no_runner_or_simulator_signals'] and postlaunch['no_production_or_frozen_source_edits']
+        assert postlaunch['only_new_launch'] == 'history-max-ns-short-dense'
+        assert set(postlaunch['status']['active_profiles']) == set(transition['original_active_receipt_sha256']) | {postlaunch['only_new_launch']}
+        assert postlaunch['status']['family_max_concurrency_cap'] == 3 and not postlaunch['status']['failures']
+        for name, expected_hash in transition['backup_file_sha256'].items():
+            assert sha(preserved[name]) == expected_hash, name
+        assert sha(preserved['history31-final-max-scheduler.py']) == transition['old_scheduler_sha256']
     for entry in proof['supplemental_files'].values():
         check_file(entry)
     if 'prior-short-bundle-hashes' in proof['supplemental_files']:

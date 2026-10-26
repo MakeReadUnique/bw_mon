@@ -12,7 +12,7 @@ windows, zero differences. The [portable preparation archive](../tests/scale/his
 contains actual inputs/configs, expected/actual/differences, source/native/tool/link
 fingerprints and measured small-run RSS. Its recorded-data verifier works without
 VCS or former temporary worktrees. The [current nominal checkpoint](../tests/scale/history_evidence/final-campaign/README.md)
-records four completed/audited COMMON short/long-dense profiles and eight still-pending
+records all six completed/audited COMMON profiles and six still-pending MAX
 new rows. Small preparation and this partial checkpoint are not full nominal
 acceptance.
 Earlier completed runs, interrupted attempts and dated matrix files retain their
@@ -47,14 +47,14 @@ probes retain their original source qualification. Every nominal cell requires i
 actual checked run, source/options manifest, counts/reference/actual/diffs and
 measured compiler/simulator RSS. No memory or wall-time acceptance cap is added.
 
-Four additional nominal profiles are planned, NS/cycle at each size: W7/S3,
+Four additional nominal profiles cover NS/cycle at each size: W7/S3,
 sparse p0 unknown size, group0 statistics reset,1GHz interval and legal clock stop,
 with all original timestamps and explicit actual edge counts. They complement
 rather than replace the regular2GHz baselines. Group-local reset must clear only
 local statistics; collector/source/raw stream and ancestors continue, with no
 physical point reset coverage or source-epoch change. An old ancestor episode's
 unknown bytes stay incomplete after its windows recover. Their implementation
-and actual measured status will be recorded with each profile's evidence.
+is qualified by both actual COMMON runs; the two MAX variants remain queued.
 
 All raw receipts and new window publications are checked online against original
 inputs in O(clock segments+sparse exceptions), with exact integers/quality and
@@ -115,13 +115,16 @@ counts. Four original common29 profiles regenerate byte-identical input/cfg/
 reference/generated SV after composing the history extensions with the final
 integration source. The initial full COMMON history admission followed independently
 qualifying and closing current-source common29 plus explicit coordinator admission.
-Later resource admission permits at most two COMMON and two MAX history jobs,
-alongside four MAX30 jobs, with no automatic cap increase. Neither a prepared
+After all six COMMON profiles completed, a fresh host review explicitly admitted
+fixed history MAX cap3 alongside four MAX30 jobs, with a3GiB host launch reserve
+and no automatic cap increase. The preceding cap2 controller and its receipts
+remain archived with the scheduler-only transition. Neither a prepared
 receipt nor a queued/running row is a pass.
 
-At2026-10-25 18:25:08UTC, four complete40us COMMON dense rows are verified and
-independently audited. Each checks102400000 raw receipts across1280 scopes, with
-zero differences:
+At2026-10-26 07:11:59UTC, all six complete40us COMMON rows are verified and
+independently audited:614016000 raw receipts and307132157 windows across7680
+final scope rows, with zero differences. Dense rows each check102400000 raw
+receipts; control/clock rows each check102208000:
 
 | Actual profile | W/S | Checked windows | Simulator peak RSS,KiB |
 | --- | --- | ---: | ---: |
@@ -129,6 +132,8 @@ zero differences:
 | Cycle short |20cycles/2cycles |51198720 |280856 |
 | NS full-scene long |40000ns/1ns |51200000 |286812 |
 | Cycle full-scene long |80000cycles/1cycle |102398720 |254784 |
+| NS control/clock |7ns/3ns |17066239 |270948 |
+| Cycle control/clock |7cycles/3cycles |34068478 |267840 |
 
 The NS long point's only full publication is at40us: [0,40000ns),5120000B/
 80000events, full/known/valid,128GB/s. The cycle long point has79999
@@ -142,8 +147,8 @@ are legitimate WARNINGs rather than invented valid e2e.
 The [portable nominal evidence](../tests/scale/history_evidence/final-campaign/README.md)
 retains original inputs, commands, source/native/tool/link hashes, expected/actual/
 differences, final streams and measured RSS. Its matrix records all twelve fixed
-new targets; only these four actual completed/audited rows are accepted. COMMON
-control/clock and MAX long rows remain running and the remaining four MAX rows prepared at that
+new targets; only these six actual completed/audited COMMON rows are accepted.
+MAX long NS/cycle and MAX short NS remain running; the other three MAX rows are prepared at that
 dated snapshot. Existing common29 middle-window evidence is version-qualified;
 the still-running MAX30 rows cannot yet supply accepted middle-window reuse.
 

@@ -1,6 +1,45 @@
 {
-  "completed_profile_count": 4,
+  "completed_profile_count": 6,
   "completed_profiles": {
+    "history-common-cycle-control-clock": {
+      "compile_peak_kib": 350676,
+      "complete_build_identity": "026129de69e8eac6c941b85acc9cdf28a11f83eb80aee2399bfc0c98e3c0b2a1",
+      "launch": {
+        "bytes": 22683,
+        "file": "history-common-cycle-control-clock/launch.json",
+        "sha256": "f518c55d55369af724f55e9656dc8c1d71995c6f6fd2d4f790ca3e9592ce765d"
+      },
+      "recorded_audit": {
+        "bytes": 13088,
+        "file": "history-common-cycle-control-clock/recorded-audit.json",
+        "sha256": "0c81ce212e145a6f6b0abdb8323b67537954d22553f8f046f68a6e17d66f05bb"
+      },
+      "simulation_peak_kib": 267840,
+      "verification": {
+        "checked_raw": 102208000,
+        "checked_windows": 34068478,
+        "difference_count": 0,
+        "episode_records": 1281,
+        "expected_raw": 102208000,
+        "expected_scopes": 1280,
+        "expected_windows": 34068478,
+        "observed_scopes": 1280,
+        "phase_records": 3844,
+        "report_conclusions": {
+          "WARNING": 15372
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15372"
+          }
+        ]
+      }
+    },
     "history-common-cycle-long-dense": {
       "compile_peak_kib": 350988,
       "complete_build_identity": "a47955bebc7cd9bf05d2608d8d845fcbc732be3f47c3168b45831e23c7d277d3",
@@ -75,6 +114,45 @@
             "scopes_expected": "1280",
             "status": "WARNING",
             "warning": "15360"
+          }
+        ]
+      }
+    },
+    "history-common-ns-control-clock": {
+      "compile_peak_kib": 350684,
+      "complete_build_identity": "7eeb0029c9840fcaf4389955f6b4a0cc78a1e748dcea78cdb452aa7cb65a3259",
+      "launch": {
+        "bytes": 22668,
+        "file": "history-common-ns-control-clock/launch.json",
+        "sha256": "4b394424274537812f42f73162316c3d2921bdd89d9809d0edd2b3367b67f93c"
+      },
+      "recorded_audit": {
+        "bytes": 13067,
+        "file": "history-common-ns-control-clock/recorded-audit.json",
+        "sha256": "010462e5238ed828cf311d2975a21229ea61f6d412c5b6caf9e5bf0fa9344837"
+      },
+      "simulation_peak_kib": 270948,
+      "verification": {
+        "checked_raw": 102208000,
+        "checked_windows": 17066239,
+        "difference_count": 0,
+        "episode_records": 1281,
+        "expected_raw": 102208000,
+        "expected_scopes": 1280,
+        "expected_windows": 17066239,
+        "observed_scopes": 1280,
+        "phase_records": 2564,
+        "report_conclusions": {
+          "WARNING": 15372
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15372"
           }
         ]
       }
@@ -158,8 +236,8 @@
       }
     }
   },
-  "controller_checkpoint_sha256": "35cd653302ba4d27eddf5df136607e82ac35f0479e7362f2ae6511c935922bdf",
-  "matrix_sha256": "1ea398b9c6dbe554d6844201968b508d5d74b811ce7a152ec72f4f58dde88587",
+  "controller_checkpoint_sha256": "01a5a7b05836fbd6754f42ad94d54911d4611048be30a28b1d311a6c56fbfd3e",
+  "matrix_sha256": "aa73781f26ccc4245f6dbb56defc4bc8d250d5b716c1bf0ce8774981545c3bbe",
   "native_header_count": 50,
   "nominal_acceptance_passed": false,
   "production_runtime": "56127495f597d215003000356ac3b5387cc809a1",
@@ -184,16 +262,16 @@
     "rtl/bw_variation_history.svh": "6c9099eb7996be712f61480784b3404b6e4eaeaaf183c98c20f845ba0a98ba1e"
   },
   "required_profile_count": 12,
-  "snapshot_utc": "2026-10-25T18:25:08.155019Z",
+  "snapshot_utc": "2026-10-26T07:11:59.277486Z",
   "source_count": 26,
   "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
   "source_tree": "d17f768abf30967d8c1ee8d1ec986d2ed5bdc174",
   "status": "PARTIAL_NOMINAL_CAMPAIGN",
   "supplemental_files": {
     "archive-checkpoint": {
-      "bytes": 13159,
+      "bytes": 15559,
       "file": "recipes/archive-checkpoint.py",
-      "sha256": "11f3d7bbb235d87de65d31a26bf1e6d6a3b7d07d8d17e0305e5d618df00753bd"
+      "sha256": "f10f33ffd25d683c7f522ea52b8d1b694e8bfd5ce811a5763e6c1c85d215218a"
     },
     "auditor": {
       "bytes": 9102,
@@ -217,10 +295,10 @@
     }
   },
   "totals": {
-    "checked_raw": 409600000,
-    "checked_windows": 255997440,
+    "checked_raw": 614016000,
+    "checked_windows": 307132157,
     "difference_count": 0,
-    "episode_records": 5120,
-    "phase_records": 2560
+    "episode_records": 7682,
+    "phase_records": 8968
   }
 }
