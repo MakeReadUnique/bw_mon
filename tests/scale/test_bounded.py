@@ -31,6 +31,21 @@ class BoundedAcceptance(unittest.TestCase):
             self.assertEqual('FAILED', result['state'])
             self.assertEqual(7, result['returncode'])
 
+    def test_successful_parent_must_not_leave_a_running_child(self):
+        with tempfile.TemporaryDirectory() as d:
+            result = execute_stage([sys.executable, '-c',
+                'import subprocess; subprocess.Popen(["sleep","60"])'], Path(d), 'escaped', 3)
+            self.assertEqual('FAILED_DESCENDANTS', result['state'])
+            self.assertTrue(result['descendants_terminated'])
+
+    def test_ready_marker_is_recorded_when_simulation_exits_between_polls(self):
+        with tempfile.TemporaryDirectory() as d:
+            result = execute_stage([sys.executable, '-c',
+                'print("ACCEPTANCE_READY", flush=True)'], Path(d), 'simulation', 3)
+            self.assertEqual('COMPLETED', result['state'])
+            self.assertIn('initialization_seconds', result)
+            self.assertIsNotNone(result['simulation_after_ready_seconds'])
+
     def test_cache_identity_changes_with_each_consumed_input(self):
         original = {'source': {'a.sv': 'abc'}, 'inputs': {'input.txt': 'def'},
                     'tools': {'vcs': 'version'}, 'options': ['-full64']}
