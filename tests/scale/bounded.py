@@ -59,6 +59,18 @@ def _terminate_group(process):
     process.wait()
 
 
+def _group_has_live_process(pgid):
+    for status in Path('/proc').glob('[0-9]*/stat'):
+        try:
+            # comm can contain spaces and parentheses; fields begin after its last ')'.
+            fields = status.read_text().rsplit(')', 1)[1].split()
+            if fields[0] != 'Z' and int(fields[2]) == pgid:
+                return True
+        except (OSError, ValueError, IndexError):
+            continue
+    return False
+
+
 def execute_stage(command, directory, stage, timeout_seconds):
     directory.mkdir(parents=True, exist_ok=True)
     log = directory / (stage + '.log')
@@ -72,6 +84,17 @@ def execute_stage(command, directory, stage, timeout_seconds):
         return result
     process = None
     old_handlers = {}
+    offset = 0
+    def read_markers():
+        nonlocal offset
+        if stage != 'simulation' or not log.exists():
+            return
+        with log.open() as stream:
+            stream.seek(offset)
+            lines = stream.read()
+            offset = stream.tell()
+        if 'initialization_seconds' not in result and re.search(r'^(?:BW_READY(?: |$)|ACCEPTANCE_READY(?: |$))', lines, re.M):
+            result['initialization_seconds'] = time.monotonic() - start
     def interrupted(signum, frame):
         raise KeyboardInterrupt('signal ' + str(signum))
     try:
@@ -81,7 +104,6 @@ def execute_stage(command, directory, stage, timeout_seconds):
             process = subprocess.Popen(wrapped, cwd=str(directory), stdout=output,
                                        stderr=subprocess.STDOUT, start_new_session=True)
             result['pid'] = process.pid
-            offset = 0
             while process.poll() is None:
                 elapsed = time.monotonic() - start
                 if elapsed >= timeout_seconds:
@@ -89,15 +111,10 @@ def execute_stage(command, directory, stage, timeout_seconds):
                     _terminate_group(process)
                     break
                 # Fixture stage markers are flushed. Poll resolution is recorded.
-                if stage == 'simulation':
-                    with log.open() as stream:
-                        stream.seek(offset)
-                        lines = stream.read()
-                        offset = stream.tell()
-                    if 'initialization_seconds' not in result and re.search(r'^(?:BW_READY |ACCEPTANCE_READY )', lines, re.M):
-                        result['initialization_seconds'] = elapsed
+                read_markers()
                 time.sleep(min(0.05, timeout_seconds - elapsed))
             result['returncode'] = process.wait()
+            read_markers()
     except KeyboardInterrupt:
         result['state'] = 'INTERRUPTED'
         if process is not None:
@@ -106,6 +123,11 @@ def execute_stage(command, directory, stage, timeout_seconds):
     finally:
         if process is not None and process.poll() is None:
             _terminate_group(process)
+        if process is not None and _group_has_live_process(process.pid):
+            _terminate_group(process)
+            result['descendants_terminated'] = True
+            if result['state'] == 'RUNNING':
+                result['state'] = 'FAILED_DESCENDANTS'
         for signum, handler in old_handlers.items():
             signal.signal(signum, handler)
     result['elapsed_seconds'] = time.monotonic() - start
