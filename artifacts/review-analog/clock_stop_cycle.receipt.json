@@ -1,0 +1,68 @@
+{
+  "source_asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+  "scene": "clock_stop_cycle",
+  "fsdb": "../acceptance/clock_stop_cycle/waves.fsdb",
+  "fsdb_sha256": "845f36985df20e9c1b800c6489f92e5f81d784907799b2ad8b9f1ae2093c4fb2",
+  "view": "clock_stop_cycle",
+  "sav_sha256": "b9e1f153797776e5da57e35b5ef339515774530aee27c7257fa2a0c46530c5e4",
+  "png_sha256": "04405f2745a26d70254b5c0840223ed1f38e79363580b7bbfde69342f428d3e4",
+  "pixels": [
+    1600,
+    760
+  ],
+  "started_utc": "2026-10-26T07:39:51.597916+00:00",
+  "command": [
+    "verdi",
+    "-nWave",
+    "-play",
+    "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-dq1y2ari/capture.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-dq1y2ari",
+  "display": ":91",
+  "capture_primitive": "wvCapture",
+  "fresh": true,
+  "saved_view_reopened": true,
+  "restored_analog_pwc_rows": 2,
+  "restored_time_unit": "1ns",
+  "independent_checkpoints": [
+    {
+      "time_ns": 85.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 95.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 101.5,
+      "alias": "p0_GBps",
+      "expected": 41.9672131147541,
+      "actual": "41.967213114754",
+      "held_value": 41.967213114754,
+      "matches": true
+    }
+  ],
+  "agent_visual_review": "PASS",
+  "human_review": "PENDING",
+  "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+  "raster_postprocessing": false,
+  "simulation_rerun": false,
+  "agent_visual_review_notes": "72–114ns；停钟时128/1024和结果序号79保持；101ns恢复发布后的GB/s为41.967213…/335.737704…；窗口20cycle、步长2cycle。",
+  "restored_signal_rows": 7,
+  "capture_tcl_sha256": "1253a87f49086223f27f859605a2080885be95277db5d1e69a330744d892b41a",
+  "raw_capture_log_sha256": "fd2f3bd0642c74e7f054fabfe69a2d65af003c8d2518ec6065eeb327d20830a4",
+  "raw_reopened_sav_sha256": "692e5e2b8a9ae0036ef63889210d76b1779ab95638a4e568f1dfeb3fb6c5d3f2",
+  "reopened_sav_sha256": "9eec6ce24be07b9605833045a05bac57425552d02e4a7a74041f10191499a839",
+  "capture_evidence_archive": "capture-provenance.tar.gz",
+  "archive_prefix": "clock_stop_cycle",
+  "open_view_tcl_sha256": "f50786307c9586aee78a1bd52dc235d26501fad7f8a67d05517a697c69312131",
+  "novas_rc_sha256": "64644909043aeb0b3a38afb1184f1e471873d12f2043ef7d6875166d6a7353d7"
+}

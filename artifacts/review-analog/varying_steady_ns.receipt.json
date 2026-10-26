@@ -1,0 +1,84 @@
+{
+  "source_asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+  "scene": "varying_ns",
+  "fsdb": "../acceptance/varying_ns/waves.fsdb",
+  "fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
+  "view": "varying_steady_ns",
+  "sav_sha256": "1839004ad2d1d208d9e007a8c1b8b6190b5c4da02d66d7ddcae970f1873ffbdb",
+  "png_sha256": "6cd2116730200da90ce7b1df429c421c02af3f5ad4db9b4edc600c384bafae13",
+  "pixels": [
+    1600,
+    760
+  ],
+  "started_utc": "2026-10-26T07:36:04.542503+00:00",
+  "command": [
+    "verdi",
+    "-nWave",
+    "-play",
+    "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-0a192c5q/capture.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-0a192c5q",
+  "display": ":91",
+  "capture_primitive": "wvCapture",
+  "fresh": true,
+  "saved_view_reopened": true,
+  "restored_analog_pwc_rows": 2,
+  "restored_time_unit": "1ns",
+  "independent_checkpoints": [
+    {
+      "time_ns": 136.5,
+      "alias": "p0_phase_candidate",
+      "expected": 2,
+      "actual": "STEADY",
+      "held_value": 2,
+      "matches": true
+    },
+    {
+      "time_ns": 136.5,
+      "alias": "p0_phase_confirmed",
+      "expected": 1,
+      "actual": "RAMP",
+      "held_value": 1,
+      "matches": true
+    },
+    {
+      "time_ns": 137.5,
+      "alias": "p0_phase_confirmed",
+      "expected": 2,
+      "actual": "STEADY",
+      "held_value": 2,
+      "matches": true
+    },
+    {
+      "time_ns": 137.5,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 137.5,
+      "alias": "all_dmc_GBps",
+      "expected": 1024,
+      "actual": "1024.000000000000",
+      "held_value": 1024.0,
+      "matches": true
+    }
+  ],
+  "agent_visual_review": "PASS",
+  "human_review": "PENDING",
+  "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+  "raster_postprocessing": false,
+  "simulation_rerun": false,
+  "agent_visual_review_notes": "130–142ns，光标138.5ns为128/1024；曲线134ns进入平台，p0候选136ns，确认137ns，最终阶段端点140ns。",
+  "restored_signal_rows": 8,
+  "capture_tcl_sha256": "1049a525e19511c7ace9325515be69c6fb2a3d49b101f71cb30e45389c63398b",
+  "raw_capture_log_sha256": "f6986f652018829b838c949f6fe68ca2482da6e787931f1da38718e5c533bfe0",
+  "raw_reopened_sav_sha256": "b964a06223d7ff85297b5f7d65c2003e6c8df132196f41052c9f629e02de3e1c",
+  "reopened_sav_sha256": "aca903093fb8abc935eaf8e23a52b19a6d36002f060daaf59e7bce57fe1f7723",
+  "capture_evidence_archive": "capture-provenance.tar.gz",
+  "archive_prefix": "varying_steady_ns",
+  "open_view_tcl_sha256": "f50786307c9586aee78a1bd52dc235d26501fad7f8a67d05517a697c69312131",
+  "novas_rc_sha256": "64644909043aeb0b3a38afb1184f1e471873d12f2043ef7d6875166d6a7353d7"
+}

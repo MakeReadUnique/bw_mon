@@ -1,0 +1,100 @@
+{
+  "source_asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+  "scene": "point_reset_ns",
+  "fsdb": "../acceptance/point_reset_ns/waves.fsdb",
+  "fsdb_sha256": "b2d05a9a7be2a21d8c73f12e5c73588179f8a6ac0807efc21aeb58da69a8b033",
+  "view": "point_reset_ns",
+  "sav_sha256": "62adce9ee73e1352dba13c9e06d0dc9099e23e1028ed992499cce431bd057c4e",
+  "png_sha256": "9c31e57557693113f4d085930fc4114afe53862482d0568f215523ffaac19674",
+  "pixels": [
+    1600,
+    820
+  ],
+  "started_utc": "2026-10-26T07:39:05.346654+00:00",
+  "command": [
+    "verdi",
+    "-nWave",
+    "-play",
+    "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-all3wga2/capture.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-all3wga2",
+  "display": ":91",
+  "capture_primitive": "wvCapture",
+  "fresh": true,
+  "saved_view_reopened": true,
+  "restored_analog_pwc_rows": 2,
+  "restored_time_unit": "1ns",
+  "independent_checkpoints": [
+    {
+      "time_ns": 105.5,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 105.5,
+      "alias": "all_dmc_GBps",
+      "expected": 1017.6,
+      "actual": "1017.600000000000",
+      "held_value": 1017.6,
+      "matches": true
+    },
+    {
+      "time_ns": 105.5,
+      "alias": "p0_epoch",
+      "expected": 1,
+      "actual": "1",
+      "held_value": 1.0,
+      "matches": true
+    },
+    {
+      "time_ns": 105.5,
+      "alias": "all_dmc_epoch",
+      "expected": 0,
+      "actual": "0",
+      "held_value": 0.0,
+      "matches": true
+    },
+    {
+      "time_ns": 105.5,
+      "alias": "p0_window_full",
+      "expected": 0,
+      "actual": "0",
+      "held_value": 0.0,
+      "matches": true
+    },
+    {
+      "time_ns": 105.5,
+      "alias": "all_dmc_member_reset",
+      "expected": 1,
+      "actual": "1",
+      "held_value": 1.0,
+      "matches": true
+    },
+    {
+      "time_ns": 115.5,
+      "alias": "p0_window_full",
+      "expected": 1,
+      "actual": "1",
+      "held_value": 1.0,
+      "matches": true
+    }
+  ],
+  "agent_visual_review": "PASS",
+  "human_review": "PENDING",
+  "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+  "raster_postprocessing": false,
+  "simulation_rerun": false,
+  "agent_visual_review_notes": "两图使用独立纵轴，all_dmc放大到1000–1040 GB/s。100–118ns，控制103.9–104.1ns复位；光标105.5ns，p0=128且未满窗，all_dmc=1017.6且保留epoch0；原始控制及质量行可读。",
+  "restored_signal_rows": 9,
+  "capture_tcl_sha256": "aceb310412477739e3b2fd5a40ab6eafb8377be94318917ec1146eacbff4c1ae",
+  "raw_capture_log_sha256": "9c4325fcaf15e35872cb97f4586d0ed364208246b7ed806f88d515f560b82b06",
+  "raw_reopened_sav_sha256": "239b78c0d1f3966f5510cd08c40d12d14b53ea0bf0b4d2d730f8f17e0b2aca7d",
+  "reopened_sav_sha256": "2f0bdd9f36965b750d1e566bfa70b5e499ba2b04d32b0dcbdc842af0710760e8",
+  "capture_evidence_archive": "capture-provenance.tar.gz",
+  "archive_prefix": "point_reset_ns",
+  "open_view_tcl_sha256": "f50786307c9586aee78a1bd52dc235d26501fad7f8a67d05517a697c69312131",
+  "novas_rc_sha256": "64644909043aeb0b3a38afb1184f1e471873d12f2043ef7d6875166d6a7353d7"
+}

@@ -1,0 +1,1114 @@
+{
+  "schema_version": 1,
+  "source_asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+  "source_asset_fingerprint": "863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee",
+  "production_milestone": "56127495f597d215003000356ac3b5387cc809a1",
+  "human_review": "PENDING",
+  "view_only": true,
+  "real_drawing_style": "pwc",
+  "phase_values": {
+    "0": "NONE",
+    "1": "RAMP",
+    "2": "STEADY",
+    "3": "FALL"
+  },
+  "views": {
+    "start_stop_ns": {
+      "scene": "start_stop_ns",
+      "fsdb": "../acceptance/start_stop_ns/waves.fsdb",
+      "fsdb_sha256": "eb7d63c67b09f1569a41cfe8407b805fc0674f1d20d4e85e165cb4f023dcdd8e",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        10,
+        80
+      ],
+      "cursor_ns": 40,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 230,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            0,
+            1152
+          ],
+          "height": 230,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_bytes_per_event",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/accounted_bytes[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_bytes_per_event"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 20,
+          "label": "START20ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 30,
+          "label": "FULL30ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 60,
+          "label": "STOP60ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 70,
+          "label": "ZERO70ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          20,
+          "p0_GBps",
+          0
+        ],
+        [
+          30,
+          "p0_GBps",
+          128
+        ],
+        [
+          60,
+          "p0_GBps",
+          128
+        ],
+        [
+          70,
+          "p0_GBps",
+          0
+        ],
+        [
+          40,
+          "all_dmc_GBps",
+          1024
+        ]
+      ],
+      "reference": "../acceptance/start_stop_ns/expected-actual.md"
+    },
+    "varying_ns": {
+      "scene": "varying_ns",
+      "fsdb": "../acceptance/varying_ns/waves.fsdb",
+      "fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        20,
+        156
+      ],
+      "cursor_ns": 50,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            0,
+            1152
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_bytes_per_event",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/accounted_bytes[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_bytes_per_event"
+        },
+        {
+          "alias": "p0_phase_candidate",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/phase_candidate[1:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_phase_candidate"
+        },
+        {
+          "alias": "p0_phase_confirmed",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/phase_current[1:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_phase_confirmed"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 50,
+          "label": "128 / 1024",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 75,
+          "label": "64 / 512",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 100,
+          "label": "128 / 1024",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 136,
+          "label": "LAST STEADY",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          50,
+          "p0_GBps",
+          128
+        ],
+        [
+          75,
+          "p0_GBps",
+          64
+        ],
+        [
+          100,
+          "p0_GBps",
+          128
+        ],
+        [
+          138,
+          "p0_GBps",
+          128
+        ],
+        [
+          50,
+          "all_dmc_GBps",
+          1024
+        ],
+        [
+          75,
+          "all_dmc_GBps",
+          512
+        ]
+      ],
+      "reference": "../acceptance/varying_ns/expected-actual.md"
+    },
+    "varying_steady_ns": {
+      "scene": "varying_ns",
+      "fsdb": "../acceptance/varying_ns/waves.fsdb",
+      "fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        130,
+        142
+      ],
+      "cursor_ns": 138.5,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            0,
+            1152
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_bytes_per_event",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/accounted_bytes[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_bytes_per_event"
+        },
+        {
+          "alias": "p0_phase_candidate",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/phase_candidate[1:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_phase_candidate"
+        },
+        {
+          "alias": "p0_phase_confirmed",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/phase_current[1:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_phase_confirmed"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 136,
+          "label": "START136ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 137,
+          "label": "CONFIRM137ns",
+          "color": "ID_CYAN5"
+        },
+        {
+          "time_ns": 140,
+          "label": "END140ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          136.5,
+          "p0_phase_candidate",
+          2
+        ],
+        [
+          136.5,
+          "p0_phase_confirmed",
+          1
+        ],
+        [
+          137.5,
+          "p0_phase_confirmed",
+          2
+        ],
+        [
+          137.5,
+          "p0_GBps",
+          128
+        ],
+        [
+          137.5,
+          "all_dmc_GBps",
+          1024
+        ]
+      ],
+      "reference": "../acceptance/varying_ns/expected-actual.md"
+    },
+    "point_reset_ns": {
+      "scene": "point_reset_ns",
+      "fsdb": "../acceptance/point_reset_ns/waves.fsdb",
+      "fsdb_sha256": "b2d05a9a7be2a21d8c73f12e5c73588179f8a6ac0807efc21aeb58da69a8b033",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        100,
+        118
+      ],
+      "cursor_ns": 105.5,
+      "pixels": [
+        1600,
+        820
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            1000,
+            1040
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_reset_n",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/reset_n",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_reset_n"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_epoch",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/stats_epoch[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_epoch"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "all_dmc_epoch",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/stats_epoch[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_epoch"
+        },
+        {
+          "alias": "all_dmc_member_reset",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/member_reset_coverage",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_member_reset"
+        },
+        {
+          "alias": "all_dmc_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 103.9,
+          "label": "RESET103.9ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 114.1,
+          "label": "FULL114.1ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          105.5,
+          "p0_GBps",
+          128
+        ],
+        [
+          105.5,
+          "all_dmc_GBps",
+          1017.6
+        ],
+        [
+          105.5,
+          "p0_epoch",
+          1
+        ],
+        [
+          105.5,
+          "all_dmc_epoch",
+          0
+        ],
+        [
+          105.5,
+          "p0_window_full",
+          0
+        ],
+        [
+          105.5,
+          "all_dmc_member_reset",
+          1
+        ],
+        [
+          115.5,
+          "p0_window_full",
+          1
+        ]
+      ],
+      "reference": "../acceptance/point_reset_ns/expected-actual.md"
+    },
+    "child_reset_ns": {
+      "scene": "child_reset_ns",
+      "fsdb": "../acceptance/child_reset_ns/waves.fsdb",
+      "fsdb_sha256": "7803f0dc35d312d2bd9de8b43f3dae4d8e95e75d118c43daf781554fbb8ea2d6",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        100,
+        118
+      ],
+      "cursor_ns": 105.5,
+      "pixels": [
+        1600,
+        820
+      ],
+      "rows": [
+        {
+          "alias": "die0_GBps",
+          "analog_range": [
+            0,
+            576
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/die0/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/die0/die0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            1000,
+            1040
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "die0_reset_n",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/die0/reset_n",
+          "view_path": "/tb_acceptance_ns/scene/die0/die0_reset_n"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "die0_epoch",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/die0/stats_epoch[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/die0/die0_epoch"
+        },
+        {
+          "alias": "die0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/die0/window_full",
+          "view_path": "/tb_acceptance_ns/scene/die0/die0_window_full"
+        },
+        {
+          "alias": "all_dmc_epoch",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/stats_epoch[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_epoch"
+        },
+        {
+          "alias": "all_dmc_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/window_full",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_window_full"
+        },
+        {
+          "alias": "all_dmc_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 103.9,
+          "label": "RESET103.9ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 114.1,
+          "label": "FULL114.1ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          105.5,
+          "die0_GBps",
+          512
+        ],
+        [
+          105.5,
+          "all_dmc_GBps",
+          1024
+        ],
+        [
+          105.5,
+          "die0_epoch",
+          1
+        ],
+        [
+          105.5,
+          "all_dmc_epoch",
+          0
+        ],
+        [
+          105.5,
+          "die0_window_full",
+          0
+        ],
+        [
+          105.5,
+          "all_dmc_window_full",
+          1
+        ]
+      ],
+      "reference": "../acceptance/child_reset_ns/expected-actual.md"
+    },
+    "size_unknown_ns": {
+      "scene": "size_unknown_ns",
+      "fsdb": "../acceptance/size_unknown_ns/waves.fsdb",
+      "fsdb_sha256": "d30c8eba70136a007dab9030e2f631c2c68ca145396c73d7ed1d4e0cc48671c4",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        100,
+        118
+      ],
+      "cursor_ns": 105.5,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            112,
+            132
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            1000,
+            1040
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_bytes_per_event",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/accounted_bytes[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_bytes_per_event"
+        },
+        {
+          "alias": "p0_size_known",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/accounted_known",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_size_known"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete"
+        },
+        {
+          "alias": "p0_events_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/events_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_events_complete"
+        },
+        {
+          "alias": "all_dmc_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 103.9,
+          "label": "UNKNOWN103.9ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 115,
+          "label": "COMPLETE115ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          105.5,
+          "p0_GBps",
+          121.6
+        ],
+        [
+          105.5,
+          "all_dmc_GBps",
+          1017.6
+        ],
+        [
+          105.5,
+          "p0_bytes_complete",
+          0
+        ],
+        [
+          105.5,
+          "p0_events_complete",
+          1
+        ],
+        [
+          115.5,
+          "p0_bytes_complete",
+          1
+        ]
+      ],
+      "reference": "../acceptance/size_unknown_ns/expected-actual.md"
+    },
+    "clock_stop_ns": {
+      "scene": "clock_stop_ns",
+      "fsdb": "../acceptance/clock_stop_ns/waves.fsdb",
+      "fsdb_sha256": "d3a395ccf59118f6cf3f063bd70f4c6b9f020c08aec84df1cbe585adfd687ecf",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        72,
+        114
+      ],
+      "cursor_ns": 95,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            0,
+            1152
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_clock",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/clk",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_clock"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_result_seq",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/result_seq[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_result_seq"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 79.5,
+          "label": "LAST79.5ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 100.5,
+          "label": "RESUME100.5ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          85,
+          "p0_GBps",
+          64
+        ],
+        [
+          95,
+          "p0_GBps",
+          0
+        ],
+        [
+          101.5,
+          "p0_GBps",
+          6.4
+        ]
+      ],
+      "reference": "../acceptance/clock_stop_ns/expected-actual.md"
+    },
+    "clock_stop_cycle": {
+      "scene": "clock_stop_cycle",
+      "fsdb": "../acceptance/clock_stop_cycle/waves.fsdb",
+      "fsdb_sha256": "845f36985df20e9c1b800c6489f92e5f81d784907799b2ad8b9f1ae2093c4fb2",
+      "window_basis": "cycle",
+      "window_width": 20,
+      "update_stride": 2,
+      "view_range_ns": [
+        72,
+        114
+      ],
+      "cursor_ns": 95,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            0,
+            1152
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_cycle/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_cycle/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_clock",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_cycle/scene/ports[0]/dut/clk",
+          "view_path": "/tb_acceptance_cycle/scene/ports[0]/dut/p0_clock"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_cycle/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_cycle/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_result_seq",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/result_seq[63:0]",
+          "view_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/p0_result_seq"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_cycle/scene/ports[0]/dut/mon/p0_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 79.5,
+          "label": "LAST79.5ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 100.5,
+          "label": "RESUME100.5ns",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          85,
+          "p0_GBps",
+          128
+        ],
+        [
+          95,
+          "p0_GBps",
+          128
+        ],
+        [
+          101.5,
+          "p0_GBps",
+          41.9672131147541
+        ]
+      ],
+      "reference": "../acceptance/clock_stop_cycle/expected-actual.md"
+    },
+    "frequency_ns": {
+      "scene": "frequency_ns",
+      "fsdb": "../acceptance/frequency_ns/waves.fsdb",
+      "fsdb_sha256": "d92665dc1a1b94bbc6adc8ae4e50367f902c9a7ac01ae5ad1fba76e802082e30",
+      "window_basis": "ns",
+      "window_width": 10,
+      "update_stride": 1,
+      "view_range_ns": [
+        72,
+        104
+      ],
+      "cursor_ns": 91,
+      "pixels": [
+        1600,
+        760
+      ],
+      "rows": [
+        {
+          "alias": "p0_GBps",
+          "analog_range": [
+            0,
+            144
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps"
+        },
+        {
+          "alias": "all_dmc_GBps",
+          "analog_range": [
+            0,
+            1152
+          ],
+          "height": 210,
+          "public_path": "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+          "view_path": "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps"
+        },
+        {
+          "alias": "p0_clock",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/clk",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_clock"
+        },
+        {
+          "alias": "p0_valid",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/valid",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid"
+        },
+        {
+          "alias": "p0_result_seq",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/result_seq[63:0]",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_result_seq"
+        },
+        {
+          "alias": "p0_window_full",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/window_full",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_window_full"
+        },
+        {
+          "alias": "p0_bytes_complete",
+          "analog_range": null,
+          "height": 23,
+          "public_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete",
+          "view_path": "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete"
+        }
+      ],
+      "markers": [
+        {
+          "time_ns": 80.5,
+          "label": "SLOW80.5ns",
+          "color": "ID_YELLOW5"
+        },
+        {
+          "time_ns": 91,
+          "label": "64 / 512",
+          "color": "ID_YELLOW5"
+        }
+      ],
+      "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+      "checks": [
+        [
+          79,
+          "p0_GBps",
+          128
+        ],
+        [
+          85,
+          "p0_GBps",
+          96
+        ],
+        [
+          91,
+          "p0_GBps",
+          64
+        ],
+        [
+          91,
+          "all_dmc_GBps",
+          512
+        ]
+      ],
+      "reference": "../acceptance/frequency_ns/expected-actual.md"
+    }
+  }
+}
