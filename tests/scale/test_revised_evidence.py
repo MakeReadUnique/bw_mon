@@ -1,7 +1,10 @@
 """The revised completion gate cannot inherit legacy counts or partial runs."""
 import unittest
 import copy
-from revised_evidence import validate_suite, FULL, QUICK, COMPONENT_CASES, digest
+import datetime
+import json
+from pathlib import Path
+from revised_evidence import validate_suite, validate_run_metadata, utc_seconds, FULL, QUICK, COMPONENT_CASES, digest
 
 
 def complete_metadata():
@@ -25,6 +28,12 @@ def bound_metadata():
              source_sha256=dict(sources),build_identity=dict(tools=tools),build_receipt_sha256='immutable-receipt',
              elapsed_seconds=1,budget_seconds=300,started_utc='2026-10-26T00:00:{:02d}Z'.format(i),
              finished_utc='2026-10-26T00:00:{:02d}Z'.format(i+1))
+        run=runs[row['name']];base='2026-10-26T00:00:{:02d}'.format(i)
+        run['compile_reused']=False
+        boundaries=[run['started_utc'],base+'.100000Z',base+'.300000Z',base+'.800000Z',run['finished_utc']]
+        run['stages']={name:dict(state='COMPLETED',returncode=0,elapsed_seconds=elapsed,
+                                started_utc=boundaries[j],finished_utc=boundaries[j+1])
+                       for j,(name,elapsed) in enumerate(zip(('generation','compile','simulation','verification'),(.1,.2,.5,.2)))}
     for i,name in enumerate(('components','common_replay','recorded_replay'),11):
         value['stages'][name].update(elapsed_seconds=1,started_utc='2026-10-26T00:00:{:02d}Z'.format(i),
                                    finished_utc='2026-10-26T00:00:{:02d}Z'.format(i+1))
@@ -42,7 +51,7 @@ class RevisedCompletion(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'tools'):
             validate_suite(value,run_loader=lambda row:wrong[row['name']])
         wrong=copy.deepcopy(runs);wrong[FULL[1]]['elapsed_seconds']=10
-        with self.assertRaisesRegex(ValueError,'interval'):
+        with self.assertRaisesRegex(ValueError,'interval|duration'):
             validate_suite(value,run_loader=lambda row:wrong[row['name']])
 
     def test_legacy_four_or_twelve_completion_counts_are_not_revised_evidence(self):
@@ -82,6 +91,29 @@ class RevisedCompletion(unittest.TestCase):
                      stages={'recorded_replay':dict(state='COMPLETED')})
         with self.assertRaises(ValueError):
             validate_suite(value,expected_key='quick-hot')
+
+    def test_parent_run_cannot_hide_executed_stage_time_as_suite_overhead(self):
+        value,runs=bound_metadata();run=runs[FULL[0]]
+        run.update(elapsed_seconds=.001,finished_utc='2026-10-26T00:00:00.001000Z')
+        value['orchestration_seconds']+=.999
+        with self.assertRaises(ValueError):
+            validate_suite(value,run_loader=lambda row:runs[row['name']])
+
+    def test_recorded_real_run_rejects_underreported_parent_and_failed_children(self):
+        original=json.loads((Path(__file__).with_name('run-time-fixture.json')).read_text())['run']
+        validate_run_metadata(original)
+        changed=copy.deepcopy(original)
+        changed['elapsed_seconds']=.001
+        changed['finished_utc']=datetime.datetime.utcfromtimestamp(utc_seconds(changed['started_utc'])+.001).isoformat()+'Z'
+        with self.assertRaises(ValueError):validate_run_metadata(changed)
+        changed=copy.deepcopy(original);changed['stages']['simulation']['returncode']=7
+        with self.assertRaisesRegex(ValueError,'failed'):validate_run_metadata(changed)
+        changed=copy.deepcopy(original);compiled=changed['stages']['compile'];changed['compile_reused']=True
+        changed['stages']['compile']=dict(state='CACHED',elapsed_seconds=0,original=compiled)
+        with self.assertRaisesRegex(ValueError,'prior'):validate_run_metadata(changed)
+        for key in ('started_utc','finished_utc'):
+            compiled[key]=datetime.datetime.utcfromtimestamp(utc_seconds(compiled[key])-1000).isoformat()+'Z'
+        validate_run_metadata(changed)
 
 
 if __name__=='__main__':

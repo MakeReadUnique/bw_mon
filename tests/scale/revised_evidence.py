@@ -62,12 +62,42 @@ def duration(value,label):
     return value
 
 
+def validate_run_metadata(run):
+    """Only current executed stages contribute to the measured run interval."""
+    total=duration(run.get('elapsed_seconds'),'parent run')
+    begin=utc_seconds(run.get('started_utc'));end=utc_seconds(run.get('finished_utc'))
+    require(end>=begin and abs(end-begin-total)<0.2,'run UTC/duration mismatch')
+    require(set(run.get('stages',{}))=={'generation','compile','simulation','verification'},'required run stages absent')
+    accounted=0;previous=begin
+    for name in ('generation','compile','simulation','verification'):
+        stage=run['stages'][name]
+        if name=='compile' and stage.get('state')=='CACHED':
+            require(run.get('compile_reused') is True and stage.get('elapsed_seconds')==0,
+                    'cached compile must have zero current duration')
+            original=stage.get('original',{})
+            require(original.get('state')=='COMPLETED' and original.get('returncode')==0,'cached compilation was not successful')
+            original_first=utc_seconds(original.get('started_utc'));original_last=utc_seconds(original.get('finished_utc'))
+            require(original_last<=begin+0.05 and original_last>=original_first and
+                    abs(original_last-original_first-duration(original.get('elapsed_seconds'),'cached build'))<0.2,
+                    'cached compilation is not a prior completed build')
+            continue
+        require(stage.get('state')=='COMPLETED' and stage.get('returncode')==0,'executed run stage failed: '+name)
+        if name=='compile':require(run.get('compile_reused') is False,'compiled run mislabeled as cache reuse')
+        elapsed=duration(stage.get('elapsed_seconds'),name)
+        first=utc_seconds(stage.get('started_utc'));last=utc_seconds(stage.get('finished_utc'))
+        require(first>=previous-0.05 and last<=end+0.05 and last>=first and abs(last-first-elapsed)<0.2,
+                'executed stage lies outside parent run interval: '+name)
+        accounted+=elapsed;previous=last
+    require(accounted<=total+0.005,'executed stage durations exceed parent run duration')
+
+
 def audit_run(manifest_path,source=None,attempt=None,native_build=None):
     manifest=json.loads(manifest_path.read_text())
     name=manifest['scenario']
     require(name in FULL,'unknown revised scenario')
     require(manifest.get('schema')=='bw-revised-acceptance-v1','legacy run is not revised evidence')
     require(manifest.get('checked_pass') and manifest.get('state')=='VERIFIED','run did not complete: '+name)
+    validate_run_metadata(manifest)
     limit=600 if name.startswith('topology-') else 300
     require(manifest['elapsed_seconds']<=manifest['budget_seconds']<=limit,'run exceeded acceptance budget: '+name)
     source=source or Path(manifest['source_snapshot'])
@@ -81,6 +111,9 @@ def audit_run(manifest_path,source=None,attempt=None,native_build=None):
     require(build_receipt['stage']==recorded_compile and
             json.loads((native_build/'compile.stage.json').read_text())==recorded_compile,
             'native attempt differs from original run receipt: '+name)
+    for stage in ('generation','simulation','verification'):
+        require(json.loads((attempt/(stage+'.stage.json')).read_text())==manifest['stages'][stage],
+                'executed stage differs from original receipt: '+stage)
     require(build_receipt['digest']==manifest['compile_digest'] and build_receipt.get('artifacts_sha256'),
             'native fingerprint incomplete: '+name)
     require(manifest['build_identity']['source']==manifest['source_sha256'] and
@@ -186,6 +219,9 @@ def validate_suite(value,expected_key=None,run_loader=None):
         run=loader(row)
         require(run.get('scenario')==row['name'],'profile label does not match actual run receipt')
         require(run.get('checked_pass') and run.get('state')=='VERIFIED','actual run incomplete')
+        validate_run_metadata(run)
+        if value['cache_mode']=='cold':
+            require(run.get('compile_reused') is False,'cold suite reused a previous compilation')
         require(run.get('source_head')==freeze['source_head'] and run.get('source_status')==freeze.get('source_status'),
                 'run source checkout differs from suite freeze')
         require(run.get('build_identity',{}).get('tools')==freeze['tools'],'run tools differ from suite freeze')
