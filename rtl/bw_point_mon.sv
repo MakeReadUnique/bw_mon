@@ -163,7 +163,10 @@ module bw_point_mon #(
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
     transport_source=point_source_handle(source_handle);
-    wait(monitor_ready && recorder.scope_id==scope_id && core.scope_id==scope_id && hints.configured &&
+    // Ready is monotonic. Subscribe to per-instance identity only after the
+    // global barrier, avoiding a global cross-module string callback fanout.
+    wait(monitor_ready);
+    wait(recorder.scope_id==scope_id && core.scope_id==scope_id && hints.configured &&
       hints.backpressure_hint.reset_capture_ready && hints.credit_shortage_hint.reset_capture_ready);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
   end
