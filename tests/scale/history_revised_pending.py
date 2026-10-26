@@ -99,6 +99,12 @@ class PendingScenario:
                        'scopes_done':1, 'scopes_expected':1}))
         if any(line.startswith(('BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ')) for line in log.splitlines()):
             errors.append('unexpected_pending_phase_or_check')
+        lines = log.splitlines()
+        summary_positions = [i for i, line in enumerate(lines) if line.startswith('BW_SUMMARY ')]
+        final_prefixes = ('BW_EPISODE ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ')
+        if len(summary_positions) == 1 and any(i > summary_positions[0] and line.startswith(final_prefixes)
+                                             for i, line in enumerate(lines)):
+            errors.append('summary_precedes_final_packet')
         if resource and (set(resource) != {'episode_runs_peak', 'episode_count_peak', 'phase_runs_peak', 'phase_count_peak',
                                          'history_peak', 'clock_peak', 'episode_final', 'phase_final'} or
                          resource.get('episode_count_peak') != 30000 or resource.get('phase_count_peak') != 30000):

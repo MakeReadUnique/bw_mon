@@ -73,6 +73,19 @@ class HistoryAuditContracts(unittest.TestCase):
                 'TB_PASS variation_pending_retention episode_bytes=48 events=6 selected_samples=3 mean=16 sigma=0\n')
             self.assertFalse(scenario.verify(out)[0])
 
+    def test_pending_summary_follows_every_final_packet(self):
+        fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_fixture.json.gz').read_bytes()))
+        original = fixture['pending_simulation_log']
+        lines = original.splitlines(True)
+        summary = next(line for line in lines if line.startswith('BW_SUMMARY '))
+        early_summary = summary+''.join(line for line in lines if not line.startswith('BW_SUMMARY '))
+        scenario = build_scenario('history-revised-pending')
+        for log, expected in [(original, True), (early_summary, False)]:
+            with self.subTest(summary_after_packets=expected), tempfile.TemporaryDirectory() as tmp:
+                out = Path(tmp)
+                (out/'simulation.log').write_text(log)
+                self.assertEqual(scenario.verify(out)[0], expected)
+
 
 if __name__ == '__main__':
     unittest.main()
