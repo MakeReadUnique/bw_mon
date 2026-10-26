@@ -1,10 +1,20 @@
 # Integration, acceptance evidence and review
 
-The current production18 matches the independently reviewed final-steady fix
-`56127495`. The [427-case/168-top proof](../artifacts/acceptance/final-component-proof/verification.json)
+The revised maximum-topology/history qualification follows current D16/T7/T8
+and the [M1–M5 mapping](bw-mon-max-topology.md) / [H1–H7 mapping](bw-mon-history.md).
+Its [serial quick/full runner](../tests/scale/revised_suite.py) enforces cold/hot
+budgets and its [portable evidence](../tests/scale/revised_evidence/final-campaign)
+keeps maximum-scope, deep-history and shared consumer-lag evidence distinct.
+The original canceled MAX matrix cannot satisfy this new completion gate.
+
+The following earlier production18 proof belongs to the independently reviewed
+final-steady fix `56127495`. The [427-case/168-top proof](../artifacts/acceptance/final-component-proof/verification.json)
 records component checkout `467b722`; the fresh42-scene public-input campaign
 records its actual simulation checkout `cd07c77`. Their18 production files match
-byte for byte. All42 original inputs/cfg and independent numeric references are
+byte for byte at those recorded checkouts. Current wrappers split the monotonic
+Ready wait from local identity readiness; topology fixtures additionally enable
+an acceptance-only collector gate/resource observer. The earlier proof is not
+relabeled byte-identical to these three changed source files. All42 original inputs/cfg and independent numeric references are
 unchanged, and all33 original real Verdi images were freshly regenerated.
 **Human review of the nine new analog views is confirmed:** MakeReadUnique
 [confirmed that all meet requirements](https://github.com/MakeReadUnique/bw_mon/issues/33#issuecomment-6411618527)
@@ -93,7 +103,9 @@ failures and resource accounting. Key facts for integration:
 Known disabled policies may leave unused seeds/thresholds unknown; unknown policies
 cannot silently disable validation. Raw control/size/reset X/Z is observation quality,
 not malformed numeric metadata. Checked arithmetic rejects unknown/overflow before
-narrowing. No user history slots/depth/RAM cap or wall-time speed gate exists.
+narrowing. No user history slots/depth/RAM cap or product wall-time overhead
+benchmark exists. Revised acceptance-tool budgets are separate: daily120s hot /
+300s cold, maximum case600s, history case300s, and complete serial suite1800s.
 
 Every scene records exact W/S/Q/N/span/K/fit/hint values, first clock phase, every
 raw control/amount row, reset intervals, actual end, source/header/oracle/cfg hashes

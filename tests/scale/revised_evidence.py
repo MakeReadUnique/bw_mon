@@ -174,6 +174,10 @@ def archive(output,destination):
                 for file in sorted(directory.rglob('*')):
                     if file.is_file():
                         _pack(file,destination,index,'suite-stages/'+key+'/'+stage_name+'/'+str(file.relative_to(directory)))
+            for file,expected in value.get('component_source_sha256',{}).items():
+                source=Path(__file__).resolve().parents[2]/file
+                require(sha(source)==expected,'component source changed before archiving: '+file)
+                _pack(source,destination,index,'suite-stages/'+key+'/components/source/'+file)
     save(destination/'index.json',index)
     shutil.copyfile(__file__,str(destination/'verify.py'))
     result=verify(destination)
@@ -212,6 +216,8 @@ def verify(directory):
                     require('TB_PASS' in text and 'Fatal:' not in text,'component failed')
                 require(all(re.search(p,text) for p in case.get('expect_log',[])),'component log contract failed')
                 require(all(len(re.findall(p,text))==n for p,n in case.get('expect_counts',{}).items()),'component record count failed')
+            for file,expected in value.get('component_source_sha256',{}).items():
+                require(sha(root/'suite-stages'/key/'components/source'/file)==expected,'component source snapshot changed')
     require(set(results)=={'quick-cold','quick-hot','full-cold','full-hot'},'required cold/hot suite absent')
     return dict(schema='bw-revised-archive-verification-v1',checked_pass=True,difference_count=0,suites=results)
 
