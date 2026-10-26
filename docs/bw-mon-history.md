@@ -112,6 +112,14 @@ The auditor expands those runs and derives expected retained positions from
 original events and independent window scheduling, including the actual clock
 boundaries. It observes event/clock segment peaks, phase-sample peaks, pending
 run peaks, pending represented-sample peaks and final retained states separately.
+The variable-clock expiry probe measured a clock-segment peak of130 and129
+segments retained at the end, plus a pending peak of20 runs/20 samples. These
+are the clock and fragmented-pending depths actually exercised; they are not
+80,000-segment claims. The original maximum-width baseline has a constant clock
+(one clock segment), and its control variant has three clock intervals; the
+variable-clock case adds repeated clock-storage growth and expiration beyond
+those original conditions. The independent source review verifies that each
+queue grows from real accepted inputs through its own checked append path.
 The 30,000 pending suffix samples compress into one run in the measured fixture;
 this is deep pending ownership coverage, not 30,000 fragmented pending runs.
 No floating-point replay order or production history behavior is changed.

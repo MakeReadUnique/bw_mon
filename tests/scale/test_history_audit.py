@@ -33,7 +33,7 @@ class HistoryAuditContracts(unittest.TestCase):
         fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_fixture.json.gz').read_bytes()))
         scenario = build_scenario(fixture['profile'])
         mutations = ('baseline', 'missing_group_storage', 'empty_storage', 'duplicate_checkpoint',
-                     'duplicate_checks', 'missing_phases', 'missing_variation', 'summary_counter')
+                     'duplicate_checks', 'missing_phases', 'missing_variation', 'summary_counter', 'missing_resource_column')
         for mutation in mutations:
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp)
@@ -55,9 +55,23 @@ class HistoryAuditContracts(unittest.TestCase):
                 elif mutation in ('missing_phases', 'missing_variation'):
                     prefix = 'BW_PHASE ' if mutation == 'missing_phases' else 'BW_VARIATION '
                     log.write_text(''.join(x for x in log.read_text().splitlines(True) if not x.startswith(prefix)))
+                elif mutation == 'missing_resource_column':
+                    rows = [x.split(',') for x in (out/'actual.csv').read_text().splitlines()]
+                    index = rows[0].index('phase_samples_peak')
+                    (out/'actual.csv').write_text('\n'.join(','.join(row[:index]+row[index+1:]) for row in rows)+'\n')
                 elif mutation == 'summary_counter':
                     log.write_text(log.read_text().replace('BW_SUMMARY status=WARNING pass=2', 'BW_SUMMARY status=WARNING pass=99'))
                 self.assertEqual(verify(scenario, out)[0], mutation == 'baseline')
+
+    def test_pending_summary_without_final_packets_is_incomplete(self):
+        scenario = build_scenario('history-revised-pending')
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            (out/'simulation.log').write_text(
+                'HISTORY_PENDING_STORAGE episode_runs_peak=1 episode_count_peak=30000 phase_runs_peak=1 '
+                'phase_count_peak=30000 history_peak=1 clock_peak=0 episode_final=0 phase_final=0\n'
+                'TB_PASS variation_pending_retention episode_bytes=48 events=6 selected_samples=3 mean=16 sigma=0\n')
+            self.assertFalse(scenario.verify(out)[0])
 
 
 if __name__ == '__main__':

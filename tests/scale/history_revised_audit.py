@@ -10,6 +10,7 @@ def kv(line):
 
 
 def verify(s, attempt):
+    from history_revised_generate import SUMMARY
     differences = []
     def require(condition, error, **details):
         if not condition:
@@ -22,6 +23,7 @@ def verify(s, attempt):
     for row in rows:
         try:
             values = {k:int(v) for k, v in row.items()}
+            require(set(values) == set(SUMMARY) and all(v >= 0 for v in values.values()), 'complete_resource_columns')
             scope = values['scope']
             require(scope not in observed and scope in (0, 1, 2), 'scope_identity', scope=scope)
             observed[scope] = values
