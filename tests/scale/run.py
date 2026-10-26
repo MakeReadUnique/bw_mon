@@ -118,7 +118,7 @@ def verify(s,attempt):
         if sid not in byid or seq!=high.get(sid,0)+1:diffs.append(dict(error='phase_identity_sequence',record=p))
         high[sid]=seq
     for x in last_steady:
-        if x.get('selection_valid')!='0':diffs.append(dict(error='truncated_last_steady_selection',record=x))
+        if not s.config.get('allow_final_steady_selection') and x.get('selection_valid')!='0':diffs.append(dict(error='truncated_last_steady_selection',record=x))
     if len(last_steady)!=len(episodes):diffs.append(dict(error='last_steady_record_count'))
     if len(summaries)!=1:diffs.append(dict(error='summary_count',actual=len(summaries)))
     else:

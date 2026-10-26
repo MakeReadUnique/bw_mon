@@ -143,16 +143,25 @@ module bw_group_mon #(
 
   task automatic collect_inputs();
     bw_notification notice;
+`ifdef BW_MON_TEST_SCHEDULING
+    bw_test_consumer_gate test_gate;
+`endif
     bw_u64_t seen_notice,seen_expected;
     bw_control_frame_t candidate,control;
     bw_record_t frame;
     int selected_control,source;
     bit all_frames;
     wait(monitor_ready);
+`ifdef BW_MON_TEST_SCHEDULING
+    test_gate=bw_test_gate_for(scope_id);
+`endif
     notice=group_notification(group_handle);
     direct_member_count=group_member_count(group_handle);
     recursive_point_count=group_recursive_point_count(group_handle);
     forever begin
+`ifdef BW_MON_TEST_SCHEDULING
+      wait(!test_gate.paused);
+`endif
       seen_notice=notice.seq;seen_expected=expected_notice;refresh_progress();
       selected_control=-1;candidate='0;
       for (int m=0;m<direct_member_count;m++) begin

@@ -558,6 +558,18 @@ package bw_mon_pkg;
       core_error("WINDOW_CONFIG", id, "cycle width exceeds 80000 cycles");
   endfunction
 
+`ifdef BW_MON_TEST_SCHEDULING
+  // Acceptance-only scheduling control: delays the real collector task without
+  // changing records, counters, acknowledgements, clocks or statistics state.
+  class bw_test_consumer_gate;
+    bit paused=0;
+  endclass
+  bw_test_consumer_gate bw_test_consumer_gates[string];
+  function automatic bw_test_consumer_gate bw_test_gate_for(string id);
+    if(!bw_test_consumer_gates.exists(id))bw_test_consumer_gates[id]=new;
+    return bw_test_consumer_gates[id];
+  endfunction
+`endif
   `include "bw_slot_settlement.svh"
   `include "bw_mon_registry.svh"
   `include "bw_mon_transport.svh"
