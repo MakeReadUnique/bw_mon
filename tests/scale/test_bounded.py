@@ -46,6 +46,13 @@ class BoundedAcceptance(unittest.TestCase):
             self.assertIn('initialization_seconds', result)
             self.assertIsNotNone(result['simulation_after_ready_seconds'])
 
+    def test_stage_allows_bounded_native_child_shutdown(self):
+        with tempfile.TemporaryDirectory() as d:
+            result = execute_stage([sys.executable, '-c',
+                'import subprocess; subprocess.Popen(["sleep","0.15"])'], Path(d), 'shutdown', 3)
+            self.assertEqual('COMPLETED', result['state'])
+            self.assertLess(result['elapsed_seconds'], 2)
+
     def test_cache_identity_changes_with_each_consumed_input(self):
         original = {'source': {'a.sv': 'abc'}, 'inputs': {'input.txt': 'def'},
                     'tools': {'vcs': 'version'}, 'options': ['-full64']}
