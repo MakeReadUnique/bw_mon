@@ -167,7 +167,7 @@ component checks and the reviewed startup change qualify the changed path.
 The revised maximum-topology fixture also adds collector-delay and read-only
 storage-growth observations behind `BW_MON_TEST_SCHEDULING` in the group/package
 sources. That define is absent from these history cases and ordinary production
-compatibility cases; explicitly marked collector-pause tests enable it. The final source comparison therefore has fifteen unchanged
+compatibility cases; the revised quick/MAX topology fixtures enable it. The final source comparison therefore has fifteen unchanged
 production files and three textually changed files (point, group and package);
 it must retain the reviewed default-path applicability of those changes.
 Exact changed-file hashes/diffs and source applicability belong in final
