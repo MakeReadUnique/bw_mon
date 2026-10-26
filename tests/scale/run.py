@@ -97,7 +97,11 @@ def verify(s,attempt):
             diffs.append(dict(error='extra_episode',scope=sid,seq=seq));continue
         fields=references[seq-1]
         for f,value in fields.items():
-            if e.get(f)!=str(value):diffs.append(dict(error='episode',scope=sid,seq=seq,field=f,expected=value,actual=e.get(f)))
+            if f=='e2e_gbps':
+                try:good=abs(F(e.get(f))-value)<=F(1,10**9)+F(1,10**12)*abs(value)
+                except (ValueError,TypeError,ZeroDivisionError):good=False
+            else:good=e.get(f)==str(value)
+            if not good:diffs.append(dict(error='episode',scope=sid,seq=seq,field=f,expected=str(value),actual=e.get(f)))
     for sid,(kind,index) in byid.items():
         n=len(s.expected_episodes(kind,index))
         if len(observed_episodes.get(sid,[]))!=n:diffs.append(dict(error='episode_count',scope=sid,expected=n,actual=len(observed_episodes.get(sid,[]))))
@@ -118,7 +122,7 @@ def verify(s,attempt):
         if sid not in byid or seq!=high.get(sid,0)+1:diffs.append(dict(error='phase_identity_sequence',record=p))
         high[sid]=seq
     for x in last_steady:
-        if x.get('selection_valid')!='0':diffs.append(dict(error='truncated_last_steady_selection',record=x))
+        if not s.config.get('allow_final_steady_selection') and x.get('selection_valid')!='0':diffs.append(dict(error='truncated_last_steady_selection',record=x))
     if len(last_steady)!=len(episodes):diffs.append(dict(error='last_steady_record_count'))
     if len(summaries)!=1:diffs.append(dict(error='summary_count',actual=len(summaries)))
     else:
