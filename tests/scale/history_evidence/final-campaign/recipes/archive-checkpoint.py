@@ -24,11 +24,14 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + '\n')
 
 
-def copy(path, name):
+def copy(path, name, preserve=False):
     raw = path.read_bytes()
     target = DEST / name
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_bytes(raw)
+    if preserve and target.exists():
+        assert target.read_bytes() == raw, ('existing original artifact changed', name)
+    else:
+        target.write_bytes(raw)
     return dict(file=name, sha256=sha(raw), bytes=len(raw))
 
 
@@ -40,12 +43,19 @@ def archive_source(manifest):
         assert sha(raw) == expected == sha((REPO / name).read_bytes())
         path = DEST / 'source' / (name + '.gz')
         path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open('wb') as stream:
-            with gzip.GzipFile(filename='', mode='wb', fileobj=stream, mtime=0, compresslevel=9) as out:
-                out.write(raw)
+        if path.exists():
+            assert gzip.decompress(path.read_bytes()) == raw, name
+        else:
+            with path.open('wb') as stream:
+                with gzip.GzipFile(filename='', mode='wb', fileobj=stream, mtime=0, compresslevel=9) as out:
+                    out.write(raw)
         index['files'][name] = dict(gzip_file=name + '.gz', gzip_sha256=sha(path.read_bytes()),
                                     uncompressed_sha256=expected, uncompressed_bytes=len(raw))
-    save(DEST / 'source/source-index.json', index)
+    index_path = DEST / 'source/source-index.json'
+    if index_path.exists():
+        assert json.loads(index_path.read_text()) == index
+    else:
+        save(index_path, index)
     return index
 
 
@@ -126,10 +136,21 @@ def main():
                              production_runtime=receipt['production_runtime'], production_sha256=receipt['production_sha256'])
             assert manifest['source_head'] == index['source_head']
             assert {k: v['uncompressed_sha256'] for k, v in index['files'].items()} == manifest['source_sha256']
-            subprocess.run([sys.executable, '-B', str(REPO / 'tests/scale/evidence/package.py'),
-                            str(REPO), str(paths[0]), str(DEST)], check=True)
-            launch_entry = copy(receipt_path, profile + '/launch.json')
-            audit_entry = copy(audit_path, profile + '/recorded-audit.json')
+            bundle_path = DEST / profile / 'bundle.json'
+            if bundle_path.exists():
+                bundle = json.loads(bundle_path.read_text())
+                assert bundle['original_manifest'] == str(paths[0]) and bundle['source_head'] == manifest['source_head']
+                for entry in bundle['files'].values():
+                    compressed = (bundle_path.parent / entry['gzip_file']).read_bytes()
+                    assert sha(compressed) == entry['gzip_sha256']
+                    raw = gzip.decompress(compressed)
+                    assert sha(raw) == entry['uncompressed_sha256']
+                    assert raw == pathlib.Path(entry['original_path']).read_bytes()
+            else:
+                subprocess.run([sys.executable, '-B', str(REPO / 'tests/scale/evidence/package.py'),
+                                str(REPO), str(paths[0]), str(DEST)], check=True)
+            launch_entry = copy(receipt_path, profile + '/launch.json', preserve=True)
+            audit_entry = copy(audit_path, profile + '/recorded-audit.json', preserve=True)
             proof['completed_profiles'][profile] = dict(verification=manifest['verification'],
                                                         compile_peak_kib=manifest['compile']['time_v_peak_rss_kib'],
                                                         simulation_peak_kib=manifest['simulation']['time_v_peak_rss_kib'],
