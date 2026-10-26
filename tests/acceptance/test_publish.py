@@ -122,6 +122,62 @@ class PublishReviewCLI(unittest.TestCase):
         self.assertEqual(self.snapshot_evidence(), evidence,
                          'Resetting review must not rewrite original evidence')
 
+    def test_review_of_external_view_is_invalidated_when_that_view_changes(self):
+        view_name = 'artifacts/review-analog/start_stop_ns.sav'
+        view = self.root / view_name
+        view.parent.mkdir(parents=True)
+        shutil.copyfile(str(ROOT / view_name), str(view))
+        self.synthetic['artifact_sha256'] = {
+            view_name: hashlib.sha256(view.read_bytes()).hexdigest(),
+        }
+        fingerprint = self.seed_synthetic_review()
+        evidence = self.snapshot_evidence()
+        self.publish()
+        self.assertEqual(self.read('review.json')['human'], self.synthetic)
+        view.write_bytes(view.read_bytes() + b'\n# SYNTHETIC CHANGED REVIEW VIEW\n')
+        self.publish()
+        ledger = self.read('review.json')
+        self.assertEqual(ledger['asset_fingerprint'], fingerprint)
+        self.assertEqual(ledger['human']['status'], 'PENDING')
+        self.assertEqual(ledger['previous_human_record'], self.synthetic)
+        self.assertEqual(self.read('verification.json')['human_review'], 'PENDING')
+        self.assertEqual(self.snapshot_evidence(), evidence)
+
+    def test_analog_verifier_accepts_review_refresh_but_rejects_changed_evidence(self):
+        analog = self.root / 'artifacts/review-analog'
+        shutil.copytree(str(ROOT / 'artifacts/review-analog'), str(analog))
+        name = 'artifacts/review-analog/start_stop_ns.sav'
+        self.synthetic['artifact_sha256'] = {
+            name: hashlib.sha256((self.root / name).read_bytes()).hexdigest(),
+        }
+        self.seed_synthetic_review()
+        self.publish()
+
+        def verify_analog():
+            return subprocess.run(
+                [sys.executable, str(analog / 'verify.py')], cwd=str(self.root),
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                universal_newlines=True, timeout=30)
+
+        result = verify_analog()
+        self.assertEqual(result.returncode, 0, result.stdout)
+        # Updated current inventories must not bless a changed historical view.
+        view = self.out / 'steady_ns/overview.sav'
+        original = view.read_bytes()
+        inventory_path = self.out / 'SHA256SUMS.json'
+        inventory_bytes = inventory_path.read_bytes()
+        view.write_bytes(original + b'\n# SYNTHETIC CHANGED HISTORICAL EVIDENCE\n')
+        inventory = json.loads(inventory_bytes.decode())
+        inventory['steady_ns/overview.sav'] = hashlib.sha256(view.read_bytes()).hexdigest()
+        inventory_path.write_text(json.dumps(inventory, indent=2) + '\n')
+        self.assertNotEqual(verify_analog().returncode, 0)
+        view.write_bytes(original)
+        inventory_path.write_bytes(inventory_bytes)
+        # Nor may a current summary change without the publisher's checksum update.
+        index = self.out / 'INDEX.md'
+        index.write_bytes(index.read_bytes() + b'\nSYNTHETIC UNPUBLISHED STATUS EDIT\n')
+        self.assertNotEqual(verify_analog().returncode, 0)
+
     def test_third_publication_retains_one_archived_review_while_current_is_pending(self):
         self.seed_synthetic_review()
         self.publish()  # First: preserve the same-fingerprint synthetic record.

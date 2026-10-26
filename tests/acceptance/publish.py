@@ -6,6 +6,16 @@ from evidence import runtime_evidence,scene_runtime_evidence,dependency_bytes,ru
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/acceptance'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def review_artifacts_match(human):
+ artifacts=human.get('artifact_sha256',{})
+ if not isinstance(artifacts,dict):return False
+ for name,digest in artifacts.items():
+  if not isinstance(name,str) or not isinstance(digest,str):return False
+  path=Path(name)
+  if path.is_absolute() or '..' in path.parts:return False
+  target=ROOT/path
+  if not target.is_file() or sha(target)!=digest:return False
+ return True
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pack',action='store_true');args=p.parse_args();scenes=[];totals={};analysis={};pictures=[];revisions=set();runtimes={}
  runtime=runtime_evidence(ROOT,OUT)
@@ -75,8 +85,8 @@ def main():
  review={'human':{'status':'PENDING','reviewer':None,'date':None,'objects_intervals_conclusion':None},'agent':{'status':'PENDING','note':'Agent inspection is not human attestation'},'actual_images':pictures,'instructions':'Read INDEX and each independent expected-actual table; inspect original FSDB/public views/images. Record exact reviewer/date/scope/interval/expected/actual/differences. No sign-off on future assets.'}
  if 'previous_human_record' in previous_review:review['previous_human_record']=previous_review['previous_human_record']
  if previous_review.get('human',{}).get('status','PENDING')!='PENDING':
-  if previous_review.get('asset_fingerprint')==fingerprint:review['human']=previous_review['human']
-  else:review['previous_human_record']=previous_review['human'];review['human']['reason']='Assets changed; prior attestation does not cover new assets'
+  if previous_review.get('asset_fingerprint')==fingerprint and review_artifacts_match(previous_review['human']):review['human']=previous_review['human']
+  else:review['previous_human_record']=previous_review['human'];review['human']['reason']='Assets or named review artifacts changed; prior attestation does not cover new assets'
  if 'previous_agent_record' in previous_review:review['previous_agent_record']=previous_review['previous_agent_record']
  if 'agent' in previous_review:
   if previous_review.get('asset_fingerprint')==fingerprint:review['agent']=previous_review['agent']
@@ -90,6 +100,8 @@ def main():
  index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **human T6 ledger status: '+human_status+'**. Agent image inspection is separate.\n\n'
  if asset_commit:index+='Fixed data bundle: [`'+asset_commit+'`](https://github.com/MakeReadUnique/bw_mon/tree/'+asset_commit+'/artifacts/acceptance), asset fingerprint `'+fingerprint+'`. Later documentation/review-status commits do not change that data identity.\n\n'
  index+='Human status covers only the ledger\'s named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.\n\n'
+ if review['human'].get('primary_confirmation_url'):
+  index+='Current named-view confirmation: [user statement]('+review['human']['primary_confirmation_url']+') in [the waveform review issue]('+review['human']['review_issue']+'). The exact objects, intervals and asset hashes are recorded in [the human ledger](review.json); this does not imply review of every original scene or scale qualification. The original HUMAN-REVIEW checklist and capture receipts retain their historical generation-time PENDING state.\n\n'
  index+='Independent totals: '+str(totals)+'; analysis: '+str(analysis)+'. Original FSDBs and images are unchanged. [D17handoff/commands](../../docs/bw-mon-acceptance.md) · [machine proof](verification.json) · [concrete human checklist](HUMAN-REVIEW.md) · [human/agent ledger](review.json) · [public fields](public-fields.json) · [error index](error-catalog.json).\n\n'
  index+='Each scene records its actual consumed checkout, immutable project snapshot and compiler dependencies. The [current runtime/native freeze](runtime-source.json) identifies the scene checkout and18 production hashes independently of the ['+str(component['cases'])+'-case component proof]('+component['directory']+'/verification.json), whose source is `'+component['source_head']+'`. Their production bytes match exactly; their checkout identities are not conflated. The [historical424 proof](current-component-proof/verification.json), [historical408 proof](component-proof/verification.json), [8e81839 runtime freeze](historical-runtime-source-8e81839.json) and [historical consumed sources](historical-source-8e81839.tar.gz) keep their original qualification scope. Scale evidence is separately scoped by its own manifests.\n\n|Scene|Basis W/S/Q|Original data and independent table|Actual screenshots|Automated performance summary|\n|---|---|---|---|---|\n'
  for s in scenes:

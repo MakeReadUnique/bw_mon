@@ -1709,7 +1709,7 @@
     "variations": 1868
   },
   "fresh_actual_pngs": 33,
-  "human_review": "PENDING",
+  "human_review": "APPROVED_NAMED_VIEWS",
   "human_review_scope": "Only named objects and intervals in review.json; no per-scene approval inferred",
   "python": "3.6.8",
   "window_real_tolerance_gbps": 1e-10,
