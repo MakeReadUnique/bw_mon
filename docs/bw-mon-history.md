@@ -164,6 +164,12 @@ change is integrated, the old bundles are no longer described as having the same
 complete production source. Reuse applies to the unchanged history/metric
 semantics and long-window original-input evidence; current public-entry cases,
 component checks and the reviewed startup change qualify the changed path.
+The revised maximum-topology fixture also adds collector-delay and read-only
+storage-growth observations behind `BW_MON_TEST_SCHEDULING` in the group/package
+sources. That define is absent from the broad production compatibility suite and
+these history cases. The final source comparison therefore has fifteen unchanged
+production files and three textually changed files (point, group and package);
+it must retain the reviewed default-path applicability of those changes.
 Exact changed-file hashes/diffs and source applicability belong in final
 qualification. `--current-source` is valid only when all original production
 hashes actually match; it must fail after a production change.
