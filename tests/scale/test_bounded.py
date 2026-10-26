@@ -7,7 +7,7 @@ import tempfile
 import time
 import unittest
 
-from bounded import execute_stage, build_identity
+from bounded import execute_stage, build_identity, build_artifacts
 
 
 class BoundedAcceptance(unittest.TestCase):
@@ -62,6 +62,15 @@ class BoundedAcceptance(unittest.TestCase):
             changed[category] = 'changed'
             self.assertNotEqual(expected, build_identity(changed), category)
         self.assertEqual(expected, build_identity(json.loads(json.dumps(original))))
+
+    def test_shared_native_payload_is_part_of_cached_build_identity(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/'simv').write_bytes(b'fixed launcher')
+            (root/'simv.daidir').mkdir();library=root/'simv.daidir/runtime.so'
+            library.write_bytes(b'original compiled model');before=build_artifacts(root)
+            library.write_bytes(b'changed compiled model');after=build_artifacts(root)
+            self.assertEqual(before['simv'],after['simv'])
+            self.assertNotEqual(before,after)
 
 
 if __name__ == '__main__':
