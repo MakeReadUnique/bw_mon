@@ -140,6 +140,9 @@ def verify(s,attempt):
     return not diffs,evidence
 
 def run(s,output,force=False):
+    if hasattr(s,'budget_seconds'):
+        from bounded import run_bounded
+        return run_bounded(s,output,force)
     stamp=datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%S')+'-'+str(os.getpid())
     attempt=output/'runs'/s.name/stamp;attempt.mkdir(parents=True)
     generate(s,attempt)
