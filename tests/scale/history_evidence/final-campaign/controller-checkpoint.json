@@ -1,16 +1,86 @@
 {
+  "cap3_transition_files": {
+    "common-scheduler-status.json": {
+      "bytes": 2287,
+      "file": "controllers/cap3-transition/common-scheduler-status.json",
+      "sha256": "27789e4ed1f032c70ecff8bbedad87af43d457073a702f32ab6804adefb5226d"
+    },
+    "history-max-cycle-control-clock-launch.json": {
+      "bytes": 22340,
+      "file": "controllers/cap3-transition/history-max-cycle-control-clock-launch.json",
+      "sha256": "bf94b222774d5b11b8fd7c5b0fcf5bafa079f3d2dcf9e54698a3ed7460a9865b"
+    },
+    "history-max-cycle-long-dense-launch.json": {
+      "bytes": 21274,
+      "file": "controllers/cap3-transition/history-max-cycle-long-dense-launch.json",
+      "sha256": "7bea7331ea43b8279837e4ea092ecd3b989a8e3eb91723582e14af81dd649f10"
+    },
+    "history-max-cycle-long-dense-native-health-before.json": {
+      "bytes": 12139,
+      "file": "controllers/cap3-transition/history-max-cycle-long-dense-native-health-before.json",
+      "sha256": "232a3813f5e82d39f7f48cf45e4d288cbca174530715af2832956d3e1c09c9c5"
+    },
+    "history-max-cycle-short-dense-launch.json": {
+      "bytes": 20816,
+      "file": "controllers/cap3-transition/history-max-cycle-short-dense-launch.json",
+      "sha256": "a56328b9316f4ba91326870395d47d11a59d5e95c2d05d3efcd8fd3d34670620"
+    },
+    "history-max-ns-control-clock-launch.json": {
+      "bytes": 22331,
+      "file": "controllers/cap3-transition/history-max-ns-control-clock-launch.json",
+      "sha256": "a130e202aae4b3de11514182bc46113691a9bce869df87d63586f29f2a84e9cf"
+    },
+    "history-max-ns-long-dense-launch.json": {
+      "bytes": 21258,
+      "file": "controllers/cap3-transition/history-max-ns-long-dense-launch.json",
+      "sha256": "fb649a1eaa48547d5d55fd93e90d056548fffdde0e247527897ac3f4718cb522"
+    },
+    "history-max-ns-long-dense-native-health-before.json": {
+      "bytes": 12496,
+      "file": "controllers/cap3-transition/history-max-ns-long-dense-native-health-before.json",
+      "sha256": "9c55ab0a268bc5e71176ee626fce3eb3e61ec1b5655bb97f7d99fef5d757cb0c"
+    },
+    "history-max-ns-short-dense-launch.json": {
+      "bytes": 20807,
+      "file": "controllers/cap3-transition/history-max-ns-short-dense-launch.json",
+      "sha256": "e054c1dfe7c9dea6cc3fc3edd1e3f96f84f3e02fc1fe6ed692e3851ed44ff5b3"
+    },
+    "history31-final-max-scheduler.py": {
+      "bytes": 11948,
+      "file": "controllers/cap3-transition/history31-final-max-scheduler.py",
+      "sha256": "9ff3e97e6e5a2ff0e83fd809578ba8dbc21bcb615a1e80ab5ba653588a3bd867"
+    },
+    "max-operator-admission.json": {
+      "bytes": 1682,
+      "file": "controllers/cap3-transition/max-operator-admission.json",
+      "sha256": "d75701b9fb5fdaa0bb6375d4519e9348137232af8fc7d2c3c9b51ae7b2279861"
+    },
+    "max-scheduler-launch.json": {
+      "bytes": 757,
+      "file": "controllers/cap3-transition/max-scheduler-launch.json",
+      "sha256": "19723ff685c594ddcdd16e76c927f31f3992be60f2109a88d1a0c516cb4efe68"
+    },
+    "max-scheduler-status.json": {
+      "bytes": 3992,
+      "file": "controllers/cap3-transition/max-scheduler-status.json",
+      "sha256": "cee9c91005be5c90879cad68e82eb55d1ee1006f87f8b78b26dedeff09d3d2a7"
+    },
+    "postlaunch.json": {
+      "bytes": 5943,
+      "file": "controllers/cap3-transition/postlaunch.json",
+      "sha256": "6321ea746b77a4728f891034914d79e932696ed386afcb362dbed94f43845e00"
+    },
+    "transition.json": {
+      "bytes": 3001,
+      "file": "controllers/cap3-transition/transition.json",
+      "sha256": "7fd3bf46d69a2e074b22fc43f1fcb51be772b4d6712d8163ec82785e32029a16"
+    }
+  },
   "common_cap": 2,
   "controllers": {
     "common-history": {
-      "alive_at_checkpoint": true,
-      "argv": [
-        "/usr/bin/python3",
-        "-B",
-        "/tmp/bw-mon-spec13-resume/history31-final-common-scheduler.py",
-        "--common-admitted"
-      ],
-      "cwd": "/tmp/bw-mon-spec13-resume",
-      "executable": "/usr/libexec/platform-python3.6",
+      "alive_at_checkpoint": false,
+      "completion_status_file": "common-scheduler-status.json",
       "files": {
         "common-operator-admission.json": {
           "bytes": 1047,
@@ -23,21 +93,31 @@
           "sha256": "0324541d396446150f9628932c8c343dcd00b641af25bbcdaa76279180190ce5"
         },
         "common-scheduler-status.json": {
-          "bytes": 2294,
+          "bytes": 2287,
           "file": "controllers/common-history/common-scheduler-status.json",
-          "sha256": "dd2ae6f13f91b3077b30004f164f1d52801ca32bb66698c465e9cec6669acfa4"
+          "sha256": "27789e4ed1f032c70ecff8bbedad87af43d457073a702f32ab6804adefb5226d"
         }
       },
       "pid": 3902179,
+      "previous_live_process": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/bw-mon-spec13-resume/history31-final-common-scheduler.py",
+          "--common-admitted"
+        ],
+        "cwd": "/tmp/bw-mon-spec13-resume",
+        "executable": "/usr/libexec/platform-python3.6",
+        "pid": 3902179,
+        "start_ticks": 20579205
+      },
+      "process_exit_not_used_as_acceptance": true,
       "script": {
         "bytes": 5910,
         "file": "controllers/common-history/controller.py",
         "sha256": "e434757d6c1312dec75c73033aea7459ea83160d6d13ac02b5be7a1aa5667e41"
       },
-      "start_ticks": 20579205,
-      "state": "S",
-      "stime_ticks": 150,
-      "utime_ticks": 213
+      "state": "EXITED_AFTER_ALL_SIX_COMMON_AUDITED"
     },
     "max-history": {
       "alive_at_checkpoint": true,
@@ -51,31 +131,31 @@
       "executable": "/usr/libexec/platform-python3.6",
       "files": {
         "max-operator-admission.json": {
-          "bytes": 1682,
+          "bytes": 1888,
           "file": "controllers/max-history/max-operator-admission.json",
-          "sha256": "d75701b9fb5fdaa0bb6375d4519e9348137232af8fc7d2c3c9b51ae7b2279861"
+          "sha256": "ef138ccb8c5dfc6964f8961ab732540ddd0af8166041cc7d52f9a6c96314b144"
         },
         "max-scheduler-launch.json": {
-          "bytes": 757,
+          "bytes": 764,
           "file": "controllers/max-history/max-scheduler-launch.json",
-          "sha256": "19723ff685c594ddcdd16e76c927f31f3992be60f2109a88d1a0c516cb4efe68"
+          "sha256": "a9776285ac4517b1c88b4733a9adadc560f01417c87cd738af15ee4eb64c4316"
         },
         "max-scheduler-status.json": {
-          "bytes": 3850,
+          "bytes": 5207,
           "file": "controllers/max-history/max-scheduler-status.json",
-          "sha256": "c17b2900a861f01ba053adaa3864a4af7260dc23dba05f2facce36e26af07298"
+          "sha256": "fe577642b8102d9a2b8c45fdf37ffc349324d7db55f9982bc9baea6635e02f27"
         }
       },
-      "pid": 3919284,
+      "pid": 4026818,
       "script": {
-        "bytes": 11948,
+        "bytes": 11966,
         "file": "controllers/max-history/controller.py",
-        "sha256": "9ff3e97e6e5a2ff0e83fd809578ba8dbc21bcb615a1e80ab5ba653588a3bd867"
+        "sha256": "e25cc9c82bde23e1a8af3aef473a7ce7a54e1e811888eb4acc2f68ed6b84c530"
       },
-      "start_ticks": 20650521,
+      "start_ticks": 21559074,
       "state": "S",
-      "stime_ticks": 192,
-      "utime_ticks": 2734
+      "stime_ticks": 127,
+      "utime_ticks": 192
     },
     "max30": {
       "alive_at_checkpoint": true,
@@ -93,9 +173,9 @@
           "sha256": "e6d475ff3bb9e8a892c49277c0ea9c78ce07de1031d136700b17c738dcc1ba3a"
         },
         "monitor-status.json": {
-          "bytes": 5236,
+          "bytes": 5238,
           "file": "controllers/max30/monitor-status.json",
-          "sha256": "ae6482881a95a7df805461ccc10b654ee244801782ebbace493fa77e12861921"
+          "sha256": "4067a2934c4df17f9a72ddfd83886568ad89b0c4612e8411038ab0cebe504b8d"
         }
       },
       "pid": 3908922,
@@ -106,14 +186,14 @@
       },
       "start_ticks": 20595965,
       "state": "S",
-      "stime_ticks": 1693,
-      "utime_ticks": 3673
+      "stime_ticks": 2234,
+      "utime_ticks": 4892
     }
   },
-  "global_heavy_cap": 6,
+  "global_heavy_cap": 7,
   "max30_cap": 4,
-  "max_history_cap": 2,
+  "max_history_cap": 3,
   "no_consumed_source_edits": true,
   "no_elapsed_auto_increase": true,
-  "snapshot_utc": "2026-10-25T18:25:08.155019Z"
+  "snapshot_utc": "2026-10-26T07:11:59.277486Z"
 }

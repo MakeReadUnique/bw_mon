@@ -1,8 +1,10 @@
 {
-  "completed_profile_count": 4,
+  "completed_profile_count": 6,
   "completed_profiles": [
+    "history-common-cycle-control-clock",
     "history-common-cycle-long-dense",
     "history-common-cycle-short-dense",
+    "history-common-ns-control-clock",
     "history-common-ns-long-dense",
     "history-common-ns-short-dense"
   ],
@@ -30,8 +32,6 @@
   },
   "nominal_acceptance_passed": false,
   "pending_profiles": [
-    "history-common-cycle-control-clock",
-    "history-common-ns-control-clock",
     "history-max-cycle-control-clock",
     "history-max-cycle-long-dense",
     "history-max-cycle-short-dense",
@@ -41,7 +41,30 @@
   ],
   "profiles": {
     "history-common-cycle-control-clock": {
-      "actual_verification": null,
+      "actual_verification": {
+        "checked_raw": 102208000,
+        "checked_windows": 34068478,
+        "difference_count": 0,
+        "episode_records": 1281,
+        "expected_raw": 102208000,
+        "expected_scopes": 1280,
+        "expected_windows": 34068478,
+        "observed_scopes": 1280,
+        "phase_records": 3844,
+        "report_conclusions": {
+          "WARNING": 15372
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15372"
+          }
+        ]
+      },
       "expected_counts": {
         "configured_metrics_per_scope": 12,
         "episode_final_records": 1281,
@@ -215,9 +238,10 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "SIMULATION_RUNNING",
-      "verified": false,
-      "verified_bundle": null
+      "simulation_peak_kib": 267840,
+      "state": "VERIFIED_AUDITED",
+      "verified": true,
+      "verified_bundle": "history-common-cycle-control-clock/bundle.json"
     },
     "history-common-cycle-long-dense": {
       "actual_verification": {
@@ -508,7 +532,30 @@
       "verified_bundle": "history-common-cycle-short-dense/bundle.json"
     },
     "history-common-ns-control-clock": {
-      "actual_verification": null,
+      "actual_verification": {
+        "checked_raw": 102208000,
+        "checked_windows": 17066239,
+        "difference_count": 0,
+        "episode_records": 1281,
+        "expected_raw": 102208000,
+        "expected_scopes": 1280,
+        "expected_windows": 17066239,
+        "observed_scopes": 1280,
+        "phase_records": 2564,
+        "report_conclusions": {
+          "WARNING": 15372
+        },
+        "summary": [
+          {
+            "fail": "0",
+            "pass": "0",
+            "scopes_done": "1280",
+            "scopes_expected": "1280",
+            "status": "WARNING",
+            "warning": "15372"
+          }
+        ]
+      },
       "expected_counts": {
         "configured_metrics_per_scope": 12,
         "episode_final_records": 1281,
@@ -682,9 +729,10 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "SIMULATION_RUNNING",
-      "verified": false,
-      "verified_bundle": null
+      "simulation_peak_kib": 270948,
+      "state": "VERIFIED_AUDITED",
+      "verified": true,
+      "verified_bundle": "history-common-ns-control-clock/bundle.json"
     },
     "history-common-ns-long-dense": {
       "actual_verification": {
@@ -1789,7 +1837,7 @@
         "variant": "baseline",
         "window_basis": "ns"
       },
-      "original_manifest": null,
+      "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-max-ns-short-dense-9d589f1a8046301e4f21/runs/history-max-ns-short-dense/20261026T070911-4027034/manifest.json",
       "required_enabled_features": {
         "analysis": {
           "K": 4,
@@ -1850,12 +1898,12 @@
         "timeunit": "1fs",
         "waveform": false
       },
-      "state": "PREPARED_NOT_LAUNCHED",
+      "state": "SIMULATION_RUNNING",
       "verified": false,
       "verified_bundle": null
     }
   },
   "required_profile_count": 12,
-  "snapshot_utc": "2026-10-25T18:25:08.155019Z",
+  "snapshot_utc": "2026-10-26T07:11:59.277486Z",
   "status": "PARTIAL_NOMINAL_CAMPAIGN"
 }

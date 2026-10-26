@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage a fixed two-job MAX history queue; never raise the admitted cap."""
+"""Stage the root-admitted fixed three-job MAX history queue; never auto-increase."""
 import argparse
 import datetime
 import fcntl
@@ -20,7 +20,7 @@ AUDITOR = pathlib.Path('/tmp/bw-mon-spec13-resume/history31-final-audit.py')
 PROFILES = ['history-max-ns-long-dense', 'history-max-cycle-long-dense',
             'history-max-ns-short-dense', 'history-max-cycle-short-dense',
             'history-max-ns-control-clock', 'history-max-cycle-control-clock']
-CAP = 2
+CAP = 3
 # Host queue admission reserve, never a product memory acceptance limit.
 HOST_RESERVE_KIB = 3 * 1024 * 1024
 
@@ -108,7 +108,7 @@ def main():
     parser.add_argument('--max-admitted', action='store_true')
     args = parser.parse_args()
     if not args.max_admitted:
-        parser.error('explicit root two-job MAX history admission is required')
+        parser.error('explicit root three-job MAX history admission is required')
     blocker = json.loads(subprocess.check_output(['gh', 'issue', 'view', '29', '--repo',
                                                  'MakeReadUnique/bw_mon', '--json', 'state,url']))
     assert blocker['state'] == 'CLOSED'
@@ -121,7 +121,7 @@ def main():
                                                  host_admission_reserve_kib=HOST_RESERVE_KIB, blocker=blocker,
                                                  source_head='04ce34a85e45dab273a650e2e1131410f56885e8',
                                                  production_runtime='56127495f597d215003000356ac3b5387cc809a1',
-                                                 root_global_admission='MAX30 cap4 + MAXhistory cap2 + COMMONhistory cap2; no elapsed-time cap increase'))
+                                                 root_global_admission='MAX30 cap4 + MAXhistory cap3; all COMMON history audited; no elapsed-time cap increase'))
     completed = set()
     failures = {}
     native = {}

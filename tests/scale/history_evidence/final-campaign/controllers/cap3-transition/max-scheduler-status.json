@@ -1,0 +1,122 @@
+{
+  "active_profiles": [
+    "history-max-ns-long-dense",
+    "history-max-cycle-long-dense"
+  ],
+  "audited_profiles": [],
+  "common_concurrency_cap": 2,
+  "failures": {},
+  "family_max_concurrency_cap": 2,
+  "host_admission_reserve_kib": 3145728,
+  "mem_available_kib": 6458332,
+  "profiles": {
+    "history-max-cycle-control-clock": {
+      "state": "QUEUED"
+    },
+    "history-max-cycle-long-dense": {
+      "family_rss_kib": 1907848,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-max-cycle-long-dense-1ac4aef8078e1c499a4d/runs/history-max-cycle-long-dense/20261025T162935-3918443/manifest.json",
+      "markers": [
+        "BW_READY time_ticks=0 points=16384 groups=4096",
+        "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=1 W=80000 S=1 variant=baseline waves=0",
+        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000",
+        "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000",
+        "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000",
+        "SCALE_PROGRESS at_ticks=4000000000 input_edges_before=8000"
+      ],
+      "mem_available_kib": 6458332,
+      "native_build_verified": true,
+      "process_family": [
+        {
+          "pid": 3918443,
+          "ppid": 1,
+          "rss_kib": 44732,
+          "start_ticks": 20648467,
+          "state": "S",
+          "stime_ticks": 5560,
+          "utime_ticks": 10626
+        },
+        {
+          "pid": 3919790,
+          "ppid": 3918443,
+          "rss_kib": 916,
+          "start_ticks": 20652807,
+          "state": "S",
+          "stime_ticks": 0,
+          "utime_ticks": 0
+        },
+        {
+          "pid": 3919791,
+          "ppid": 3919790,
+          "rss_kib": 1862200,
+          "start_ticks": 20652811,
+          "state": "R",
+          "stime_ticks": 413,
+          "utime_ticks": 857687
+        }
+      ],
+      "runner_pid": 3918443,
+      "simulation_ready": true,
+      "simulation_started": true,
+      "state": "SIMULATION_RUNNING"
+    },
+    "history-max-cycle-short-dense": {
+      "state": "QUEUED"
+    },
+    "history-max-ns-control-clock": {
+      "state": "QUEUED"
+    },
+    "history-max-ns-long-dense": {
+      "family_rss_kib": 2020976,
+      "manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-max-ns-long-dense-351847286c8587999347/runs/history-max-ns-long-dense/20261025T162303-3912471/manifest.json",
+      "markers": [
+        "BW_READY time_ticks=0 points=16384 groups=4096",
+        "SCALE_RUN_START points=16384 groups=4096 scopes=20480 edges=80000 end_ticks=40000000000 basis=0 W=40000 S=1 variant=baseline waves=0",
+        "SCALE_PROGRESS at_ticks=1000000000 input_edges_before=2000",
+        "SCALE_PROGRESS at_ticks=2000000000 input_edges_before=4000",
+        "SCALE_PROGRESS at_ticks=3000000000 input_edges_before=6000",
+        "SCALE_PROGRESS at_ticks=4000000000 input_edges_before=8000"
+      ],
+      "mem_available_kib": 6458332,
+      "native_build_verified": true,
+      "process_family": [
+        {
+          "pid": 3912471,
+          "ppid": 1,
+          "rss_kib": 44568,
+          "start_ticks": 20609293,
+          "state": "S",
+          "stime_ticks": 5832,
+          "utime_ticks": 10906
+        },
+        {
+          "pid": 3914543,
+          "ppid": 3912471,
+          "rss_kib": 1000,
+          "start_ticks": 20613301,
+          "state": "S",
+          "stime_ticks": 0,
+          "utime_ticks": 0
+        },
+        {
+          "pid": 3914544,
+          "ppid": 3914543,
+          "rss_kib": 1975408,
+          "start_ticks": 20613301,
+          "state": "R",
+          "stime_ticks": 333,
+          "utime_ticks": 893263
+        }
+      ],
+      "runner_pid": 3912471,
+      "simulation_ready": true,
+      "simulation_started": true,
+      "state": "SIMULATION_RUNNING"
+    },
+    "history-max-ns-short-dense": {
+      "state": "QUEUED"
+    }
+  },
+  "state": "RUNNING",
+  "updated_utc": "2026-10-26T07:09:04.124543Z"
+}

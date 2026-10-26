@@ -1,0 +1,137 @@
+{
+  "files": {
+    "actual.csv": {
+      "gzip_bytes": 8154,
+      "gzip_file": "actual.csv.gz",
+      "gzip_sha256": "4666642e6c298393e453d0e5fd142555c088cffde9dac89f3d71b21b595b67bf",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/actual.csv",
+      "uncompressed_bytes": 245972,
+      "uncompressed_sha256": "8d71ee746967cd704874dc262f558c2a13d13e8286071f369c8245355dd0dd96"
+    },
+    "checker.sv": {
+      "gzip_bytes": 1639,
+      "gzip_file": "checker.sv.gz",
+      "gzip_sha256": "55c1e10c1796587b8cef1d0ac98b06d53f659d21833fff5a6740202f2f035473",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/checker.sv",
+      "uncompressed_bytes": 6935,
+      "uncompressed_sha256": "1d9d8a22560c3e712e525016741171403cc1ec3ea77869ed7898feb31a5f8f2f"
+    },
+    "compile-success.json": {
+      "gzip_bytes": 774,
+      "gzip_file": "compile-success.json.gz",
+      "gzip_sha256": "3d2237908c347c0b14154e751617c5971acc0548d2b3999ebe91ce61f486cdf6",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/builds/dfc636e5500db97262b87ced47023d9c2afa32955afa83c150f318ad94917531/compile-success.json",
+      "uncompressed_bytes": 4861,
+      "uncompressed_sha256": "542a24d3ee67493a51df8fdf2c7ab8efae5e665e76fc22aca13e65ab000ab956"
+    },
+    "compile.log": {
+      "gzip_bytes": 1710,
+      "gzip_file": "compile.log.gz",
+      "gzip_sha256": "ed9c75a9b07b35831f93068c16f6d5bdbc02e128cb770c297029bbbec6552500",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/builds/dfc636e5500db97262b87ced47023d9c2afa32955afa83c150f318ad94917531/compile-attempt-1/compile.log",
+      "uncompressed_bytes": 13252,
+      "uncompressed_sha256": "19e1f4fd67122deb922a00b9283215a519722589c9622b6a992a47f0f6939660"
+    },
+    "compile.time-v.txt": {
+      "gzip_bytes": 765,
+      "gzip_file": "compile.time-v.txt.gz",
+      "gzip_sha256": "797e0cbd0d44d8f10d2072eb8d1da66b460e09e20707cf0e682e5176134ac182",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/builds/dfc636e5500db97262b87ced47023d9c2afa32955afa83c150f318ad94917531/compile-attempt-1/time-v.txt",
+      "uncompressed_bytes": 3916,
+      "uncompressed_sha256": "2a485640487524e97244271ce534eefa6cc5c9407c0512c3e830707089e3732d"
+    },
+    "diffs.json": {
+      "gzip_bytes": 23,
+      "gzip_file": "diffs.json.gz",
+      "gzip_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/diffs.json",
+      "uncompressed_bytes": 3,
+      "uncompressed_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "expect.cfg": {
+      "gzip_bytes": 5104,
+      "gzip_file": "expect.cfg.gz",
+      "gzip_sha256": "0531ebe46dc9c458130e5107e8b3092588ce03565ca237184e83eac57da05c34",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/expect.cfg",
+      "uncompressed_bytes": 441083,
+      "uncompressed_sha256": "1b2ea20d99846499fe7a10bdeb3266284a25e03e227a89b3533c9485e872337f"
+    },
+    "expected.csv": {
+      "gzip_bytes": 8431,
+      "gzip_file": "expected.csv.gz",
+      "gzip_sha256": "a01aa86f738921a1f37e3d388753a715b2108da3142f714c30e466d1d38eaa2b",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/expected.csv",
+      "uncompressed_bytes": 247253,
+      "uncompressed_sha256": "50f73b5c5ee29dd48785f1be9a78c2bf003f1aae31011a3d91ccc7d06a518725"
+    },
+    "input.json": {
+      "gzip_bytes": 10244,
+      "gzip_file": "input.json.gz",
+      "gzip_sha256": "9e281f0c455a6959fb093aa4065ca838b0705496101dd6fe5ffd39662e7b9fd2",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/input.json",
+      "uncompressed_bytes": 91843,
+      "uncompressed_sha256": "d579aa855cea4094d9f119f63c551d76ee7df96290346d62d91c893d95e2a6d7"
+    },
+    "input_pkg.sv": {
+      "gzip_bytes": 2855,
+      "gzip_file": "input_pkg.sv.gz",
+      "gzip_sha256": "e7265bb990d12c52bdc85f9ac17e02e7a1f8e5557b23d2e5dbf6ee7e66417208",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/input_pkg.sv",
+      "uncompressed_bytes": 16454,
+      "uncompressed_sha256": "70584c12dcbc711949d1e7b22fbb013c03de89934516d7cbe4d7fa5f7f5163d2"
+    },
+    "manifest.json": {
+      "gzip_bytes": 15113,
+      "gzip_file": "manifest.json.gz",
+      "gzip_sha256": "942f1d6dbf765e4a9c5e979683dc336182fbe30177a5b79b6fd7569481a46ab7",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/manifest.json",
+      "uncompressed_bytes": 121533,
+      "uncompressed_sha256": "0cc68eb5d1e573335dc3551a620c4397872a6f3f85a65cccfe64356b4761b62b"
+    },
+    "native-dependencies.d": {
+      "gzip_bytes": 249,
+      "gzip_file": "native-dependencies.d.gz",
+      "gzip_sha256": "642befdae2d518b1857f80aacb96d89c8055581cc0e20cca6c52ac5fe3858adf",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/builds/dfc636e5500db97262b87ced47023d9c2afa32955afa83c150f318ad94917531/csrc/bw_slot_settlement.d",
+      "uncompressed_bytes": 359,
+      "uncompressed_sha256": "eece9d48ead8b1d4664d5233a0d7bce1c04f8d315718589468938d78836b3697"
+    },
+    "simulation.log": {
+      "gzip_bytes": 272213,
+      "gzip_file": "simulation.log.gz",
+      "gzip_sha256": "b07569ab9c7002acb7662c5ffba277b53611ab6554ee7535cfe96416d44b00cd",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/simulation.log",
+      "uncompressed_bytes": 24607882,
+      "uncompressed_sha256": "f3d193cfa3606a385a5e8cc821c1420039259e7bea13722a47b4f07192437109"
+    },
+    "simulation.time-v.txt": {
+      "gzip_bytes": 616,
+      "gzip_file": "simulation.time-v.txt.gz",
+      "gzip_sha256": "b47b7e76a9c0bcf56707db0aade87bd2afd03cebdd1dd16284f5ff9228ddae1a",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/simulation.time-v.txt",
+      "uncompressed_bytes": 1331,
+      "uncompressed_sha256": "a08cf48a7490313b819a4aa12b736473ccfec53fd0f4f01a3050f730a3325b86"
+    },
+    "tb_bw_scale.sv": {
+      "gzip_bytes": 8601,
+      "gzip_file": "tb_bw_scale.sv.gz",
+      "gzip_sha256": "844957ada9fc5bb44dca649c6c34196aac8b506c2a1852b4619f1010666e94d2",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/tb_bw_scale.sv",
+      "uncompressed_bytes": 100868,
+      "uncompressed_sha256": "68c3531c0f6cb28dfc0b6b88dd9784867f72122ffb760cfda01cd1b225005a53"
+    },
+    "verification.json": {
+      "gzip_bytes": 253,
+      "gzip_file": "verification.json.gz",
+      "gzip_sha256": "369503b2a180587d29df9da24df518a0c6a5bf8dd70aa772978fa6376ba4265c",
+      "original_path": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/verification.json",
+      "uncompressed_bytes": 490,
+      "uncompressed_sha256": "f6cd666559c0bb8bbaa9375c6fa9b50d160777f7854d219dfc95834ce1c6595a"
+    }
+  },
+  "original_checked_pass": true,
+  "original_manifest": "/tmp/bw-mon-spec13-resume/history31-final-campaign/history-common-cycle-control-clock-026129de69e8eac6c941/runs/history-common-cycle-control-clock/20261025T180622-3991654/manifest.json",
+  "scenario": "history-common-cycle-control-clock",
+  "source_head": "04ce34a85e45dab273a650e2e1131410f56885e8",
+  "source_tree": "d17f768abf30967d8c1ee8d1ec986d2ed5bdc174"
+}

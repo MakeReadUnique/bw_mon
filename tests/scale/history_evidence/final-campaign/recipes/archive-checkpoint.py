@@ -61,15 +61,35 @@ def archive_source(manifest):
 
 def controller(label, pid, script, files):
     proc = pathlib.Path('/proc') / str(pid)
-    fields = (proc / 'stat').read_text().rsplit(') ', 1)[1].split()
-    argv = (proc / 'cmdline').read_bytes().decode().rstrip('\0').split('\0')
-    status = (proc / 'status').read_text()
-    assert fields[0] != 'Z' and script in argv
-    assert int(re.search(r'^Uid:\s+(\d+)', status, re.M).group(1)) == os.getuid()
-    result = dict(pid=pid, state=fields[0], argv=argv, cwd=os.readlink(str(proc / 'cwd')),
-                  executable=os.readlink(str(proc / 'exe')), start_ticks=int(fields[19]),
-                  utime_ticks=int(fields[11]), stime_ticks=int(fields[12]), alive_at_checkpoint=True,
-                  script=copy(pathlib.Path(script), 'controllers/' + label + '/controller.py'), files={})
+    if not proc.exists():
+        # The common queue deliberately exits after six actual audited results.
+        # Its disappearance alone must never qualify any profile.
+        assert label == 'common-history'
+        finished = json.loads((BASE / 'common-scheduler-status.json').read_text())
+        required = {name for name in finished['profiles'] if name.startswith('history-common-')}
+        assert finished['state'] == 'ALL_SIX_COMMON_AUDITED'
+        assert len(required) == 6 and set(finished['audited_profiles']) == required
+        assert not finished['active_profiles'] and not finished['failures']
+        assert all(finished['profiles'][name]['state'] == 'VERIFIED' for name in required)
+        previous = json.loads((DEST / 'controller-checkpoint.json').read_text())
+        observed = previous['controllers'][label]
+        assert observed['pid'] == pid
+        identity = (observed['previous_live_process'] if not observed['alive_at_checkpoint'] else
+                    {key: observed[key] for key in ('pid', 'argv', 'start_ticks', 'cwd', 'executable')})
+        result = dict(pid=pid, state='EXITED_AFTER_ALL_SIX_COMMON_AUDITED',
+                      alive_at_checkpoint=False, previous_live_process=identity,
+                      completion_status_file='common-scheduler-status.json',
+                      process_exit_not_used_as_acceptance=True)
+    else:
+        fields = (proc / 'stat').read_text().rsplit(') ', 1)[1].split()
+        argv = (proc / 'cmdline').read_bytes().decode().rstrip('\0').split('\0')
+        status = (proc / 'status').read_text()
+        assert fields[0] != 'Z' and script in argv
+        assert int(re.search(r'^Uid:\s+(\d+)', status, re.M).group(1)) == os.getuid()
+        result = dict(pid=pid, state=fields[0], argv=argv, cwd=os.readlink(str(proc / 'cwd')),
+                      executable=os.readlink(str(proc / 'exe')), start_ticks=int(fields[19]),
+                      utime_ticks=int(fields[11]), stime_ticks=int(fields[12]), alive_at_checkpoint=True)
+    result.update(script=copy(pathlib.Path(script), 'controllers/' + label + '/controller.py'), files={})
     for path in files:
         result['files'][path.name] = copy(path, 'controllers/' + label + '/' + path.name)
     return result
@@ -80,11 +100,15 @@ def main():
     maximum = json.loads((BASE / 'max-scheduler-status.json').read_text())
     common_launch = json.loads((BASE / 'common-scheduler-launch.json').read_text())
     max_launch = json.loads((BASE / 'max-scheduler-launch.json').read_text())
+    max_admission = json.loads((BASE / 'max-operator-admission.json').read_text())
     other = json.loads((MAX30 / 'monitor-status.json').read_text())
     completed = sorted(set(common['audited_profiles']) | set(maximum['audited_profiles']))
     assert completed and not common['failures'] and not maximum['failures']
-    assert common['concurrency_cap'] == 2 and maximum['family_max_concurrency_cap'] == 2
-    assert len(common['active_profiles']) <= 2 and len(maximum['active_profiles']) <= 2
+    max_cap = max_admission['family_max_history_cap']
+    assert common['concurrency_cap'] == 2 and maximum['family_max_concurrency_cap'] == max_cap == 3
+    assert max_admission['global_heavy_root_cap'] == 7 and max_admission['host_admission_reserve_kib'] == 3145728
+    assert common['state'] == 'ALL_SIX_COMMON_AUDITED' and not common['active_profiles']
+    assert len(maximum['active_profiles']) <= max_cap
     assert other['active_max30'] <= 4 and other['admission']['total_heavy_cap'] == 6
     assert other['admission']['no_elapsed_auto_admission']
     plan = json.loads(PLAN.read_text())
@@ -177,8 +201,8 @@ def main():
     matrix['external_max30_reuse'] = dict(state='RUNNING_NOT_YET_ACCEPTED',
                                          profiles=[row['profile'] for row in other['profiles']],
                                          contributes_to_twelve_new_profile_count=False)
-    controllers = dict(snapshot_utc=matrix['snapshot_utc'], global_heavy_cap=6, common_cap=2,
-                       max30_cap=4, max_history_cap=2, no_elapsed_auto_increase=True,
+    controllers = dict(snapshot_utc=matrix['snapshot_utc'], global_heavy_cap=7, common_cap=2,
+                       max30_cap=4, max_history_cap=max_cap, no_elapsed_auto_increase=True,
                        no_consumed_source_edits=True, controllers={})
     controllers['controllers']['common-history'] = controller('common-history', common_launch['pid'],
         '/tmp/bw-mon-spec13-resume/history31-final-common-scheduler.py',
@@ -188,6 +212,16 @@ def main():
         [BASE / 'max-scheduler-launch.json', BASE / 'max-scheduler-status.json', BASE / 'max-operator-admission.json'])
     controllers['controllers']['max30'] = controller('max30', other['monitor_pid'],
         '/tmp/bw-mon-spec13-resume/max30-monitor.py', [MAX30 / 'admission.json', MAX30 / 'monitor-status.json'])
+    transition = pathlib.Path(max_admission['cap3_transition_receipt']).parent
+    controllers['cap3_transition_files'] = {}
+    for path in sorted(transition.iterdir()):
+        if path.is_file():
+            controllers['cap3_transition_files'][path.name] = copy(path, 'controllers/cap3-transition/' + path.name, preserve=True)
+    previous_proof = json.loads((DEST / 'verification.json').read_text())
+    for name in ('long-window-contracts', 'prior-short-bundle-hashes'):
+        entry = previous_proof['supplemental_files'][name]
+        assert sha((DEST / entry['file']).read_bytes()) == entry['sha256']
+        proof['supplemental_files'][name] = entry
     for key, path in [('launcher', pathlib.Path('/tmp/bw-mon-spec13-resume/history31-final-launch.py')),
                       ('auditor', pathlib.Path('/tmp/bw-mon-spec13-resume/history31-final-audit.py')),
                       ('archive-checkpoint', pathlib.Path(__file__))]:
