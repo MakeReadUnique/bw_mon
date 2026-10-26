@@ -1,0 +1,32 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+viewPort 10 10 1600 760 300 110
+openDirFile -d / "" "../acceptance/size_unknown_ns/waves.fsdb"
+signalSpacing 5
+windowTimeUnit 1ns
+zoom 100 118 1n
+cursor 105.5
+marker 0
+top 0
+userMarker 103.9 "UNKNOWN103.9ns" ID_YELLOW5 long_dashed
+userMarker 115 "COMPLETE115ns" ID_YELLOW5 long_dashed
+activeDirFile "" "../acceptance/size_unknown_ns/waves.fsdb"
+addRenameSig "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps" "/tb_acceptance_ns/scene/ports[0]/dut/mon/bandwidth_gbps"
+addRenameSig "/tb_acceptance_ns/scene/all_dmc/all_dmc_GBps" "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps"
+addRenameSig "/tb_acceptance_ns/scene/ports[0]/dut/p0_valid" "/tb_acceptance_ns/scene/ports[0]/dut/valid"
+addRenameSig "/tb_acceptance_ns/scene/ports[0]/dut/p0_bytes_per_event" "/tb_acceptance_ns/scene/ports[0]/dut/accounted_bytes[63:0]"
+addRenameSig "/tb_acceptance_ns/scene/ports[0]/dut/p0_size_known" "/tb_acceptance_ns/scene/ports[0]/dut/accounted_known"
+addRenameSig "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete" "/tb_acceptance_ns/scene/ports[0]/dut/mon/bytes_complete"
+addRenameSig "/tb_acceptance_ns/scene/ports[0]/dut/mon/p0_events_complete" "/tb_acceptance_ns/scene/ports[0]/dut/mon/events_complete"
+addRenameSig "/tb_acceptance_ns/scene/all_dmc/all_dmc_bytes_complete" "/tb_acceptance_ns/scene/all_dmc/bytes_complete"
+addGroup "W=10ns S=1ns | GB/s"
+activeDirFile "" "../acceptance/size_unknown_ns/waves.fsdb"
+addSignal -w analog -ds pwc -c ID_CYAN5 -ls solid -lw 2 -h 210 -gy -ry -va 64.96.128.0.0.0.0.0 64.92.0.0.0.0.0.0 /tb_acceptance_ns/scene/ports[0]/dut/mon/p0_GBps
+addSignal -w analog -ds pwc -c ID_ORANGE5 -ls solid -lw 2 -h 210 -gy -ry -va 64.144.64.0.0.0.0.0 64.143.64.0.0.0.0.0 /tb_acceptance_ns/scene/all_dmc/all_dmc_GBps
+addSignal -h 23 -UNSIGNED -UDEC /tb_acceptance_ns/scene/ports[0]/dut/p0_valid
+addSignal -h 23 -UNSIGNED -UDEC /tb_acceptance_ns/scene/ports[0]/dut/p0_bytes_per_event
+addSignal -h 23 -UNSIGNED -UDEC /tb_acceptance_ns/scene/ports[0]/dut/p0_size_known
+addSignal -h 23 -UNSIGNED -UDEC /tb_acceptance_ns/scene/ports[0]/dut/mon/p0_bytes_complete
+addSignal -h 23 -UNSIGNED -UDEC /tb_acceptance_ns/scene/ports[0]/dut/mon/p0_events_complete
+addSignal -h 23 -UNSIGNED -UDEC /tb_acceptance_ns/scene/all_dmc/all_dmc_bytes_complete
+addGroup "END"

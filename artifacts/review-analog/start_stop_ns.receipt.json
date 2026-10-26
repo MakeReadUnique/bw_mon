@@ -1,0 +1,84 @@
+{
+  "source_asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+  "scene": "start_stop_ns",
+  "fsdb": "../acceptance/start_stop_ns/waves.fsdb",
+  "fsdb_sha256": "eb7d63c67b09f1569a41cfe8407b805fc0674f1d20d4e85e165cb4f023dcdd8e",
+  "view": "start_stop_ns",
+  "sav_sha256": "8e36208519c56c892b75b4252ae5dca8b12f641820b8a1ae7e2e8fe75a10fb83",
+  "png_sha256": "dfbb3337574cb0aa2b297d301afb1e41b49beaa388d1be7b9b4b9e7273c452ff",
+  "pixels": [
+    1600,
+    760
+  ],
+  "started_utc": "2026-10-26T07:36:50.272516+00:00",
+  "command": [
+    "verdi",
+    "-nWave",
+    "-play",
+    "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-dg7vwb_9/capture.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-dg7vwb_9",
+  "display": ":91",
+  "capture_primitive": "wvCapture",
+  "fresh": true,
+  "saved_view_reopened": true,
+  "restored_analog_pwc_rows": 2,
+  "restored_time_unit": "1ns",
+  "independent_checkpoints": [
+    {
+      "time_ns": 20.0,
+      "alias": "p0_GBps",
+      "expected": 0,
+      "actual": "0.000000000000",
+      "held_value": 0.0,
+      "matches": true
+    },
+    {
+      "time_ns": 30.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "115.200000000000 -> 128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 60.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 70.0,
+      "alias": "p0_GBps",
+      "expected": 0,
+      "actual": "12.800000000000 -> 0.000000000000",
+      "held_value": 0.0,
+      "matches": true
+    },
+    {
+      "time_ns": 40.0,
+      "alias": "all_dmc_GBps",
+      "expected": 1024,
+      "actual": "1024.000000000000",
+      "held_value": 1024.0,
+      "matches": true
+    }
+  ],
+  "agent_visual_review": "PASS",
+  "human_review": "PENDING",
+  "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+  "raster_postprocessing": false,
+  "simulation_rerun": false,
+  "agent_visual_review_notes": "两条真实阶梯曲线；20ns开始，30ns达到128/1024，60ns停止，70ns归零。光标40ns。",
+  "restored_signal_rows": 6,
+  "capture_tcl_sha256": "d63626ea3fcccd05bece50e80c65376f251560fc63e89f84e7da0c20d590650e",
+  "raw_capture_log_sha256": "bc114353cf71a96f1012027f02ecc8691a8ad701cd839d67dfa13b201851e02d",
+  "raw_reopened_sav_sha256": "1df426185e76b522d3a8403f5661251e715f0d4b66108c0a1d70ea70e6d2aac4",
+  "reopened_sav_sha256": "f9cafb1a829dcfd1d80c1d950cd4e0c0c4dcc6ebe591eb011a889f816cc36688",
+  "capture_evidence_archive": "capture-provenance.tar.gz",
+  "archive_prefix": "start_stop_ns",
+  "open_view_tcl_sha256": "f50786307c9586aee78a1bd52dc235d26501fad7f8a67d05517a697c69312131",
+  "novas_rc_sha256": "64644909043aeb0b3a38afb1184f1e471873d12f2043ef7d6875166d6a7353d7"
+}

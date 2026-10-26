@@ -1,0 +1,92 @@
+{
+  "source_asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+  "scene": "varying_ns",
+  "fsdb": "../acceptance/varying_ns/waves.fsdb",
+  "fsdb_sha256": "79376b83983ba0dfb03a969fb8f76904d9e081a3efbc994c42cc5413f11c4bf0",
+  "view": "varying_ns",
+  "sav_sha256": "e6460ff70d2c0cef152ab55473df79e83dc5f3420749ffb0e748c531f4602b65",
+  "png_sha256": "3cd3cd218390cbde73e8e369b37108521aef0b3355c7b0c48e926816be96e8e1",
+  "pixels": [
+    1600,
+    760
+  ],
+  "started_utc": "2026-10-26T07:36:24.612701+00:00",
+  "command": [
+    "verdi",
+    "-nWave",
+    "-play",
+    "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-x_gwhex5/capture.tcl"
+  ],
+  "cwd": "/tmp/bw-mon-spec13-oct26/analog28/bw-analog-x_gwhex5",
+  "display": ":91",
+  "capture_primitive": "wvCapture",
+  "fresh": true,
+  "saved_view_reopened": true,
+  "restored_analog_pwc_rows": 2,
+  "restored_time_unit": "1ns",
+  "independent_checkpoints": [
+    {
+      "time_ns": 50.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 75.0,
+      "alias": "p0_GBps",
+      "expected": 64,
+      "actual": "64.000000000000",
+      "held_value": 64.0,
+      "matches": true
+    },
+    {
+      "time_ns": 100.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 138.0,
+      "alias": "p0_GBps",
+      "expected": 128,
+      "actual": "128.000000000000",
+      "held_value": 128.0,
+      "matches": true
+    },
+    {
+      "time_ns": 50.0,
+      "alias": "all_dmc_GBps",
+      "expected": 1024,
+      "actual": "1024.000000000000",
+      "held_value": 1024.0,
+      "matches": true
+    },
+    {
+      "time_ns": 75.0,
+      "alias": "all_dmc_GBps",
+      "expected": 512,
+      "actual": "512.000000000000",
+      "held_value": 512.0,
+      "matches": true
+    }
+  ],
+  "agent_visual_review": "PASS",
+  "human_review": "PENDING",
+  "marker_semantics": "Verdi view annotations from frozen stimulus/reference; not added FSDB signals.",
+  "raster_postprocessing": false,
+  "simulation_rerun": false,
+  "agent_visual_review_notes": "20–156ns重复升降及平台；50/75/100ns的p0为128/64/128，all_dmc为1024/512/1024。实际候选/确认状态独立显示。",
+  "restored_signal_rows": 8,
+  "capture_tcl_sha256": "712117653bf3697d3f3a85be1fdae1908afbc32e9d5099c4d2e8b61f6062671f",
+  "raw_capture_log_sha256": "f46567caf3b5a626261aa9e3e8fea644082bb358bb899e408ddd71f161a2657e",
+  "raw_reopened_sav_sha256": "cc558c71bbee186bc0cb03c3ca67d33eff73084b2cc0882be982cafa0bb40b72",
+  "reopened_sav_sha256": "b29c6da7c571e4643fb321cd4ed81d8e649a7a5d39c027862892ccba47095e3f",
+  "capture_evidence_archive": "capture-provenance.tar.gz",
+  "archive_prefix": "varying_ns",
+  "open_view_tcl_sha256": "f50786307c9586aee78a1bd52dc235d26501fad7f8a67d05517a697c69312131",
+  "novas_rc_sha256": "64644909043aeb0b3a38afb1184f1e471873d12f2043ef7d6875166d6a7353d7"
+}

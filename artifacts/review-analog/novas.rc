@@ -1,0 +1,9 @@
+@verdi rc file Version 1.0
+[Wave]
+analogFmtPrecision = Engineering 2
+legend_window_font = -f COURIER14 -c ID_CYAN5
+value_window_font = -f COURIER14 -c ID_CYAN5
+curve_window_font = -f COURIER14 -c ID_CYAN5
+group_name_font = -f COURIER14 -c ID_GREEN5
+ruler_value_font = -f COURIER14 -c ID_CYAN5
+analog_ruler_value_font = -f COURIER14 -c ID_CYAN5
