@@ -139,6 +139,68 @@ been admitted using recorded live host/RSS/progress checks. Further admission
 requires fresh observations. These scheduling choices impose no product memory
 or wall-time acceptance cap.
 
+## Completing the current qualification
+
+The original monitor ends at `FOUR_FULL_RUNNERS_VERIFIED_ARCHIVE_AUDIT_PENDING`.
+The separate `tests/scale/qualify_maximum.py` workflow supplies the remaining
+recorded-data audit and portable archive. Its [continuation receipt](../tests/scale/evidence/maximum-qualification/continuation.json)
+pins the four original manifests, launch receipts, immutable source, native
+identities and fixed expected counts. That receipt is a running checkpoint;
+it contains no nominal pass.
+
+To check once, use a fresh archive destination:
+
+```sh
+python3 tests/scale/qualify_maximum.py archive \
+  --campaign /tmp/bw-mon-spec13-resume/max30-final-complete-campaign \
+  --launcher /tmp/bw-mon-spec13-resume/max30-final-launch.py \
+  --current-source . \
+  --monitor /tmp/bw-mon-spec13-resume/max30-monitor.py \
+  --output /tmp/bw-mon-spec13-oct26/max30/full-nominal-proof
+```
+
+Exit status 2 means some original simulations remain pending, and no archive is created.
+Exit status 1 means qualification was rejected. `watch` accepts the same arguments plus
+`--status /tmp/bw-mon-spec13-oct26/max30/qualification-status.json` and
+`--poll-seconds 30`; it waits for the existing four runners, then audits them
+serially. A missing runner before recorded verification is an error. Completion
+requires the actual 40 us results, exact nominal counts, and successful independent
+replay. The workflow never changes a ticket or the PR; its final status remains
+`ticket_complete=false` pending the independent merger and final review.
+
+For each profile the workflow regenerates the complete original input, cfg,
+reference and public SV from its 26 consumed source files, rechecks the final
+formal stream in an isolated copy, and retains the original evidence bytes.
+It checks all 18 current production hashes; actual native compile/link commands;
+the optimized 50-header inventory and original two-SDK-header dependency file; installed
+link-input hashes; tool versions; original native-object/binary identity; and
+both GNU time-v and process-family RSS. Post-run tool executable hashes are
+explicitly supplemental measurements, not invented pre-launch hashes.
+
+The archive includes source snapshots, complete per-profile records, original
+launch recipes/receipts, native audits and monitor snapshots. A portable replay
+must pass before its temporary directory becomes the final archive destination.
+Across the four required profiles the fixed totals are 6,553,600,000 checked raw
+receipts, 327,639,039 publications and 81,921 episode finals, with zero differences.
+These are required counts, not currently completed counts.
+
+After a genuine full archive is available, its bundled verifier works without
+VCS, SDKs or the original temporary paths:
+
+```sh
+python3 /path/to/full-nominal-proof/verify.py verify /path/to/full-nominal-proof --current-source .
+python3 tests/scale/test_qualify_maximum.py
+```
+
+The workflow was exercised using the four genuine archived small preparations:
+107,520 raw checks and 5,263 publications, zero differences. Each native audit
+and portable replay passed, including replay with an empty tool search path.
+The tests reject promoting a tracer or a mislabeled launch receipt into nominal
+acceptance and verify that recorded-data replay preserves the originals. The
+pending gate was also checked against the four actual running full profiles.
+These validate the qualification workflow; full nominal acceptance still waits
+for the original simulations and their final audits.
+
 ## Historical preparation and superseded attempts
 
 The earlier [maximum preparation](../tests/scale/evidence/maximum-preparation/README.md)
