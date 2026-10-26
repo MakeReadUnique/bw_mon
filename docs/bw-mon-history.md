@@ -7,6 +7,15 @@ D16/T7/T8 clauses of the [implementation spec](https://github.com/MakeReadUnique
 The canceled twelve-cell COMMON/MAX long-run matrix is historical evidence. Its
 six completed COMMON cells are not a completion counter for this matrix.
 
+The [completed shared campaign](../tests/scale/revised_evidence/final-campaign/README.md)
+passed all seven history cases, both full-scale H6 cases,15 directed H5/H7 checks
+and independent replay in cold and cached modes. The complete two-ticket suites
+took906.636s/829.518s; the longest new history case took20.273s, within300s.
+Both deep cases actually retained80,000 event segments in p0 and the group,
+and one exact merged run in p1. The pending case retained30,000 samples in each
+variation queue and released both. Full per-case timings, observed state and
+resource limits are in the linked measured summary.
+
 ## Reproduce the history cases
 
 Use the shared, serial qualification runner for final cold/hot timing and the
@@ -50,8 +59,7 @@ monitor overhead benchmark or a product memory cap.
 ## Property and evidence mapping
 
 The machine-readable mapping is
-[history-coverage.json](../tests/scale/history-coverage.json). Final qualification
-must supply actual verification receipts for every required profile and the
+[history-coverage.json](../tests/scale/history-coverage.json). The completed qualification supplies actual verification receipts for every required profile and the
 shared H6 case; old profile names cannot meet those requirements.
 
 | Requirement | State and invariant | Executable evidence and independent expectation |

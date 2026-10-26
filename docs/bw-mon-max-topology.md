@@ -7,6 +7,14 @@ parents remain real public-module requirements. The canceled four 40 μs MAX
 runs retain their incomplete identities; their completion counters do not apply
 to this matrix.
 
+The [completed frozen campaign](../tests/scale/revised_evidence/final-campaign/README.md)
+passed all four serial suites: daily96.596s cold /25.528s cached and
+complete906.636s cold /829.518s cached. Both maximum profiles check all65,536
+direct identities and10,485,760 raw receipts each, with5,242,876 NS windows and
+10,465,274 cycle windows, zero differences. The slowest maximum run across both
+modes was340.344s against600s. Independent portable replay also passed; PR and
+issue review status is separate from these completed measurements.
+
 ## Reproduce the revised suites
 
 The commands run on Python 3.6.8 or later with the installed VCS W-2024.09-SP1,
