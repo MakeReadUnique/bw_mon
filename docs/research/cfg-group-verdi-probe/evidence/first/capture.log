@@ -1,0 +1,25 @@
+logDir = /tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/view-first/verdiLog
+
+
+                                   Verdi (R)
+
+               Version W-2024.09-SP1 for linux64 - Dec 01, 2024 
+
+                    Copyright (c) 1999 - 2024 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+rcfile = /tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/view-first/novas.rc
+guiConfFile (read)= /tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/view-first/novas.conf (working directory)
+guiConfFile (write)= /tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/view-first/novas.conf (working directory)

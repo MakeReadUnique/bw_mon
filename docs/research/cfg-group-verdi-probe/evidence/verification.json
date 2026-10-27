@@ -1,0 +1,812 @@
+{
+  "cases": {
+    "first": {
+      "artifact_sha256": {
+        "mapping.json": "d3e84fa33ceb1c20aa56ce803d442b00cab08b5ad8cebd353c8efd0194ae4e05",
+        "run.log": "d38022e5c48d5d4500de1ab713ab417e6311600aacb5bf8c8b78e65795655706",
+        "signals.csv": "c6745d0e23ff9481b4da37c487285cb92249c631ab45f58cb26dfeefefd40a17",
+        "waves.fsdb": "207318b9fc512b88d78efeb9a82a52e2bc08c00cbbda1ecd3d9c292698b713b6",
+        "waves.vcd": "04462118e9cdb26921a3d2d51cc3a2072bf111faa712db40ed50e4fb0ae00f4f"
+      },
+      "groups": {
+        "g2": {
+          "enum_labels_seen": [
+            "FULL",
+            "WARMUP"
+          ],
+          "identity": "g2",
+          "identity_source": "fsdbreport signals.csv",
+          "matched_publications": 24,
+          "matched_values": [
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 1,
+              "time_ns": 2,
+              "window_bytes": 24,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 2,
+              "time_ns": 4,
+              "window_bytes": 48,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 3,
+              "time_ns": 6,
+              "window_bytes": 72,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 4,
+              "time_ns": 8,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 15.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 5,
+              "time_ns": 10,
+              "window_bytes": 120,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 18.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 6,
+              "time_ns": 12,
+              "window_bytes": 144,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 21.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 7,
+              "time_ns": 14,
+              "window_bytes": 168,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 24.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 8,
+              "time_ns": 16,
+              "window_bytes": 192,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 22.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 9,
+              "time_ns": 18,
+              "window_bytes": 176,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 20.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 10,
+              "time_ns": 20,
+              "window_bytes": 160,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 18.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 11,
+              "time_ns": 22,
+              "window_bytes": 144,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 12,
+              "time_ns": 24,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 13,
+              "time_ns": 26,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 8.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 14,
+              "time_ns": 28,
+              "window_bytes": 64,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 15,
+              "time_ns": 30,
+              "window_bytes": 32,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 0.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 16,
+              "time_ns": 32,
+              "window_bytes": 0,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 3.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 17,
+              "time_ns": 34,
+              "window_bytes": 24,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 6.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 18,
+              "time_ns": 36,
+              "window_bytes": 48,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 9.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 19,
+              "time_ns": 38,
+              "window_bytes": 72,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 20,
+              "time_ns": 40,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 9.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 21,
+              "time_ns": 42,
+              "window_bytes": 72,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 6.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 22,
+              "time_ns": 44,
+              "window_bytes": 48,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 3.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 23,
+              "time_ns": 46,
+              "window_bytes": 24,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 0.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 24,
+              "time_ns": 48,
+              "window_bytes": 0,
+              "window_full": 1
+            }
+          ],
+          "path": "/tb_cfg_group_probe/wave_slots[0]",
+          "real_declaration": {
+            "type": "real",
+            "width": 64
+          }
+        }
+      },
+      "stimulus_samples_checked": 24
+    },
+    "second": {
+      "artifact_sha256": {
+        "mapping.json": "b7d81060b21d1eb1abb3671a927310cb57bb0414b0fd06f4d79d5fc4f1de89a5",
+        "run.log": "62fa8874ee25683dc650af8ee0a28a0783085069c5fa6bd3567f770367a0e415",
+        "signals.csv": "b020cd867d4015af7343d4f203f7a2d99d055522f0bacbc46b15bab5986a615d",
+        "waves.fsdb": "b2c7602940f16035c3b179a0e0a3bcee92f07961cffa42d3eebbcd677514c34f",
+        "waves.vcd": "aad6e10243301d06f6dd4ca2adbaf2e072e4f417d9fdf74cd9e6695f21806fb7"
+      },
+      "groups": {
+        "g1": {
+          "enum_labels_seen": [
+            "FULL",
+            "WARMUP"
+          ],
+          "identity": "g1",
+          "identity_source": "fsdbreport signals.csv",
+          "matched_publications": 24,
+          "matched_values": [
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 1,
+              "time_ns": 2,
+              "window_bytes": 8,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 2,
+              "time_ns": 4,
+              "window_bytes": 16,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 3,
+              "time_ns": 6,
+              "window_bytes": 24,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 4,
+              "time_ns": 8,
+              "window_bytes": 32,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 7.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 5,
+              "time_ns": 10,
+              "window_bytes": 56,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 10.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 6,
+              "time_ns": 12,
+              "window_bytes": 80,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 13.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 7,
+              "time_ns": 14,
+              "window_bytes": 104,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 8,
+              "time_ns": 16,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 9,
+              "time_ns": 18,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 10,
+              "time_ns": 20,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 11,
+              "time_ns": 22,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 12,
+              "time_ns": 24,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 13,
+              "time_ns": 26,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 8.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 14,
+              "time_ns": 28,
+              "window_bytes": 64,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 15,
+              "time_ns": 30,
+              "window_bytes": 32,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 0.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 16,
+              "time_ns": 32,
+              "window_bytes": 0,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 2.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 17,
+              "time_ns": 34,
+              "window_bytes": 16,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 18,
+              "time_ns": 36,
+              "window_bytes": 32,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 6.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 19,
+              "time_ns": 38,
+              "window_bytes": 48,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 8.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 20,
+              "time_ns": 40,
+              "window_bytes": 64,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 6.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 21,
+              "time_ns": 42,
+              "window_bytes": 48,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 22,
+              "time_ns": 44,
+              "window_bytes": 32,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 2.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 23,
+              "time_ns": 46,
+              "window_bytes": 16,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 0.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 24,
+              "time_ns": 48,
+              "window_bytes": 0,
+              "window_full": 1
+            }
+          ],
+          "path": "/tb_cfg_group_probe/wave_slots[1]",
+          "real_declaration": {
+            "type": "real",
+            "width": 64
+          }
+        },
+        "g2": {
+          "enum_labels_seen": [
+            "FULL",
+            "WARMUP"
+          ],
+          "identity": "g2",
+          "identity_source": "fsdbreport signals.csv",
+          "matched_publications": 24,
+          "matched_values": [
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 1,
+              "time_ns": 2,
+              "window_bytes": 24,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 2,
+              "time_ns": 4,
+              "window_bytes": 48,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 1,
+              "result_seq": 3,
+              "time_ns": 6,
+              "window_bytes": 72,
+              "window_full": 0
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 4,
+              "time_ns": 8,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 15.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 5,
+              "time_ns": 10,
+              "window_bytes": 120,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 18.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 6,
+              "time_ns": 12,
+              "window_bytes": 144,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 21.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 7,
+              "time_ns": 14,
+              "window_bytes": 168,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 24.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 8,
+              "time_ns": 16,
+              "window_bytes": 192,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 22.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 9,
+              "time_ns": 18,
+              "window_bytes": 176,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 20.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 10,
+              "time_ns": 20,
+              "window_bytes": 160,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 18.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 11,
+              "time_ns": 22,
+              "window_bytes": 144,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 16.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 12,
+              "time_ns": 24,
+              "window_bytes": 128,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 13,
+              "time_ns": 26,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 8.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 14,
+              "time_ns": 28,
+              "window_bytes": 64,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 4.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 15,
+              "time_ns": 30,
+              "window_bytes": 32,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 0.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 16,
+              "time_ns": 32,
+              "window_bytes": 0,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 3.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 17,
+              "time_ns": 34,
+              "window_bytes": 24,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 6.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 18,
+              "time_ns": 36,
+              "window_bytes": 48,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 9.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 19,
+              "time_ns": 38,
+              "window_bytes": 72,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 12.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 20,
+              "time_ns": 40,
+              "window_bytes": 96,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 9.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 21,
+              "time_ns": 42,
+              "window_bytes": 72,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 6.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 22,
+              "time_ns": 44,
+              "window_bytes": 48,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 3.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 23,
+              "time_ns": 46,
+              "window_bytes": 24,
+              "window_full": 1
+            },
+            {
+              "active": 1,
+              "bandwidth_gbps": 0.0,
+              "bytes_complete": 1,
+              "probe_state": 2,
+              "result_seq": 24,
+              "time_ns": 48,
+              "window_bytes": 0,
+              "window_full": 1
+            }
+          ],
+          "path": "/tb_cfg_group_probe/wave_slots[0]",
+          "real_declaration": {
+            "type": "real",
+            "width": 64
+          }
+        }
+      },
+      "stimulus_samples_checked": 24
+    }
+  },
+  "compile_count": 1,
+  "g2_unchanged": true,
+  "limitations": [
+    "No product group parser or statistics engine is exercised",
+    "The probe has four precompiled anonymous scalar wave slots",
+    "probe_state is a toy enum, not actual traffic phase analysis",
+    "No reset, traffic episode, performance expectation, or capacity acceptance",
+    "VCD type declarations and CSV values are exports from the recorded FSDB; this verifier does not independently decode binary FSDB"
+  ],
+  "matched_group_publications": 72,
+  "method": "Independent explicit p0/p1 input table and prefix-sum windows; saved FSDB VCD and fsdbreport CSV values checked at every publication",
+  "same_simv_sha256": "ce2acd7edffe6b511637ac18831a8576c3657dc4d09ede4aa8369392da5f9aef",
+  "scope": "Toy cfg-created group wave-carrier evidence only",
+  "source_sha256": "e742447478791bdc4d36532558b98d3cbf813afc9406b9f4da41a92d45751300",
+  "status": "PASS",
+  "verifier_sha256": "47da23ff3c56fb3720dcf0a38f5feea89c807f178b2d986b8b233805a7d0bb32"
+}

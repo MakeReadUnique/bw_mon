@@ -1,0 +1,72 @@
+{
+  "tool": "Verdi/nWave W-2024.09-SP1",
+  "command": [
+    "verdi",
+    "-nWave",
+    "-ssf",
+    "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/waves.fsdb",
+    "-play",
+    "/tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/view-second/capture.tcl"
+  ],
+  "actual_signals": [
+    "/tb_cfg_group_probe/wave_slots[1]/group_id",
+    "/tb_cfg_group_probe/wave_slots[1]/active",
+    "/tb_cfg_group_probe/wave_slots[1]/bandwidth_gbps",
+    "/tb_cfg_group_probe/wave_slots[1]/result_seq",
+    "/tb_cfg_group_probe/wave_slots[1]/window_bytes",
+    "/tb_cfg_group_probe/wave_slots[1]/window_full",
+    "/tb_cfg_group_probe/wave_slots[1]/bytes_complete",
+    "/tb_cfg_group_probe/wave_slots[1]/probe_state",
+    "/tb_cfg_group_probe/wave_slots[0]/group_id",
+    "/tb_cfg_group_probe/wave_slots[0]/bandwidth_gbps"
+  ],
+  "analog_rows": 2,
+  "pixels": [
+    1660,
+    900
+  ],
+  "fsdb_sha256": "b2c7602940f16035c3b179a0e0a3bcee92f07961cffa42d3eebbcd677514c34f",
+  "png_sha256": "2ac43d071877366abe46c4fa427f0a3fc552fc5f0f35a3d311123ef0ba813dcd",
+  "capture_primitive": "wvCapture",
+  "raster_postprocessing": false,
+  "checked_nwave_cursor_values": [
+    {
+      "time_ns": 18.001,
+      "group_id": "g2",
+      "actual_gbps": 22.0,
+      "expected_gbps": 22.0
+    },
+    {
+      "time_ns": 18.001,
+      "group_id": "g1",
+      "actual_gbps": 16.0,
+      "expected_gbps": 16.0
+    },
+    {
+      "time_ns": 32.001,
+      "group_id": "g2",
+      "actual_gbps": 0.0,
+      "expected_gbps": 0.0
+    },
+    {
+      "time_ns": 32.001,
+      "group_id": "g1",
+      "actual_gbps": 0.0,
+      "expected_gbps": 0.0
+    },
+    {
+      "time_ns": 40.001,
+      "group_id": "g2",
+      "actual_gbps": 12.0,
+      "expected_gbps": 12.0
+    },
+    {
+      "time_ns": 40.001,
+      "group_id": "g1",
+      "actual_gbps": 8.0,
+      "expected_gbps": 8.0
+    }
+  ],
+  "agent_visual_review": "PASS: inspected actual PNG; Group ID, real analog curve, result sequence, window bytes, quality and enum are readable",
+  "human_review": "PENDING"
+}

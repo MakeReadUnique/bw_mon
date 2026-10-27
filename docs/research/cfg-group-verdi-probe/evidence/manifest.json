@@ -1,0 +1,117 @@
+{
+  "scope": "wave-carrier feasibility only; not product acceptance",
+  "source_sha256": "e742447478791bdc4d36532558b98d3cbf813afc9406b9f4da41a92d45751300",
+  "compile_command": [
+    "vcs",
+    "-full64",
+    "-sverilog",
+    "-debug_access+all",
+    "-kdb",
+    "-top",
+    "tb_cfg_group_probe",
+    "-o",
+    "/tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/simv",
+    "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/probe.sv"
+  ],
+  "compile_count": 1,
+  "build_payload_sha256": {
+    "simv": "ce2acd7edffe6b511637ac18831a8576c3657dc4d09ede4aa8369392da5f9aef",
+    "csrc/_496649_archive_1.so": "f3418369ece28ac0fde7e7312892fa3f72d5421bfa9092657bfb59eb8122e5c8",
+    "simv.daidir/_496649_archive_1.so": "f3418369ece28ac0fde7e7312892fa3f72d5421bfa9092657bfb59eb8122e5c8"
+  },
+  "runs": [
+    {
+      "case": "first",
+      "simv_sha256_before": "ce2acd7edffe6b511637ac18831a8576c3657dc4d09ede4aa8369392da5f9aef",
+      "simv_sha256_after": "ce2acd7edffe6b511637ac18831a8576c3657dc4d09ede4aa8369392da5f9aef",
+      "unchanged_build_payloads": true,
+      "cfg_sha256": "6b3ca8bd8d7633142de94c83d5f25db79ac4b099bd8b6a0e1cccc4e8aaccb846",
+      "mapping": {
+        "g2": "/tb_cfg_group_probe/wave_slots[0]"
+      },
+      "fsdb_sha256": "207318b9fc512b88d78efeb9a82a52e2bc08c00cbbda1ecd3d9c292698b713b6",
+      "commands": [
+        [
+          "/tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/simv",
+          "-no_save",
+          "+CFG=/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/first.cfg",
+          "+FSDB=/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/first/waves.fsdb"
+        ],
+        [
+          "fsdbreport",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/first/waves.fsdb",
+          "-nolog",
+          "-csv",
+          "-s",
+          "/tb_cfg_group_probe/wave_slots[0]/group_id",
+          "/tb_cfg_group_probe/wave_slots[0]/active",
+          "/tb_cfg_group_probe/wave_slots[0]/bandwidth_gbps",
+          "/tb_cfg_group_probe/wave_slots[0]/result_seq",
+          "/tb_cfg_group_probe/wave_slots[0]/window_bytes",
+          "/tb_cfg_group_probe/wave_slots[0]/window_full",
+          "/tb_cfg_group_probe/wave_slots[0]/bytes_complete",
+          "/tb_cfg_group_probe/wave_slots[0]/probe_state",
+          "-o",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/first/signals.csv"
+        ],
+        [
+          "fsdb2vcd",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/first/waves.fsdb",
+          "-o",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/first/waves.vcd"
+        ]
+      ]
+    },
+    {
+      "case": "second",
+      "simv_sha256_before": "ce2acd7edffe6b511637ac18831a8576c3657dc4d09ede4aa8369392da5f9aef",
+      "simv_sha256_after": "ce2acd7edffe6b511637ac18831a8576c3657dc4d09ede4aa8369392da5f9aef",
+      "unchanged_build_payloads": true,
+      "cfg_sha256": "f795fda5b4ab1c53d8737b8648dd671d8f3eadecf26c7c00ac72dae12e60ad1d",
+      "mapping": {
+        "g2": "/tb_cfg_group_probe/wave_slots[0]",
+        "g1": "/tb_cfg_group_probe/wave_slots[1]"
+      },
+      "fsdb_sha256": "b2c7602940f16035c3b179a0e0a3bcee92f07961cffa42d3eebbcd677514c34f",
+      "commands": [
+        [
+          "/tmp/bw-mon-cfg-group-verdi/.build/cfg-group-verdi-probe/simv",
+          "-no_save",
+          "+CFG=/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/second.cfg",
+          "+FSDB=/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/waves.fsdb"
+        ],
+        [
+          "fsdbreport",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/waves.fsdb",
+          "-nolog",
+          "-csv",
+          "-s",
+          "/tb_cfg_group_probe/wave_slots[0]/group_id",
+          "/tb_cfg_group_probe/wave_slots[0]/active",
+          "/tb_cfg_group_probe/wave_slots[0]/bandwidth_gbps",
+          "/tb_cfg_group_probe/wave_slots[0]/result_seq",
+          "/tb_cfg_group_probe/wave_slots[0]/window_bytes",
+          "/tb_cfg_group_probe/wave_slots[0]/window_full",
+          "/tb_cfg_group_probe/wave_slots[0]/bytes_complete",
+          "/tb_cfg_group_probe/wave_slots[0]/probe_state",
+          "/tb_cfg_group_probe/wave_slots[1]/group_id",
+          "/tb_cfg_group_probe/wave_slots[1]/active",
+          "/tb_cfg_group_probe/wave_slots[1]/bandwidth_gbps",
+          "/tb_cfg_group_probe/wave_slots[1]/result_seq",
+          "/tb_cfg_group_probe/wave_slots[1]/window_bytes",
+          "/tb_cfg_group_probe/wave_slots[1]/window_full",
+          "/tb_cfg_group_probe/wave_slots[1]/bytes_complete",
+          "/tb_cfg_group_probe/wave_slots[1]/probe_state",
+          "-o",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/signals.csv"
+        ],
+        [
+          "fsdb2vcd",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/waves.fsdb",
+          "-o",
+          "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/waves.vcd"
+        ]
+      ]
+    }
+  ]
+}
