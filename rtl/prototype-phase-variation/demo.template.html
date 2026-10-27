@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>默认阶段策略与波动检查 · 可交互原型</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#172b3a;background:#f4f6f8;line-height:1.55}
+body{max-width:1240px;margin:36px auto;padding:0 24px}h1{font-size:27px;margin-bottom:8px}h2{font-size:18px;margin:0 0 12px}
+p{max-width:100ch}.lead{color:#42596a}.badge{display:inline-block;padding:3px 10px;background:#e3ebf0;border-radius:4px;font-size:13px}
+section{background:white;border:1px solid #dce3e8;border-radius:8px;padding:20px;margin-top:18px}
+button,select{font:inherit;padding:8px 12px;border:1px solid #bdcbd5;background:white;border-radius:5px;cursor:pointer;margin:4px 5px 4px 0}
+button.active,button.primary{background:#145f7b;color:white;border-color:#145f7b}button:disabled{opacity:.5;cursor:default}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.field{background:#f4f7f9;padding:10px 14px;border-radius:5px}
+.field span{display:block;font-size:12px;color:#536a7b}.field strong{font-size:17px}.muted{color:#536a7b;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid #e1e7ec;padding:8px;text-align:left;vertical-align:top}
+th{color:#42596a}.scroll{max-height:350px;overflow:auto}.PASS{color:#246c53}.FAIL{color:#b53a35}.WARNING,.INSUFFICIENT{color:#8d6218}
+svg{width:100%;height:280px;background:#fbfcfd;border:1px solid #e5eaee;border-radius:4px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+details{margin:14px 0}summary{cursor:pointer;font-weight:600}.notice{border-left:4px solid #cf9d36;padding:8px 14px;background:#fff8e8}
+code{font-size:.9em;background:#edf1f4;padding:1px 4px}.row{display:flex;gap:20px;align-items:center;flex-wrap:wrap}@media(max-width:750px){.cols{grid-template-columns:1fr}}
+</style>
+<body>
+<span class="badge">THROWAWAY · 决策原型 · 尚无默认策略通过决议</span>
+<h1>阶段保持稳定，波动仍可失败</h1>
+<p class="lead">这两种内部策略能否在最多八次有效更新内辨认持续、波动、升降与平台切换，同时让冻结参考的 5% 持续检查保留异常？查看同一批固定输入下的阶段边界、确认时刻与最终检查证据，再逐窗操作。</p>
+<p class="notice">窗口值来自真实 VCS <b>原型探针</b>；阶段和检查器来自可复现行为模型，未使用产品 RTL。定向数值用例中的阶段归属为人工指定。所有失败都保留；这份页面本身不表示候选策略已经获批。</p>
+<section><h2>一次专项的完整结果</h2><div id="overview"></div></section>
+<section>
+<h2>当前状态</h2><div id="tabs"></div>
+<div class="row"><label>固定场景 <select id="case"></select></label><label>内部候选 <select id="candidate"></select></label><label>过程 <select id="episode"></select></label></div>
+<p id="scenario" class="muted"></p><div id="state" class="fields"></div>
+<p id="mode" class="muted"></p><svg id="plot" viewBox="0 0 1120 280" role="img" aria-label="窗口带宽、阶段和冻结参考图"></svg>
+<p class="muted">蓝线：窗口带宽；浅色区：已确认阶段；虚线：当前平台冻结参考及 ±5% 边界。横轴使用窗口所选基准；实际物理确认时刻另列。阶段与参考按当前截取数据重算，最终账目需点击“到过程结束”。</p>
+<h2>自由操作</h2>
+<button class="primary" id="next">发布下一条窗口</button><button id="eight">推进八条窗口</button><button id="all">到过程结束</button><button id="reset">从头开始</button>
+<button id="high">追加高侧 +8%</button><button id="low">追加低侧 −8%</button><button id="gap">追加观测缺口</button><button id="held">读取同一旧快照</button>
+<p class="muted">追加操作属于手动探索，会明确标记；不改写上方固定专项证据，也不计入它的通过数。</p>
+<details open><summary>引导步骤</summary><p id="guide"></p><button id="guide1">1 · 观察首次证据</button><button id="guide2">2 · 检查确认进度</button><button id="guide3">3 · 查看最终参考与异常归属</button></details>
+</section>
+<div class="cols">
+<section><h2>边界与确认时刻</h2><div id="phases"></div><div id="goals"></div></section>
+<section><h2>参考与检查结果</h2><div id="checks"></div></section>
+</div>
+<section><h2>逐窗归属与持续超限</h2><div id="evidence" class="scroll"></div></section>
+<section><h2>预先固定的数值边界</h2><p class="muted">这是检查器规则的定向执行结果，不能用人工指定的正常过渡证明阶段算法会正确找出过渡。</p><div id="contracts" class="scroll"></div></section>
+<section><h2>启停、身份与证据边界</h2><div id="controls"></div><ul id="limits"></ul></section>
+<script>/*__MODEL__*/</script>
+<script>/*__DATA__*/</script>
+<script>
+const $=id=>document.getElementById(id), n=v=>v===null||v===undefined?'—':typeof v==='number'?Number(v.toPrecision(7)):v;
+const esc=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const label=s=>({STEADY:'稳定',RAMP:'爬坡',FALL:'下降',UNDETERMINED:'未判定'}[s]||s);
+const table=(heads,rows)=>'<table><thead><tr>'+heads.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+let family=0,ci=0,ei=0,candidate='pair6',cursor=0,extra=[],manual=false;
+function selected(){const f=DATA.families[family],c=f.cases[ci],result=c.candidates[candidate],run=result.runs[ei];return {f,c,result,run};}
+function allRecords(){const {c,run}=selected();return run.episode?c.windows.filter(r=>r.episode===run.episode.id):[];}
+function restart(){cursor=0;extra=[];manual=false;render();}
+function loadFamily(i){family=i;ci=0;ei=0;populate();restart();}
+function populate(){
+ const f=DATA.families[family];$('tabs').innerHTML=DATA.families.map((f,i)=>`<button class="${i===family?'active':''}" data-family="${i}">${esc(f.name)}</button>`).join('');
+ $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>loadFamily(+b.dataset.family));
+ $('case').innerHTML=f.cases.map((c,i)=>`<option value="${i}">${esc(c.name)}</option>`).join('');$('case').value=ci;
+ $('candidate').innerHTML=PV.candidates.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('candidate').value=candidate;
+ const {result}=selected();$('episode').innerHTML=result.runs.map((r,i)=>`<option value="${i}">${r.episode?'过程 '+r.episode.id+' / '+r.episode.endReason:'无过程'}</option>`).join('');$('episode').value=ei;
+}
+function render(){
+ const {f,c,result,run}=selected(), all=allRecords(), rr=all.slice(0,cursor).concat(extra);
+ const end=cursor>=all.length&&!manual&&run.episode?run.episode.end:(rr.length?rr.at(-1).u+1:1);
+ const ph=PV.phase(rr,result.config,end),check=PV.check(rr,ph.phases,result.config,{end,
+   type:f.type,id:f.scope,episode:run.episode?.id,noEpisode:!run.episode,
+   incomplete:cursor>=all.length&&run.episode&&run.episode.endReason!=='正常静默结束'?run.episode.endReason:null});
+ const state=ph.trace.at(-1),plat=check.platforms.at(-1),cfg=result.config;
+ $('scenario').textContent=f.description+' 当前输入：'+c.name+'。W='+f.w+'，S='+f.s+'，Q='+f.q+'，'+f.basis+'；策略证据 N='+cfg.n+'，K='+cfg.k+'，最小跨度 '+cfg.minSpan+'。';
+ $('state').innerHTML=[['当前阶段',state?label(state.current):run.episode?'等待窗口':'尚无过程'],
+   ['已有 / 所需证据',(state?.count||0)+' / '+cfg.n],['证据跨度 / 所需',(state?.span||0)+' / '+cfg.minSpan],
+   ['候选确认',state?.pending?label(state.pending.label)+' '+state.pending.count+'/'+cfg.k:'—'],
+   ['未判定或等待原因',state?.reason||'—'],['参考带宽 B',n(plat?.B)],['检查结果',cursor>=all.length&&!manual?check.status:'待最终结算'],
+   ['查看进度',Math.min(cursor,all.length)+' / '+all.length]].map(([k,v])=>`<div class="field"><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join('');
+ $('mode').textContent=manual?'当前为自由探索；上方专项结果仍为冻结实测记录。':'当前为固定输入逐窗重放。';
+ $('guide').textContent=family===1?'先推进八条窗口确认阶段，再到结束查看参考样本是否也被回查；±8% 输入应允许“稳定 + FAIL”。':family===0?'观察平台切换前后是否分别确认稳定，再检查正常变化在待判定区间是否被误算为旧平台异常。':family===2?'观察短暂停顿是否保留同一过程、短突发是否仍未判定、零字节稳定参考为何不能 PASS。':'观察缺口如何打断候选，恢复后是否重新积累，以及退出稳定后异常是否仍被保留。';
+ $('phases').innerHTML=table(['阶段','边界','确认位置','确认物理时间','结束'],ph.phases.map(p=>[esc(label(p.label)),n(p.start),n(p.confirm),n(p.confirmTime)+' ns',n(p.end)]));
+ $('goals').innerHTML='<details><summary>冻结专项的期限核验</summary>'+table(['目标','首个完整窗口','第八次期限','确认','结果'],run.quality.expectations.map(g=>[esc(g.key)+' '+esc(label(g.label)),n(g.first),n(g.deadline),n(g.confirmation),`<span class="${g.result}">${g.result}</span>`]))+'</details>';
+ $('checks').innerHTML=check.platforms.length?check.platforms.map(p=>`<p><b>平台 ${p.phase.id} · <span class="${p.status}">${p.status}</span></b>　B=${n(p.B)}，绝对阈值=${n(p.threshold)}，最大偏离=${n(p.pMax)}%</p><p class="muted">${esc(p.reasons.join('；'))}。参考端点：${p.referenceSamples.map(r=>r.u).join(', ')||'无'}；参考值：${p.referenceSamples.map(r=>n(r.y)).join(', ')||'无'}。持续超限段 ${p.runs.filter(r=>r.sustained).length} 个，最长跨度 ${p.longestSpan}。</p>`).join(''):'<p>'+esc(check.warning)+'</p>';
+ $('checks').innerHTML+='<details><summary>已确认过渡豁免</summary>'+table(['区间','原因','确认'],check.exclusions.map(e=>['['+e.start+','+e.end+')',esc(e.reason),n(e.confirmation)]))+'</details>';
+ const ev=check.platforms.flatMap(p=>p.evidence.map(r=>[p.phase.id,r.seq,r.u,n(r.y),r.excluded?'正常过渡豁免':r.invalid?'证据缺口':r.over?'超限':'合格',r.reference?'参考样本（回查）':'',n(r.p)]));
+ $('evidence').innerHTML=table(['平台','序号','逻辑端点','带宽','归属','参考资格','偏离 %'],ev);
+ plot(rr,ph.phases,plat,all.length?all.at(-1).u:100);
+}
+function plot(rr,phases,p,last){
+ const width=1060,height=205,ox=45,oy=25,x=u=>ox+u/Math.max(last,rr.at(-1)?.u||0,1)*width;
+ const max=Math.max(1,...rr.map(r=>r.y),p?.B||0)*1.15,y=v=>oy+height-v/max*height;
+ let s=`<line x1="${ox}" y1="${oy+height}" x2="1105" y2="${oy+height}" stroke="#aebdc7"/>`;
+ for(const ph of phases){const color=ph.label==='STEADY'?'#e0efe8':ph.label==='RAMP'?'#e2ebf5':'#f0e8df';s+=`<rect x="${x(ph.start)}" y="${oy}" width="${Math.max(1,x(ph.end)-x(ph.start))}" height="${height}" fill="${color}"/><text x="${x(ph.start)+3}" y="${oy+15}" font-size="11" fill="#486070">${label(ph.label)}</text>`;}
+ if(p?.B!==null&&p?.B!==undefined)for(const factor of [.95,1,1.05])s+=`<line x1="${ox}" y1="${y(p.B*factor)}" x2="1105" y2="${y(p.B*factor)}" stroke="#b17b32" stroke-dasharray="5 5"/>`;
+ s+='<polyline fill="none" stroke="#145f7b" stroke-width="2" points="'+rr.filter(r=>r.eligible).map(r=>x(r.u)+','+y(r.y)).join(' ')+'"/>';
+ for(const r of rr)s+=`<circle cx="${x(r.u)}" cy="${y(r.y)}" r="2" fill="${r.eligible?'#145f7b':'#c34b42'}"><title>u=${r.u}; t=${r.t} ns; y=${r.y}; ${r.reason||'有效'}</title></circle>`;
+ s+=`<text x="${ox}" y="260" font-size="12">0</text><text x="1030" y="260" font-size="12">${Math.max(last,rr.at(-1)?.u||0)}</text><text x="5" y="${oy+10}" font-size="11">${n(max)}</text><text x="6" y="${oy+height}" font-size="11">0</text>`;$('plot').innerHTML=s;
+}
+function advance(n){cursor=Math.min(allRecords().length,cursor+n);render();}
+function append(kind){
+ const {f}=selected(), rr=allRecords().slice(0,cursor).concat(extra),last=rr.at(-1);
+ if(!last)return;manual=true;
+ if(kind==='held')extra.push({...last,delivery:(last.delivery||last.t)+1000});
+ else extra.push({...last,seq:last.seq+1,u:last.u+f.s,t:last.t+f.s,left:last.left+f.s,
+   y:f.base*(kind==='high'?1.08:kind==='low'?.92:1),eligible:kind!=='gap',reason:kind==='gap'?'手动观测缺口':'手动探索',expectedKey:null});
+ render();
+}
+function overview(){
+ $('overview').innerHTML=table(['候选','阶段场景通过','期限失败','错误确认','多余切换'],DATA.candidateSummary.map(c=>[esc(c.name),c.phaseCasesPassed+'/'+c.cases,c.targetDeadlineFailures+'/'+c.targetDeadlines,c.wrongConfirmations,c.extraSwitches]))+
+ `<p class="muted">窗口对照 ${DATA.windowComparison.count} 条，不一致 ${DATA.windowComparison.mismatches.length} 条。定向检查器 ${DATA.contracts.filter(c=>c.passed).length}/${DATA.contracts.length} 与预期一致。完整专项耗时与编译日志位于同目录 evidence/budget.json。</p>`;
+ $('contracts').innerHTML=table(['预定用例','预期','实际','一致'],DATA.contracts.map(c=>[esc(c.name),c.expected,`<span class="${c.actual.status}">${c.actual.status}</span>`,c.passed?'是':'否']));
+ $('controls').innerHTML=table(['过程开启','阶段开启','预期','实际'],DATA.controls.map(c=>[esc(c.episode),esc(c.phaseEnabled),c.expected,c.actual]));
+ $('limits').innerHTML=DATA.limitations.map(l=>'<li>'+esc(l)+'</li>').join('');
+}
+$('case').onchange=e=>{ci=+e.target.value;ei=0;populate();restart();};$('candidate').onchange=e=>{candidate=e.target.value;ei=0;populate();restart();};$('episode').onchange=e=>{ei=+e.target.value;restart();};
+$('next').onclick=()=>advance(1);$('eight').onclick=()=>advance(8);$('all').onclick=()=>{cursor=allRecords().length;render();};$('reset').onclick=restart;
+for(const k of ['high','low','gap','held'])$(k).onclick=()=>append(k);
+$('guide1').onclick=()=>{restart();advance(3);};$('guide2').onclick=()=>{restart();advance(8);};$('guide3').onclick=()=>{restart();cursor=allRecords().length;render();};
+overview();populate();render();
+</script>
+</body></html>
