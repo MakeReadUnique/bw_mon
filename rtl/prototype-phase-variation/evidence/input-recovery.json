@@ -1,0 +1,9475 @@
+{
+  "id": "recovery",
+  "name": "证据中断与恢复",
+  "type": "group",
+  "scope": "tb.group4",
+  "basis": "ns",
+  "w": 10,
+  "s": 1,
+  "q": 10,
+  "base": 400,
+  "description": "同一个四成员组，密集发布；缺口、复位隔离，以及未判定异常回到原平台。",
+  "cases": [
+    {
+      "name": "观测缺口与复位后重新积累",
+      "segments": [
+        {
+          "ticks": 80,
+          "value": 400,
+          "label": "STEADY",
+          "key": "beforegap"
+        },
+        {
+          "ticks": 1,
+          "value": 400,
+          "known": 0
+        },
+        {
+          "ticks": 90,
+          "value": 400,
+          "label": "STEADY",
+          "key": "recover",
+          "newPhase": true
+        },
+        {
+          "ticks": 1,
+          "value": 0,
+          "events": 0,
+          "reset": 1
+        },
+        {
+          "ticks": 90,
+          "value": 400,
+          "label": "STEADY",
+          "key": "afterreset",
+          "newPhase": true
+        },
+        {
+          "ticks": 12,
+          "value": 0,
+          "events": 0
+        }
+      ],
+      "id": 11,
+      "rows": [
+        {
+          "u": 1,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 2,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 3,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 4,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 5,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 6,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 7,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 8,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 9,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 10,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 11,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 12,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 13,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 14,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 15,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 16,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 17,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 18,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 19,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 20,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 21,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 22,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 23,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 24,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 25,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 26,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 27,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 28,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 29,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 30,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 31,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 32,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 33,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 34,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 35,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 36,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 37,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 38,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 39,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 40,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 41,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 42,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 43,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 44,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 45,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 46,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 47,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 48,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 49,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 50,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 51,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 52,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 53,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 54,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 55,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 56,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 57,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 58,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 59,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 60,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 61,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 62,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 63,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 64,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 65,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 66,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 67,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 68,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 69,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 70,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 71,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 72,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 73,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 74,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 75,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 76,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 77,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 78,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 79,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 80,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "beforegap",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 81,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 0,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 80,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 82,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 83,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 84,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 85,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 86,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 87,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 88,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 89,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 90,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 91,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 92,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 93,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 94,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 95,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 96,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 97,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 98,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 99,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 100,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 101,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 102,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 103,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 104,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 105,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 106,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 107,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 108,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 109,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 110,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 111,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 112,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 113,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 114,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 115,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 116,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 117,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 118,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 119,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 120,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 121,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 122,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 123,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 124,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 125,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 126,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 127,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 128,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 129,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 130,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 131,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 132,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 133,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 134,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 135,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 136,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 137,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 138,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 139,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 140,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 141,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 142,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 143,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 144,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 145,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 146,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 147,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 148,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 149,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 150,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 151,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 152,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 153,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 154,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 155,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 156,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 157,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 158,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 159,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 160,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 161,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 162,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 163,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 164,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 165,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 166,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 167,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 168,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 169,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 170,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 171,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "recover",
+          "label": "STEADY",
+          "segmentStart": 81,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 172,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 1,
+          "key": null,
+          "label": null,
+          "segmentStart": 171,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 173,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 174,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 175,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 176,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 177,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 178,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 179,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 180,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 181,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 182,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 183,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 184,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 185,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 186,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 187,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 188,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 189,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 190,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 191,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 192,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 193,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 194,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 195,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 196,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 197,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 198,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 199,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 200,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 201,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 202,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 203,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 204,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 205,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 206,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 207,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 208,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 209,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 210,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 211,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 212,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 213,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 214,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 215,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 216,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 217,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 218,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 219,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 220,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 221,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 222,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 223,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 224,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 225,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 226,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 227,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 228,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 229,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 230,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 231,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 232,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 233,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 234,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 235,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 236,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 237,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 238,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 239,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 240,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 241,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 242,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 243,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 244,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 245,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 246,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 247,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 248,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 249,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 250,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 251,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 252,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 253,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 254,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 255,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 256,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 257,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 258,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 259,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 260,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 261,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 262,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "afterreset",
+          "label": "STEADY",
+          "segmentStart": 172,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 263,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 264,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 265,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 266,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 267,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 268,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 269,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 270,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 271,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 272,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 273,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 274,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 262,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        }
+      ],
+      "goals": [
+        {
+          "key": "beforegap",
+          "label": "STEADY",
+          "inputU": 0,
+          "newPhase": false,
+          "noChatter": false,
+          "required": true
+        },
+        {
+          "key": "recover",
+          "label": "STEADY",
+          "inputU": 81,
+          "newPhase": true,
+          "noChatter": false,
+          "required": true
+        },
+        {
+          "key": "afterreset",
+          "label": "STEADY",
+          "inputU": 172,
+          "newPhase": true,
+          "noChatter": false,
+          "required": true
+        }
+      ],
+      "expectedChecker": [
+        "WARNING"
+      ],
+      "expectedCheckerNote": "预先固定的最终检查期望"
+    },
+    {
+      "name": "偏离后回到原平台的保留证据",
+      "segments": [
+        {
+          "ticks": 100,
+          "value": 400,
+          "label": "STEADY",
+          "key": "base"
+        },
+        {
+          "ticks": 26,
+          "value": 400,
+          "pattern": [
+            0,
+            0,
+            800,
+            800,
+            800,
+            0,
+            800,
+            0,
+            800,
+            800,
+            0,
+            0,
+            0
+          ],
+          "key": "anomaly"
+        },
+        {
+          "ticks": 100,
+          "value": 400,
+          "label": "STEADY",
+          "key": "return"
+        },
+        {
+          "ticks": 12,
+          "value": 0,
+          "events": 0
+        }
+      ],
+      "id": 12,
+      "rows": [
+        {
+          "u": 1,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 2,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 3,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 4,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 5,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 6,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 7,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 8,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 9,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 10,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 11,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 12,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 13,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 14,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 15,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 16,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 17,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 18,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 19,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 20,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 21,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 22,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 23,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 24,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 25,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 26,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 27,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 28,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 29,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 30,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 31,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 32,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 33,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 34,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 35,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 36,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 37,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 38,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 39,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 40,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 41,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 42,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 43,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 44,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 45,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 46,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 47,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 48,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 49,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 50,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 51,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 52,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 53,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 54,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 55,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 56,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 57,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 58,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 59,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 60,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 61,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 62,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 63,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 64,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 65,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 66,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 67,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 68,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 69,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 70,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 71,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 72,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 73,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 74,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 75,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 76,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 77,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 78,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 79,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 80,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 81,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 82,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 83,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 84,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 85,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 86,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 87,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 88,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 89,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 90,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 91,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 92,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 93,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 94,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 95,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 96,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 97,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 98,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 99,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 100,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "base",
+          "label": "STEADY",
+          "segmentStart": 0,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 101,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 102,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 103,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 104,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 105,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 106,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 107,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 108,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 109,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 110,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 111,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 112,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 113,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 114,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 115,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 116,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 117,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 118,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 119,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 120,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 121,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 122,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 123,
+          "members": [
+            200,
+            200,
+            200,
+            200
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 124,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 125,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 126,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "anomaly",
+          "label": null,
+          "segmentStart": 100,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 127,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 128,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 129,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 130,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 131,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 132,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 133,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 134,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 135,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 136,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 137,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 138,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 139,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 140,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 141,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 142,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 143,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 144,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 145,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 146,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 147,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 148,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 149,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 150,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 151,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 152,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 153,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 154,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 155,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 156,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 157,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 158,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 159,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 160,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 161,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 162,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 163,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 164,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 165,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 166,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 167,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 168,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 169,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 170,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 171,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 172,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 173,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 174,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 175,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 176,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 177,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 178,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 179,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 180,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 181,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 182,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 183,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 184,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 185,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 186,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 187,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 188,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 189,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 190,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 191,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 192,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 193,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 194,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 195,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 196,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 197,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 198,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 199,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 200,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 201,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 202,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 203,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 204,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 205,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 206,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 207,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 208,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 209,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 210,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 211,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 212,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 213,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 214,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 215,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 216,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 217,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 218,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 219,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 220,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 221,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 222,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 223,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 224,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 225,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 226,
+          "members": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "events": 1,
+          "known": 1,
+          "reset": 0,
+          "key": "return",
+          "label": "STEADY",
+          "segmentStart": 126,
+          "allowed": [
+            "STEADY"
+          ]
+        },
+        {
+          "u": 227,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 228,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 229,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 230,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 231,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 232,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 233,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 234,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 235,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 236,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 237,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        },
+        {
+          "u": 238,
+          "members": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "events": 0,
+          "known": 1,
+          "reset": 0,
+          "key": null,
+          "label": null,
+          "segmentStart": 226,
+          "allowed": [
+            "STEADY",
+            "RAMP",
+            "FALL"
+          ]
+        }
+      ],
+      "goals": [
+        {
+          "key": "base",
+          "label": "STEADY",
+          "inputU": 0,
+          "newPhase": false,
+          "noChatter": false,
+          "required": true
+        },
+        {
+          "key": "return",
+          "label": "STEADY",
+          "inputU": 126,
+          "newPhase": false,
+          "noChatter": false,
+          "required": true
+        }
+      ],
+      "expectedChecker": [
+        "FAIL"
+      ],
+      "expectedCheckerNote": "预先固定的最终检查期望"
+    }
+  ]
+}

@@ -1,0 +1,5191 @@
+{
+  "candidates": [
+    {
+      "candidate": "ols4",
+      "configs": [
+        {
+          "family": "continuous",
+          "id": "ols4",
+          "name": "候选 A：四点直线拟合",
+          "n": 4,
+          "k": 2,
+          "pair": false,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 10,
+          "referenceCount": 4,
+          "w": 10,
+          "s": 10,
+          "q": 10,
+          "basis": "ns",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        },
+        {
+          "family": "platforms",
+          "id": "ols4",
+          "name": "候选 A：四点直线拟合",
+          "n": 4,
+          "k": 2,
+          "pair": false,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 10,
+          "referenceCount": 4,
+          "w": 10,
+          "s": 10,
+          "q": 10,
+          "basis": "cycle",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        },
+        {
+          "family": "activity",
+          "id": "ols4",
+          "name": "候选 A：四点直线拟合",
+          "n": 4,
+          "k": 2,
+          "pair": false,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 3,
+          "referenceCount": 4,
+          "w": 10,
+          "s": 1,
+          "q": 10,
+          "basis": "cycle",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        },
+        {
+          "family": "recovery",
+          "id": "ols4",
+          "name": "候选 A：四点直线拟合",
+          "n": 4,
+          "k": 2,
+          "pair": false,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 3,
+          "referenceCount": 4,
+          "w": 10,
+          "s": 1,
+          "q": 10,
+          "basis": "ns",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        }
+      ]
+    },
+    {
+      "candidate": "pair6",
+      "configs": [
+        {
+          "family": "continuous",
+          "id": "pair6",
+          "name": "候选 B：六点相邻配对拟合",
+          "n": 6,
+          "k": 2,
+          "pair": true,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 10,
+          "referenceCount": 6,
+          "w": 10,
+          "s": 10,
+          "q": 10,
+          "basis": "ns",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        },
+        {
+          "family": "platforms",
+          "id": "pair6",
+          "name": "候选 B：六点相邻配对拟合",
+          "n": 6,
+          "k": 2,
+          "pair": true,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 10,
+          "referenceCount": 6,
+          "w": 10,
+          "s": 10,
+          "q": 10,
+          "basis": "cycle",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        },
+        {
+          "family": "activity",
+          "id": "pair6",
+          "name": "候选 B：六点相邻配对拟合",
+          "n": 6,
+          "k": 2,
+          "pair": true,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 5,
+          "referenceCount": 6,
+          "w": 10,
+          "s": 1,
+          "q": 10,
+          "basis": "cycle",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        },
+        {
+          "family": "recovery",
+          "id": "pair6",
+          "name": "候选 B：六点相邻配对拟合",
+          "n": 6,
+          "k": 2,
+          "pair": true,
+          "steadyEnter": 0.04,
+          "steadyExit": 0.08,
+          "rmsEnter": 0.1,
+          "rmsExit": 0.12,
+          "trend": 0.1,
+          "trendRms": 0.025,
+          "minSpan": 5,
+          "referenceCount": 6,
+          "w": 10,
+          "s": 1,
+          "q": 10,
+          "basis": "ns",
+          "absoluteThresholds": 0,
+          "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "family": "continuous",
+      "cases": [
+        {
+          "name": "恒定、阶跃、下降、爬坡及重复平台",
+          "goals": [
+            {
+              "key": "c1",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "c2",
+              "label": "STEADY",
+              "inputU": 160,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "fall",
+              "label": "FALL",
+              "inputU": 320,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "c3",
+              "label": "STEADY",
+              "inputU": 480,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "ramp",
+              "label": "RAMP",
+              "inputU": 640,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "c4",
+              "label": "STEADY",
+              "inputU": 800,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "PASS"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "恰好十二个完整窗口的平台",
+          "goals": [
+            {
+              "key": "short1",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "short2",
+              "label": "STEADY",
+              "inputU": 120,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "PASS",
+            "WARNING"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        }
+      ]
+    },
+    {
+      "family": "platforms",
+      "cases": [
+        {
+          "name": "交替 ±2% 长平台",
+          "goals": [
+            {
+              "key": "micro",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": true,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "PASS"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "交替 ±8% 长平台",
+          "goals": [
+            {
+              "key": "alt8",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": true,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "FAIL"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "早期波动失败后出现新平台",
+          "goals": [
+            {
+              "key": "firstfail",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": true,
+              "required": true
+            },
+            {
+              "key": "lastpass",
+              "label": "STEADY",
+              "inputU": 240,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "FAIL"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        }
+      ]
+    },
+    {
+      "family": "activity",
+      "cases": [
+        {
+          "name": "短暂停顿后恢复同一过程",
+          "goals": [
+            {
+              "key": "beforepause",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "afterpause",
+              "label": "STEADY",
+              "inputU": 83,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": null,
+          "expectedCheckerNote": "短暂停顿需依据独立确认的升降归属定稿；不得仅因暂停而豁免，未给定单一结果"
+        },
+        {
+          "name": "证据不足的三周期短突发",
+          "goals": [
+            {
+              "key": "burst",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": false,
+              "required": false
+            }
+          ],
+          "expectedChecker": [
+            "WARNING"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "零字节传输维持零带宽平台",
+          "goals": [
+            {
+              "key": "zero",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": true,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "WARNING"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "完全没有传输",
+          "goals": [],
+          "expectedChecker": [
+            "WARNING"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "密集发布的持续升降",
+          "goals": [
+            {
+              "key": "dense1",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "denseup",
+              "label": "RAMP",
+              "inputU": 50,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "dense2",
+              "label": "STEADY",
+              "inputU": 77,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "densedown",
+              "label": "FALL",
+              "inputU": 137,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "dense3",
+              "label": "STEADY",
+              "inputU": 164,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "PASS"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        }
+      ]
+    },
+    {
+      "family": "recovery",
+      "cases": [
+        {
+          "name": "观测缺口与复位后重新积累",
+          "goals": [
+            {
+              "key": "beforegap",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "recover",
+              "label": "STEADY",
+              "inputU": 81,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "afterreset",
+              "label": "STEADY",
+              "inputU": 172,
+              "newPhase": true,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "WARNING"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        },
+        {
+          "name": "偏离后回到原平台的保留证据",
+          "goals": [
+            {
+              "key": "base",
+              "label": "STEADY",
+              "inputU": 0,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            },
+            {
+              "key": "return",
+              "label": "STEADY",
+              "inputU": 126,
+              "newPhase": false,
+              "noChatter": false,
+              "required": true
+            }
+          ],
+          "expectedChecker": [
+            "FAIL"
+          ],
+          "expectedCheckerNote": "预先固定的最终检查期望"
+        }
+      ]
+    }
+  ],
+  "numericContracts": [
+    {
+      "name": "高侧低于阈值 104.9",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 104.9,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 104.9,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 91,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 91
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "高侧恰好等于阈值 105",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 105,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 105,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 91,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 91
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "低侧恰好等于阈值 95",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 95,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 95,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 91,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 91
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "高侧 105.1 持续恰好 W",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 105.1,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 105.1,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "低侧 94.9 持续恰好 W",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 94.9,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 94.9,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "单条 106 后恢复",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 91,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 91
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "双向交替 106 和 94",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 94,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 10,
+          "u": 100,
+          "t": 100,
+          "left": 90,
+          "y": 94,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 101,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 101
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "106、缺口、106 不拼接",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 100,
+          "eligible": false,
+          "reason": "人工插入的观测缺口"
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 91,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 91
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "有效失败之后出现缺口",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": false,
+          "reason": "人工插入的观测缺口"
+        },
+        {
+          "seq": 10,
+          "u": 100,
+          "t": 100,
+          "left": 90,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 101,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 101
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "参考建立期本身交替 ±8%",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 92,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 108,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 92,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 108,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 92,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 108,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 92,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 108,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "零参考",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 0,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "正的近零参考",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 1e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 1e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 1e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 1e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 1e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 1e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 1.049e-12,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 1.049e-12,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "单个样本没有参考",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 11,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 11
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "短平台无完整参考",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 20,
+          "end": 41,
+          "confirm": 30
+        }
+      ],
+      "meta": {
+        "end": 41
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "没有稳定平台",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [],
+      "meta": {
+        "end": 81
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "整个范围没有过程",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [],
+      "phases": [],
+      "meta": {
+        "end": 1,
+        "noEpisode": true
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "截断且没有独立失败",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81,
+        "incomplete": "仿真截断"
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "复位前已有有效失败",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81,
+        "incomplete": "复位截断"
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "分析关闭无其他规则",
+      "expected": "STATISTICS_ONLY",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 1,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 1,
+        "enabled": false
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "显式其他检查 PASS 不覆盖默认 FAIL",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81,
+        "otherStatuses": [
+          "PASS"
+        ]
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "旧快照重复读取不增加证据",
+      "expected": "WARNING",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 106,
+          "eligible": true,
+          "delivery": 100
+        },
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 106,
+          "eligible": true,
+          "delivery": 200
+        },
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 106,
+          "eligible": true,
+          "delivery": 300
+        },
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 106,
+          "eligible": true,
+          "delivery": 400
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 11,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 11
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "密集发布连续超限 3 条",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 5,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 1,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 1,
+          "t": 1,
+          "left": -9,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 2,
+          "t": 2,
+          "left": -8,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 3,
+          "t": 3,
+          "left": -7,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 4,
+          "t": 4,
+          "left": -6,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 5,
+          "t": 5,
+          "left": -5,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 6,
+          "t": 6,
+          "left": -4,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 7,
+          "t": 7,
+          "left": -3,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 8,
+          "t": 8,
+          "left": -2,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 9,
+          "t": 9,
+          "left": -1,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 10,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 11,
+          "u": 11,
+          "t": 11,
+          "left": 1,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 12,
+          "u": 12,
+          "t": 12,
+          "left": 2,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 13,
+          "u": 13,
+          "t": 13,
+          "left": 3,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 14,
+          "u": 14,
+          "t": 14,
+          "left": 4,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 15,
+          "u": 15,
+          "t": 15,
+          "left": 5,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 16,
+          "u": 16,
+          "t": 16,
+          "left": 6,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 17,
+          "u": 17,
+          "t": 17,
+          "left": 7,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 18,
+          "u": 18,
+          "t": 18,
+          "left": 8,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 19,
+          "u": 19,
+          "t": 19,
+          "left": 9,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 20,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 21,
+          "u": 21,
+          "t": 21,
+          "left": 11,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 22,
+          "u": 22,
+          "t": 22,
+          "left": 12,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 23,
+          "u": 23,
+          "t": 23,
+          "left": 13,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 24,
+          "u": 24,
+          "t": 24,
+          "left": 14,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 25,
+          "u": 25,
+          "t": 25,
+          "left": 15,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 26,
+          "u": 26,
+          "t": 26,
+          "left": 16,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 27,
+          "u": 27,
+          "t": 27,
+          "left": 17,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 28,
+          "u": 28,
+          "t": 28,
+          "left": 18,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 29,
+          "u": 29,
+          "t": 29,
+          "left": 19,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 30,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 31,
+          "u": 31,
+          "t": 31,
+          "left": 21,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 32,
+          "u": 32,
+          "t": 32,
+          "left": 22,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 33,
+          "u": 33,
+          "t": 33,
+          "left": 23,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 34,
+          "u": 34,
+          "t": 34,
+          "left": 24,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 35,
+          "u": 35,
+          "t": 35,
+          "left": 25,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 36,
+          "u": 36,
+          "t": 36,
+          "left": 26,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 37,
+          "u": 37,
+          "t": 37,
+          "left": 27,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 38,
+          "u": 38,
+          "t": 38,
+          "left": 28,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 39,
+          "u": 39,
+          "t": 39,
+          "left": 29,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 40,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 41,
+          "u": 41,
+          "t": 41,
+          "left": 31,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 42,
+          "u": 42,
+          "t": 42,
+          "left": 32,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 43,
+          "u": 43,
+          "t": 43,
+          "left": 33,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 44,
+          "u": 44,
+          "t": 44,
+          "left": 34,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 45,
+          "u": 45,
+          "t": 45,
+          "left": 35,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 46,
+          "u": 46,
+          "t": 46,
+          "left": 36,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 47,
+          "u": 47,
+          "t": 47,
+          "left": 37,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 48,
+          "u": 48,
+          "t": 48,
+          "left": 38,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 49,
+          "u": 49,
+          "t": 49,
+          "left": 39,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 50,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 51,
+          "u": 51,
+          "t": 51,
+          "left": 41,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 52,
+          "u": 52,
+          "t": 52,
+          "left": 42,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 53,
+          "u": 53,
+          "t": 53,
+          "left": 43,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 54,
+          "u": 54,
+          "t": 54,
+          "left": 44,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 55,
+          "u": 55,
+          "t": 55,
+          "left": 45,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 56,
+          "u": 56,
+          "t": 56,
+          "left": 46,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 57,
+          "u": 57,
+          "t": 57,
+          "left": 47,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 58,
+          "u": 58,
+          "t": 58,
+          "left": 48,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 59,
+          "u": 59,
+          "t": 59,
+          "left": 49,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 60,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 61,
+          "u": 61,
+          "t": 61,
+          "left": 51,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 62,
+          "u": 62,
+          "t": 62,
+          "left": 52,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 63,
+          "u": 63,
+          "t": 63,
+          "left": 53,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 64,
+          "u": 64,
+          "t": 64,
+          "left": 54,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 65,
+          "u": 65,
+          "t": 65,
+          "left": 55,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 66,
+          "u": 66,
+          "t": 66,
+          "left": 56,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 67,
+          "u": 67,
+          "t": 67,
+          "left": 57,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 68,
+          "u": 68,
+          "t": 68,
+          "left": 58,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 69,
+          "u": 69,
+          "t": 69,
+          "left": 59,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 70,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 71,
+          "u": 71,
+          "t": 71,
+          "left": 61,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 72,
+          "u": 72,
+          "t": 72,
+          "left": 62,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 73,
+          "u": 73,
+          "t": 73,
+          "left": 63,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 74,
+          "u": 74,
+          "t": 74,
+          "left": 64,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 75,
+          "u": 75,
+          "t": 75,
+          "left": 65,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 76,
+          "u": 76,
+          "t": 76,
+          "left": 66,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 77,
+          "u": 77,
+          "t": 77,
+          "left": 67,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 78,
+          "u": 78,
+          "t": 78,
+          "left": 68,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 79,
+          "u": 79,
+          "t": 79,
+          "left": 69,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 80,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 81,
+          "u": 81,
+          "t": 81,
+          "left": 71,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 82,
+          "u": 82,
+          "t": 82,
+          "left": 72,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 83,
+          "u": 83,
+          "t": 83,
+          "left": 73,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 84,
+          "u": 84,
+          "t": 84,
+          "left": 74,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 85,
+          "u": 85,
+          "t": 85,
+          "left": 75,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 86,
+          "u": 86,
+          "t": 86,
+          "left": 76,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 87,
+          "u": 87,
+          "t": 87,
+          "left": 77,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 88,
+          "u": 88,
+          "t": 88,
+          "left": 78,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 89,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 89
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "密集发布连续超限 11 条",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 5,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 1,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 1,
+          "t": 1,
+          "left": -9,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 2,
+          "t": 2,
+          "left": -8,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 3,
+          "t": 3,
+          "left": -7,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 4,
+          "t": 4,
+          "left": -6,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 5,
+          "t": 5,
+          "left": -5,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 6,
+          "t": 6,
+          "left": -4,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 7,
+          "t": 7,
+          "left": -3,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 8,
+          "t": 8,
+          "left": -2,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 9,
+          "t": 9,
+          "left": -1,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 10,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 11,
+          "u": 11,
+          "t": 11,
+          "left": 1,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 12,
+          "u": 12,
+          "t": 12,
+          "left": 2,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 13,
+          "u": 13,
+          "t": 13,
+          "left": 3,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 14,
+          "u": 14,
+          "t": 14,
+          "left": 4,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 15,
+          "u": 15,
+          "t": 15,
+          "left": 5,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 16,
+          "u": 16,
+          "t": 16,
+          "left": 6,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 17,
+          "u": 17,
+          "t": 17,
+          "left": 7,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 18,
+          "u": 18,
+          "t": 18,
+          "left": 8,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 19,
+          "u": 19,
+          "t": 19,
+          "left": 9,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 20,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 21,
+          "u": 21,
+          "t": 21,
+          "left": 11,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 22,
+          "u": 22,
+          "t": 22,
+          "left": 12,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 23,
+          "u": 23,
+          "t": 23,
+          "left": 13,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 24,
+          "u": 24,
+          "t": 24,
+          "left": 14,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 25,
+          "u": 25,
+          "t": 25,
+          "left": 15,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 26,
+          "u": 26,
+          "t": 26,
+          "left": 16,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 27,
+          "u": 27,
+          "t": 27,
+          "left": 17,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 28,
+          "u": 28,
+          "t": 28,
+          "left": 18,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 29,
+          "u": 29,
+          "t": 29,
+          "left": 19,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 30,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 31,
+          "u": 31,
+          "t": 31,
+          "left": 21,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 32,
+          "u": 32,
+          "t": 32,
+          "left": 22,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 33,
+          "u": 33,
+          "t": 33,
+          "left": 23,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 34,
+          "u": 34,
+          "t": 34,
+          "left": 24,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 35,
+          "u": 35,
+          "t": 35,
+          "left": 25,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 36,
+          "u": 36,
+          "t": 36,
+          "left": 26,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 37,
+          "u": 37,
+          "t": 37,
+          "left": 27,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 38,
+          "u": 38,
+          "t": 38,
+          "left": 28,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 39,
+          "u": 39,
+          "t": 39,
+          "left": 29,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 40,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 41,
+          "u": 41,
+          "t": 41,
+          "left": 31,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 42,
+          "u": 42,
+          "t": 42,
+          "left": 32,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 43,
+          "u": 43,
+          "t": 43,
+          "left": 33,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 44,
+          "u": 44,
+          "t": 44,
+          "left": 34,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 45,
+          "u": 45,
+          "t": 45,
+          "left": 35,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 46,
+          "u": 46,
+          "t": 46,
+          "left": 36,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 47,
+          "u": 47,
+          "t": 47,
+          "left": 37,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 48,
+          "u": 48,
+          "t": 48,
+          "left": 38,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 49,
+          "u": 49,
+          "t": 49,
+          "left": 39,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 50,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 51,
+          "u": 51,
+          "t": 51,
+          "left": 41,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 52,
+          "u": 52,
+          "t": 52,
+          "left": 42,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 53,
+          "u": 53,
+          "t": 53,
+          "left": 43,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 54,
+          "u": 54,
+          "t": 54,
+          "left": 44,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 55,
+          "u": 55,
+          "t": 55,
+          "left": 45,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 56,
+          "u": 56,
+          "t": 56,
+          "left": 46,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 57,
+          "u": 57,
+          "t": 57,
+          "left": 47,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 58,
+          "u": 58,
+          "t": 58,
+          "left": 48,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 59,
+          "u": 59,
+          "t": 59,
+          "left": 49,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 60,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 61,
+          "u": 61,
+          "t": 61,
+          "left": 51,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 62,
+          "u": 62,
+          "t": 62,
+          "left": 52,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 63,
+          "u": 63,
+          "t": 63,
+          "left": 53,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 64,
+          "u": 64,
+          "t": 64,
+          "left": 54,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 65,
+          "u": 65,
+          "t": 65,
+          "left": 55,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 66,
+          "u": 66,
+          "t": 66,
+          "left": 56,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 67,
+          "u": 67,
+          "t": 67,
+          "left": 57,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 68,
+          "u": 68,
+          "t": 68,
+          "left": 58,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 69,
+          "u": 69,
+          "t": 69,
+          "left": 59,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 70,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 71,
+          "u": 71,
+          "t": 71,
+          "left": 61,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 72,
+          "u": 72,
+          "t": 72,
+          "left": 62,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 73,
+          "u": 73,
+          "t": 73,
+          "left": 63,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 74,
+          "u": 74,
+          "t": 74,
+          "left": 64,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 75,
+          "u": 75,
+          "t": 75,
+          "left": 65,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 76,
+          "u": 76,
+          "t": 76,
+          "left": 66,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 77,
+          "u": 77,
+          "t": 77,
+          "left": 67,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 78,
+          "u": 78,
+          "t": 78,
+          "left": 68,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 79,
+          "u": 79,
+          "t": 79,
+          "left": 69,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 80,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 81,
+          "u": 81,
+          "t": 81,
+          "left": 71,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 82,
+          "u": 82,
+          "t": 82,
+          "left": 72,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 83,
+          "u": 83,
+          "t": 83,
+          "left": 73,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 84,
+          "u": 84,
+          "t": 84,
+          "left": 74,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 85,
+          "u": 85,
+          "t": 85,
+          "left": 75,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 86,
+          "u": 86,
+          "t": 86,
+          "left": 76,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 87,
+          "u": 87,
+          "t": 87,
+          "left": 77,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 88,
+          "u": 88,
+          "t": 88,
+          "left": 78,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 89,
+          "u": 89,
+          "t": 89,
+          "left": 79,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 90,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 91,
+          "u": 91,
+          "t": 91,
+          "left": 81,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 92,
+          "u": 92,
+          "t": 92,
+          "left": 82,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 93,
+          "u": 93,
+          "t": 93,
+          "left": 83,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 94,
+          "u": 94,
+          "t": 94,
+          "left": 84,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 95,
+          "u": 95,
+          "t": 95,
+          "left": 85,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 96,
+          "u": 96,
+          "t": 96,
+          "left": 86,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 97,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 97
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "组延迟交付按原逻辑端点检查",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "delivery": 1000
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true,
+          "delivery": 1000
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81,
+        "type": "group",
+        "id": "same.id"
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "同名 point 仍独立检查",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 81,
+          "confirm": 0,
+          "confirmTime": 0
+        }
+      ],
+      "meta": {
+        "end": 81,
+        "type": "point",
+        "id": "same.id"
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "先 FAIL 后 PASS 的全部平台",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 110,
+          "eligible": true
+        },
+        {
+          "seq": 10,
+          "u": 100,
+          "t": 100,
+          "left": 90,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 11,
+          "u": 110,
+          "t": 110,
+          "left": 100,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 12,
+          "u": 120,
+          "t": 120,
+          "left": 110,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 13,
+          "u": 130,
+          "t": 130,
+          "left": 120,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 14,
+          "u": 140,
+          "t": 140,
+          "left": 130,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 15,
+          "u": 150,
+          "t": 150,
+          "left": 140,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 16,
+          "u": 160,
+          "t": 160,
+          "left": 150,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 17,
+          "u": 170,
+          "t": 170,
+          "left": 160,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 18,
+          "u": 180,
+          "t": 180,
+          "left": 170,
+          "y": 120,
+          "eligible": true
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 90,
+          "confirm": 10
+        },
+        {
+          "id": 2,
+          "label": "RAMP",
+          "start": 90,
+          "end": 100,
+          "confirm": 100
+        },
+        {
+          "id": 3,
+          "label": "STEADY",
+          "start": 100,
+          "end": 181,
+          "confirm": 110
+        }
+      ],
+      "meta": {
+        "end": 181
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "独立确认升降的归属豁免",
+      "expected": "PASS",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 105,
+          "eligible": true
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 110,
+          "eligible": true
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 115,
+          "eligible": true
+        },
+        {
+          "seq": 10,
+          "u": 100,
+          "t": 100,
+          "left": 90,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 11,
+          "u": 110,
+          "t": 110,
+          "left": 100,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 12,
+          "u": 120,
+          "t": 120,
+          "left": 110,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 13,
+          "u": 130,
+          "t": 130,
+          "left": 120,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 14,
+          "u": 140,
+          "t": 140,
+          "left": 130,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 15,
+          "u": 150,
+          "t": 150,
+          "left": 140,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 16,
+          "u": 160,
+          "t": 160,
+          "left": 150,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 17,
+          "u": 170,
+          "t": 170,
+          "left": 160,
+          "y": 120,
+          "eligible": true
+        },
+        {
+          "seq": 18,
+          "u": 180,
+          "t": 180,
+          "left": 170,
+          "y": 120,
+          "eligible": true
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 70,
+          "confirm": 10
+        },
+        {
+          "id": 2,
+          "label": "RAMP",
+          "start": 70,
+          "end": 110,
+          "confirm": 80
+        },
+        {
+          "id": 3,
+          "label": "STEADY",
+          "start": 110,
+          "end": 181,
+          "confirm": 120
+        }
+      ],
+      "meta": {
+        "end": 181
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    },
+    {
+      "name": "退出稳定但未获过渡豁免",
+      "expected": "FAIL",
+      "config": {
+        "id": "pair6",
+        "name": "候选 B：六点相邻配对拟合",
+        "n": 6,
+        "k": 2,
+        "pair": true,
+        "steadyEnter": 0.04,
+        "steadyExit": 0.08,
+        "rmsEnter": 0.1,
+        "rmsExit": 0.12,
+        "trend": 0.1,
+        "trendRms": 0.025,
+        "minSpan": 10,
+        "referenceCount": 6,
+        "w": 10,
+        "s": 10,
+        "q": 10,
+        "basis": "ns",
+        "absoluteThresholds": 0,
+        "scale": "当前合格证据的平均带宽；全零单独识别稳定"
+      },
+      "records": [
+        {
+          "seq": 1,
+          "u": 10,
+          "t": 10,
+          "left": 0,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 2,
+          "u": 20,
+          "t": 20,
+          "left": 10,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 3,
+          "u": 30,
+          "t": 30,
+          "left": 20,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 4,
+          "u": 40,
+          "t": 40,
+          "left": 30,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 5,
+          "u": 50,
+          "t": 50,
+          "left": 40,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 6,
+          "u": 60,
+          "t": 60,
+          "left": 50,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 7,
+          "u": 70,
+          "t": 70,
+          "left": 60,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 8,
+          "u": 80,
+          "t": 80,
+          "left": 70,
+          "y": 106,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 9,
+          "u": 90,
+          "t": 90,
+          "left": 80,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        },
+        {
+          "seq": 10,
+          "u": 100,
+          "t": 100,
+          "left": 90,
+          "y": 100,
+          "eligible": true,
+          "reason": ""
+        }
+      ],
+      "phases": [
+        {
+          "id": 1,
+          "label": "STEADY",
+          "start": 0,
+          "end": 70,
+          "confirm": 10
+        }
+      ],
+      "meta": {
+        "end": 101
+      },
+      "provenance": "定向检查器输入：平台归属为人工给定，不作为阶段识别证据"
+    }
+  ],
+  "sourceHashes": {
+    "model.js": "f6754bdc42f5b42701b6c55b516216572f0e6d9436b1e765cf8943d0f0a7778a",
+    "fixtures.js": "ad86e9212c4ecd7fa4b956e048f97dba3a8738d717197dcd68e1ddb4f70fc930",
+    "window_probe.sv": "28d9aed7e43c25c9ba7b2fe825aadf35f736318fef4815dd7a503d8179523885",
+    "run.js": "186c170737c6223aa8d33c820040afb11ca52d2d5bf4c92c62df7f26e307b20b",
+    "demo.template.html": "b2a8aac26d6fdb864db75d8a172f6be24b27fe2c0d4d84883ddafde4fe2fd8a3"
+  },
+  "scope": "四份固定输入，两个预先声明候选；没有参数扫描、随机种子或第二次专项。"
+}

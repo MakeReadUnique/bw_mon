@@ -1,0 +1,49 @@
+{
+  "started": "2026-10-27T17:57:52.941Z",
+  "limitSeconds": 900,
+  "stages": [
+    {
+      "name": "固定输入生成与工具准备",
+      "seconds": 0.020223396999999997
+    },
+    {
+      "name": "一次 VCS 冷编译",
+      "seconds": 5.173324335
+    },
+    {
+      "name": "同一个 simv 执行四份输入",
+      "seconds": 9.559547438
+    },
+    {
+      "name": "窗口独立对照、候选模型、检查器与完整核验",
+      "seconds": 0.021630854999999727
+    },
+    {
+      "name": "保存全部输入、逐窗证据与交互图表",
+      "seconds": 0.06331498800000013
+    },
+    {
+      "name": "清理冷构建产物",
+      "seconds": 0.0021832649999993237
+    }
+  ],
+  "environment": {
+    "node": "v22.21.1",
+    "os": "Linux",
+    "release": "4.18.0-553.89.1.el8_10.x86_64",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) Ultra X7 358H",
+    "baseline": "fa20d9cb15731e68255d83fb80f950f62c24fb9c"
+  },
+  "command": "node rtl/prototype-phase-variation/run.js",
+  "sourceHashes": {
+    "model.js": "f6754bdc42f5b42701b6c55b516216572f0e6d9436b1e765cf8943d0f0a7778a",
+    "fixtures.js": "ad86e9212c4ecd7fa4b956e048f97dba3a8738d717197dcd68e1ddb4f70fc930",
+    "window_probe.sv": "28d9aed7e43c25c9ba7b2fe825aadf35f736318fef4815dd7a503d8179523885",
+    "run.js": "186c170737c6223aa8d33c820040afb11ca52d2d5bf4c92c62df7f26e307b20b",
+    "demo.template.html": "b2a8aac26d6fdb864db75d8a172f6be24b27fe2c0d4d84883ddafde4fe2fd8a3"
+  },
+  "totalSeconds": 14.855882158,
+  "withinBudget": true,
+  "complete": true
+}
