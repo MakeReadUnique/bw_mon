@@ -1,5 +1,7 @@
 # Scale correctness and resource runs
 
+> 交付目录已精简：当前 PR 保留源码、最终摘要和截图。下面的历史证据链接指向固定提交；本地查看/复验请先看[证据与复现说明](bw-mon-evidence.md)。
+
 This page retains the original COMMON campaign and its exact historical inputs.
 Current topology/history acceptance uses the serial
 [revised quick/full suites](bw-mon-max-topology.md); those suites enforce the
@@ -64,7 +66,7 @@ tail edge within the observation. Independent audits rechecked the baseline's
 steady boundary120ns/confirmation150ns, plus cycle's0.25ns offset, alongside the
 distinct raw/window/quality and final report checks.
 
-The [current campaign](../tests/scale/evidence/final-runtime-467b722/README.md)
+The [current campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/evidence/final-runtime-467b722/README.md)
 retains the24 consumed source/driver files, original generated input/config/
 reference/actual/differences, complete bounded result logs, commands, cache/native
 dependencies and separate compiler/simulator RSS. The original launch fingerprint
@@ -120,7 +122,7 @@ is outside the observation. Those conclusions remain separate from the numerical
 checks. Independent recorded-data audits also checked the baseline's first
 steady boundary120ns/confirmation150ns and cycle's0.25ns offset.
 
-The [historical scheduling-repair campaign](../tests/scale/evidence/repaired-source-3bba72c/README.md)
+The [historical scheduling-repair campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/evidence/repaired-source-3bba72c/README.md)
 preserves all24 consumed source/driver files, original generated inputs/config/
 reference/actual/differences/logs, commands and separate compiler/simulator RSS.
 The actual C dependency files and compile-success records link the private helper
@@ -182,7 +184,7 @@ Concurrent wall durations and1s process-family samples are retained with full
 context, with no speed or fixed-memory acceptance limit. Maximum-scale and
 short/middle/long/dense history-matrix measurements remain separate work.
 
-[Portable recorded evidence](../tests/scale/evidence/README.md) contains the
+[Portable recorded evidence](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/evidence/README.md) contains the
 original manifests/config/input/generatedSV, per-scope reference/actual CSVs,
 empty differences, bounded final-stream logs, resource records and consumed
 source snapshot, with compressed and original SHA256s. Verify its repository

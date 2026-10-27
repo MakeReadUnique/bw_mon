@@ -1265,7 +1265,10 @@ point/four-group scenes through one module-type bind and public setup/group APIs
 The standalone reference uses original input rows and Fraction arithmetic; it
 never reads monitor code as a golden model. See the checked-in source
 [`scene.sv`](../tests/acceptance/scene.sv), configurations, original FSDBs, portable
-public views and expected/actual tables under `artifacts/acceptance`.
+public views and expected/actual tables under `artifacts/acceptance` after local
+generation or explicit restoration. The current PR keeps screenshots and final
+summaries; use the [evidence guide](bw-mon-evidence.md) to restore recorded data
+without committing waveform files or intermediate results again.
 
 The earlier per-ticket run counts above are historical, explicitly scoped proof.
 The current427-case proof, historical424/408-case component proofs and fresh42-scene evidence are

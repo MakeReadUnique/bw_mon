@@ -1,0 +1,156 @@
+{
+  "report": {
+    "capture_tool": "Mozilla Firefox 140.6.0esr",
+    "html_sha256": "a664aa910a5404ce8759cd374d65687dfe6f608e903047b4d8d8367d4db08590",
+    "input": "evidence/results.json",
+    "input_sha256": "cee554545b17a39832312ed0e95aa6b3f72893202c01dc3d8d9089698c09a8b5",
+    "kind": "Browser screenshot of recorded test summary; not a new simulator run",
+    "path": "docs/pr-images/test-results.png",
+    "pixels": [
+      1600,
+      1080
+    ],
+    "renderer": "tools/render_pr_report.py",
+    "renderer_sha256": "b996a593f2beb00cf41592c64e25842b09bdb67cd606c2351743403a2a5423fc",
+    "reproduce": [
+      "python3 tools/render_pr_report.py",
+      "mkdir -p .build/report-firefox",
+      "firefox --headless --no-remote --profile .build/report-firefox --screenshot docs/pr-images/test-results.png --window-size 1600,1080 file://ABSOLUTE_REPO/.build/pr-report.html"
+    ],
+    "sha256": "abd8568921ab6694f594f92dce89e80c7a5b298097a8d6bd112c105891a178f3"
+  },
+  "verdi": {
+    "metadata_commit": "b22e32e1beb704beb290e65f7af20bbe44065a34",
+    "metadata_path": "artifacts/review-analog/views.json",
+    "note": "Original Verdi PNG bytes are unchanged. Waveform data is restored only on explicit request.",
+    "original_human_confirmation": "https://github.com/MakeReadUnique/bw_mon/issues/33#issuecomment-6411618527",
+    "unchanged_images": [
+      {
+        "basis": "ns",
+        "cursor_ns": 105.5,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/child_reset_ns.png",
+        "range_ns": [
+          100,
+          118
+        ],
+        "scene": "child_reset_ns",
+        "sha256": "2a9e817f785134e991782d9855c2df8f5eea62f1df11dc9eed4cd3b58c0015b6",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "cycle",
+        "cursor_ns": 95,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/clock_stop_cycle.png",
+        "range_ns": [
+          72,
+          114
+        ],
+        "scene": "clock_stop_cycle",
+        "sha256": "04405f2745a26d70254b5c0840223ed1f38e79363580b7bbfde69342f428d3e4",
+        "stride": 2,
+        "width": 20
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 95,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/clock_stop_ns.png",
+        "range_ns": [
+          72,
+          114
+        ],
+        "scene": "clock_stop_ns",
+        "sha256": "8d28ec0525e1d3192d1bf55627875d074db35a641d63d892ce09c2d4c4708e2d",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 91,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/frequency_ns.png",
+        "range_ns": [
+          72,
+          104
+        ],
+        "scene": "frequency_ns",
+        "sha256": "a4077b378a439cfd1953a714c4ee295be4a757ed98002b2250840f87835a6f1a",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 105.5,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/point_reset_ns.png",
+        "range_ns": [
+          100,
+          118
+        ],
+        "scene": "point_reset_ns",
+        "sha256": "9c31e57557693113f4d085930fc4114afe53862482d0568f215523ffaac19674",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 105.5,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/size_unknown_ns.png",
+        "range_ns": [
+          100,
+          118
+        ],
+        "scene": "size_unknown_ns",
+        "sha256": "debd7a38e6ef6f261ab4fac123ee735aa9da38dcb695bca01201170278bb0398",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 40,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/start_stop_ns.png",
+        "range_ns": [
+          10,
+          80
+        ],
+        "scene": "start_stop_ns",
+        "sha256": "dfbb3337574cb0aa2b297d301afb1e41b49beaa388d1be7b9b4b9e7273c452ff",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 50,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/varying_ns.png",
+        "range_ns": [
+          20,
+          156
+        ],
+        "scene": "varying_ns",
+        "sha256": "3cd3cd218390cbde73e8e369b37108521aef0b3355c7b0c48e926816be96e8e1",
+        "stride": 1,
+        "width": 10
+      },
+      {
+        "basis": "ns",
+        "cursor_ns": 138.5,
+        "data_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
+        "path": "artifacts/review-analog/varying_steady_ns.png",
+        "range_ns": [
+          130,
+          142
+        ],
+        "scene": "varying_ns",
+        "sha256": "6cd2116730200da90ce7b1df429c421c02af3f5ad4db9b4edc600c384bafae13",
+        "stride": 1,
+        "width": 10
+      }
+    ]
+  }
+}

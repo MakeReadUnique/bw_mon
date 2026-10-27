@@ -2,11 +2,13 @@
 
 用于 SoC 仿真验证的通用带宽监测器（bandwidth monitor）。目标是提供可复用的 SystemVerilog `module`，观察 master、memory 接口与 NoC 链路，统计带宽并辅助定位传输间隙和长时间反压。
 
-仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](tests/review/compatibility/README.md)及[修订规模/历史验收](tests/scale/revised_evidence/final-campaign/README.md)已实际通过；PR 审查和 issue 关闭与这些测量结果分别记录。
+仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility/README.md)及[修订规模/历史验收](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)已实际通过；PR 审查和 issue 关闭与这些测量结果分别记录。
+
+当前 PR 只保留源码、测试、[最终结果摘要](evidence/README.md)和关键截图。FSDB、完整数据包及中间记录按需从固定历史提交恢复到本地忽略目录，见[复现说明](docs/bw-mon-evidence.md)。`make verify-evidence` 可离线复验已保存的结果。
 
 运行 `make test`，使用 VCS 编译执行组件与公开入口测试；`make acceptance` 运行十二点/四组原始输入到真实 FSDB 的独立对照。配置、公开字段、错误和独立预期见[集成说明](docs/bw-mon-api.md)。
 
-修订后的规模 / 历史验收使用 `python3 tests/scale/revised_suite.py quick|full --cache-mode cold|hot --output-root PATH`。
+日常规模回归使用 `make scale-quick`；完整规模 / 历史验收使用 `make scale-full`，自动准备所需的 COMMON 记录。自选参数见[复现说明](docs/bw-mon-evidence.md)。
 日常入口实际覆盖128点/32组；完整入口真实覆盖16,384点/4,096组、全部拓扑上限及少量范围的80,000沿深历史，串行计时并独立核验。
 预算、固定输入、冷 / 热缓存和可移植证据见[最大拓扑验收](docs/bw-mon-max-topology.md)及[历史验收](docs/bw-mon-history.md)。
 旧的四场 MAX 长跑及历史 MAX 场景保持用户停止 / 未启动身份，不由新入口恢复或计为通过。

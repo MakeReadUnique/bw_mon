@@ -1,25 +1,27 @@
 # Integration, acceptance evidence and review
 
+> 交付目录已精简：当前 PR 保留源码、最终摘要和截图。下面的历史证据链接指向固定提交；本地查看/复验请先看[证据与复现说明](bw-mon-evidence.md)。
+
 The revised maximum-topology/history qualification follows current D16/T7/T8
 and the [M1–M5 mapping](bw-mon-max-topology.md) / [H1–H7 mapping](bw-mon-history.md).
 Its [serial quick/full runner](../tests/scale/revised_suite.py) enforces cold/hot
-budgets and its [portable evidence](../tests/scale/revised_evidence/final-campaign)
+budgets and its [portable evidence](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign)
 keeps maximum-scope, deep-history and shared consumer-lag evidence distinct.
 The original canceled MAX matrix cannot satisfy this new completion gate.
 
-The completed [revised campaign](../tests/scale/revised_evidence/final-campaign/README.md)
+The completed [revised campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)
 uses frozen source `8c8f3d818979479b72fc9ed7f29b905ea9337396`: daily cold/cached
 96.596s/25.528s and complete cold/cached906.636s/829.518s, all within budget.
 Each complete suite checks21,670,663 new raw receipts and16,236,946 windows with
 zero differences, plus15 directed cases and frozen COMMON replay. Both maximum
 cases check every16,384-point/4,096-group scope and all65,536 direct identities.
-The [current compatibility proof](../tests/review/compatibility/README.md) separately
+The [current compatibility proof](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility/README.md) separately
 passes all427 components and42 end-to-end scenes, including exact equality of672
 public scope CSVs and canonical final packets. These are completed measurements;
 PR review and issue closure are tracked separately.
 
 The following earlier production18 proof belongs to the independently reviewed
-final-steady fix `56127495`. The [427-case/168-top proof](../artifacts/acceptance/final-component-proof/verification.json)
+final-steady fix `56127495`. The [427-case/168-top proof](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/final-component-proof/verification.json)
 records component checkout `467b722`; the fresh42-scene public-input campaign
 records its actual simulation checkout `cd07c77`. Their18 production files match
 byte for byte at those recorded checkouts. Current wrappers split the monotonic
@@ -40,9 +42,9 @@ pinned to `23e50de1357afb43b6535ecb9874aa6586889528`. The
 the GitHub review issue is the current review entry point. Later
 documentation/status edits retain the original data identity.
 
-Start at the [scene/gallery index](../artifacts/acceptance/INDEX.md), which links
+Start at the [scene/gallery index](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/INDEX.md), which links
 the original FSDBs, portable public views, fresh images, independent tables and
-per-scene commands. The [earlier scene runtime/native freeze](../artifacts/acceptance/runtime-source.json)
+per-scene commands. The [earlier scene runtime/native freeze](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/runtime-source.json)
 keeps actual scene checkout, production milestone and component checkout distinct.
 Every scene retains version2 source/native receipts and an immutable project
 archive. The actual VCS `.d` lists source+2SDK headers; the separate full survey
@@ -50,18 +52,18 @@ uses the actual implicit `-fPIC -O` options and includes50 native headers.
 SDK/system header contents are not vendored. The427 proof retains its own original
 49-header pre-run record and honest actual-flags50 post-run supplement.
 
-The unchanged [historical424 proof](../artifacts/acceptance/current-component-proof/verification.json),
-[historical408 proof](../artifacts/acceptance/component-proof/verification.json) and
-[8e81839 freeze](../artifacts/acceptance/historical-runtime-source-8e81839.json)
-remain scoped to their original source. The [review history](../artifacts/acceptance/review-history/README.md)
+The unchanged [historical424 proof](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/current-component-proof/verification.json),
+[historical408 proof](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/component-proof/verification.json) and
+[8e81839 freeze](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/historical-runtime-source-8e81839.json)
+remain scoped to their original source. The [review history](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/review-history/README.md)
 preserves earlier agent observations and pending human records. Fresh campaign
-[input/cfg equality](../artifacts/acceptance/input-equivalence.json),
-[oracle equality](../artifacts/acceptance/oracle-equivalence.json),
-[capture provenance](../artifacts/acceptance/capture-provenance.json),
-[detached clean-checkout run](../artifacts/acceptance/clean-checkout-repro.json) and
-[actual relocated-view proof](../artifacts/acceptance/portable-view-proof.json)
+[input/cfg equality](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/input-equivalence.json),
+[oracle equality](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/oracle-equivalence.json),
+[capture provenance](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/capture-provenance.json),
+[detached clean-checkout run](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/clean-checkout-repro.json) and
+[actual relocated-view proof](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/portable-view-proof.json)
 remain directly auditable after temporary builds are removed. The
-[earlier handoff source inventory](../artifacts/acceptance/current-source-manifest.json)
+[earlier handoff source inventory](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/current-source-manifest.json)
 distinguishes actual consumed scene snapshots from later packaging/audit wrappers.
 The [scale guide](bw-mon-scale.md) retains each scale campaign's exact source and
 profile; these small wave scenes do not substitute for scale qualification.
@@ -127,7 +129,7 @@ they do not overwrite the T4 baseline or pretend an absent next edge occurred.
 
 ## Public results and log/error location
 
-[Public field manifest](../artifacts/acceptance/public-fields.json) and each view's
+[Public field manifest](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/public-fields.json) and each view's
 `signals-*.json` provide actual names and fixed paths. Integers/ticks, real values,
 enums and independent quality flags live directly at point AND group scope.
 Window `result_seq`, raw/control/acceptance sequences, stats/source epochs and
@@ -149,7 +151,7 @@ trust, unknown tail, absent stage and incomplete process remain separate conditi
 | BW_HINT_HIT / BW_HINT_END | Local protocol condition, start/trigger/end/duration/reason and independent counts. They never add performance FAIL/WARNING. |
 | BW_CORE_ERROR | Fatal code/scope/time plus expected/received edge/sequence, identity/conflict paths or arithmetic/resource use. Never downgraded to performance WARNING. |
 
-The [concrete error index](../artifacts/acceptance/error-catalog.json) links literal/
+The [concrete error index](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/error-catalog.json) links literal/
 durable codes to source locations and expected-fatal cases. Registry/ownership/
 context/DAG errors locate objects and both overlapping paths; record/time/sequence/
 ACK errors locate expected versus received source data; numeric/storage errors
@@ -206,7 +208,7 @@ scene retains its actual checkout revision and production hashes. The global
 `production_sources` list identifies every consumed runtime; a mixed bundle does
 not claim one current production base or borrow the old component qualification.
 
-The [historical project archive](../artifacts/acceptance/historical-source-8e81839.tar.gz)
+The [historical project archive](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/historical-source-8e81839.tar.gz)
 preserves the23 actual8e81839 project files consumed by the original42 scenes,
 including the original runner/reference scripts. Its bytes were checked against
 all42 existing manifests. The original frozen assets remain unchanged. Editing
@@ -227,10 +229,10 @@ real rows avoid interpolation, and integer bytes/bounds independently establish
 values. No simulation data or raster was altered. Scientific formatting exposes
 exact distinctions such as152 versus151.99. Saved views reference nearby FSDBs.
 
-The [original T6 checklist](../artifacts/acceptance/HUMAN-REVIEW.md) names actual
+The [original T6 checklist](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/HUMAN-REVIEW.md) names actual
 objects, intervals and expected observations across both bases and independent
 variants and retains its generation-time PENDING text. The
-[human ledger](../artifacts/acceptance/review.json) records the user-authored
+[human ledger](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance/review.json) records the user-authored
 confirmation of the nine analog views in [the current review issue](https://github.com/MakeReadUnique/bw_mon/issues/33),
 including confirmation time, exact objects/intervals and hashes. Agent image
 inspection remains separate. The exact viewing time was not separately supplied;

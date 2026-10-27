@@ -1,5 +1,7 @@
 # Revised maximum-topology acceptance
 
+> 交付目录已精简：当前 PR 保留源码、最终摘要和截图。下面的历史证据链接指向固定提交；本地查看/复验请先看[证据与复现说明](bw-mon-evidence.md)。
+
 The current [topology ticket](https://github.com/MakeReadUnique/bw_mon/issues/30)
 uses M1–M5 together with the [history ticket](bw-mon-history.md). The maximum
 16,384 points, 4,096 groups, eight levels, 65,536 direct edges and sixteen direct
@@ -7,7 +9,7 @@ parents remain real public-module requirements. The canceled four 40 μs MAX
 runs retain their incomplete identities; their completion counters do not apply
 to this matrix.
 
-The [completed frozen campaign](../tests/scale/revised_evidence/final-campaign/README.md)
+The [completed frozen campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)
 passed all four serial suites: daily96.596s cold /25.528s cached and
 complete906.636s cold /829.518s cached. Both maximum profiles check all65,536
 direct identities and10,485,760 raw receipts each, with5,242,876 NS windows and
@@ -23,6 +25,7 @@ versions, executable hashes, native headers, compiler options and host load.
 Use one output root and unchanged sources for cold and hot measurements:
 
 ```sh
+python3 tools/evidence.py restore common
 python3 tests/scale/revised_suite.py quick --cache-mode cold --output-root /tmp/bw-revised --lock /tmp/bw-qualification.lock
 python3 tests/scale/revised_suite.py quick --cache-mode hot --output-root /tmp/bw-revised --lock /tmp/bw-qualification.lock
 python3 tests/scale/revised_suite.py full --cache-mode cold --output-root /tmp/bw-revised --lock /tmp/bw-qualification.lock
@@ -142,7 +145,7 @@ maxima are labeled as sums and are not simultaneous global high-water marks.
 RSS includes simulator/checker overhead; it is not a direct product allocation
 counter. No fixed memory cap, dropped events or approximate accounting exists.
 
-The final campaign is [revised_evidence/final-campaign](../tests/scale/revised_evidence/final-campaign).
+The final campaign is [revised_evidence/final-campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign).
 Its four cold/hot suite receipts and portable verifier are the completion gate;
 individual exploratory passes are not substituted for the final source-frozen
 suite. Source snapshots include the exact fixtures and native build receipts.
@@ -152,7 +155,7 @@ measured; the required independent recorded replay is already included in each
 suite's budget.
 
 The original four MAX jobs were stopped by the user and never completed. Their
-[original receipts](../tests/scale/evidence/maximum-qualification/continuation.json)
+[original receipts](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/evidence/maximum-qualification/continuation.json)
 and preparation archives keep their historical checkpoint states. The later
 cancellation is recorded in the [topology ticket](https://github.com/MakeReadUnique/bw_mon/issues/30).
 The old `maximum.py`/`qualify_maximum.py` workflow is an explicitly selected

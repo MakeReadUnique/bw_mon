@@ -1,5 +1,7 @@
 # Exact history acceptance
 
+> 交付目录已精简：当前 PR 保留源码、最终摘要和截图。下面的历史证据链接指向固定提交；本地查看/复验请先看[证据与复现说明](bw-mon-evidence.md)。
+
 The revised [history acceptance ticket](https://github.com/MakeReadUnique/bw_mon/issues/31)
 separates history depth, elapsed time, window expiration, representation, evidence
 ownership and transport retention. Its H1–H7 requirements implement the current
@@ -7,7 +9,7 @@ D16/T7/T8 clauses of the [implementation spec](https://github.com/MakeReadUnique
 The canceled twelve-cell COMMON/MAX long-run matrix is historical evidence. Its
 six completed COMMON cells are not a completion counter for this matrix.
 
-The [completed shared campaign](../tests/scale/revised_evidence/final-campaign/README.md)
+The [completed shared campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)
 passed all seven history cases, both full-scale H6 cases,15 directed H5/H7 checks
 and independent replay in cold and cached modes. The complete two-ticket suites
 took906.636s/829.518s; the longest new history case took20.273s, within300s.
@@ -35,7 +37,7 @@ The combined entry is `python3 tests/scale/revised_suite.py quick|full
 --output-root PATH --cache-mode cold|hot`. Run cold and hot against the same
 unchanged source and output root. The portable archive entry is
 `python3 tests/scale/revised_evidence.py verify DIRECTORY`; the campaign bundle
-is [revised_evidence/final-campaign](../tests/scale/revised_evidence/final-campaign).
+is [revised_evidence/final-campaign](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign).
 
 Run these commands serially with other qualification work. The coordinated
 campaign holds one `qualification.lock` for costly generation, compilation,
@@ -154,7 +156,7 @@ assumptions explicitly.
 
 ## Historical evidence and source applicability
 
-The immutable [six COMMON bundles](../tests/scale/history_evidence/final-campaign/README.md)
+The immutable [six COMMON bundles](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/history_evidence/final-campaign/README.md)
 retain their original source, commands, actual inputs/results, native dependencies,
 RSS and independent audit. Offline replay at the revision baseline passed all
 614,016,000 raw checks and307,132,157 window checks, zero differences. Their

@@ -1,9 +1,0 @@
-{
-  "asset_commit": "59fc046a154945b6a6ae60220e663f7d5ee12bb6",
-  "asset_fingerprint": "863af4f477409bf3e36af90f8fd7b2ffc7d008e2281f83fef759607482eeadee",
-  "scope": "Immutable actual42 FSDB/source/input/config/reference/view/image bundle; later documentation and review-status commits do not change its data identity",
-  "actual_scene_checkout": "cd07c77fcb706022069a9496bcf72d4354c1d2f8",
-  "production_milestone": "56127495f597d215003000356ac3b5387cc809a1",
-  "component_proof_checkout": "467b722cde3ea00e8eb8ed0e97dcc72d4dc67aa9",
-  "human_review": "PENDING"
-}
