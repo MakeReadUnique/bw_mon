@@ -1,0 +1,82 @@
+{
+  "source_fsdb_sha256": "b2c7602940f16035c3b179a0e0a3bcee92f07961cffa42d3eebbcd677514c34f",
+  "source_unchanged": true,
+  "derived_fsdb_sha256": "7ebd142401b6d0682f7e7f08c338b7b44a39555635f072a0047acd0967fe6aa3",
+  "original_mapping": {
+    "g2": "/tb_cfg_group_probe/wave_slots[0]",
+    "g1": "/tb_cfg_group_probe/wave_slots[1]"
+  },
+  "derived_mapping": {
+    "g2": "/tb_cfg_group_probe/g2",
+    "g1": "/tb_cfg_group_probe/g1"
+  },
+  "commands": [
+    [
+      "fsdbextract",
+      "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/evidence/second/waves.fsdb",
+      "-nolog",
+      "-seq",
+      "-s",
+      "/tb_cfg_group_probe/wave_slots[0]",
+      "-level",
+      "0",
+      "/tb_cfg_group_probe/wave_slots[1]",
+      "-level",
+      "0",
+      "-o",
+      "/tmp/bw-mon-cfg-group-verdi/.build/native-hierarchy/selected.fsdb"
+    ],
+    [
+      "fsdbedit",
+      "/tmp/bw-mon-cfg-group-verdi/.build/native-hierarchy/selected.fsdb",
+      "-rename_scope",
+      "tb_cfg_group_probe/wave_slots[0]",
+      "g2",
+      "-o",
+      "/tmp/bw-mon-cfg-group-verdi/.build/native-hierarchy/g2.fsdb"
+    ],
+    [
+      "fsdbedit",
+      "/tmp/bw-mon-cfg-group-verdi/.build/native-hierarchy/g2.fsdb",
+      "-rename_scope",
+      "tb_cfg_group_probe/wave_slots[1]",
+      "g1",
+      "-o",
+      "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/native-hierarchy/evidence/groups.fsdb"
+    ],
+    [
+      "fsdbreport",
+      "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/native-hierarchy/evidence/groups.fsdb",
+      "-nolog",
+      "-csv",
+      "-s",
+      "/tb_cfg_group_probe/g2/group_id",
+      "/tb_cfg_group_probe/g2/active",
+      "/tb_cfg_group_probe/g2/bandwidth_gbps",
+      "/tb_cfg_group_probe/g2/result_seq",
+      "/tb_cfg_group_probe/g2/window_bytes",
+      "/tb_cfg_group_probe/g2/window_full",
+      "/tb_cfg_group_probe/g2/bytes_complete",
+      "/tb_cfg_group_probe/g2/probe_state",
+      "/tb_cfg_group_probe/g1/group_id",
+      "/tb_cfg_group_probe/g1/active",
+      "/tb_cfg_group_probe/g1/bandwidth_gbps",
+      "/tb_cfg_group_probe/g1/result_seq",
+      "/tb_cfg_group_probe/g1/window_bytes",
+      "/tb_cfg_group_probe/g1/window_full",
+      "/tb_cfg_group_probe/g1/bytes_complete",
+      "/tb_cfg_group_probe/g1/probe_state",
+      "-o",
+      "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/native-hierarchy/evidence/signals.csv"
+    ]
+  ],
+  "extraction_environment": {
+    "FSDB_ENV_MAX_GLITCH_NUM": "0"
+  },
+  "source_rows": 26,
+  "signals_checked": 16,
+  "all_exported_timestamps_and_values_equal": true,
+  "simulation_rerun": false,
+  "compilation": false,
+  "scope": "Selected public fields in this small probe only; no general losslessness or scale claim"
+}

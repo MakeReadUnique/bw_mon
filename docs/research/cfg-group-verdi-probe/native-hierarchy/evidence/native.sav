@@ -1,0 +1,76 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 54 237 960 332 100 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "groups.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+windowTimeUnit 1ns
+
+; waveform viewport range
+zoom 0.000000 49.000000 1n
+cursor 18.001000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 3
+; marker line index
+markerPos 7
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "groups.fsdb"
+addSignal -h 15 /tb_cfg_group_probe/g1/group_id
+addSignal -w analog -ds pwc -c ID_RED5 -ls solid -lw 2 -h 150 -holdScope bandwidth_gbps
+addSignal -h 15 -UNSIGNED -HEX -holdScope result_seq[63:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope window_bytes[63:0]
+addSignal -h 15 -holdScope window_full
+addSignal -h 15 -UNSIGNED -holdScope probe_state[1:0]
+addSignal -w analog -ds pwc -c ID_ORANGE5 -ls solid -lw 2 -h 150 /tb_cfg_group_probe/g2/bandwidth_gbps
+addGroup "G2"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "groups.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm open
+
+"/tb_cfg_group_probe"
+
+SCOPE_LIST_BEGIN
+"/tb_cfg_group_probe"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+

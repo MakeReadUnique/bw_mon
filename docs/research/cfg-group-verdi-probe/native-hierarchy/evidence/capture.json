@@ -1,0 +1,27 @@
+{
+  "command": [
+    "verdi",
+    "-nWave",
+    "-ssf",
+    "/tmp/bw-mon-cfg-group-verdi/docs/research/cfg-group-verdi-probe/native-hierarchy/evidence/groups.fsdb",
+    "-play",
+    "/tmp/bw-mon-cfg-group-verdi/.build/native-hierarchy/view/capture.tcl"
+  ],
+  "derived_fsdb_sha256": "7ebd142401b6d0682f7e7f08c338b7b44a39555635f072a0047acd0967fe6aa3",
+  "no_display_aliases": true,
+  "native_tree_query": "SCOPES g1 g2\nG1_SIGNALS active bandwidth_gbps bytes_complete group_id probe_state[1:0] result_seq[63:0] window_bytes[63:0] window_full\n",
+  "signals_added_by_native_path": [
+    "/tb_cfg_group_probe/g1/group_id",
+    "/tb_cfg_group_probe/g1/bandwidth_gbps",
+    "/tb_cfg_group_probe/g1/result_seq",
+    "/tb_cfg_group_probe/g1/window_bytes",
+    "/tb_cfg_group_probe/g1/window_full",
+    "/tb_cfg_group_probe/g1/probe_state",
+    "/tb_cfg_group_probe/g2/bandwidth_gbps"
+  ],
+  "image_capture": "ImageMagick import of the native Get Signals window on isolated Xvfb",
+  "raster_postprocessing": false,
+  "agent_visual_review": "PASS: actual Get Signals browser shows native g1/g2 children; no display aliases; human drag-and-drop not signed off",
+  "human_review": "PENDING",
+  "user_contract_result": "REJECTED: user requires matching real SV instance and source hierarchy, and has withdrawn both cfg-created groups and cfg membership edits"
+}

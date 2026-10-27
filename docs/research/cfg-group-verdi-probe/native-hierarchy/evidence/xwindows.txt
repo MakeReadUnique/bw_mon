@@ -1,0 +1,248 @@
+
+xwininfo: Window id: 0x50e (the root window) (has no name)
+
+  Root window id: 0x50e (the root window) (has no name)
+  Parent window id: 0x0 (none)
+     24 children:
+     0x6000dc "Get Signals": ("Novas" "novas")  800x479+134+267  +134+267
+        34 children:
+        0x6002af "novas": ("Novas" "novas")  17x17+783+462  +917+729
+        0x600136 "novas": ("Novas" "novas")  80x22+711+445  +845+712
+        0x600134 "novas": ("Novas" "novas")  80x22+626+445  +760+712
+        0x600132 "novas": ("Novas" "novas")  80x22+541+445  +675+712
+        0x600130 "novas": ("Novas" "novas")  58x23+345+444  +479+711
+        0x60012e "novas": ("Novas" "novas")  24x24+276+444  +410+711
+        0x60012c "novas": ("Novas" "novas")  3x24+268+444  +402+711
+        0x60012a "novas": ("Novas" "novas")  24x24+0+0  +134+267
+        0x600128 "novas": ("Novas" "novas")  100x30+0+0  +134+267
+        0x600126 "novas": ("Novas" "novas")  24x24+239+444  +373+711
+        0x600124 "novas": ("Novas" "novas")  24x24+210+444  +344+711
+        0x600122 "novas": ("Novas" "novas")  24x24+181+444  +315+711
+        0x600120 "novas": ("Novas" "novas")  24x24+152+444  +286+711
+        0x60011e "novas": ("Novas" "novas")  24x24+123+444  +257+711
+        0x60011c "novas": ("Novas" "novas")  24x24+94+444  +228+711
+        0x60011a "novas": ("Novas" "novas")  80x22+9+445  +143+712
+        0x600118 "novas": ("Novas" "novas")  790x3+5+436  +139+703
+        0x6000fe "novas": ("Novas" "novas")  782x391+9+40  +143+307
+           6 children:
+           0x600116 "novas": ("Novas" "novas")  6x391+576+0  +719+307
+           0x600114 "novas": ("Novas" "novas")  6x391+169+0  +312+307
+           0x600112 "novas": ("Novas" "novas")  100x30+0+0  +143+307
+           0x600110 "novas": ("Novas" "novas")  169x391+0+0  +143+307
+           0x60010e "novas": ("Novas" "novas")  401x391+175+0  +318+307
+           0x600100 "novas": ("Novas" "novas")  200x391+582+0  +725+307
+              1 child:
+              0x600104 "novas": ("Novas" "novas")  196x387+2+2  +727+309
+                 5 children:
+                 0x60010a "novas": ("Novas" "novas")  14x385+181+1  +908+310
+                 0x6002b1 "novas": ("Novas" "novas")  14x14+181+372  +908+681
+                 0x600108 "novas": ("Novas" "novas")  180x14+1+372  +728+681
+                 0x6002ad "novas": ("Novas" "novas")  194x15+1+372  +728+681
+                 0x600106 "novas": ("Novas" "novas")  180x385+1+1  +728+310
+                    1 child:
+                    0x60010c "novas": ("Novas" "novas")  180x559+0+0  +728+310
+        0x6000fc "novas": ("Novas" "novas")  24x24+0+0  +134+267
+        0x6000fa "novas": ("Novas" "novas")  24x24+767+11  +901+278
+        0x6000f8 "novas": ("Novas" "novas")  24x24+738+11  +872+278
+        0x6000f6 "novas": ("Novas" "novas")  24x24+709+11  +843+278
+        0x6000f4 "novas": ("Novas" "novas")  24x24+680+11  +814+278
+        0x6000f2 "novas": ("Novas" "novas")  24x24+651+11  +785+278
+        0x6000f0 "novas": ("Novas" "novas")  24x24+622+11  +756+278
+        0x6000ee "novas": ("Novas" "novas")  24x24+593+11  +727+278
+        0x6000ec "novas": ("Novas" "novas")  118x22+470+12  +604+279
+           1 child:
+           0x6002ab "novas": ("Novas" "novas")  98x17+2+3  +606+282
+        0x6000ea "novas": ("Novas" "novas")  47x14+418+16  +552+283
+        0x6000e8 "novas": ("Novas" "novas")  24x24+389+11  +523+278
+        0x6000e6 "novas": ("Novas" "novas")  24x24+360+11  +494+278
+        0x6000e4 "novas": ("Novas" "novas")  236x22+119+12  +253+279
+           1 child:
+           0x6002a9 "novas": ("Novas" "novas")  216x17+2+3  +255+282
+        0x6000e2 "novas": ("Novas" "novas")  47x14+67+16  +201+283
+        0x6000e0 "novas": ("Novas" "novas")  24x24+38+11  +172+278
+        0x6000de "novas": ("Novas" "novas")  24x24+9+11  +143+278
+     0x200305 "Confirm": ("errorDialog_popup" "TopLevelShell")  5x5+200+200  +200+200
+     0x200304 "Confirm": ("errorDialog_popup" "TopLevelShell")  5x5+200+200  +200+200
+     0x200302 "Error": ("errorDialog_popup" "TopLevelShell")  5x5+200+200  +200+200
+     0x800004 "verdi": ("verdi" "Tk")  1x1+0+0  +0+0
+        1 child:
+        0x800003 (has no name): ()  1x1+0+0  +0+0
+     0x800001 (has no name): ()  1x1+0+0  +0+0
+     0x6000b7 "novas": ("Novas" "novas")  100x30+0+0  +0+0
+     0x600006 "*<nWave:1> /tmp/.../native-hierarchy/evidence/groups.fsdb": ("Novas" "novas")  960x332+54+237  +54+237
+        18 children:
+        0x6000ad "novas": ("Novas" "novas")  960x22+0+310  +54+547
+        0x600047 "novas": ("Novas" "novas")  100x30+0+0  +54+237
+        0x600045 "novas": ("Novas" "novas")  100x30+0+0  +54+237
+        0x600043 "novas": ("Novas" "novas")  34x25+926+22  +980+259
+        0x600041 "novas": ("Novas" "novas")  100x30+0+0  +54+237
+        0x60003f "novas": ("Novas" "novas")  100x30+0+0  +54+237
+        0x60003d "novas": ("Novas" "novas")  100x30+0+0  +54+237
+        0x60003b "novas": ("Novas" "novas")  43x25+883+22  +937+259
+        0x600039 "novas": ("Novas" "novas")  67x25+893+22  +947+259
+           3 children:
+           0x60017c "novas": ("Novas" "novas")  71x22+55+1  +1002+260
+           0x6000d5 "novas": ("Novas" "novas")  12x22+56+0  +1003+259
+           0x6000d3 "novas": ("Novas" "novas")  46x25+9+0  +956+259
+        0x600037 "novas": ("Novas" "novas")  34x25+782+22  +836+259
+        0x600035 "novas": ("Novas" "novas")  282x25+611+22  +665+259
+           9 children:
+           0x60023f "novas": ("Novas" "novas")  80x22+177+1  +842+260
+           0x60023d "novas": ("Novas" "novas")  24x24+153+0  +818+259
+           0x60023b "novas": ("Novas" "novas")  80x22+73+1  +738+260
+           0x60017a "novas": ("Novas" "novas")  25x25+98+0  +763+259
+           0x600178 "novas": ("Novas" "novas")  25x25+73+0  +738+259
+           0x600176 "novas": ("Novas" "novas")  34x25+39+0  +704+259
+           0x600174 "novas": ("Novas" "novas")  30x25+9+0  +674+259
+           0x6000d1 "novas": ("Novas" "novas")  12x25+271+0  +936+259
+           0x6000cf "novas": ("Novas" "novas")  71x22+9+1  +674+260
+        0x600033 "novas": ("Novas" "novas")  84x25+527+22  +581+259
+        0x600031 "novas": ("Novas" "novas")  100x30+0+0  +54+237
+        0x60002f "novas": ("Novas" "novas")  359x25+168+22  +222+259
+           8 children:
+           0x6000da "novas": ("Novas" "novas")  12x25+36+0  +258+259
+           0x6000cc "novas": ("Novas" "novas")  41x19+318+3  +540+262
+           0x6000ca "novas": ("Novas" "novas")  75x25+243+0  +465+259
+           0x6000c8 "novas": ("Novas" "novas")  34x25+209+0  +431+259
+           0x6000c6 "novas": ("Novas" "novas")  75x22+134+1  +356+260
+           0x6000c4 "novas": ("Novas" "novas")  25x25+109+0  +331+259
+           0x6000c2 "novas": ("Novas" "novas")  75x22+34+1  +256+260
+           0x6000c0 "novas": ("Novas" "novas")  25x25+9+0  +231+259
+        0x60002d "novas": ("Novas" "novas")  109x25+59+22  +113+259
+        0x60002b "novas": ("Novas" "novas")  59x25+0+22  +54+259
+        0x600029 "novas": ("Novas" "novas")  960x22+0+0  +54+237
+           1 child:
+           0x6000d7 "novas": ("Novas" "novas")  21x21+938+0  +992+237
+        0x600009 "novas": ("Novas" "novas")  960x263+0+47  +54+284
+           1 child:
+           0x60000b "novas": ("Novas" "novas")  960x263+0+0  +54+284
+              4 children:
+              0x600027 "novas": ("Novas" "novas")  1x1+0+0  +54+284
+              0x600025 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+              0x600023 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                 4 children:
+                 0x60005d "novas": ("Novas" "novas")  1x1+0+0  +54+284
+                 0x60005b "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                 0x60004d "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                    1 child:
+                    0x600051 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                       3 children:
+                       0x600057 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                       0x600055 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                       0x600053 "novas": ("Novas" "novas")  98x28+1+1  +55+285
+                          1 child:
+                          0x600059 "novas": ("Novas" "novas")  100x50+0+0  +55+285
+                 0x60004b "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                    4 children:
+                    0x600089 "novas": ("Novas" "novas")  1x1+0+0  +54+284
+                    0x600087 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                    0x600079 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                       1 child:
+                       0x60007d "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                          3 children:
+                          0x600083 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                          0x600081 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                          0x60007f "novas": ("Novas" "novas")  98x28+1+1  +55+285
+                             1 child:
+                             0x600085 "novas": ("Novas" "novas")  100x50+0+0  +55+285
+                    0x600077 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                       1 child:
+                       0x600099 "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                          3 children:
+                          0x60009f "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                          0x60009d "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                          0x60009b "novas": ("Novas" "novas")  98x28+1+1  +55+285
+                             1 child:
+                             0x6000a1 "novas": ("Novas" "novas")  100x50+0+0  +55+285
+              0x60000d "novas": ("Novas" "novas")  960x263+0+0  +54+284
+                 4 children:
+                 0x600021 "novas": ("Novas" "novas")  7x263+98+0  +152+284
+                 0x60001f "novas": ("Novas" "novas")  100x30+0+0  +54+284
+                 0x600011 "novas": ("Novas" "novas")  100x263+0+0  +54+284
+                    1 child:
+                    0x600015 "novas": ("Novas" "novas")  100x263+0+0  +54+284
+                       5 children:
+                       0x600207 "novas": ("Novas" "novas")  14x14+85+248  +139+532
+                       0x60001b "novas": ("Novas" "novas")  14x247+85+1  +139+285
+                       0x600019 "novas": ("Novas" "novas")  84x14+1+248  +55+532
+                       0x6000be "novas": ("Novas" "novas")  98x15+1+248  +55+532
+                       0x600017 "novas": ("Novas" "novas")  84x247+1+1  +55+285
+                          1 child:
+                          0x60001d "novas": ("Novas" "novas")  359x501+0+0  +55+285
+                 0x60000f "novas": ("Novas" "novas")  857x263+103+0  +157+284
+                    6 children:
+                    0x600075 "novas": ("Novas" "novas")  7x263+63+0  +220+284
+                    0x600073 "novas": ("Novas" "novas")  1x1+0+0  +157+284
+                    0x600071 "novas": ("Novas" "novas")  100x30+0+0  +157+284
+                    0x600063 "novas": ("Novas" "novas")  65x263+0+0  +157+284
+                       1 child:
+                       0x600067 "novas": ("Novas" "novas")  65x263+0+0  +157+284
+                          4 children:
+                          0x60006b "novas": ("Novas" "novas")  63x14+1+248  +158+532
+                          0x6000bb "novas": ("Novas" "novas")  63x15+1+248  +158+532
+                          0x60006d "novas": ("Novas" "novas")  100x30+0+0  +157+284
+                          0x600069 "novas": ("Novas" "novas")  63x261+1+1  +158+285
+                             1 child:
+                             0x60006f "novas": ("Novas" "novas")  63x501+0+0  +158+285
+                    0x600061 "novas": ("Novas" "novas")  100x30+0+0  +157+284
+                    0x60005f "novas": ("Novas" "novas")  789x263+68+0  +225+284
+                       1 child:
+                       0x60008d "novas": ("Novas" "novas")  789x263+0+0  +225+284
+                          4 children:
+                          0x600093 "novas": ("Novas" "novas")  14x247+774+1  +999+285
+                          0x600091 "novas": ("Novas" "novas")  773x14+1+248  +226+532
+                          0x6000b9 "novas": ("Novas" "novas")  14x14+774+248  +999+532
+                          0x60008f "novas": ("Novas" "novas")  773x247+1+1  +226+285
+                             1 child:
+                             0x600095 "novas": ("Novas" "novas")  781x501+0+0  +226+285
+     0x6000ab "novas": ("Novas" "novas")  100x30+0+0  +0+0
+     0x6000a9 "novas": ("Novas" "novas")  100x30+0+0  +0+0
+     0x6000a3 "<Verdi:nWave>": ("Novas" "novas")  640x480+0+0  +0+0
+        3 children:
+        0x6000af "novas": ("Novas" "novas")  100x30+0+0  +0+0
+           3 children:
+           0x6000b5 "novas": ("Novas" "novas")  243x25+0+0  +0+0
+           0x6000b3 "novas": ("Novas" "novas")  100x30+0+0  +0+0
+           0x6000b1 "novas": ("Novas" "novas")  100x30+0+0  +0+0
+        0x6000a7 "novas": ("Novas" "novas")  100x30+0+0  +0+0
+        0x6000a5 "novas": ("Novas" "novas")  100x30+0+0  +0+0
+     0x600008 "novas": ()  1x1+0+0  +0+0
+     0x600004 "Qt Selection Owner for Novas": ()  3x3+0+0  +0+0
+     0x2002fe "Information": ("infoDialog_popup" "TopLevelShell")  750x250+100+200  +100+200
+     0x400001 (has no name): ()  10x10+-100+-100  +-100+-100
+     0x2002f7 "Warning": ("warningDialog_popup" "TopLevelShell")  600x250+100+200  +100+200
+     0x2002f6 "*Memory Error*": ("MemError_popup" "TopLevelShell")  5x5+200+200  +200+200
+     0x2002f1 "Question": ("Q3Dialog_popup" "TopLevelShell")  5x5+200+200  +200+200
+     0x2002e5 (has no name): ()  5x5+0+0  +0+0
+        1 child:
+        0x2002e6 (has no name): ()  143x126+0+0  +0+0
+           9 children:
+           0x2002ef (has no name): ()  133x19+5+104  +5+104
+           0x2002ee (has no name): ()  133x2+5+102  +5+102
+           0x2002ed (has no name): ()  133x19+5+83  +5+83
+           0x2002ec (has no name): ()  133x19+5+64  +5+64
+           0x2002eb (has no name): ()  133x2+5+62  +5+62
+           0x2002ea (has no name): ()  133x19+5+43  +5+43
+           0x2002e9 (has no name): ()  133x19+5+24  +5+24
+           0x2002e8 (has no name): ()  133x2+5+22  +5+22
+           0x2002e7 (has no name): ()  133x19+5+3  +5+3
+     0x2002d3 (has no name): ()  5x5+0+0  +0+0
+        1 child:
+        0x2002d4 (has no name): ()  143x126+0+0  +0+0
+           9 children:
+           0x2002e4 (has no name): ()  133x19+5+104  +5+104
+           0x2002e3 (has no name): ()  133x2+5+102  +5+102
+           0x2002e2 (has no name): ()  133x19+5+83  +5+83
+           0x2002e1 (has no name): ()  133x19+5+64  +5+64
+           0x2002db (has no name): ()  133x2+5+62  +5+62
+           0x2002da (has no name): ()  133x19+5+43  +5+43
+           0x2002d9 (has no name): ()  133x19+5+24  +5+24
+           0x2002d8 (has no name): ()  133x2+5+22  +5+22
+           0x2002d7 (has no name): ()  133x19+5+3  +5+3
+     0x2002cd (has no name): ()  5x5+0+0  +0+0
+        1 child:
+        0x2002d2 (has no name): ()  16x16+0+0  +0+0
+     0x200009 "verdi": ("verdi" "TopLevelShell")  1x1+0+0  +0+0
+     0x200002 (has no name): ()  1x1+0+0  +0+0
+     0x200001 "Novas": ("Novas" "TurboWave")  1x1+0+0  +0+0
+

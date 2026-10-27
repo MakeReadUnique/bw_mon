@@ -1,0 +1,2 @@
+SCOPES g1 g2
+G1_SIGNALS active bandwidth_gbps bytes_complete group_id probe_state[1:0] result_seq[63:0] window_bytes[63:0] window_full
