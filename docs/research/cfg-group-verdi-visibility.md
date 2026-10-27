@@ -6,14 +6,19 @@
 
 ## 所核实的要求
 
-已经接入 p0/p1，编译一次后，只在第二次启动使用的 cfg 中加入 g1 并让 g2 引用它。需要能够在离线 Verdi/nWave 中找到 g1 的连续 `real` 带宽以及整数、质量、阶段、过程、结果序号和复位状态波形。只多出文本报告或一个登记项不满足此要求。
+已经接入 p0/p1，编译一次后，只在第二次启动使用的 cfg 中加入 g1 并让 g2 引用它。本票核实能否在离线 Verdi/nWave 中找到 g1 的连续 `real` 带宽和普通状态信号；用整数、质量位、结果序号及枚举验证相关类型的承载。完整阶段、过程和复位状态属于后续产品观测契约，本探针不生成或验收这些语义。只多出文本报告或一个登记项不满足此要求。
 
 本研究核实观测能力，不把探针当作完整聚合统计实现，不决定时钟、复位、配置来源和资源规模。
+
+### 当前产品基线
+
+研究基线是产品提交 `fa20d9cb15731e68255d83fb80f950f62c24fb9c`。[`bw_group_mon`](https://github.com/MakeReadUnique/bw_mon/blob/fa20d9cb15731e68255d83fb80f950f62c24fb9c/rtl/bw_group_mon.sv#L23)具有 `clk/reset_n`、公开标量和逐沿收集逻辑，并在模块内例化统计核心；[组登记对象](https://github.com/MakeReadUnique/bw_mon/blob/fa20d9cb15731e68255d83fb80f950f62c24fb9c/rtl/bw_mon_registry_types.svh#L32)保存身份、成员及拓扑信息。仅在登记表中加入 Group ID 不会自动得到这些模块行为。因此，下文的运行期对象加静态槽位是独立工具探针，不表示现有产品已具备文件新增组的统计与波形能力。
 
 ## 官方资料明确支持的能力
 
 | 事实 | 一手资料及定位 | 可以得出的结论 |
 | --- | --- | --- |
+| VCS 三步流程在 elaboration 时建立实例层级并生成 `simv`，随后由该可执行文件运行仿真。 | [S7]，Three-step Flow → Elaboration。 | 启动 cfg 中的逻辑身份与编译时建立的模块层级是两种对象；本探针的 cfg 不创建新的 module 实例。 |
 | 普通 FSDB dumping 支持 module、generate、package、interface 等层级中的标量，以及 `int`、`longint`、`enum`、`real`、`realtime` 等类型。 | [S1]，第 48–49 页，默认 hierarchy construct / non-MDA atom data type 表。 | 若每个运行期聚合组把公开观测值更新到预先存在的标量信号，所需基本类型有正式 dumping 支持。 |
 | VCS 使用 `-debug_access` 启用 FSDB；`$fsdbDumpfile` / `$fsdbDumpvars` 或 UCLI 可以开始录波。 | [S2]，Dumping FSDB File for Various Flows。 | 调试可见性必须在编译和录波流程中启用；cfg 创建逻辑对象不会自动替用户补录未记录的数据。 |
 | Verdi 交互调试能把 class 对象及其数据成员加入 nWave；class 对象本身的值是对象指针，展开后可看成员。 | [S3]，第 81–82 页，Dumping Dynamic Objects。 | 不能笼统说“class 在 Verdi 看不到”。 |
@@ -25,7 +30,7 @@
 
 推导出的候选方式是：内部在编译时预留观测槽位，启动读取 cfg 后自动把 Group ID 绑定到槽位，再把该组的公开结果写入其中。例：`group_view[1].group_id = "g1"` 与 `group_view[1].bw_GBps`。cfg 用户不填写槽号，不为每个新 Group ID 例化 module。
 
-这里需要区分 Group ID 和 SV module 路径。Group ID 是运行期身份；已有的观测槽位是静态层级。新增 Group ID 不意味着同一个 `simv` 会凭 cfg 新建一个名为 `g1` 的 SV module 层级。用动态对象也同样不等于创建 module 实例。普通 SV 静态层级在 elaboration 阶段形成；本候选方案避免依赖运行期新增静态层级。
+这里需要区分 Group ID 和 SV module 路径。Group ID 是运行期身份；已有的观测槽位是静态层级。新增 Group ID 不意味着同一个 `simv` 会凭 cfg 新建一个名为 `g1` 的 SV module 层级。用动态对象也同样不等于创建 module 实例。VCS 在 elaboration 阶段建立实例层级 [S7]；本候选方案避免依赖运行期新增静态层级。
 
 此方案是否可接受还有两个明确边界：
 
@@ -58,6 +63,8 @@
 - [第一次真实 Verdi 截图](cfg-group-verdi-probe/evidence/first/view.png)和[第二次真实 Verdi 截图](cfg-group-verdi-probe/evidence/second/view.png)均由 nWave 的 `wvCapture` 直接输出，没有图像后处理。nWave 实际执行 `wvAddSignal`，随后保存可重开的 `.sav`。曲线使用 analog 阶梯保持；连线不表示产生了额外统计样本。
 - 新 g1 的路径为 `/tb_cfg_group_probe/wave_slots[1]/bandwidth_gbps`，同一层级 `group_id="g1"`。18.001 ns 的 nWave 光标值为 g1 **16 GB/s**、g2 **22 GB/s**；32.001 ns 两者为 0；40.001 ns 为 g1 **8 GB/s**、g2 **12 GB/s**。[原始光标读数](cfg-group-verdi-probe/evidence/second/nwave-values.tsv)与[截图取证清单](cfg-group-verdi-probe/evidence/second/capture.json)可核对。
 - 原始 [第一次 FSDB](cfg-group-verdi-probe/evidence/first/waves.fsdb) 与 [第二次 FSDB](cfg-group-verdi-probe/evidence/second/waves.fsdb)随研究分支保存。查看过程没有修改这两个文件。
+
+本轮收口时重新核对了保留的 `simv` 及两份共享对象，均与清单指纹一致；从两份原始 FSDB 再次导出的 CSV/VCD 与冻结证据逐字节相同，独立核验仍为 72/72。随后在隔离临时目录重新启动 nWave，加信号、读取上述三处光标值并直接截图，两次均通过，代理也查看了新截图。原始 FSDB 和已发布截图保持不变；该复核没有把尚待用户讨论的观测契约标为已接受。
 
 ### 证据边界
 
@@ -96,8 +103,11 @@ verdi -nWave -ssf waves.fsdb -play open.tcl
 - **[S1]** Synopsys，*Verdi Linking Novas Files with Simulators and Enabling FSDB Dumping Manual*，W-2024.09-SP1，第 48–49 页。本机原件：`/home/eda/app/synopsys/verdi/W-2024.09-SP1/doc/verdi_linking_dumping.pdf`。
 - **[S2]** Synopsys，*VCS User Guide*，W-2024.09-SP1，Debugging With Verdi → Dumping FSDB File for Various Flows。本机 HTML：`/home/eda/app/synopsys/vcs/W-2024.09-SP1/doc/UserGuide/html/vcs_user_guide/debugging_with_verdi/dumping_fsdb_file_for_various_flows.html`。
 - **[S3]** Synopsys，*Verdi SVTB Interactive Simulation Debug User Guide*，W-2024.09-SP1，第 81–82、171 页。本机原件：`/home/eda/app/synopsys/verdi/W-2024.09-SP1/doc/verdi_svtb_interactive_debug.pdf`。
-- **[S4]** Synopsys，*Verdi UVM Debug User Guide*，W-2024.09-SP1，第 114–118 页。本机原件：`/home/eda/app/synopsys/verdi/W-2024.09-SP1/doc/verdi_uvm_debug_ug.pdf`。
+- **[S4]** Synopsys，*Verdi UVM Debug User Guide*，W-2024.09-SP1，第 113–118 页。本机原件：`/home/eda/app/synopsys/verdi/W-2024.09-SP1/doc/verdi_uvm_debug_ug.pdf`。
 - **[S5]** Synopsys，*VCS User Guide*，W-2024.09-SP1，Compiling/Elaborating Design → Optimizing Simulation Performance for Desired Debug Visibility With the -debug_access Option。本机 HTML：`/home/eda/app/synopsys/vcs/W-2024.09-SP1/doc/UserGuide/html/vcs_user_guide/compiling_elaborating_design/optimizing_simulation_performance_for_desired_debug_visibility_with_debug_access_option.html`。
 - **[S6]** Synopsys 官方公开说明：[Verdi Waveform Utilities](https://www.synopsys.com/blogs/chip-design/verdi-waveform-utilities.html)。它确认 FSDB 可用批处理工具抽取信号、报告值变化及转换 VCD，但未给出本研究动态 group 的实现契约；因此只作为批处理验证手段的背景。
+- **[S7]** Synopsys，*VCS User Guide*，W-2024.09-SP1，VCS Flow → Three-step Flow → Elaboration。本机 HTML：`/home/eda/app/synopsys/vcs/W-2024.09-SP1/doc/UserGuide/html/vcs_user_guide/vcs_flow/three_step_flow.html`。
+
+2026-10-27 再次核对了 [S1]–[S5]、[S7] 原件及 [S6] 公开网页。[S1]、[S3]、[S4] 的封面版本均为 W-2024.09-SP1（December 2024）；上述页码为手册正文页码，与本机 PDF 页序一致。对动态容器及 `inter.fsdb` 的限制只归属于 [S3] 的交互调试流程，不据此否定其他离线动态对象录波流程。
 
 已浏览公开官方资料；决定类型与 dumping 范围的依据以上述安装版本手册为主。IEEE 1800-2023 的[官方条目](https://ieeexplore.ieee.org/document/10458102)可检索，但正文网页被访问校验拦住，本报告没有把未读取的标准正文当作证据。
