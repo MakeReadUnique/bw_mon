@@ -1,0 +1,53 @@
+{
+  "revision": "r2",
+  "authorization": "用户在第一轮结果后要求继续修复；本轮只执行一次固定专项",
+  "started": "2026-10-27T18:28:00.575Z",
+  "limitSeconds": 900,
+  "stages": [
+    {
+      "name": "固定输入生成与工具准备",
+      "seconds": 0.015882883
+    },
+    {
+      "name": "一次 VCS 冷编译",
+      "seconds": 5.035236297
+    },
+    {
+      "name": "同一个 simv 执行四份输入",
+      "seconds": 9.414748837
+    },
+    {
+      "name": "窗口独立对照、候选模型、检查器与完整核验",
+      "seconds": 0.06099859299999899
+    },
+    {
+      "name": "保存全部输入、逐窗证据与交互图表",
+      "seconds": 0.1567437800000011
+    },
+    {
+      "name": "清理冷构建产物",
+      "seconds": 0.002080765999998846
+    }
+  ],
+  "environment": {
+    "node": "v22.21.1",
+    "os": "Linux",
+    "release": "4.18.0-553.89.1.el8_10.x86_64",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) Ultra X7 358H",
+    "baseline": "fa20d9cb15731e68255d83fb80f950f62c24fb9c"
+  },
+  "command": "timeout --signal=KILL 900s node rtl/prototype-phase-variation/run.js",
+  "sourceHashes": {
+    "model.js": "24c78a22248c5b0e9826a6be9cf3b34b5e5fb73bc5d1b93c49d2dc85a69424cd",
+    "fixtures.js": "75c9defbf7c25a3ed91b56b187a4725d381b355efaa9e34d38011d27928dd30b",
+    "window_probe.sv": "28d9aed7e43c25c9ba7b2fe825aadf35f736318fef4815dd7a503d8179523885",
+    "run.js": "efbeeee9454ad692eae2b7c7490cde8bf4ffd3f0bf4ad456a94ad05e6056b9d6",
+    "demo.template.html": "c3a76ab1643b58bb05cdbedd10e2e465914d6c40dbb744d1b9c1ee4911b96e3d"
+  },
+  "candidateBFixedMatrixPassed": true,
+  "repairPassed": true,
+  "totalSeconds": 14.691075511,
+  "withinBudget": true,
+  "complete": true
+}

@@ -1,0 +1,10 @@
+Chronologic VCS simulator copyright 1991-2024
+Contains Synopsys proprietary information.
+Compiler version W-2024.09-SP1_Full64; Runtime version W-2024.09-SP1_Full64;  Oct 27 14:28 2026
+PROTOTYPE_WINDOW_PROBE_COMPLETE
+$finish called from file "/tmp/bw-mon-phase-variation-20261027/rtl/prototype-phase-variation/window_probe.sv", line 35.
+$finish at simulation time               776000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 776000 ps
+CPU Time:      0.090 seconds;       Data structure size:   0.0Mb
+Tue Oct 27 14:28:14 2026
