@@ -28,3 +28,16 @@ __pycache__/
 *.swp
 *.swo
 .DS_Store
+
+/.build/
+
+# Generated/recovered evidence stays local; keep only final PR screenshots.
+/artifacts/acceptance/
+/artifacts/review-analog/*
+!/artifacts/review-analog/*.png
+/tests/scale/evidence/
+/tests/scale/history_evidence/
+/tests/scale/revised_evidence/
+/tests/review/evidence/
+/tests/review/compatibility/
+/tests/scheduling/evidence/

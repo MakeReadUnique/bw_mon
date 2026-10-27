@@ -1,0 +1,243 @@
+{
+  "compatibility": {
+    "components": 427,
+    "differences": 0,
+    "episodes": 518,
+    "phases": 1350,
+    "public_csv_files": 672,
+    "raw": 161472,
+    "receipts": 161472,
+    "scenes": 42,
+    "source_head": "816464ac673a508616d12a5cd535c6771164f879",
+    "tops": 168,
+    "variations": 1868,
+    "windows": 86375
+  },
+  "data_date": "2026-10-26",
+  "evidence_commit": "b22e32e1beb704beb290e65f7af20bbe44065a34",
+  "human_review": "Original nine Verdi views approved in issue33; no new human attestation.",
+  "scale": {
+    "profiles": {
+      "history-revised-cycle-deep": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 20.273062386986567
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 14.691648747015279
+        }
+      },
+      "history-revised-cycle-expiry": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 10.070910312002525
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 3.981991198990727
+        }
+      },
+      "history-revised-cycle-seeded": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 9.073755093006184
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 3.014433269010624
+        },
+        "quick-cold": {
+          "budget_seconds": 240.08739351699478,
+          "checked_pass": true,
+          "elapsed_seconds": 18.085275446996093
+        },
+        "quick-hot": {
+          "budget_seconds": 103.02894464001292,
+          "checked_pass": true,
+          "elapsed_seconds": 3.3514135430159513
+        }
+      },
+      "history-revised-ns-deep": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 17.895313463988714
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 11.872452755022096
+        }
+      },
+      "history-revised-ns-expiry": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 9.841355602024123
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 3.652575251995586
+        }
+      },
+      "history-revised-ns-seeded": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 9.199087332002819
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 3.3755903620040044
+        },
+        "quick-cold": {
+          "budget_seconds": 253.87073614899418,
+          "checked_pass": true,
+          "elapsed_seconds": 13.775014396000188
+        },
+        "quick-hot": {
+          "budget_seconds": 108.9882623340236,
+          "checked_pass": true,
+          "elapsed_seconds": 5.950779044011142
+        }
+      },
+      "history-revised-pending": {
+        "full-cold": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 9.081456840998726
+        },
+        "full-hot": {
+          "budget_seconds": 300,
+          "checked_pass": true,
+          "elapsed_seconds": 2.7325825830048416
+        },
+        "quick-cold": {
+          "budget_seconds": 222.00068900198676,
+          "checked_pass": true,
+          "elapsed_seconds": 17.21976125202491
+        },
+        "quick-hot": {
+          "budget_seconds": 99.67614556802437,
+          "checked_pass": true,
+          "elapsed_seconds": 3.8261956160131376
+        }
+      },
+      "topology-max-cycle": {
+        "full-cold": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 333.9495150349976
+        },
+        "full-hot": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 340.3444036449946
+        }
+      },
+      "topology-max-ns": {
+        "full-cold": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 336.2358103769948
+        },
+        "full-hot": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 337.91857107702526
+        }
+      },
+      "topology-quick-cycle": {
+        "full-cold": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 11.7265034840093
+        },
+        "full-hot": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 3.7289151049917564
+        },
+        "quick-cold": {
+          "budget_seconds": 274.35545389098115,
+          "checked_pass": true,
+          "elapsed_seconds": 20.476685731991893
+        },
+        "quick-hot": {
+          "budget_seconds": 113.15015485402546,
+          "checked_pass": true,
+          "elapsed_seconds": 4.153665131016169
+        }
+      },
+      "topology-quick-ns": {
+        "full-cold": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 12.748857575992588
+        },
+        "full-hot": {
+          "budget_seconds": 600,
+          "checked_pass": true,
+          "elapsed_seconds": 3.521920995990513
+        },
+        "quick-cold": {
+          "budget_seconds": 299.7044478979951,
+          "checked_pass": true,
+          "elapsed_seconds": 25.34732786999666
+        },
+        "quick-hot": {
+          "budget_seconds": 119.77781180699822,
+          "checked_pass": true,
+          "elapsed_seconds": 6.625634733994957
+        }
+      }
+    },
+    "raw_checks_per_full_suite": 21670663,
+    "source_head": "8c8f3d818979479b72fc9ed7f29b905ea9337396",
+    "suites": {
+      "full-cold": {
+        "budget_seconds": 1800,
+        "checked_pass": true,
+        "elapsed_seconds": 906.6364806340134,
+        "state": "VERIFIED"
+      },
+      "full-hot": {
+        "budget_seconds": 1800,
+        "checked_pass": true,
+        "elapsed_seconds": 829.518432190991,
+        "state": "VERIFIED"
+      },
+      "quick-cold": {
+        "budget_seconds": 300,
+        "checked_pass": true,
+        "elapsed_seconds": 96.59564641601173,
+        "state": "VERIFIED"
+      },
+      "quick-hot": {
+        "budget_seconds": 120,
+        "checked_pass": true,
+        "elapsed_seconds": 25.5283085469855,
+        "state": "VERIFIED"
+      }
+    },
+    "window_checks_per_full_suite": 16236946
+  },
+  "scope": {
+    "deep_end_ns": 40000,
+    "deep_sampling_edges": 80000,
+    "depth": 8,
+    "direct_edges": 65536,
+    "groups": 4096,
+    "parents_per_source": 16,
+    "points": 16384
+  }
+}

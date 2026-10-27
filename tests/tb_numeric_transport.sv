@@ -1,0 +1,38 @@
+module tb_numeric_transport;
+  timeunit 1fs;timeprecision 1fs;
+  import bw_mon_pkg::*;
+  string mode;
+  int point_handle,source,group_handle;
+  bw_record_t frame,received;
+  bw_control_t control;
+  bw_control_frame_t envelope;
+  bit found;
+  initial begin
+    if(!$value$plusargs("MODE=%s",mode))mode="ack_frame";
+    define_group("transport.group",1);add_point_member("transport.group","transport.point");
+    group_handle=register_group_owner("transport.group","component.group",BW_NS,1,1,"clk");
+    point_handle=register_point("transport.point","component.point",BW_NS,1,1,"clk");
+    source=point_source_handle(point_handle);configure_monitor(1,1);finish_configuration();wait(monitor_ready);
+    #250000;
+    frame='0;frame.timestamp_ticks=$time;frame.edge_index=1;frame.record_seq=1;
+    frame.byte_inc=8;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
+    control='0;control.point_handle=point_handle;control.timestamp_ticks=$time;control.control_seq=1;control.reset_n=1'bz;
+    if(mode=="publish_handle")publish_frame(64'hx000000000000000,frame);
+    else begin
+      publish_frame(source,frame);publish_control(source,control);
+      if(mode=="ack_frame")acknowledge_member_frame(group_handle,0,64'hx000000000000001);
+      else if(mode=="ack_control")acknowledge_member_control(group_handle,0,64'hx000000000000001);
+      else if(mode=="group_handle")found=peek_member_frame(64'hx000000000000000,0,received);
+      else if(mode=="member_index")found=peek_member_frame(group_handle,64'hx000000000000000,received);
+      else if(mode=="progress")set_source_progress(source,64'hx000000000000000);
+      else if(mode=="valid_reset")begin
+        if(!peek_member_control(group_handle,0,envelope) || envelope.value.reset_n!==1'bz ||
+           !peek_member_frame(group_handle,0,received) || received.byte_inc!=8)
+          $fatal(1,"four-state reset is legitimate quality, independently of numeric metadata");
+        acknowledge_member_control(group_handle,0,1);acknowledge_member_frame(group_handle,0,1);
+        $display("TB_PASS numeric_transport valid_reset");$finish;
+      end else $fatal(1,"bad MODE");
+    end
+    $fatal(1,"expected core error did not occur");
+  end
+endmodule

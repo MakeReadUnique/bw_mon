@@ -1,0 +1,189 @@
+{
+  "daily_profiles": [
+    "history-revised-ns-seeded",
+    "history-revised-cycle-seeded",
+    "history-revised-pending"
+  ],
+  "legacy_completion_gate": false,
+  "legacy_states": {
+    "history-common-cycle-control-clock": "VERIFIED_HISTORICAL_SOURCE_QUALIFIED",
+    "history-common-cycle-long-dense": "VERIFIED_HISTORICAL_SOURCE_QUALIFIED",
+    "history-common-cycle-short-dense": "VERIFIED_HISTORICAL_SOURCE_QUALIFIED",
+    "history-common-ns-control-clock": "VERIFIED_HISTORICAL_SOURCE_QUALIFIED",
+    "history-common-ns-long-dense": "VERIFIED_HISTORICAL_SOURCE_QUALIFIED",
+    "history-common-ns-short-dense": "VERIFIED_HISTORICAL_SOURCE_QUALIFIED",
+    "history-max-cycle-control-clock": "CANCELED_BEFORE_START",
+    "history-max-cycle-long-dense": "OPERATOR_INTERRUPTED",
+    "history-max-cycle-short-dense": "CANCELED_BEFORE_START",
+    "history-max-ns-control-clock": "CANCELED_BEFORE_START",
+    "history-max-ns-long-dense": "OPERATOR_INTERRUPTED",
+    "history-max-ns-short-dense": "OPERATOR_INTERRUPTED"
+  },
+  "legacy_stop_source": "https://github.com/MakeReadUnique/bw_mon/issues/31#issuecomment-6414148225",
+  "properties": {
+    "H1": {
+      "assertions": [
+        "every original raw receipt",
+        "every published half-open window",
+        "warmup/full/quality/sequence",
+        "W not divisible by S"
+      ],
+      "component_cases": [
+        "history_trace_ns",
+        "history_trace_cycle"
+      ],
+      "profiles": [
+        "history-revised-ns-seeded",
+        "history-revised-cycle-seeded",
+        "history-revised-ns-expiry",
+        "history-revised-cycle-expiry"
+      ]
+    },
+    "H2": {
+      "assertions": [
+        "80000 real 2GHz edges through40000ns",
+        "first edge250000fs",
+        "NS first full only at40000ns",
+        "cycle79999 of80000 remains warmup",
+        "final truncation and unknown tail"
+      ],
+      "profiles": [
+        "history-revised-ns-deep",
+        "history-revised-cycle-deep"
+      ],
+      "reused_common": [
+        "history-common-ns-long-dense",
+        "history-common-cycle-long-dense"
+      ]
+    },
+    "H3": {
+      "assertions": [
+        "actual event segments80000/1/80000",
+        "four empty-history drain checkpoints",
+        "original variable-clock boundary expansion",
+        "separate event/clock/pending segment and sample peaks"
+      ],
+      "profiles": [
+        "history-revised-ns-deep",
+        "history-revised-cycle-deep",
+        "history-revised-ns-expiry",
+        "history-revised-cycle-expiry"
+      ]
+    },
+    "H4": {
+      "assertions": [
+        "observed run expansion equals original retained events",
+        "independent left boundary",
+        "singleton/partial/boundary/multiple-run cuts",
+        "reset and unknown flags through public literal trace",
+        "complete per-scope checkpoint schedule and final snapshot; missing/empty/duplicate proof rejected"
+      ],
+      "component_cases": [
+        "history_trace_ns",
+        "history_trace_cycle"
+      ],
+      "profiles": [
+        "history-revised-ns-seeded",
+        "history-revised-cycle-seeded",
+        "history-revised-ns-expiry",
+        "history-revised-cycle-expiry",
+        "history-revised-ns-deep",
+        "history-revised-cycle-deep"
+      ]
+    },
+    "H5": {
+      "assertions": [
+        "window recovery preserves old episode incompleteness",
+        "four exact episode/tail/Q boundaries",
+        "30000 retained pending samples",
+        "ordered original1/2/3ns prefix selected",
+        "pending queues released",
+        "independent rational fit derives all phase identities/boundaries/confirmations",
+        "exact configured metric identities and independent conclusions",
+        "report summary counters and ordering"
+      ],
+      "component_cases": [
+        "history_trace_ns",
+        "history_trace_cycle",
+        "phase_delayed",
+        "metrics_stopped_history",
+        "variation_pending_retention",
+        "reset_member_controls",
+        "reset_rewarm"
+      ],
+      "profiles": [
+        "history-revised-ns-seeded",
+        "history-revised-cycle-seeded",
+        "history-revised-ns-expiry",
+        "history-revised-cycle-expiry",
+        "history-revised-pending"
+      ],
+      "reused_common": [
+        "history-common-ns-control-clock",
+        "history-common-cycle-control-clock"
+      ]
+    },
+    "H6": {
+      "assertions": [
+        "all full-scale public scopes",
+        "16 direct parents",
+        "unequal consumer progress",
+        "retained original frames and controls",
+        "core acceptance before input ACK",
+        "release after all ACKs"
+      ],
+      "component_cases": [
+        "transport_growth",
+        "transport_retention"
+      ],
+      "shared_with_ticket": 30
+    },
+    "H7": {
+      "assertions": [
+        "actual cumulative343597383560000B",
+        "exact unsigned64 boundary literals",
+        "actual timestamp40000000000fs",
+        "all original sequence progression",
+        "production arithmetic error boundaries"
+      ],
+      "component_cases": [
+        "numeric_arithmetic_known",
+        "numeric_add_unknown",
+        "numeric_mul_unknown",
+        "numeric_add_overflow",
+        "numeric_mul_overflow",
+        "numeric_queue_range",
+        "numeric_subtract_known",
+        "numeric_subtract_underflow",
+        "numeric_subtract_unknown"
+      ],
+      "profiles": [
+        "history-revised-ns-deep",
+        "history-revised-cycle-deep"
+      ]
+    }
+  },
+  "required_profiles": [
+    "history-revised-ns-seeded",
+    "history-revised-cycle-seeded",
+    "history-revised-ns-expiry",
+    "history-revised-cycle-expiry",
+    "history-revised-ns-deep",
+    "history-revised-cycle-deep",
+    "history-revised-pending"
+  ],
+  "required_shared_evidence": "M4/H6 full-scale public topology, both bases, unequal consumer progress, 16 direct parents and retained controls",
+  "resource_limits": {
+    "measured_resource_categories": [
+      "full-scale short topology",
+      "three-scope deep event history",
+      "one-scope pending suffix",
+      "transport backlog"
+    ],
+    "product_memory_cap": null,
+    "sum_is_not_full_scale_long_history_measurement": true
+  },
+  "schema": "bw-history-coverage-v1",
+  "spec": "https://github.com/MakeReadUnique/bw_mon/issues/13",
+  "ticket": "https://github.com/MakeReadUnique/bw_mon/issues/31"
+}

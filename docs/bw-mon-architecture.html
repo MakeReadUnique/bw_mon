@@ -50,7 +50,7 @@
   </aside>
   <main class="main">
     <div class="topline"><span>ENGINEERING NOTES <span aria-hidden="true">/</span> 最终架构说明</span><div class="top-actions"><a class="quiet" href="https://github.com/MakeReadUnique/bw_mon/issues/1" target="_blank" rel="noopener">GitHub 决议 ↗</a><button class="quiet" id="print-button">打印 / 保存 PDF</button></div></div>
-    <header class="page-title"><div><h1>bw_mon 最终架构</h1><p>从接口传输到精确带宽，再到自动阶段分析与性能结论。<br>纯仿真 SystemVerilog module；支持类型 bind、单点观测与同钟分层聚合。</p></div><div class="version"><span class="tag green">11 / 11 子决策已关闭</span><br>架构已定 · 实现与验收待完成</div></header>
+    <header class="page-title"><div><h1>bw_mon 最终架构</h1><p>从接口传输到精确带宽，再到自动阶段分析与性能结论。<br>纯仿真 SystemVerilog module；支持类型 bind、单点观测与同钟分层聚合。</p></div><div class="version"><span class="tag green">11 / 11 子决策已关闭</span><br>架构已定 · 实现与自动验证已交付 · 人工/规模验收分别记录</div></header>
     <div class="principles"><div class="principle"><span class="symbol">∥</span><div><b>记录与诊断并行</b><span>同一采样视图，各自保留质量状态</span></div></div><div class="principle"><span class="symbol">Σ</span><div><b>原始计量逐层汇总</b><span>每个范围独立计算窗口与过程</span></div></div><div class="principle"><span class="symbol">[ )</span><div><b>精确时间与区间</b><span>整数 tick、半开窗口、确定性提交</span></div></div></div>
     <noscript><p class="no-script">JavaScript 未启用，以下显示全部架构内容；交互示例与模块详情需启用 JavaScript。</p><style>.view[hidden]{display:block}.navigation{display:none}</style></noscript>
 
@@ -88,8 +88,8 @@
             </div>
           </div>
         </div>
-        <div class="output-strip"><button class="node" data-module="report"><span class="name">bw_check_report</span><span class="desc">接收各范围结果 → 最终统计 / 场景 cfg / PASS · FAIL · WARNING</span></button><button class="node" data-module="wave"><span class="name">公开点 / 组层次 · Verdi</span><span class="desc">普通标量输出 real、整数、enum；保留各项独立质量状态</span></button></div>
-        <div class="architecture-foot"><span>单点直接路径 + package 聚合路径，共用规范化记录语义。</span><span>module 名称为建议命名；具体端口 / typedef 由实现确定。</span></div>
+        <div class="output-strip"><button class="node" data-module="report"><span class="name">bw_check_report</span><span class="desc">接收不可变最终记录 → 场景 cfg / PASS · FAIL · WARNING</span></button><button class="node" data-module="wave"><span class="name">公开点 / 组层次 · Verdi</span><span class="desc">普通标量输出 real、整数、enum；保留各项独立质量状态</span></button></div>
+        <div class="architecture-foot"><span>单点直接路径 + package 聚合路径，共用规范化记录语义。</span><span>实际入口、参数与 typedef 见 <a href="bw-mon-api.md">公开 API</a>；<a href="bw-mon-acceptance.md">复现与证据</a>；私有时隙结算的 C/VPI 构建要求见 <a href="bw-mon-scheduling.md">调度说明</a>。</span></div>
       </div></div>
       <div class="panel" style="margin-top:18px"><div class="panel-title"><div><h3>一个统计核心，三项私有职责</h3><p>每个观测点、每个聚合组拥有自己的 bw_stats_core 实例和统计状态。</p></div><span class="tag">唯一调度入口</span></div><div class="core-breakdown"><div class="core-part"><span class="number-label">MEASURE</span><h4>精确计量与滑窗</h4><p>拥有原始累计、精确窗口历史、未知标记和边界快照。正式带宽使用实际物理时长。</p></div><div class="core-part"><span class="number-label">EPISODE</span><h4>流量过程与 e2e</h4><p>追踪首末传输、尾周期与静默期限；以原始计数字节和真实过程区间计算全程平均带宽。</p></div><div class="core-part"><span class="number-label">PHASE</span><h4>自动阶段识别</h4><p>使用同一条新发布滑窗序列；维护拟合、迟滞、候选、确认和可回溯的阶段边界。</p></div></div><div class="note">这三项是职责划分，物理 SV module 数未固定。内部可用过程 / 函数或 module 实现；同刻提交顺序由同一个入口负责。</div></div>
       <div class="thirds"><div class="panel"><span class="number-label">INTEGRATION 01</span><h3>类型 bind / 观测点接入</h3><p class="caption">一次类型 bind 覆盖多个目标实例；默认在公开 monitor 作用域用 %m 生成身份，允许显式覆盖。</p></div><div class="panel"><span class="number-label">INTEGRATION 02</span><h3>每组一个 module</h3><p class="caption">提供 GROUP_ID、共同 clk、组 reset 和成员配置。观测点无需预先知道自己属于哪些组。</p></div><div class="panel"><span class="number-label">INTEGRATION 03</span><h3>统一配置与 ready</h3><p class="caption">总点数包含未归组点；校验完成后冻结成员与配置。集成者无需手动推进 read / ack 或逐层提交。</p></div></div>
@@ -97,7 +97,7 @@
     </section>
 
     <section class="view" id="hierarchy" role="tabpanel" aria-labelledby="tab-hierarchy" hidden>
-      <div class="section-heading"><div><h2><span class="section-number">02</span>分层聚合：沿着成员关系传递原始计量</h2><p>采用最终确认的 12 点、4 组验收拓扑。以下为连接关系与计量演示，尚未运行 RTL。</p></div></div>
+      <div class="section-heading"><div><h2><span class="section-number">02</span>分层聚合：沿着成员关系传递原始计量</h2><p>采用最终确认的 12 点、4 组验收拓扑。以下仍为架构交互演示；对应实际 RTL、原始输入对照和 FSDB 见验收索引。</p></div></div>
       <div class="panel"><div class="panel-title"><h3>同一采样时钟 · 同一窗口基准、W、S</h3><span class="tag green">无环成员关系</span></div>
         <div class="topology">
           <div class="topology-column"><div class="topology-card"><b>p0 … p3</b><p>die 0 的 DMC 观测点</p><div class="point-chips"><span>p0</span><span>p1</span><span>p2</span><span>p3</span></div></div><div class="topology-card"><b>p4 … p7</b><p>die 1 的 DMC 观测点</p><div class="point-chips"><span>p4</span><span>p5</span><span>p6</span><span>p7</span></div></div><div class="topology-card"><b>p8 · p9</b><p>直接加入 mixed</p></div><div class="topology-card free"><b>p10 · p11</b><p>仅单点统计，仍计入总注册数</p></div></div>
@@ -163,7 +163,7 @@
       <div class="section-heading"><div><h2><span class="section-number">05</span>统计与检查：每项结论都有自己的证据</h2><p>性能预期属于具体场景。阶段判定、性能比较和辅助 hint 分别处理。</p></div></div>
       <div class="panel"><div class="table-wrap"><table><thead><tr><th>统计量</th><th>来源 / 口径</th><th>检查对象</th></tr></thead><tbody><tr><td>稳定段带宽</td><td>最终阶段区间的原始字节 ÷ 实际时长</td><td>正常完成过程中，最后一个已确认稳定段</td></tr><tr><td>e2e</td><td>过程原始字节 ÷ 实际过程时长</td><td>每个满足完整条件的过程</td></tr><tr><td>爬坡 / 下降时间</td><td>每个已确认片段的最终边界之差，单位 ns</td><td>各片段独立使用该范围的同一预期</td></tr><tr><td>min / max、标准差、CV</td><td>最终区间内发布的合格新窗口结果，按结果等权</td><td>最后稳定段、整个过程；过程波动含升降与内部静默</td></tr></tbody></table></div><div class="note">原始字节用于稳定段带宽和 e2e；窗口序列用于波动。阶段拟合的残差 rms 与性能波动标准差是不同量。</div><details><summary>展开：波动样本的精确选择</summary><ul class="facts"><li>最终区间 [a,b) 按发布时间选取 a ≤ tᵢ &lt; b 的窗口结果；窗口本身可以覆盖同一过程的前一阶段。</li><li>样本须新发布、满窗、字节完整、不混有其他过程。重叠窗口不是独立统计样本。</li><li>总体标准差 σ = √mean((yᵢ−μ)²)，CV = 100 × σ / μ。min/max 至少 1 点；σ/CV 至少 2 点。</li><li>μ=0 时 CV 不适用；绝对波动仍可有效。不能填造 0，也不能剔除未知后宣称完整达标。</li></ul></details></div>
       <div class="columns"><div class="panel"><div class="panel-title"><div><h3>试一项带宽下限检查</h3><p>仅演示性能结算公式，以下数值不是产品默认目标。</p></div></div><div class="check-form"><label for="actual-bw">实际值 · GB/s<input id="actual-bw" type="number" min="0" value="128" step="any"></label><label for="target-bw">下限 L · GB/s<input id="target-bw" type="number" min="0" value="160" step="any"></label><label for="tolerance">相对容差 · %<input id="tolerance" type="number" min="0" value="5" step="any"></label></div><label class="evidence-label"><input id="evidence-complete" type="checkbox" checked>结果已最终确定，且本指标证据完整</label><div class="check-result" aria-live="polite"><span class="check-status" id="check-status">FAIL</span><p id="check-explanation"></p></div><p class="caption">本例绝对容差 A=0。等于有效边界算 PASS；数值不达标为 FAIL；缺少可比较结果为 WARNING。两者都继续仿真。</p><details><summary>完整上下限公式</summary><div class="formula">有效下限 = L − (A + |L| × R_pct / 100)<br>有效上限 = U + (A + |U| × R_pct / 100)</div><p class="caption">支持下限、上限或区间；绝对与百分比容差相加。未配置容差时 A=0、R_pct=0。</p></details></div>
-        <div class="panel"><h3>场景性能预期 · +BW_EXPECT</h3><p class="caption" style="margin-bottom:12px">按完整 POINT_ID / GROUP_ID 匹配。下列片段仅为输入示例。</p><pre># scene_a.cfg
+        <div class="panel"><h3>场景性能预期 · +BW_EXPECT</h3><p class="caption" style="margin-bottom:12px">按完整 POINT_ID / GROUP_ID 匹配。下列片段仅为输入示例；完整 48 键、单位和容差见 <a href="bw-mon-expectations.md">实际键表</a>。</p><pre># scene_a.cfg
 [point "tb.top.master0.bw"]
 steady_bw_min_gbps = 80
 steady_bw_rel_tol_pct = 5
@@ -180,7 +180,7 @@ episode_cv_max_pct = 10</pre><p class="caption">未指定文件时仅统计。�
     </section>
 
     <section class="view" id="acceptance" role="tabpanel" aria-labelledby="tab-acceptance" hidden>
-      <div class="section-heading"><div><h2><span class="section-number">06</span>规模目标与实现验收</h2><p>以下为已确认的设计与后续验收目标；当前架构规划未实现或运行监测器。</p></div><span class="tag amber">待实现验证</span></div>
+      <div class="section-heading"><div><h2><span class="section-number">06</span>规模目标与实现验收</h2><p>以下为已确认的设计与后续验收目标；已有可运行监测器及组件/端到端自动证据；最大规模与人工查看按各自记录判定。</p></div><span class="tag amber">规模 / 人工证据分别记录</span></div>
       <div class="capacity-grid"><div class="capacity"><span class="eyebrow">POINTS</span><div class="metric">16,384</div><p>最大观测点数，含未归组点</p></div><div class="capacity"><span class="eyebrow">GROUPS</span><div class="metric">4,096</div><p>全部层级合计的聚合组数</p></div><div class="capacity"><span class="eyebrow">DEPTH</span><div class="metric">8 <small>层</small></div><p>组嵌套上限</p></div><div class="capacity"><span class="eyebrow">SAMPLING</span><div class="metric">2 <small>GHz</small></div><p>最高采样频率，模拟时长 40 μs</p></div></div>
       <div class="columns"><div class="panel"><h3>数值与拓扑边界</h3><div class="table-wrap" style="margin-top:12px"><table class="compact"><tbody><tr><th>直接成员关系总数</th><td>≤ 65,536</td></tr><tr><th>每源直接上级数</th><td>≤ 16</td></tr><tr><th>最大窗口</th><td>40,000 ns / 80,000 cycles</td></tr><tr><th>单次计量字节</th><td>≤ 2³²−1 B；组单沿增量需扩宽</td></tr><tr><th>时间 / 累计字节</th><td>无符号 64 位；时间差先整数计算</td></tr><tr><th>启动期限初始值</th><td>100 ns，可配置</td></tr><tr><th>缺失记录期限初始值</th><td>自真实预期沿 T 起 1 ns，可配置</td></tr></tbody></table></div><p class="caption">到期同刻的数据先参与到齐判断；合法停钟无新预期沿，不虚构缺帧。40 μs 预算不随局部复位重新获得。</p></div>
         <div class="panel"><h3>资源策略</h3><ul class="facts"><li><b>内部自动管理容量：</b>预分配、增长、回收或精确无损合并由实现选择；用户无需配置历史槽数或队列深度。</li><li><b>保持精确语义：</b>通信记录、窗口历史、未知标记、证据与待裁剪状态都不能静默丢弃。</li><li><b>无固定内存验收上限：</b>提供资源估算并记录实际峰值内存。</li><li><b>不考核仿真墙钟耗时增幅：</b>已撤销旧 20% / 50% 目标；物理仿真时间的启动与缺帧期限仍有效。</li><li>常用档：1,024 点 / 256 组，两层无跨组复用；2 GHz、40 μs、W=100 ns、S=10 ns，每点每沿 64 B。</li></ul></div></div>
@@ -203,9 +203,9 @@ episode_cv_max_pct = 10</pre><p class="caption">未指定文件时仅统计。�
         <li><div><a href="https://github.com/MakeReadUnique/bw_mon/issues/11#issuecomment-6385539595" target="_blank" rel="noopener"><span class="source-no">08</span>架构验收场景与实现交接约束 ↗</a><small>组件 UT、12 点真实波形、大规模正确性与六项交接要求。</small></div><span class="tag green">最终决议</span></li>
       </ul></div>
       <div class="panel"><h3>已完成的前置研究</h3><ul class="facts"><li><a href="https://github.com/MakeReadUnique/bw_mon/issues/5" target="_blank" rel="noopener">查证小时间窗、bind 与 Verdi 观测的技术约束 ↗</a></li><li><a href="https://github.com/MakeReadUnique/bw_mon/issues/6" target="_blank" rel="noopener">查证自动流量阶段识别与短滑窗统计的适用方法 ↗</a></li><li><a href="https://github.com/MakeReadUnique/bw_mon/issues/9" target="_blank" rel="noopener">查证 CHI Size 字段与单次传输字节计量的关系 ↗</a></li></ul></div>
-      <div class="note amber"><p><b>当前完成的是架构规划。</b>本页为离线可读的决议可视化，交互用于解释规则。SV 实现、真实 FSDB 和规模正确性仍需按验收契约交付。</p><p>范围不含可综合 IP、UVM、跨异步时钟聚合、逐笔事务匹配 / 延迟分析；不增加 pending 等外部需求提示。</p></div>
+      <div class="note amber"><p><b>本页展示架构与说明示例。</b>本页为离线可读的决议可视化，交互用于解释规则。实际 SV、真实 FSDB、独立对照及人工/规模状态见 <a href="bw-mon-acceptance.md">验收交接</a>；HTML 曲线不能替代仿真数据或人工检查。</p><p>范围不含可综合 IP、UVM、跨异步时钟聚合、逐笔事务匹配 / 延迟分析；不增加 pending 等外部需求提示。</p></div>
     </section>
-    <footer class="footer"><span>bw_mon · 最终决议快照 2026-10-24 · 单文件 HTML / 无外部依赖</span><span>架构说明与示例计算 · 实际监测器与工具行为待实现验收</span></footer>
+    <footer class="footer"><span>bw_mon · 最终决议快照 2026-10-24 · 单文件 HTML / 无外部依赖</span><span>架构说明与示例计算 · 实际监测器、工具与验收证据见交接索引</span></footer>
   </main>
   <dialog id="module-dialog" class="dialog" aria-labelledby="dialog-title"><div class="dialog-inner"><div class="dialog-top"><span class="eyebrow" id="dialog-category"></span><button class="dialog-close" id="dialog-close" aria-label="关闭模块详情">×</button></div><h2 id="dialog-title"></h2><p class="dialog-purpose" id="dialog-purpose"></p><div class="dialog-grid"><div class="dialog-box"><h4>输入</h4><ul id="dialog-inputs"></ul></div><div class="dialog-box"><h4>输出</h4><ul id="dialog-outputs"></ul></div></div><p class="dialog-state" id="dialog-state"></p><div class="note teal" id="dialog-reset"></div><div class="dialog-source" id="dialog-source"></div></div></dialog>
   <script>
@@ -222,7 +222,7 @@ episode_cv_max_pct = 10</pre><p class="caption">未指定文件时仅统计。�
     };
     const modules = {
       setup:{category:'CONFIGURATION / LIFECYCLE',title:'统一配置与启动',purpose:'加载配置与自动注册 → 校验并冻结 → 发布 ready → 开始计量。集成者使用统一入口。',
-        inputs:['预期总点数 expected_point_count，包含未归组点','唯一 POINT_ID / GROUP_ID、声明组 owner、预期直接成员数','成员规则、共同采样 / 窗口上下文、阶段与 hint 配置'],
+        inputs:['实际 EXPECTED_POINT_COUNT / EXPECTED_GROUP_COUNT，包含未归组点','唯一 POINT_ID / GROUP_ID、声明组 owner、预期直接成员数','成员规则、共同采样 / 窗口上下文、阶段与 hint 配置'],
         outputs:['冻结的成员关系与路由','公共计量起点与 ready','带对象、路径、预期 / 实际数量的启动错误'],
         state:'校验非空组、数量、身份、时钟 / 窗口兼容、循环引用与递归重叠。观测点按完整 ID 或层次段前缀匹配；noc1 不匹配 noc10。总点数不能由重叠组人数相加得到。',
         reset:'局部复位不重新注册、不改变身份或路由。启动期限初始值 100 ns，可配置；运行中不能改成员或统计配置。',sources:[7,12,10]},
@@ -258,13 +258,13 @@ episode_cv_max_pct = 10</pre><p class="caption">未指定文件时仅统计。�
         reset:'本组统计复位与向上供数分离；不传播成实际观测点复位。上级历史和过程继续，子组预热不阻碍确定字节向上贡献。',sources:[12]},
       core:{category:'STATISTICS / PER-SCOPE STATE',title:'bw_stats_core',purpose:'单点与聚合范围复用同一种实现，各实例拥有独立统计状态和唯一调度入口。',
         inputs:['规范化范围记录、事件与原始字节增量','时间 / 周期元数据、reset、timer 和控制动作','窗口、静默、N / K、跨度、门槛与迟滞配置'],
-        outputs:['精确滑窗字节、GB/s、可选 B/cycle 及质量','流量过程、原始边界快照、实际时长与 e2e','同一窗口序列上的阶段证据、候选、确认和最终片段'],
+        outputs:['精确滑窗字节、GB/s、可选 B/cycle 及质量','流量过程、原始边界快照、实际时长与 e2e','同一窗口序列上的阶段证据、候选/确认、原始片段带宽、波动与最后稳定段'],
         state:'三项私有职责：计量拥有精确历史与累计；过程拥有活动和静默；阶段拥有拟合与候选。物理 module 数未固定，不能通过独立 always 引入额外公共调度协议。',
         reset:'本范围自身复位清自己的窗口、打断过程 / 阶段并重新预热；成员复位只作为输入。历史、边界、事件 / 字节质量独立于诊断可信性。',sources:[3,4,7]},
-      report:{category:'CHECKS / FINAL RESULTS',title:'bw_check_report',purpose:'独立进行最终统计、性能比较和报告，不反向改变原始计量或阶段识别。',
-        inputs:['窗口、过程、阶段及其独立质量状态','原始计数边界快照、最终可结算记录','场景 +BW_EXPECT 配置；独立 hint 结果'],
+      report:{category:'CHECKS / FINAL RESULTS',title:'bw_check_report（setup 持有的专用 owner）',purpose:'消费 core 已计算的不可变最终记录，执行性能比较和报告，不反向改变计量或阶段识别。',
+        inputs:['同步按值传入的最终 phase / episode 记录及逐指标质量','原始边界快照、core 已计算的时长 / 原始带宽 / 波动 / 最后稳定段','场景 +BW_EXPECT 配置；hint 独立输出，不进入性能计数'],
         outputs:['稳定段带宽、阶段时间、e2e、min / max / 标准差 / CV','带身份 / 世代 / 过程 / 阶段、区间、实际值和允许范围的日志','一次性 PASS / FAIL / WARNING 计数与最终汇总'],
-        state:'稳定段代表值选正常完成过程中最后一个已确认稳定段。波动按发布时间选择合格窗口样本，使用等权总体标准差。所有原始字节仅计一次。',
+        state:'统计值、精确样本选择与最后稳定段由 core 拥有；专用报告 owner 保留规则、逐流去重与计数。只比较已配置且自身证据足够的指标。所有范围 ScopeDone 后输出一次汇总。',
         reset:'后续未知、复位或截断不抹掉先前已完整确定的阶段。逐指标判断证据；性能 FAIL / WARNING 继续仿真，核心错误仍终止。hint 与性能汇总分开。',sources:[8]},
       wave:{category:'PUBLIC OBSERVABILITY / VERDI',title:'公开点 / 组层次的稳定输出',purpose:'在公开 module 固定层次提供普通标量；Verdi 展示 monitor 已计算的 real 带宽。',
         inputs:['各点 / 组的窗口、过程、阶段结果','原始协议输入与本地 hint 状态'],
