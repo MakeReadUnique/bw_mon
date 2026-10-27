@@ -65,15 +65,16 @@ const PV = (() => {
           if (f.proposed === current) pending = null;
           else {
             if (!pending || pending.label !== f.proposed)
-              pending = {label: f.proposed, start: r.u, startTime: r.t, count: 1};
-            else pending.count++;
+              pending = {label: f.proposed, start: r.u, startTime: r.t, count: 1,
+                support: evidence.map(v=>v.seq)};
+            else { pending.count++; pending.support.push(r.seq); }
             if (pending.count >= c.k) {
               close(pending.start);
               current = pending.label;
               if (current !== 'UNDETERMINED') {
                 active = {id: phases.length + 1, label: current, start: pending.start,
                   startTime: pending.startTime, confirm: r.u, confirmTime: r.t,
-                  end, fit: f};
+                  end, fit: f, confirmationSeqs:pending.support.slice()};
                 phases.push(active);
               }
               pending = null;
@@ -83,9 +84,9 @@ const PV = (() => {
           else if (current === 'UNDETERMINED') reason = '已有证据未支持任何阶段';
         }
       }
-      trace.push({seq: r.seq, u: r.u, t: r.t, current, reason,
+      trace.push({seq: r.seq, u: r.u, t: r.t, current, phaseId:active?active.id:null, reason,
         count: evidence.length, need: c.n, span: evidence.length ? r.u - evidence[0].u : 0,
-        minSpan: c.minSpan, pending: pending ? {...pending} : null, fit: f});
+        minSpan: c.minSpan, pending: pending ? {...pending,support:pending.support.slice()} : null, fit: f});
     }
     close(end);
     return {phases: phases.filter(p => p.start < end), trace};
@@ -94,17 +95,91 @@ const PV = (() => {
     const enabled = phaseEnabled === undefined ? episode : phaseEnabled;
     return !episode && enabled ? 'CONFIG_ERROR' : enabled ? 'ANALYZE' : 'STATISTICS_ONLY';
   }
+  // Phase-layer attribution only: no checker reference B, percentage, or verdict input.
+  // A handoff and a reference have different qualification requirements.
+  function ownership(records, phases, c) {
+    const rr=[], seen=new Set();
+    for(const r of records)if(!seen.has(r.seq)){seen.add(r.seq);rr.push(r);}
+    const steady=phases.filter(p=>p.label==='STEADY');
+    const platforms=steady.map(p=>{
+      let chain=[], qualified=null;
+      for(const r of rr.filter(r=>r.u>=p.start&&r.u<p.end)){
+        if(!r.eligible){chain=[];continue;}
+        chain.push(r);
+        if(chain.length>=2&&r.u-chain[0].u>=c.w){qualified=chain.slice();break;}
+      }
+      const support=p.confirmationSeqs?
+        rr.filter(r=>p.confirmationSeqs.includes(r.seq)):
+        rr.filter(r=>r.u>=p.start&&r.u<p.end&&r.eligible).slice(0,c.n+c.k-1);
+      const supportValid=support.length>=c.n+c.k-1&&support.every(r=>r.eligible)&&
+        support[support.length-1].u-support[0].u>=c.minSpan&&
+        support.every((r,i)=>!i||rr.indexOf(r)===rr.indexOf(support[i-1])+1);
+      return {id:p.id,start:p.start,end:p.end,canHandoff:!!qualified,
+        qualification:qualified?{first:qualified[0].u,last:qualified.at(-1).u,
+          count:qualified.length,span:qualified.at(-1).u-qualified[0].u,
+          confirmation:Math.max(p.confirm,qualified.at(-1).u),seqs:qualified.map(r=>r.seq)}:null,
+        supportSeqs:support.map(r=>r.seq),supportValid,
+        envelope:supportValid?{low:Math.min(...support.map(r=>r.y)),high:Math.max(...support.map(r=>r.y))}:null,
+        reason:qualified?'已确认平台含至少 W 的连续有效发布跨度':'最终平台跨度不足 W；保留旧平台待结算证据'};
+    });
+    const steps=[], attempts=[];
+    for(let i=1;i<steady.length;i++){
+      const old=steady[i-1], next=steady[i], a=platforms[i-1], b=platforms[i];
+      const attempt={oldPhase:old.id,newPhase:next.id,accepted:false};attempts.push(attempt);
+      if(!a.canHandoff||!b.canHandoff||!a.supportValid||!b.supportValid){
+        attempt.reason='平台或确认样本不足，不证明正常阶跃';continue;
+      }
+      if(phases.some(p=>p.label!=='STEADY'&&p.start<next.start&&p.end>old.start)){
+        attempt.reason='已有升降阶段，使用其独立区间';continue;
+      }
+      const direction=b.envelope.low>a.envelope.high?1:b.envelope.high<a.envelope.low?-1:0;
+      if(!direction){attempt.reason='两平台确认样本带宽包络重叠，不能证明阶跃';continue;}
+      const inBand=(r,band)=>r.y>=band.low&&r.y<=band.high;
+      let j=rr.findIndex(r=>r.u===next.start);
+      if(j<0||!rr[j].eligible||!inBand(rr[j],b.envelope)){
+        attempt.reason='新平台边界没有合格的对应窗口';continue;
+      }
+      // Find the complete contiguous suffix at the new independently confirmed level.
+      // Recognition delay in this suffix is not the duration of the physical bridge.
+      while(j>0&&rr[j-1].u>old.start&&rr[j-1].eligible&&inBand(rr[j-1],b.envelope))j--;
+      const newLevelStart=j;
+      let k=j-1;
+      while(k>=0&&rr[k].u>=old.start&&rr[k].eligible&&!inBand(rr[k],a.envelope)&&
+        direction*(rr[k+1].y-rr[k].y)>=0&&rr[newLevelStart].u-rr[k].u<=c.w+c.s)k--;
+      if(k<0||rr[k].u<old.start||!rr[k].eligible||!inBand(rr[k],a.envelope)||
+        rr[newLevelStart].u-rr[k].u>c.w+c.s){
+        attempt.reason='没有连续、单调且跨度不超过 W+S 的旧平台连接；保留待结算前缀';continue;
+      }
+      const bridge=rr.slice(k,newLevelStart+1);
+      if(bridge.some((r,idx)=>!r.eligible||(idx&&direction*(r.y-bridge[idx-1].y)<0))){
+        attempt.reason='连接区间不连续或存在反向变化';continue;
+      }
+      const start=rr[k+1].u;
+      if(start>=next.start){attempt.reason='没有需要豁免的确认前区间';continue;}
+      const proof={oldPhase:old.id,newPhase:next.id,start,end:next.start,
+        reason:'独立阶段证据确认的平台阶跃',confirmation:b.qualification.confirmation,
+        oldEnvelope:a.envelope,newEnvelope:b.envelope,
+        oldSupport:a.supportSeqs,newSupport:b.supportSeqs,
+        bridge:{start:rr[k].u,end:rr[newLevelStart].u,span:rr[newLevelStart].u-rr[k].u,
+          maximum:c.w+c.s,seqs:bridge.map(r=>r.seq)},
+        recognitionSuffix:{start:rr[newLevelStart].u,end:next.start},
+        retainedPrefix:{start:old.start,end:start}};
+      steps.push(proof);attempt.accepted=true;attempt.reason=proof.reason;
+    }
+    return {platforms,steps,attempts};
+  }
   function check(records, phases, c, meta = {}) {
     if (meta.enabled === false) return {status:rank(['STATISTICS_ONLY',...(meta.otherStatuses||[])]),
       platforms: [], exclusions: [], finalRecords: []};
     const unique = [], seen = new Set();
     for (const r of records) if (!seen.has(r.seq)) { unique.push(r); seen.add(r.seq); }
     const steady = phases.filter(p => p.label === 'STEADY');
+    const attribution=ownership(unique,phases,c);
     const exclusions = phases.filter(p => p.label === 'RAMP' || p.label === 'FALL')
       .map(p => ({start: p.start, end: p.end, reason: '独立确认的 ' + p.label,
-        confirmation: p.confirm}));
+        confirmation: p.confirm})).concat(attribution.steps);
     const platforms = steady.map((p, pi) => {
-      const next = steady[pi + 1];
+      const next = steady.slice(pi+1).find(q=>attribution.platforms.find(v=>v.id===q.id).canHandoff);
       const stop = next ? next.start : (meta.end === undefined ? Infinity : meta.end);
       const owned = unique.filter(r => r.u >= p.start && r.u < stop);
       const excluded = r => exclusions.some(x => r.u >= x.start && r.u < x.end);
@@ -119,7 +194,9 @@ const PV = (() => {
       }
       const key = [meta.type || 'point', meta.id || 'demo', meta.reset || 0,
         meta.episode || 1, p.id].join(':');
-      const out = {key, phase: clone(p), checking: {start: p.start, end: stop},
+      const out = {key, phase: clone(p), checking: {start: p.start, end: stop,
+          handoffPhase:next?next.id:null,retainedShortPlatforms:steady.slice(pi+1)
+            .filter(q=>q.start<stop).map(q=>q.id)},
         referenceSamples: reference || [], B: null, threshold: null, thresholdPct: 5,
         dMax: null, pMax: null, runs: [], evidence: [], status: 'WARNING', reasons: [],
         quality: [], longestSpan: 0, adequateCoverage: false};
@@ -167,7 +244,7 @@ const PV = (() => {
     const finalRecords=usable?platforms:[{key:[meta.type||'point',meta.id||'demo',meta.reset||0,
       meta.noEpisode?'scope':meta.episode||1,'warning'].join(':'),status:'WARNING',reasons:[warning]}];
     return {status: rank(finalRecords.map(p => p.status).concat(meta.otherStatuses || [])),
-      platforms, exclusions, finalRecords, warning:usable?null:warning};
+      platforms, exclusions, attribution, finalRecords, warning:usable?null:warning};
   }
   function rank(statuses) {
     if (!statuses.length) return 'WARNING';
@@ -183,6 +260,7 @@ const PV = (() => {
         p.end > first.u && (!g.newPhase || p.start >= g.inputU));
       return {...g, count:eligible.length, first:first.u, deadline:deadline.u,
         firstTime:first.t, deadlineTime:deadline.t,
+        phaseId:matched?matched.id:null,
         boundary:matched ? matched.start : null, confirmation:matched ? matched.confirm : null,
         updateLatency:matched ? Math.max(1, eligible.filter(r => r.u <= matched.confirm).length) : null,
         physicalLatency:matched ? Math.max(0, matched.confirmTime - first.t) : null,
@@ -197,10 +275,10 @@ const PV = (() => {
     for (const g of goals.filter(g => g.required)) {
       const rr = records.filter(r => r.expectedKey === g.key);
       if (!rr.length) continue;
-      const states = result.trace.filter(p => p.u >= rr[0].u && p.u <= rr[rr.length-1].u);
-      const firstTarget = states.findIndex(p => p.current === g.label);
-      if (firstTarget < 0) continue;
-      const switches = states.slice(firstTarget+1).filter((p,i) => p.current !== states[firstTarget+i].current);
+      const matched=expectations.find(e=>e.key===g.key);
+      if(!matched||matched.phaseId===null||matched.phaseId===undefined)continue;
+      const states = result.trace.filter(p => p.u >= Math.max(rr[0].u,matched.confirmation) && p.u <= rr[rr.length-1].u);
+      const switches = states.slice(1).filter((p,i) => p.current !== states[i].current||p.phaseId!==states[i].phaseId);
       if (switches.length) extra.push({key:g.key,changes:switches,extra:switches.length});
     }
     return {expectations, wrong, extra,
@@ -213,6 +291,6 @@ const PV = (() => {
     return {status:rank(entries.map(p=>p.status)),count:entries.length,
       counts:Object.fromEntries(['FAIL','WARNING','PASS','STATISTICS_ONLY'].map(s=>[s,entries.filter(p=>p.status===s).length]))};
   }
-  return {candidates, config, phase, check, control, rank, assess, mean, settle};
+  return {candidates, config, phase, ownership, check, control, rank, assess, mean, settle};
 })();
 if (typeof module !== 'undefined') module.exports = PV;

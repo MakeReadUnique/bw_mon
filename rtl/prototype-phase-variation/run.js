@@ -3,14 +3,15 @@
 const start=process.hrtime.bigint();
 const fs=require('node:fs'), path=require('node:path'), cp=require('node:child_process');
 const os=require('node:os'), crypto=require('node:crypto');
-const root=__dirname, out=path.resolve(process.argv[2]||path.join(root,'evidence'));
+const root=__dirname, out=path.resolve(process.argv[2]||path.join(root,'evidence-r2'));
 const elapsed=()=>Number(process.hrtime.bigint()-start)/1e9;
 if(fs.existsSync(out))throw Error('Output exists. This command will not restart the recorded budget.');
 fs.mkdirSync(out,{recursive:true});
-const budget={started:new Date().toISOString(),limitSeconds:900,stages:[],environment:{
+const budget={revision:'r2',authorization:'用户在第一轮结果后要求继续修复；本轮只执行一次固定专项',
+  started:new Date().toISOString(),limitSeconds:900,stages:[],environment:{
   node:process.version,os:os.type(),release:os.release(),arch:os.arch(),
   cpu:os.cpus()[0].model,baseline:'fa20d9cb15731e68255d83fb80f950f62c24fb9c'},
-  command:'node rtl/prototype-phase-variation/run.js',sourceHashes:{}};
+  command:'timeout --signal=KILL 900s node rtl/prototype-phase-variation/run.js',sourceHashes:{}};
 const write=(name,v)=>fs.writeFileSync(path.join(out,name),typeof v==='string'?v:JSON.stringify(v,null,2)+'\n');
 function step(name,fn){const at=elapsed();if(at>=900)throw Error('Budget exhausted before '+name);
   write('progress.json',{...budget,currentStep:name,elapsed:at});
@@ -41,7 +42,8 @@ try {
       cases:families.map(f=>({family:f.id,cases:f.cases.map(c=>({name:c.name,goals:c.goals,
         expectedChecker:c.expectedChecker,expectedCheckerNote:c.expectedCheckerNote}))})),
       numericContracts:F.contracts(),sourceHashes:budget.sourceHashes,
-      scope:'四份固定输入，两个预先声明候选；没有参数扫描、随机种子或第二次专项。'});
+      previousPrototype:'a7a9fb94fb0e88617b2eebfc19ee77608e2495b5',
+      scope:'用户要求继续修复后的 r2：四份输入，保留前12场景的全部原始样本，追加一段固定持续异常；32个定向用例，无组合扫测或本轮失败后重跑。'});
     return families;
   });
   step('一次 VCS 冷编译',()=>exec('compile','vcs',['-full64','-sverilog','-timescale=1ns/1ps',
@@ -59,18 +61,26 @@ try {
     const result={provenance:{window:'真实 VCS 原型滑窗探针输出，非产品 RTL',
       behavior:'Node 执行的候选阶段/检查器行为模型',
       contract:'人工指定阶段归属的定向数值检查；不证明真实阶段豁免正确'},
-      families:[],contracts:[],controls:[],candidateSummary:[],windowComparison:{count:0,mismatches:[]},
+      revision:'r2',families:[],contracts:[],controls:[],candidateSummary:[],
+      preservedInputs:[],repairChecks:[],windowComparison:{count:0,mismatches:[]},
       limitations:[
         '正式 bw_stats_core / bw_check_report 尚未实现新默认；本证据不能视为产品回归通过。',
         '点/四成员组是固定 1 ns 采样、精确整数计量的原型；未验证实际注册、cfg 创建组、DPI、Verdi、规模、变频或资源上限。',
-        '正常平台切换的待判定区间未获得自动豁免；候选仅豁免已独立确认的 RAMP/FALL 区间，可能留下正常过渡误报。',
+        '平台交接与阶跃包络证明是候选算法；通过固定输入不表示任意复杂过渡均已验证。',
         '候选 B 相邻配对只评估固定交替输入；没有证明任意随机 ±8% 序列。',
         '全零特判和纯相对系数需要改变内部校验；现有 trend_abs > steady_exit_abs 约束不允许直接套入。',
         '最终窗口按 [阶段起点,阶段终点) 的发布时间归属；结束边界上的窗口不计入离开平台。',
-        '候选通过情况基于预先固定窗口参考，失败样本没有删除，未进行失败后调参重跑。'
+        '候选通过情况基于预先固定窗口参考；保留第一轮12场景全部原始样本，错误预期被明确修正；本轮不在失败后调参重跑。'
       ]};
     for(let fi=0;fi<families.length;fi++){
       const f=families[fi], vf={...f,cases:[]};
+      const previous=JSON.parse(fs.readFileSync(path.join(root,'evidence','input-'+f.id+'.json'),'utf8'));
+      for(const oldCase of previous.cases){
+        const current=f.cases.find(c=>c.id===oldCase.id);
+        const equal=!!current&&JSON.stringify(current.rows)===JSON.stringify(oldCase.rows);
+        result.preservedInputs.push({family:f.id,case:oldCase.name,rawSamplesUnchanged:equal});
+        if(!equal)throw Error('A first-round raw input was unexpectedly changed: '+oldCase.name);
+      }
       const wanted=new Set(f.cases.flatMap(c=>c.rows.filter(r=>r.u%f.s===0).map(r=>c.id+':'+r.u)));
       const actualKeys=csvs[fi].map(r=>r.caseId+':'+r.u);
       if(actualKeys.length!==wanted.size || new Set(actualKeys).size!==wanted.size || actualKeys.some(k=>!wanted.has(k)))
@@ -148,6 +158,45 @@ try {
       [true,false,'STATISTICS_ONLY'],[true,true,'ANALYZE'],[false,true,'CONFIG_ERROR']]){
       const actual=P.control(episode,phaseEnabled);result.controls.push({episode,phaseEnabled:phaseEnabled===undefined?'omitted':phaseEnabled,expected,actual,passed:actual===expected});
     }
+    const oldResults=JSON.parse(fs.readFileSync(path.join(root,'evidence','results.json'),'utf8'));
+    const allCases=result.families.flatMap(f=>f.cases);
+    const oldCases=oldResults.families.flatMap(f=>f.cases);
+    const timeline=r=>r.runs.map(run=>run.phase.phases.map(p=>[p.id,p.label,p.start,p.confirm,p.end]));
+    result.phaseTimelineComparison=oldCases.map(old=>({case:old.name,
+      unchanged:P.candidates.every(c=>JSON.stringify(timeline(old.candidates[c.id]))===
+        JSON.stringify(timeline(allCases.find(v=>v.id===old.id).candidates[c.id])))}));
+    const b=id=>allCases.find(c=>c.id===id).candidates.pair6;
+    const recordRepair=(name,passed,detail)=>result.repairChecks.push({name,passed,detail});
+    const firstStep=b(1).runs[0].checker;
+    const proof=firstStep.exclusions.find(x=>x.oldPhase===1&&x.newPhase===2);
+    recordRepair('正常阶跃的旧平台通过，且具备独立区间证据',
+      firstStep.platforms[0].status==='PASS'&&proof?.start===170&&proof?.end===220&&proof.bridge.span===10,
+      {oldStatus:'FAIL',newStatus:firstStep.platforms[0].status,proof});
+    const pause=b(6).runs[0].checker;
+    const preserved=pause.platforms[0].runs.find(r=>r.start===81&&r.end===92&&r.span===11&&r.count===12&&r.sustained);
+    recordRepair('短平台没有切断十二条持续超限样本',
+      pause.status==='FAIL'&&!!preserved&&pause.platforms[0].checking.retainedShortPlatforms.includes(2),
+      {oldStatus:'WARNING',newStatus:pause.status,run:preserved,checking:pause.platforms[0].checking});
+    const noFalseChatter=[1,2,5].every(id=>b(id).runs.every(r=>r.quality.extra.length===0));
+    recordRepair('三个正常交接以新平台确认身份起算切换',noFalseChatter,
+      {oldExtraSwitches:6,newExtraSwitches:[1,2,5].map(id=>b(id).runs.map(r=>r.quality.extra))});
+    recordRepair('已有十二份场景的阶段边界与确认时刻未被 checker 修复改变',
+      result.phaseTimelineComparison.every(c=>c.unchanged),result.phaseTimelineComparison);
+    const baselineCase=allCases.find(c=>c.id===12),sustainedCase=allCases.find(c=>c.id===13);
+    const pulseWindows=sustainedCase.windows.filter(r=>r.u>=110&&r.u<=152);
+    recordRepair('保留原短超限夹具并追加真正持续异常',
+      baselineCase.candidates.pair6.checkerStatus==='PASS'&&sustainedCase.candidates.pair6.checkerStatus==='FAIL'&&
+      pulseWindows.every(r=>r.eligible&&r.y<=120)&&pulseWindows.at(-1).u-pulseWindows[0].u>=10,
+      {retainedOriginalStatus:baselineCase.candidates.pair6.checkerStatus,newStatus:sustainedCase.candidates.pair6.checkerStatus,
+        windowInterval:[pulseWindows[0].u,pulseWindows.at(-1).u],maximum:Math.max(...pulseWindows.map(r=>r.y))});
+    const previousFailure=result.contracts.find(c=>c.name==='正常阶跃不能擦掉先前的持续异常');
+    recordRepair('正常阶跃豁免不删除此前已经持续达标的失败',
+      previousFailure.actual.platforms[0].runs.some(r=>r.start===130&&r.end===140&&r.sustained)&&
+      previousFailure.actual.exclusions.some(e=>e.start===170),previousFailure.actual.platforms[0].runs);
+    const clipped=result.contracts.find(c=>c.name==='最终裁剪使新平台不足 W 时撤回交接');
+    recordRepair('最终裁剪后不保留无依据的交接或豁免',clipped.actual.status==='FAIL'&&
+      !clipped.actual.attribution.platforms[1].canHandoff&&!clipped.actual.exclusions.length,
+      clipped.actual.attribution);
     for(const cand of P.candidates){
       const cases=result.families.flatMap(f=>f.cases.map(c=>c.candidates[cand.id]));
       const q=cases.flatMap(c=>c.runs.map(r=>r.quality));
@@ -158,6 +207,7 @@ try {
         wrongConfirmations:q.reduce((s,v)=>s+v.wrong.length,0),
         extraSwitches:q.reduce((s,v)=>s+v.extra.reduce((s,x)=>s+x.extra,0),0),
         checkerExpectationFailures:cases.filter(c=>c.checkerMatchesExpected===false).length,
+        jointCasesPassed:cases.filter(c=>c.phasePassed&&c.checkerMatchesExpected===true).length,
         finalReplayIdempotent:cases.every(c=>c.finalReplayIdempotent),
         approved:false});
     }
@@ -170,17 +220,32 @@ try {
     const html=template.replace('/*__MODEL__*/',()=>fs.readFileSync(path.join(root,'model.js'),'utf8'))
       .replace('/*__DATA__*/',()=> 'const DATA='+escape(JSON.stringify(data))+';');
     fs.writeFileSync(path.join(root,'demo.html'),html);
+    // Syntax and event smoke check for the shareable page; this is not browser layout validation.
+    const vm=require('node:vm'), elements=new Map();
+    const element=id=>{if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',value:'',
+      querySelectorAll:()=>[]});return elements.get(id);};
+    const context=vm.createContext({document:{getElementById:element},console});
+    for(const script of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(script[1]).runInContext(context,{timeout:3000});
+    for(const action of ['eight','all','reset'])element(action).onclick();
+    data.pageSmoke={scriptsParsed:true,initialRender:true,actions:['eight','all','reset'],browserLayoutVerified:false};
+    write('results.json',data);
     let md='# 默认阶段策略与波动检查：一次固定输入原型记录\n\n';
     md+='本记录是实测结果，不是用户决议。候选失败、质量缺口与定向人工归属均保留。\n\n';
     md+='| 候选 | 阶段场景通过 | 期限失败 | 错误确认 | 多余切换 |\n| --- | --- | --- | --- | --- |\n';
     for(const c of data.candidateSummary)md+=`| ${c.name} | ${c.phaseCasesPassed}/${c.cases} | ${c.targetDeadlineFailures}/${c.targetDeadlines} | ${c.wrongConfirmations} | ${c.extraSwitches} |\n`;
     md+=`\nVCS 窗口独立对照：${data.windowComparison.count} 条，${data.windowComparison.mismatches.length} 处不一致。定向 checker 数值输入：${data.contracts.filter(c=>c.passed).length}/${data.contracts.length} 与预期一致。\n\n`;
+    md+='修复核验：'+data.repairChecks.filter(c=>c.passed).length+'/'+data.repairChecks.length+'；旧输入原始样本保留：'+data.preservedInputs.filter(c=>c.rawSamplesUnchanged).length+'/'+data.preservedInputs.length+'。\n\n';
     md+='| 输入 | 候选 | 阶段 | checker 预期 | checker 实际 |\n| --- | --- | --- | --- | --- |\n';
     for(const f of data.families)for(const c of f.cases)for(const candidate of P.candidates){
       const r=c.candidates[candidate.id];md+=`| ${f.name} / ${c.name} | ${candidate.id} | ${r.phasePassed?'PASS':'FAIL'} | ${c.expectedChecker?c.expectedChecker.join(' / '):'取决于独立过渡归属'} | ${r.checkerStatus} |\n`;
     }
     md+='\n## 证据边界\n\n'+data.limitations.map(s=>'- '+s).join('\n')+'\n';
     write('REPORT.md',md);
+    const candidateB=data.candidateSummary.find(c=>c.id==='pair6');
+    budget.candidateBFixedMatrixPassed=candidateB.jointCasesPassed===candidateB.cases&&
+      !candidateB.targetDeadlineFailures&&!candidateB.wrongConfirmations&&!candidateB.extraSwitches;
+    budget.repairPassed=budget.candidateBFixedMatrixPassed&&data.repairChecks.every(c=>c.passed)&&
+      data.contracts.every(c=>c.passed)&&data.controls.every(c=>c.passed)&&!data.windowComparison.mismatches.length;
   });
 }catch(e){budget.error=e.stack;process.exitCode=1;write('failure.txt',e.stack+'\n');}
 finally{
@@ -192,5 +257,5 @@ finally{
   console.log(JSON.stringify({budget,candidates:data&&data.candidateSummary,
     windowComparison:data&&data.windowComparison,
     numericContracts:data&&{passed:data.contracts.filter(c=>c.passed).length,total:data.contracts.length}},null,2));
-  if(!budget.withinBudget)process.exitCode=1;
+  if(!budget.withinBudget||budget.repairPassed===false)process.exitCode=1;
 }

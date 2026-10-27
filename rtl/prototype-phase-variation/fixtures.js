@@ -38,16 +38,22 @@ function fixtures() {
           {ticks:1,value:0,events:0,reset:1},steady(90,400,'afterreset',{newPhase:true}),quiet(12)]},
         {name:'偏离后回到原平台的保留证据',segments:[steady(100,400,'base'),
           {ticks:26,value:400,pattern:[0,0,800,800,800,0,800,0,800,800,0,0,0],key:'anomaly'},
-          steady(100,400,'return'),quiet(12)]}
+          steady(100,400,'return'),quiet(12)]},
+        {name:'持续异常跨短平台后回到原平台',segments:[steady(100,400,'sustainedbase'),
+          {ticks:52,value:0,pattern:[1200,0,0,0,0,0,0,0,0,0,0,0,0],key:'sustained_anomaly'},
+          steady(100,400,'sustainedreturn'),quiet(12)]}
       ]}
   ];
   const expectedChecker=[['PASS'],['PASS','WARNING'],['PASS'],['FAIL'],['FAIL'],
-    null,['WARNING'],['WARNING'],['WARNING'],['PASS'],['WARNING'],['FAIL']];
+    ['FAIL'],['WARNING'],['WARNING'],['WARNING'],['PASS'],['WARNING'],['PASS'],['FAIL']];
   for (const f of families) for (const c of f.cases) {
     c.id = ++serial; c.rows = []; c.goals = [];
     c.expectedChecker=expectedChecker[serial-1];
     c.expectedCheckerNote=c.expectedChecker?'预先固定的最终检查期望':
       '短暂停顿需依据独立确认的升降归属定稿；不得仅因暂停而豁免，未给定单一结果';
+    if(serial===6)c.expectedCheckerNote='旧参考下 u=81…92 连续超限跨度11，短平台不得切断证据';
+    if(serial===12)c.expectedCheckerNote='保留第一轮原输入；其实际窗口最大连续超限跨度8<W，纠正错误 FAIL 期望为 PASS';
+    if(serial===13)c.expectedCheckerNote='新增固定的持续异常：在完整位于52周期异常块的窗口中，值仅0或120，连续偏离原400参考超过W；不替换旧输入';
     let u = 0;
     for (const seg of c.segments) {
       const start = u;
@@ -129,6 +135,24 @@ function contracts() {
     {id:3,label:'STEADY',start:110,end:181,confirm:120}]});
   add('退出稳定但未获过渡豁免',[106,106,100,100],'FAIL',{phases:[
     {id:1,label:'STEADY',start:0,end:70,confirm:10}]});
+  const records=ys=>ys.map((y,i)=>({seq:i+1,u:(i+1)*10,t:(i+1)*10,left:i*10,y,eligible:true}));
+  const stepPhases=[{id:1,label:'STEADY',start:60,end:170,confirm:70},
+    {id:2,label:'STEADY',start:220,end:321,confirm:230}];
+  add('新平台独立证据支持 100→120 阶跃',[],'PASS',{noPrefix:true,
+    records:records(Array(16).fill(100).concat(Array(16).fill(120))),phases:stepPhases});
+  add('正常阶跃不能擦掉先前的持续异常',[],'FAIL',{noPrefix:true,
+    records:records(Array(12).fill(100).concat([106,106,100,100],Array(16).fill(200))),phases:stepPhases});
+  const shortRecords=Array.from({length:162},(_,i)=>{const u=i+1;
+    const y=u===81||u===92?90:u===82||u===91?80:u>=83&&u<=90?70:100;
+    return {seq:u,u,t:u,left:u-10,y,eligible:u>=10};});
+  add('无参考短平台不得切断 u81…92 的持续超限',[],'FAIL',{noPrefix:true,
+    config:{s:1,minSpan:5},records:shortRecords,phases:[
+      {id:1,label:'STEADY',start:15,end:82,confirm:16},
+      {id:2,label:'STEADY',start:88,end:91,confirm:89},
+      {id:3,label:'STEADY',start:98,end:163,confirm:99}]});
+  add('最终裁剪使新平台不足 W 时撤回交接',[],'FAIL',{noPrefix:true,
+    records:records(Array(16).fill(100).concat(Array(16).fill(200))),
+    phases:[stepPhases[0],{...stepPhases[1],end:225}],meta:{end:225,incomplete:'仿真截断'}});
   return specs;
 }
 module.exports={fixtures,contracts};
