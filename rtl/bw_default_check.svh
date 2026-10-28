@@ -127,7 +127,7 @@ function automatic void default_result(int index,bw_episode_result_t episode,
   reference_first_seq=0;reference_last_seq=0;reference_first_u=0;reference_last_u=0;reference_seqs="";
   run_count=0;run_first=0;run_last=0;runs=0;longest_count=0;longest_first=0;longest_last=0;longest_span=0;
   previous_seq=0;exclusion_count=0;
-  failed=0;quality=episode.status!=BW_EPISODE_COMPLETE || !episode.bytes_complete || !episode.first_known ||
+  failed=0;quality=episode.status!==BW_EPISODE_COMPLETE || !episode.bytes_complete || !episode.first_known ||
     !episode.tail_known || !episode.last_known;
   reason=have_platform ? "REFERENCE_INSUFFICIENT" : (episode.episode_id==0 ? "NO_EPISODE" : "NO_CONFIRMED_STEADY");
   if(have_platform)foreach(default_scopes[index].phases[p])begin

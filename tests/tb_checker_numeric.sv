@@ -28,7 +28,7 @@ module tb_checker_numeric;
     baseline=mode=="zero" ? 0.0 : ((mode inside {"nearzero","nearzero_pass"}) ? 1e-200 : 100.0);
     // 0 PASS, 1 FAIL, 2 WARNING: worked examples independent of report fields.
     expected=(mode inside {"high_over","low_over","expanded_high_over","expanded_low_over","explicit_time","alternating","reference_backcheck","nearzero","reset_fail","cycle","dense_fail"}) ? 1 :
-      ((mode inside {"gap","zero","reference_short","coverage","truncated","terminal_crop","start_unknown"}) ? 2 : 0);
+      ((mode inside {"gap","zero","reference_short","coverage","truncated","terminal_crop","start_unknown","unknown_status"}) ? 2 : 0);
     report_sink.analysis_scope(BW_POINT,"numeric.check",1,cycle_basis ? BW_CYCLE : BW_NS,10,stride);
     for(int n=1;n<=count;n++)begin
       endpoint=dense ? 9+n : 10*n;
@@ -83,6 +83,7 @@ module tb_checker_numeric;
     episode='{default:0};episode.scope_kind=BW_POINT;episode.episode_id=1;episode.result_seq=1;
     episode.status=mode=="reset_fail" ? BW_EPISODE_RESET_INTERRUPTED :
       (mode=="truncated" ? BW_EPISODE_TRUNCATED : BW_EPISODE_COMPLETE);
+    if(mode=="unknown_status")episode.status=bw_episode_status_t'(3'bxxx);
     episode.first_known=1;episode.last_known=1;episode.tail_known=1;
     episode.bytes_complete=1;episode.first_ticks=measurement_start_ticks;episode.tail_ticks=platform.end_ticks;
     if(mode=="terminal_crop")episode.tail_ticks=measurement_start_ticks+55000000;

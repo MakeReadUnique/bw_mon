@@ -94,6 +94,18 @@ physical delivery time. Closed fragments retain their individual identities and
 summaries. The ordered prior-episode activity marker and one selected last steady
 remain intact. Fit evidence retains its actual N samples/span.
 
+The default sustained-variation checker has a separate lossless pending stream
+captured before those summaries. It preserves seq/epoch/episode, both physical
+and logical endpoints, raw bandwidth bits, and every validity/reset flag.
+Compression requires equal values and flags plus affine sequence and all four
+endpoints; changing cycle/time relationships or window-left geometry splits a
+run. Invalid rows are retained as breaks, never filtered and rejoined. Original
+seven-row confirmation support seqs and min/max envelope are frozen by the phase
+owner independently of the latest six-row fit. This pending checker prefix is
+retained through terminal episode attribution; it is not recoverable from a
+variation mean/min/max summary. Disabled active scopes retain evidence for the
+partial-terminal work rather than manufacturing a finalized platform.
+
 Package transport is a different owner: one durable frame/control stream per
 source, unique authoritative ACK positions per direct consumer, release through
 ALL direct ACKs. A group output is durable and its core has accepted or reset-

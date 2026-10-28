@@ -1017,6 +1017,28 @@ metrics also retain RESET/TRUNCATED reasons rather than losing their interruptio
 context behind a generic boundary reason. A previously settled
 complete phase remains valid after a later gap, reset or observation end.
 
+The fixed default sustained-variation rule is separate from these explicit
+variation metrics. With phase analysis enabled it needs no `BW_EXPECT` file:
+`bw_check_report` builds the earliest six consecutive fully platform-contained
+windows with logical span at least `min(W,5*S)`, freezes their mean B, and checks
+the reference rows too. Strict `abs(y-B)>0.05*B` must hold for >=2 consecutive new
+valid rows spanning W in original ns-tick/cycle positions to FAIL. Equality,
+CV and phase-fit residuals do not redefine this rule. Zero/missing reference or
+incomplete coverage warns; positive near-zero references follow the same rule.
+Every platform settles once at terminal episode attribution, preserving earlier
+FAIL and keeping explicit metric counters independent. See
+[expectation and report contract](bw-mon-expectations.md#default-sustained-variation-check).
+
+Phase records additionally retain original recognition support in
+`support_first_seq`, `support_last_seq`, `support_count` and
+`support_min_gbps`/`support_max_gbps`. The fixed first confirmation uses seven
+original valid rows; advancing the six-row fit does not replace that support.
+Private raw evidence preserves both window endpoints and actual cycle positions
+for final reference/cutoff checks. `BW_DEFAULT_CHECK` reports B separately from
+raw steady bandwidth and includes reference membership, runs, quality and reason;
+`BW_DEFAULT_EXCLUSION` reports independently confirmed phase ranges. Normal-step
+handoff attribution is a separate following implementation requirement.
+
 Episode records also contain `last_steady_found`, `last_steady_selection_valid`,
 `last_steady_reason` and embedded immutable `last_steady`. Only a normally
 completed episode with a known last transfer and actual tail makes representative

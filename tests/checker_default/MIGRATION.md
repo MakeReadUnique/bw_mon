@@ -70,3 +70,14 @@ Its independent same-ID group contains the healthy point and continues to PASS.
 Scope-owned helpers stop before queue/receipt mutation on failure; previously
 settled totals remain. Pending active evidence is retained for the later partial
 terminal hook, with no fabricated platform final and no new disabled-scope PASS.
+
+`checker_equivalence_*` compares every public default-result field exactly for
+compressed/split raw receipts in the same execution at both 5% equalities and
+both just-outside values. It asserts B100/threshold5 and the exact IEEE double
+peak, rather than reusing stale logs or inspecting representation internals.
+`checker_numeric_unknown_status` rejects an unknown final status as incomplete
+quality; four-state metadata cannot be coerced into PASS.
+`checker_quickstart_*` compiles the actual unchanged example input:20 transfers
+of64 bytes with W10 cannot supply six platform-contained reference windows, so
+its default WARNING remains beside its optional explicit e2e PASS. User-guide
+summaries now describe the measured result without changing the example input.
