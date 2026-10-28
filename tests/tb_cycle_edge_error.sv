@@ -49,6 +49,8 @@ module tb_cycle_edge_error;
     record.edge_index=13;
     record_toggle<=!record_toggle;
     #1;
-    $fatal(1,"expected core error did not occur");
+    if(!scope_disabled(BW_POINT,"cycle.component") || core.accepted_record_seq!=1)
+      $fatal(1,"bad edge must not receive acceptance after reliable first frame");
+    $display("TB_PASS cycle_edge_error quarantined");$finish;
   end
 endmodule

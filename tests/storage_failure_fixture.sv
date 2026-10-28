@@ -31,6 +31,9 @@ module storage_failure_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_p
     if(resource inside {"quality.window","quality.episode"})begin
       #(3100002-$time);reset_n=0;#400000;reset_n=1;
     end else if(resource=="phase.pending")begin #(4100002-$time);valid=0;end
-    #(10000002-$time);$fatal(1,"expected core error did not occur");
+    #(10000002-$time);
+    if(!scope_disabled(owner=="fault.group" ? BW_GROUP : BW_POINT,owner))
+      $fatal(1,"runtime storage failure did not quarantine the owning scope");
+    $display("TB_PASS storage_failure resource=%s owner=%s quarantined=1",resource,owner);$finish;
   end
 endmodule

@@ -14,6 +14,7 @@ module tb_phase_fit_error;
   initial begin
     wait(monitor_ready);
     for(int t=1;t<=5;t++)begin #(ns_to_ticks(t)-$time);clk=1;#1;clk=0;end
-    $fatal(1,"expected core error did not occur");
+    if(!scope_disabled(BW_POINT,"phase.fit_error"))$fatal(1,"nonfinite phase fit must disable its owner");
+    $display("TB_PASS phase_fit_error quarantined");$finish;
   end
 endmodule

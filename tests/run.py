@@ -77,6 +77,8 @@ def main():
         else:
             passed = (result.returncode == 0 and "TB_PASS" in result.stdout and
                       "Fatal:" not in result.stdout)
+            if case.get("expect_warning"):
+                passed = passed and re.search(case["expect_warning"],result.stdout) is not None
         passed = passed and all(re.search(pattern, result.stdout) is not None
                                 for pattern in case.get("expect_log", []))
         passed = passed and all(len(re.findall(pattern, result.stdout)) == count

@@ -441,7 +441,7 @@ package bw_check_report_pkg;
         string record_kind,real measured,string evidence_reason,bit final_settlement=0);
       int r;
       string conclusion,reason,actual;
-      if(core_failure_seen || (final_settlement && core_failure_pending())) return;
+      if(scope_failed(context_value.scope_kind,scopes[index].id) || (final_settlement && core_failure_pending()))return;
       if(!enabled_rule(index,metric)) return;
       r=index*METRIC_COUNT+metric;reason=evidence_reason;
       if(reason=="NONE" && !finite_real(measured)) reason="ACTUAL_NONFINITE";
@@ -455,7 +455,7 @@ package bw_check_report_pkg;
       end else begin
         conclusion="PASS";totals.pass_count=checked_add(totals.pass_count,1,scopes[index].id);
       end
-      if(core_failure_seen || (final_settlement && core_failure_pending())) return;
+      if(scope_failed(context_value.scope_kind,scopes[index].id) || (final_settlement && core_failure_pending()))return;
       $display("BW_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d result_seq=%0d kind=%s phase=%0d metric=%s unit=%s start_ticks=%0d end_ticks=%0d actual=%s has_min=%0b min=%.17g has_max=%0b max=%.17g abs_tol=%.17g rel_tol_pct=%.17g effective_min=%.17g effective_max=%.17g bytes=%0d events=%0d duration_ticks=%0d bytes_complete=%0b events_complete=%0b first_known=%0b last_known=%0b tail_known=%0b duration_valid=%0b member_reset=%0b phase_kind=%0d phase_result_seq=%0d basis=%0d W=%0d S=%0d samples=%0d first_sample_ticks=%0d last_sample_ticks=%0d sample_span_ticks=%0d mean_gbps=%.17g interval_known=%0b coverage_complete=%0b minmax_valid=%0b stddev_valid=%0b cv_valid=%0b minmax_reason=%s stddev_reason=%s cv_reason=%s excluded_warmup=%0d excluded_foreign=%0d unknown_samples=%0d excluded_denominator=%0d cfg_file=%s min_line=%0d max_line=%0d abs_line=%0d rel_line=%0d conclusion=%s reason=%s",
         context_value.scope_kind,scopes[index].id,context_value.stats_epoch,context_value.episode_id,
         context_value.result_seq,record_kind,context_value.phase_id,metric_name(metric),metric_unit(metric),
@@ -539,7 +539,7 @@ package bw_check_report_pkg;
       int index,metric;
       string reason;
       real measured;
-      if(core_failure_seen || totals.finalized || result.result_seq==0) return;
+      if(scope_failed(result.scope_kind,scope_id) || totals.finalized || result.result_seq==0)return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
@@ -579,7 +579,7 @@ package bw_check_report_pkg;
       string reason,selection_reason,episode_reason;
       real measured;
       bit same_time_episode;
-      if(core_failure_seen || totals.finalized || result.result_seq==0) return;
+      if(scope_failed(result.scope_kind,scope_id) || totals.finalized || result.result_seq==0)return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
@@ -626,7 +626,10 @@ package bw_check_report_pkg;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(kind,scope_id);
       if(index<0 || scopes[index].done) return;
-      if(!scopes[index].saw_episode) begin
+      if(scope_disabled(kind,scope_id))begin
+        totals.warning_count=checked_add(totals.warning_count,1,scope_id);
+        $display("BW_CHECK_WARNING scope_kind=%0d scope=%s reason=MONITOR_DISABLED",kind,scope_id);
+      end else if(!scopes[index].saw_episode) begin
         // No record numbers are interpreted as zero measurements.
         empty_result.scope_kind=kind;empty_result.stats_epoch=stats_epoch;
         empty_result.variation='{window_basis:BW_NS,minmax_reason:BW_METRIC_NO_SAMPLES,
