@@ -377,9 +377,16 @@
   "name": "episode_final",
   "top": "tb_episode_final",
   "expect_log": [
-   "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000001 last_ticks=1000001 tail_ticks=2000001 confirm_ticks=3000001 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
-   "(?s)^(?!.*BW_EPISODE[^\\n]*scope=episode.none)"
-  ]
+   "TB_PASS episode_final",
+   "BW_POINT_TERMINAL scope=episode.final state=INTERRUPTED expected=2 captured=2 inflight=2 published=2 accepted=2 input_generation=12 closed_generation=11 time_ticks=3000001",
+   "BW_POINT_TERMINAL scope=episode.none state=INTERRUPTED.*time_ticks=3000001",
+   "(?s)^(?!.*BW_EPISODE)"
+  ],
+  "expect_counts": {
+   "BW_EPISODE ": 0,
+   "BW_SUMMARY ": 0,
+   "BW_DEFAULT_CHECK ": 0
+  }
  },
  {
   "name": "episode_final_budget",
@@ -1563,9 +1570,10 @@
    "+BW_EXPECT=../../../tests/expect/e2e_group_barrier.cfg"
   ],
   "expect_log": [
-   "(?s)BW_CHECK .*scope=p0 .*actual=UNAVAILABLE .*reason=NO_EPISODE.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=6 scopes_done=3 scopes_expected=3"
+   "(?s)BW_CHECK .*scope=p0 .*actual=UNAVAILABLE .*reason=NO_EPISODE.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 0,
    "BW_CHECK ": 1,
    "BW_SUMMARY ": 1
   }
@@ -2070,8 +2078,11 @@
   "expect_log": [
    "BW_CHECK scope_kind=0 scope=metrics.first_boundary .*metric=steady_bw .*conclusion=FAIL reason=NONE",
    "BW_CHECK scope_kind=1 scope=metrics.first_boundary_group .*metric=steady_stddev .*conclusion=PASS reason=NONE",
-   "BW_SUMMARY status=FAIL pass=2 fail=2 warning=0 scopes_done=2 scopes_expected=2"
-  ]
+   "BW_SUMMARY status=FAIL pass=2 fail=2 warning=2 scopes_done=2 scopes_expected=2"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  }
  },
  {
   "name": "metrics_first_boundary_known_start",
@@ -2083,8 +2094,11 @@
   "expect_log": [
    "BW_CHECK scope_kind=0 scope=metrics.first_boundary .*metric=steady_bw .*conclusion=FAIL reason=NONE",
    "BW_CHECK scope_kind=1 scope=metrics.first_boundary_group .*metric=steady_stddev .*conclusion=PASS reason=NONE",
-   "BW_SUMMARY status=FAIL pass=2 fail=2 warning=0 scopes_done=2 scopes_expected=2"
-  ]
+   "BW_SUMMARY status=FAIL pass=2 fail=2 warning=2 scopes_done=2 scopes_expected=2"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  }
  },
  {
   "name": "metrics_first_boundary_unknown_end",
@@ -2095,8 +2109,11 @@
   ],
   "expect_log": [
    "BW_LAST_STEADY.*scope=metrics.first_boundary .*selection_valid=0.*reason=BOUNDARY_UNKNOWN",
-   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=4 scopes_done=2 scopes_expected=2"
-  ]
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=6 scopes_done=2 scopes_expected=2"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  }
  },
  {
   "name": "metrics_independent",
@@ -2644,9 +2661,10 @@
    "scope=phase.zero0 .*metric=episode_cv .*actual=UNAVAILABLE .*reason=ZERO_MEAN",
    "scope=phase.zero1 .*metric=steady_bw .*reason=NO_CONFIRMED_STEADY",
    "scope=phase.zero2 .*metric=e2e_bw .*reason=NO_EPISODE",
-   "BW_SUMMARY status=WARNING pass=8 fail=0 warning=8"
+   "BW_SUMMARY status=WARNING pass=8 fail=0 warning=13"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 5,
    "BW_CHECK ": 16,
    "BW_CFG WARNING ": 0,
    "BW_SUMMARY ": 1
@@ -2662,9 +2680,10 @@
    "metric=e2e_bw .*reason=BYTES_INCOMPLETE",
    "metric=episode_stddev .*actual=5 .*conclusion=PASS",
    "metric=episode_cv .*conclusion=PASS",
-   "BW_SUMMARY status=WARNING pass=4 fail=0 warning=1"
+   "BW_SUMMARY status=WARNING pass=4 fail=0 warning=2"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 1,
    "BW_CHECK ": 5,
    "BW_CFG WARNING ": 0,
    "BW_SUMMARY ": 1
@@ -2681,9 +2700,10 @@
    "scope=metrics.ancestor0 .*metric=steady_bw .*reason=BYTES_INCOMPLETE",
    "scope=metrics.ancestor0 .*metric=steady_stddev .*conclusion=PASS",
    "scope=metrics.ancestor0 .*metric=episode_stddev .*reason=OBSERVATION_INCOMPLETE",
-   "BW_SUMMARY status=WARNING pass=5 fail=0 warning=5"
+   "BW_SUMMARY status=WARNING pass=6 fail=0 warning=7"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 3,
    "BW_CHECK ": 10,
    "BW_CFG WARNING ": 0,
    "BW_SUMMARY ": 1
@@ -2699,9 +2719,10 @@
    "metric=ramp_time .*actual=6 .*conclusion=PASS",
    "scope=metrics.interrupted0 .*metric=steady_bw .*reason=RESET_INTERRUPTED",
    "scope=metrics.interrupted1 .*metric=steady_bw .*reason=OBSERVATION_TRUNCATED",
-   "BW_SUMMARY status=WARNING pass=2 fail=0 warning=4"
+   "BW_SUMMARY status=WARNING pass=2 fail=0 warning=6"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2,
    "BW_CHECK ": 6,
    "BW_CFG WARNING ": 0,
    "BW_SUMMARY ": 1
@@ -2716,9 +2737,10 @@
   "expect_log": [
    "metric=steady_bw .*actual=0 .*conclusion=PASS",
    "metric=steady_window_min .*actual=6.4.*conclusion=PASS",
-   "BW_SUMMARY status=WARNING pass=3 fail=0 warning=1"
+   "BW_SUMMARY status=WARNING pass=3 fail=0 warning=2"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 1,
    "BW_CHECK ": 4,
    "BW_CFG WARNING ": 0,
    "BW_SUMMARY ": 1
@@ -2902,9 +2924,10 @@
   "expect_log": [
    "metric=ramp_time .*actual=4 .*conclusion=PASS",
    "metric=steady_bw .*reason=OBSERVATION_TRUNCATED",
-   "BW_SUMMARY status=WARNING pass=2 fail=0 warning=4"
+   "BW_SUMMARY status=WARNING pass=2 fail=0 warning=6"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2,
    "BW_CHECK ": 6,
    "BW_SUMMARY ": 1
   }
