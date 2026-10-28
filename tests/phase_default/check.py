@@ -11,6 +11,8 @@ from pathlib import Path
 import re
 import sys
 
+from window_reference import reference_family
+
 TICKS = 1_000_000
 HERE = Path(__file__).resolve().parent
 
@@ -24,9 +26,12 @@ def check(log_path, family_id):
     metrics, variations = {}, {}
     current = None
     registrations=[]
+    measurement_starts=[]
     for line in Path(log_path).read_text().splitlines():
         v = fields(line)
-        if line.startswith('BW_READY '):registrations.append((int(v['points']),int(v['groups'])))
+        if line.startswith('BW_READY '):
+            registrations.append((int(v['points']),int(v['groups'])))
+            measurement_starts.append(int(v['time_ticks']))
         if line.startswith('FIXED_ENUM '): enum = {value:key for key,value in v.items()}
         elif line.startswith('FIXED_CASE '):
             current=int(v['case']);origins[current]=int(v['origin'])
@@ -45,40 +50,43 @@ def check(log_path, family_id):
                 kind='point' if scope.startswith('point') else 'group'
                 phases.setdefault((current,kind),[]).append(v)
     assert registrations==[(5,1)], ('T4 requires exactly five registered points and one group',registrations)
-    assert set(origins)==set(cases), ('missing input cases',set(cases)-set(origins))
+    references=reference_family(family,measurement_starts[0])
+    assert set(origins)==set(cases)==set(references), ('missing input cases',set(cases)-set(origins))
+    assert origins=={cid:ref.origin for cid,ref in references.items()}, ('case origins',origins)
     count=0;targets=[]
     for cid,c in cases.items():
-        origin=origins[cid]
-        activity=[(origin+(r['u']-1)*TICKS+1,r) for r in c['rows']]
+        reference=references[cid]
+        origin=reference.origin
+        activity=reference.activity
+        publications={w.u:w for w in reference.windows}
+        expected_phases=[]
+        for phase in c['phases']:
+            start=publications[phase['start']].ticks
+            episode=next(e for e in reference.episodes if e.first_ticks<=start<e.end_ticks)
+            # Frozen R2 boundaries are logical positions. Actual timestamps
+            # come from the independent publication and raw episode models.
+            # A final tail/reset can be 1fs after the NS result at the same u.
+            end=(episode.end_ticks if phase['end']==episode.end_u else
+                 publications[phase['end']].ticks)
+            expected_phases.append({'label':phase['label'],'start':start,
+                                    'confirm':publications[phase['confirm']].ticks,'end':end})
         for kind in ('point','group'):
             observed=windows.get((cid,kind),[])
             assert observed, (cid,kind,'no published windows')
-            if family['basis']=='cycle':
-                expected_ticks={origin+u*TICKS+1 for u in range(family['s'],len(c['rows']),family['s'])}
-            else:
-                expected_ticks=set();epoch_start=origin;asserted=False
-                reset_edges=[(at,bool(r['reset'])) for at,r in activity]
-                next_tick=origin+family['s']*TICKS
-                for at,reset in reset_edges+[(origin+len(c['rows'])*TICKS+(1 if cid==family['cases'][-1]['id'] else 0),False)]:
-                    while not asserted and next_tick<at:
-                        expected_ticks.add(next_tick);next_tick+=family['s']*TICKS
-                    if asserted and not reset:
-                        epoch_start=at;next_tick=at+family['s']*TICKS
-                    asserted=reset
-            assert {int(v['ticks']) for v in observed}==expected_ticks,(cid,kind,'publication schedule')
-            unique=set()
-            for v in observed:
-                end,left=int(v['ticks']),int(v['left'])
-                assert end not in unique, (cid,kind,'duplicate window',end)
-                unique.add(end)
-                raw=[r for tick,r in activity if left<=tick<end]
-                expected_bytes=sum(sum(r['members']) for r in raw if r['events'] and r['known'] and not r['reset'])
-                expected_complete=all(r['known'] for r in raw if not r['reset'])
-                assert int(v['bytes'])==expected_bytes, (cid,kind,end,'bytes',v['bytes'],expected_bytes)
-                assert bool(int(v['full']))==(end-left==family['w']*TICKS),(cid,kind,end,'full coverage')
-                assert bool(int(v['complete']))==expected_complete,(cid,kind,end,'quality',v['complete'],expected_complete)
-                assert abs(float(v['y'])-expected_bytes*TICKS/(end-left))<=1e-9,(cid,kind,end,'bandwidth')
+            expected_windows=reference.windows
+            assert [int(v['ticks']) for v in observed]==[w.ticks for w in expected_windows],(cid,kind,'publication schedule')
+            for v,w in zip(observed,expected_windows):
+                # No product interval or quality flag is used to construct the
+                # oracle. Geometry, bytes and eligibility all originate in the
+                # original protocol rows, actual edges and reset epochs.
+                for field in ('left','bytes','full','complete','eligible'):
+                    assert int(v[field])==getattr(w,field),(cid,kind,w.ticks,field,v[field],getattr(w,field))
+                assert abs(float(v['y'])-w.y)<=1e-9,(cid,kind,w.ticks,'bandwidth',v['y'],w.y)
                 count+=1
+            actual=[{'label':enum[p['kind']],'start':int(p['start_ticks']),
+                     'confirm':int(p['confirm_ticks']),'end':int(p['end_ticks'])}
+                    for p in phases.get((cid,kind),[])]
+            assert actual==expected_phases,(cid,kind,'exact phase ticks',actual,expected_phases)
             # Final phase bytes use raw events; variation equally weights the
             # eligible full windows in that final interval. The sources differ.
             for p in phases.get((cid,kind),[]):
@@ -92,12 +100,7 @@ def check(log_path, family_id):
                     expected=sum(sum(r['members']) for r in raw if r['events'] and r['known'] and not r['reset'])
                     assert int(m['bytes'])==expected,(cid,kind,'phase raw bytes',m,expected)
                     assert abs(float(m['bandwidth_gbps'])-expected*TICKS/(end-start))<=1e-9,(cid,kind,'phase raw bandwidth')
-                ys=[]
-                for w in observed:
-                    tick,left=int(w['ticks']),int(w['left'])
-                    selected=[r for at,r in activity if left<=at<tick]
-                    if start<=tick<end and tick-left==family['w']*TICKS and all(r['known'] for r in selected):
-                        ys.append(sum(sum(r['members']) for r in selected if r['events'] and not r['reset'])*TICKS/(tick-left))
+                ys=[w.y for w in expected_windows if start<=w.ticks<end and w.eligible]
                 assert int(v['samples'])==len(ys),(cid,kind,'phase window count',v,len(ys))
                 if ys:
                     mean=sum(ys)/len(ys)
@@ -106,25 +109,24 @@ def check(log_path, family_id):
                     if int(v['stddev_valid']):
                         sigma=math.sqrt(sum((y-mean)**2 for y in ys)/len(ys))
                         assert abs(float(v['stddev_gbps'])-sigma)<=1e-9,(cid,kind,'phase population sigma')
-            actual=[]
-            for p in phases.get((cid,kind),[]):
-                actual.append({'label':enum[p['kind']],**{out:(int(p[at])-origin)//TICKS for out,at in
-                    [('start','start_ticks'),('confirm','confirm_ticks'),('end','end_ticks')]}})
-            assert actual==c['phases'],(cid,kind,'phase timeline',actual,c['phases'])
             for target in c['targets']:
-                p=next(p for p in phases[(cid,kind)] if enum[p['kind']]==target['label'] and
-                       (int(p['start_ticks'])-origin)//TICKS==target['boundary'])
-                first=next(v for v in observed if (int(v['ticks'])-origin)//TICKS==target['first'])
-                confirm=int(p['confirm_ticks']);first_tick=int(first['ticks'])
+                position=next(i for i,p in enumerate(c['phases'])
+                              if p['label']==target['label'] and p['start']==target['boundary'])
+                p=phases[(cid,kind)][position]
+                first_tick=publications[target['first']].ticks
+                first=next(v for v in observed if int(v['ticks'])==first_tick)
+                confirm=int(p['confirm_ticks'])
                 updates=1+(target['confirmation']-target['first'])//family['s']
-                assert int(first['eligible'])==1 and 1<=updates<=8,(cid,kind,target['key'],'deadline')
-                assert confirm<=origin+target['deadline']*TICKS+1,(cid,kind,target['key'],'physical deadline')
+                assert publications[target['first']].eligible and int(first['eligible'])==1 and 1<=updates<=8,(cid,kind,target['key'],'deadline')
+                assert confirm==publications[target['confirmation']].ticks,(cid,kind,target['key'],'exact confirmation')
+                assert confirm<=publications[target['deadline']].ticks,(cid,kind,target['key'],'physical deadline')
                 targets.append({'case':cid,'kind':kind,'target':target['key'],'first_ticks':first_tick,
                     'boundary_ticks':int(p['start_ticks']),'confirmation_ticks':confirm,'updates':updates,
                     'seven_stride_ticks':7*family['s']*TICKS,'first_to_confirmation_ticks':confirm-first_tick,
                     'input_to_confirmation_ticks':confirm-(origin+target['inputU']*TICKS+1)})
     result={'family':family_id,'registered_points':5,'registered_groups':1,'windows_checked':count,'targets_checked':len(targets),'targets':targets,
-            'wrong_confirmations':0,'extra_switches':0,'checker_claim':False}
+            'wrong_confirmations':0,'extra_switches':0,'checker_claim':False,
+            'time_comparison':'exact integer femtoseconds','window_oracle':'raw input clock/reset/episode model'}
     Path(log_path).with_suffix('.verification.json').write_text(json.dumps(result,indent=2)+'\n')
     print(f"PHASE_FIXED_PASS family={family_id} windows={count} targets={len(targets)} wrong=0 extra=0")
     return result
