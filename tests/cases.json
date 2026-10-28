@@ -699,7 +699,7 @@
   ],
   "expect_log": [
    "BW_CHECK .*scope=records.fail epoch=7 episode=9 result_seq=1 .*conclusion=FAIL",
-   "(?s)BW_CHECK .*scope=records.missing .*reason=NO_EPISODE.*BW_SUMMARY status=FAIL pass=1 fail=1 warning=3 scopes_done=3 scopes_expected=3"
+   "(?s)BW_CHECK .*scope=records.missing .*reason=NO_EPISODE.*BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
    "BW_CHECK ": 3,
@@ -1269,7 +1269,7 @@
    "+TRANSIENT_DEFERRED"
   ],
   "expect_log": [
-   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=3 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
    "BW_CHECK ": 3,
