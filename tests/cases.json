@@ -4509,5 +4509,9 @@
    "BW_READY ": 1,
    "BW_SUMMARY ": 1
   }
+ },
+ {
+  "name": "auto_core_origin",
+  "top": "tb_auto_core_origin"
  }
 ]
