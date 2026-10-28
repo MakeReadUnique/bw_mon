@@ -4391,7 +4391,7 @@
   ],
   "verify": [
    "python3",
-   "tests/phase_default/check.py",
+   "tests/checker_default/check_ownership.py",
    "{log}",
    "continuous"
   ],
@@ -4408,7 +4408,7 @@
   ],
   "verify": [
    "python3",
-   "tests/phase_default/check.py",
+   "tests/checker_default/check_ownership.py",
    "{log}",
    "platforms"
   ],
@@ -4425,7 +4425,7 @@
   ],
   "verify": [
    "python3",
-   "tests/phase_default/check.py",
+   "tests/checker_default/check_ownership.py",
    "{log}",
    "activity"
   ],
@@ -4442,7 +4442,7 @@
   ],
   "verify": [
    "python3",
-   "tests/phase_default/check.py",
+   "tests/checker_default/check_ownership.py",
    "{log}",
    "recovery"
   ],
@@ -4991,5 +4991,20 @@
  {"name": "checker_prefix_explicit", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "plusargs": ["+BW_EXPECT=../../../tests/expect/checker_prefix.cfg"], "expect_log": ["BW_SUMMARY status=WARNING pass=2 fail=0 warning=1", "BW_CHECK .*metric=e2e_bw .*conclusion=WARNING reason=BYTES_INCOMPLETE"], "verify": ["python3", "tests/checker_default/check_prefix.py", "{log}"]},
  {"name": "checker_prefix_gap", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "plusargs": ["+GAP"], "expect_log": ["BW_SUMMARY status=WARNING pass=0 fail=0 warning=2"]},
  {"name": "checker_prefix_truncated", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "plusargs": ["+TRUNCATED"], "expect_log": ["BW_SUMMARY status=WARNING pass=0 fail=0 warning=2"]},
- {"name": "checker_replay", "top": "tb_checker_replay", "plusargs": ["+BW_EXPECT=../../../tests/expect/checker_replay.cfg"], "expect_counts": {"BW_DEFAULT_CHECK ": 6, "BW_CHECK ": 6}, "expect_log": ["BW_SUMMARY status=PASS pass=12 fail=0 warning=0"]}
+ {"name": "checker_replay", "top": "tb_checker_replay", "plusargs": ["+BW_EXPECT=../../../tests/expect/checker_replay.cfg"], "expect_counts": {"BW_DEFAULT_CHECK ": 6, "BW_CHECK ": 6}, "expect_log": ["BW_SUMMARY status=PASS pass=12 fail=0 warning=0"]},
+ {"name":"checker_ownership_five_reference","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"expect_counts":{"BW_DEFAULT_CHECK .*conclusion=PASS":2,"BW_DEFAULT_CHECK .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT":2},"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","five"]},
+ {"name":"checker_ownership_early_fail","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+EARLY_FAIL"],"expect_counts":{"BW_DEFAULT_CHECK .*conclusion=FAIL":2,"BW_DEFAULT_CHECK .*conclusion=PASS":2},"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","early"]},
+ {"name":"checker_ownership_crop","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=1"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","crop"]},
+ {"name":"checker_ownership_crop_reset","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=1"],"plusargs":["+RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","reset"]},
+ {"name":"checker_ownership_crop_truncated","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=1"],"plusargs":["+TRUNCATED"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","crop"]},
+{"name": "checker_ownership_records_normal", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=normal"], "expect_log": ["BW_STAGE_STEP .*valid=1"]},
+{"name": "checker_ownership_records_crop", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=crop"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+{"name": "checker_ownership_records_gap", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=gap"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+{"name": "checker_ownership_records_old_fail", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=old_fail"], "expect_log": ["BW_STAGE_STEP .*valid=1"]},
+{"name": "checker_ownership_records_bad_support", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=bad_support"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+{"name": "checker_ownership_records_overlap", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=overlap"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+{"name": "checker_ownership_records_reverse", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=reverse"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+{"name": "checker_ownership_records_long_bridge", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=long_bridge"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+{"name": "checker_ownership_records_reset_bridge", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=reset_bridge"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
+ {"name":"checker_ownership_late_reset","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+LATE_RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","late_reset"]}
 ]

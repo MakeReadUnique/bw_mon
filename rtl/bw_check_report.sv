@@ -9,17 +9,15 @@ package bw_check_report_pkg;
   typedef struct packed {
     bw_u64_t epoch,episode,platform;
   } default_identity_t;
-  class bw_default_scope;
+  `include "bw_stage_ownership.svh"
+  class bw_default_scope extends bw_stage_evidence;
     bit enabled=0,have_seq=0;
-    bw_basis_t basis;
-    bw_u64_t width,stride,last_seq;
+    bw_u64_t last_seq;
     // Core final streams are synchronous and ordered by logical epoch/episode,
     // then immutable platform ID. Durable logical watermarks survive raw release;
     // delivery counters never stand in for identity and cannot poison a new ID.
     bit have_episode_identity=0,have_phase_identity=0,have_default_identity=0;
     default_identity_t episode_identity,phase_identity,default_identity;
-    default_run_t raw[$];
-    bw_phase_result_t phases[$];
   endclass
 
   class bw_check_report extends bw_report_sink;
