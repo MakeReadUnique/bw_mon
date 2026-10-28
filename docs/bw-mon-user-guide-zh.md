@@ -415,6 +415,10 @@ add_group_member("all_mem", "die1_mem");
 
 最后一拍之后直接 `$finish`，或者立刻停钟，都可能无法得到完整结果。应保持时钟运行，让末拍有结束边界，并等待足够的静默时间。读取最终结果时，先看 `episode_result_e2e_valid`，为 1 时再用 `episode_result_e2e_gbps`。
 
+### 结束时的全局审计与一次报告完成
+
+仿真结束时不再依赖任何 final 块顺序：第一个到达结束的 owner 先执行一次幂等的全局审计（日志行 `BW_END_AUDIT`），冻结持久责任清单，然后每个点和组得到自己的终态行 `BW_POINT_TERMINAL` / `BW_GROUP_TERMINAL`（`state=NORMAL|UNOBSERVED|DISABLED|INTERRUPTED`，中断时附 `stage=` 责任阶段）。所有 SV 结算完成后，一个原生结束回调核对全部 core/hint/owner 回执，仅当每个已登记责任都有真实终态时输出唯一一行 `BW_REPORT_COMPLETE`；缺任何回执则输出 `BW_REPORT_INCOMPLETE reason=...` 并且不补发标记。标记行上的 `integrity=` 表达监测完整性（存在 DISABLED/INTERRUPTED 终态即 INCOMPLETE），`performance=` 表达汇总结果，两者与进程状态（退出码/TB_PASS）分别可判。被外部强杀或工具停滞的进程不会出现标记，未正常完成只由这类外部证据表达，不伪造库内缺帧诊断。运行期禁用的范围在结束时仍会对其尚未结束的过程用禁用前已提交的证据做一次终态结算：无已确认平台时给一条该过程 WARNING，已结算的可靠 FAIL 保留；分析关闭的范围保持 STATISTICS_ONLY。
+
 ### 识别爬坡 稳定和下降
 
 开启过程分析时，省略阶段开关就会使用已经确认的默认策略。点和具名组采用相同规则：

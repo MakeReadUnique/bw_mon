@@ -14,12 +14,13 @@ A killed or stalled process never reaches these lines; its absence is the
 external evidence of an unclean ending and must not be replaced by invented
 in-library missing-frame diagnostics.
 
-Usage: end_contract_check.py <log> <complete|incomplete|aborted>
+Usage: end_contract_check.py <log> <complete|incomplete|aborted|killed>
 """
 import re
 import sys
 
-COMPLETE, INCOMPLETE, ABORTED = "complete", "incomplete", "aborted"
+COMPLETE, INCOMPLETE, ABORTED, KILLED = ("complete", "incomplete", "aborted",
+                                         "killed")
 
 
 def fail(reason):
@@ -28,7 +29,8 @@ def fail(reason):
 
 
 def main():
-    if len(sys.argv) != 3 or sys.argv[2] not in (COMPLETE, INCOMPLETE, ABORTED):
+    if len(sys.argv) != 3 or sys.argv[2] not in (COMPLETE, INCOMPLETE,
+                                                 ABORTED, KILLED):
         print(__doc__)
         sys.exit(2)
     log = open(sys.argv[1]).read()
@@ -45,6 +47,13 @@ def main():
             fail("aborted ending must carry the simulator's fatal evidence")
         if "TB_PASS" in log:
             fail("an aborted run must not claim TB_PASS")
+    elif mode == KILLED:
+        # Only external evidence expresses an unclean kill: no TB_PASS, no
+        # fatal diagnostic, and no invented in-library missing-frame output.
+        if "TB_PASS" in log:
+            fail("a killed run must not claim TB_PASS")
+        if "Fatal:" in log:
+            fail("a killed run has no simulator fatal evidence to rely on")
     else:
         if "TB_PASS" not in log:
             fail("clean ending must carry TB_PASS")
@@ -52,7 +61,7 @@ def main():
             fail("a clean ending must not contain Fatal:")
 
     # Report completion marker.
-    if mode == ABORTED:
+    if mode in (ABORTED, KILLED):
         if markers:
             fail("an unclean ending must not emit the completion marker")
         if summaries:
@@ -67,7 +76,7 @@ def main():
     # Monitoring integrity is judged independently of the marker's presence:
     # the integrity named on the marker must agree with the real terminal
     # states, whichever way it goes.
-    if mode != ABORTED:
+    if mode not in (ABORTED, KILLED):
         bad = [t for t in terminals if t in ("DISABLED", "INTERRUPTED")]
         named_incomplete = "integrity=INCOMPLETE" in log
         if bad and not named_incomplete:
