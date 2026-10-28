@@ -170,7 +170,7 @@ module bw_stats_core #(
   quality_interval_t episode_quality_intervals[$];
 
   typedef struct {
-    bw_u64_t ticks,basis_position;
+    bw_u64_t ticks,basis_position,seq;
     real value;
   } phase_sample_t;
   phase_sample_t phase_samples[$];
@@ -205,6 +205,8 @@ module bw_stats_core #(
   bw_u64_t episode_end_unknown_records=0,episode_end_unknown_ticks=0;
   bw_u64_t phase_start_total_bytes=0,phase_start_total_events=0;
   real phase_confirmation_delta=0.0,phase_confirmation_rms=0.0;
+  bw_u64_t candidate_support_first_seq=0,phase_support_first_seq=0,phase_support_last_seq=0;
+  real candidate_support_min=0.0,candidate_support_max=0.0,phase_support_min=0.0,phase_support_max=0.0;
   // Ordered episodes make this an exact compressed ownership query: every
   // retired episode's activity is at/before the latest retired transfer,
   // including a zero-byte event. Unknown evidence has a separate quality gate.
@@ -333,7 +335,22 @@ module bw_stats_core #(
 
   task automatic retain_variation_sample();
     variation_sample_t sample;
+    bw_check_window_t check_sample;
     if(!EPISODE_ENABLE || !episode_active)return;
+    if(PHASE_ENABLE && report_sink!=null)begin
+      check_sample.scope_kind=bw_scope_t'(scope_kind);
+      check_sample.stats_epoch=stats_epoch;check_sample.episode_id=episode_id;
+      check_sample.seq=result_seq;check_sample.left_ticks=window_start_ticks;check_sample.ticks=window_end_ticks;
+      check_sample.left_u=(WINDOW_BASIS==BW_NS) ? window_start_ticks : window_start_cycle;
+      check_sample.u=(WINDOW_BASIS==BW_NS) ? window_end_ticks : window_end_cycle;
+      check_sample.value=bandwidth_gbps;
+      check_sample.full=window_full;check_sample.bytes_complete=bytes_complete;
+      check_sample.denominator_valid=denominator_valid;check_sample.foreign_activity=foreign_activity();
+      check_sample.reset_coverage=member_reset_coverage;
+      check_sample.valid=window_full && bytes_complete && denominator_valid && !foreign_activity();
+      report_sink.submit_window(scope_id,check_sample);
+      if(runtime_failed())return;
+    end
     sample.ticks=window_end_ticks;sample.value=bandwidth_gbps;
     sample.warmup=!window_full;sample.foreign_activity=foreign_activity();
     sample.unknown_observation=!bytes_complete;sample.bad_denominator=!denominator_valid;
@@ -468,6 +485,9 @@ module bw_stats_core #(
     fragment.start_reset_records=phase_start_reset_records;fragment.end_reset_records=end_reset_records;
     fragment.start_unknown_ticks=phase_start_unknown_ticks;fragment.end_unknown_ticks=end_unknown_ticks;
     fragment.confirmation_delta=phase_confirmation_delta;fragment.confirmation_rms=phase_confirmation_rms;
+    fragment.support_first_seq=phase_support_first_seq;fragment.support_last_seq=phase_support_last_seq;
+    fragment.support_count=PHASE_N+PHASE_K-1;
+    fragment.support_min_gbps=phase_support_min;fragment.support_max_gbps=phase_support_max;
     check_storage_growth(pending_phases.size(),scope_id,"phase.pending",end_tick,last_edge_index,last_record_seq);
     if(runtime_failed())return;
     pending.fragment=fragment;pending.stats=phase_variation;
@@ -602,7 +622,7 @@ module bw_stats_core #(
     return;end
     phase_evidence_continuous=1;
     if(phase_samples.size()>=PHASE_N)discarded=phase_samples.pop_front();
-    sample.ticks=window_end_ticks;sample.basis_position=(WINDOW_BASIS==BW_NS) ?
+    sample.seq=result_seq;sample.ticks=window_end_ticks;sample.basis_position=(WINDOW_BASIS==BW_NS) ?
       window_end_ticks : window_end_cycle;sample.value=bandwidth_gbps;
     check_storage_growth(phase_samples.size(),scope_id,"phase.fit",window_end_ticks,last_edge_index,last_record_seq);
     if(runtime_failed())return;
@@ -637,6 +657,12 @@ module bw_stats_core #(
       return;
     end
     if(phase_candidate_count==0 || proposed!=phase_candidate)begin
+      candidate_support_first_seq=phase_samples[0].seq;
+      candidate_support_min=phase_samples[0].value;candidate_support_max=phase_samples[0].value;
+      foreach(phase_samples[j])begin
+        if(phase_samples[j].value<candidate_support_min)candidate_support_min=phase_samples[j].value;
+        if(phase_samples[j].value>candidate_support_max)candidate_support_max=phase_samples[j].value;
+      end
       phase_candidate=proposed;phase_candidate_count=1;phase_candidate_ticks=window_end_ticks;
       phase_candidate_total_bytes=total_bytes;phase_candidate_total_events=total_events;
       candidate_unknown_records=raw_unknown_records;candidate_unknown_ticks=unknown_ticks_at(window_end_ticks);
@@ -653,6 +679,9 @@ module bw_stats_core #(
     phase_start_unknown_records=candidate_unknown_records;phase_start_unknown_ticks=candidate_unknown_ticks;
     phase_start_unknown_event_records=candidate_unknown_event_records;phase_start_reset_records=candidate_reset_records;
     phase_confirmation_delta=phase_fit_delta;phase_confirmation_rms=phase_fit_rms;
+    phase_support_first_seq=candidate_support_first_seq;phase_support_last_seq=result_seq;
+    phase_support_min=sample.value<candidate_support_min ? sample.value : candidate_support_min;
+    phase_support_max=sample.value>candidate_support_max ? sample.value : candidate_support_max;
     if(proposed!=BW_PHASE_UNDETERMINED)begin
       phase_id=checked_add(phase_id,1,scope_id);
       if(runtime_failed())return;phase_active=1;
@@ -1408,6 +1437,8 @@ module bw_stats_core #(
     $display("BW_ANALYSIS_CONFIG scope_kind=%0d scope=%s basis=%0d W=%0d S=%0d Q=%0d episode_enabled=%0b phase_enabled=%0b strategy=%s N=%0d K=%0d min_span=%0d scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0",
       scope_kind,scope_id,WINDOW_BASIS,WINDOW_WIDTH,stride_cfg,silence_cfg,
       EPISODE_ENABLE,PHASE_ENABLE,BW_PHASE_STRATEGY,PHASE_N,PHASE_K,phase_min_span_cfg);
+    record_check_analysis(bw_scope_t'(scope_kind),scope_id,PHASE_ENABLE,
+      bw_basis_t'(WINDOW_BASIS),WINDOW_WIDTH,stride_cfg);
     initialize_reset_capture($sformatf("%m"),"stats_reset_n");
   end
 
