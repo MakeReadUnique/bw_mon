@@ -6419,5 +6419,24 @@
    "BW_HINT_END scope=pending\\.hint": 1,
    "BW_REPORT_COMPLETE": 1
   }
+ },
+ {
+  "name": "end_disabled_roles",
+  "top": "tb_end_disabled",
+  "expect_log": [
+   "TB_PASS end_disabled healthy_bytes=64",
+   "BW_POINT_TERMINAL scope=dis\\.p1 state=DISABLED",
+   "BW_GROUP_TERMINAL scope=dis\\.g1 state=DISABLED",
+   "BW_POINT_TERMINAL scope=dis\\.p2 state=NORMAL",
+   "BW_GROUP_TERMINAL scope=dis\\.g2 state=NORMAL",
+   "BW_REPORT_COMPLETE .*integrity=INCOMPLETE"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 1,
+   "BW_SUMMARY ": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_GROUP_TERMINAL": 2
+  },
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT"
  }
 ]
