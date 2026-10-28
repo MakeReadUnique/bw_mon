@@ -11,7 +11,7 @@ module tb_recorder_edges;
     (.scope_id("recorder.component"),.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.size_bytes(64'bx),.size_known(1'b0),
      .record(record),.sampled_view(sample),.record_toggle(toggled),.control(),.control_toggle());
   initial begin
-    source_handle=register_point("recorder.component","tb_recorder_edges",BW_NS,10,1,"clk");
+    source_handle=register_point("recorder.component","tb_recorder_edges",BW_NS,10,1);
     wait(monitor_ready);
     #1ns;clk=1;#1fs;
     if(record.record_seq!=1 || record.reset_points!=1 || record.event_inc!=0 ||

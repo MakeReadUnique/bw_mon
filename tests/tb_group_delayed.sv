@@ -15,7 +15,7 @@ module tb_group_delayed;
   always @(deliver_second) if (deliver_second) publish_frame(transport_source,slow_frame);
   initial begin
     define_group("delayed",2);add_point_member("delayed","slow");add_point_member("delayed","fast");
-    point_handle=register_point("slow","controlled.source",BW_NS,1,1,"default");
+    point_handle=register_point("slow","controlled.source",BW_NS,1,1);
     transport_source=point_source_handle(point_handle);
     finish_configuration();wait(monitor_ready);
     initial_control='0;initial_control.point_handle=point_handle;initial_control.control_seq=1;

@@ -7,21 +7,21 @@ module tb_startup_errors;
   initial begin
     if(!$value$plusargs("CASE=%s",which)) $fatal(1,"test requires CASE");
     case(which)
-      "empty": unused_handle=register_point("","tb.point",BW_NS,10,1,"clk");
-      "bad_width": unused_handle=register_point("p0","tb.p0",BW_NS,0,1,"clk");
-      "bad_stride": unused_handle=register_point("p0","tb.p0",BW_NS,10,11,"clk");
-      "ns_width_limit": unused_handle=register_point("p0","tb.p0",BW_NS,40001,1,"clk");
-      "cycle_width_limit": unused_handle=register_point("p0","tb.p0",BW_CYCLE,80001,1,"clk");
-      "cycle_bad_stride": unused_handle=register_point("p0","tb.p0",BW_CYCLE,10,11,"clk");
+      "empty": unused_handle=register_point("","tb.point",BW_NS,10,1);
+      "bad_width": unused_handle=register_point("p0","tb.p0",BW_NS,0,1);
+      "bad_stride": unused_handle=register_point("p0","tb.p0",BW_NS,10,11);
+      "ns_width_limit": unused_handle=register_point("p0","tb.p0",BW_NS,40001,1);
+      "cycle_width_limit": unused_handle=register_point("p0","tb.p0",BW_CYCLE,80001,1);
+      "cycle_bad_stride": unused_handle=register_point("p0","tb.p0",BW_CYCLE,10,11);
       default: begin
-        unused_handle=register_point("p0","tb.p0",BW_NS,10,1,"clk");
-        if(which=="duplicate") unused_handle=register_point("p0","tb.p1",BW_NS,10,1,"clk");
+        unused_handle=register_point("p0","tb.p0",BW_NS,10,1);
+        if(which=="duplicate") unused_handle=register_point("p0","tb.p1",BW_NS,10,1);
         else if(which=="missing") #6000000;
         else begin
-          unused_handle=register_point("p1","tb.p1",BW_NS,10,1,"clk");
+          unused_handle=register_point("p1","tb.p1",BW_NS,10,1);
           wait(monitor_ready);
           #1000000;
-          if(which=="late") unused_handle=register_point("p2","tb.p2",BW_NS,10,1,"clk");
+          if(which=="late") unused_handle=register_point("p2","tb.p2",BW_NS,10,1);
           else if(which=="reconfigure") configure_monitor(2);
         end
       end

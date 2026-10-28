@@ -236,11 +236,13 @@
       group=registered_groups[g];owner=registered_sources[group.source_handle];
       foreach (group.members[m]) begin
         source_handle=group.members[m];member=registered_sources[source_handle];
-        if (member.clock_context!=owner.clock_context || member.basis!=owner.basis ||
-            member.width!=owner.width || member.stride!=owner.stride)
+        // CLOCK_CONTEXT is gone: a shared sampling clock remains a documented
+        // usage prerequisite, not a declared or checked integration item. The
+        // non-clock topology and window consistency checks are unchanged.
+        if (member.basis!=owner.basis || member.width!=owner.width || member.stride!=owner.stride)
           core_error("GROUP_CONTEXT",group.id,
-            $sformatf("member=%s clock=%s/%s basis=%0d/%0d W=%0d/%0d S=%0d/%0d",
-             member.id,member.clock_context,owner.clock_context,member.basis,owner.basis,
+            $sformatf("member=%s basis=%0d/%0d W=%0d/%0d S=%0d/%0d",
+             member.id,member.basis,owner.basis,
              member.width,owner.width,member.stride,owner.stride));
         if (member.parents.size()>=16)
           core_error("TOPOLOGY_LIMIT",group.id,
@@ -293,7 +295,7 @@
   endfunction
 
   function automatic int register_point(string id,string monitor_path,logic [1:0] basis,
-      logic [63:0] width,logic [63:0] stride,string clock_context);
+      logic [63:0] width,logic [63:0] stride);
     bw_point_registration_t entry;
     bw_source_state source;
     int handle,transport;
@@ -303,14 +305,13 @@
       core_error("DUPLICATE_POINT",id,
         $sformatf("first=%s second=%s",registered_points[point_by_id[id]].monitor_path,monitor_path));
     validate_window(basis,width,stride,id);
-    if (clock_context.len()==0) core_error("CLOCK_CONTEXT",id,"empty clock context");
     if (registered_points.size()>=16384) core_error("POINT_COUNT",id,"more than 16384 points");
     transport=create_source(BW_POINT,id);handle=registered_points.size();
     source=registered_sources[transport];source.point_handle=handle;
-    source.monitor_path=monitor_path;source.clock_context=clock_context;
+    source.monitor_path=monitor_path;
     source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
     entry.id=id;entry.monitor_path=monitor_path;entry.basis=bw_basis_t'(basis);entry.width=width;
-    entry.stride=stride;entry.clock_context=clock_context;entry.transport_source=transport;
+    entry.stride=stride;entry.transport_source=transport;
     check_storage_growth(registered_points.size(),id,"registry.points",$time);
     if(core_failure_seen)return 0;
     registered_points.push_back(entry);point_by_id[id]=handle;
@@ -319,19 +320,18 @@
   endfunction
 
   function automatic int register_group_owner(string id,string monitor_path,logic [1:0] basis,
-      logic [63:0] width,logic [63:0] stride,string clock_context);
+      logic [63:0] width,logic [63:0] stride);
     int handle;
     bw_group_state group;
     bw_source_state source;
     if (monitor_ready) core_error("REGISTRATION_FROZEN",id,"group owner after ready");
     if (id.len()==0) core_error("GROUP_ID",monitor_path,"empty Group ID");
     validate_window(basis,width,stride,id);
-    if (clock_context.len()==0) core_error("CLOCK_CONTEXT",id,"empty clock context");
     handle=group_handle_for_id(id,!configuration_finished);group=registered_groups[handle];
     if (group.owner_registered)
       core_error("DUPLICATE_OWNER",id,$sformatf("first=%s second=%s",group.owner_path,monitor_path));
     group.owner_registered=1;group.owner_path=monitor_path;source=registered_sources[group.source_handle];
-    source.monitor_path=monitor_path;source.clock_context=clock_context;
+    source.monitor_path=monitor_path;
     source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
     registration_seq=checked_add(registration_seq,1,"registration");try_ready();
     return handle;

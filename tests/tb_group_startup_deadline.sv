@@ -8,7 +8,7 @@ module tb_group_startup_deadline;
     (.clk(1'b0),.reset_n(1'b1),.valid(1'b0));
   always @(owner_start) if(owner_start)owner_second<=1;
   always @(owner_second) if(owner_second)
-    owner=register_group_owner("g","component.owner",BW_NS,1,1,"default");
+    owner=register_group_owner("g","component.owner",BW_NS,1,1);
   initial begin
     define_group("g",1);add_point_member("g","p");finish_configuration();
     #2000000;

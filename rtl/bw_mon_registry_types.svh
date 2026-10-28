@@ -15,7 +15,7 @@
 
   class bw_source_state;
     bw_scope_t kind;
-    string id, clock_context, monitor_path;
+    string id, monitor_path;
     bw_basis_t basis;
     bw_u64_t width, stride;
     int point_handle=-1, group_handle=-1;

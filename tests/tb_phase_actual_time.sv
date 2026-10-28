@@ -6,7 +6,7 @@ module tb_phase_actual_time;
   bw_mon_setup #(.EXPECTED_POINT_COUNT(6)) setup();
   for(genvar g=0;g<6;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("phase.actual_time%0d",g)),.WINDOW_BASIS(BW_CYCLE),
-      .CLOCK_CONTEXT(g<3 ? "normal" : "half"),
+      
       .WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(20),
       .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(g%3==1 ? 3 : 2),.PHASE_K(1),
       .PHASE_STEADY_ENTER_ABS(g%3==2 ? 0.0 : 0.1),.PHASE_STEADY_ENTER_REL(g%3==2 ? 0.5 : 0.0),

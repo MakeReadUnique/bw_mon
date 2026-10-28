@@ -90,8 +90,8 @@ module tb_numeric_core;
      .phase_result());
   initial begin
     if(!$value$plusargs("MODE=%s",mode))mode="frame_bytes";
-    handle=register_point("registry.p0","component0",BW_NS,1,1,"clk");
-    handle=register_point("registry.p1","component1",BW_NS,1,1,"clk");configure_monitor(2);wait(monitor_ready);
+    handle=register_point("registry.p0","component0",BW_NS,1,1);
+    handle=register_point("registry.p1","component1",BW_NS,1,1);configure_monitor(2);wait(monitor_ready);
     #125000;
     if(mode=="kind")kind=1'bx;
     if(mode=="progress")progress=64'hx000000000000000;

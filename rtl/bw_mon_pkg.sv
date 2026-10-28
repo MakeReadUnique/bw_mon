@@ -69,6 +69,12 @@ package bw_mon_pkg;
   localparam bw_u64_t BW_TICKS_PER_NS = 1000000;
   localparam bw_u64_t BW_U64_MAX = 64'hffffffffffffffff;
   localparam bw_u64_t BW_MONITOR_LIMIT_TICKS = 64'd40000000000;
+  // Omitted numeric configuration is expressed by a sentinel parameter default.
+  // The sentinel itself is outside every legal explicit range (0<S<=W,
+  // positive Q), so only a user explicitly writing this exact value could be
+  // mistaken for omission; unknown, zero and out-of-range values stay errors.
+  localparam logic [63:0] BW_CFG_OMITTED = 64'hffffffffffffffff;
+  localparam bw_u64_t BW_DEFAULT_SILENCE_THRESHOLD = 64'd10;
 
   // This is a per-edge record, including idle/unknown/reset edges. Time, edge,
   // record sequence and source epoch remain distinct quantities.
@@ -212,7 +218,6 @@ package bw_mon_pkg;
     bw_basis_t basis;
     bw_u64_t width;
     bw_u64_t stride;
-    string clock_context;
     int transport_source;
   } bw_point_registration_t;
 
@@ -549,6 +554,24 @@ package bw_mon_pkg;
           resource,current_size,edge_index,record_number,at_ticks));
     end
 `endif
+  endfunction
+
+  // Only omission takes the defaults: the sentinel maps to the decided
+  // effective value while every other value passes through unchanged for the
+  // ordinary validation paths to accept or reject as an explicit setting.
+  function automatic bw_u64_t resolve_update_stride(logic [63:0] stride, logic [63:0] width);
+    if (!$isunknown(stride) && stride==BW_CFG_OMITTED) return width;
+    return stride;
+  endfunction
+
+  function automatic bw_u64_t resolve_silence_threshold(logic [63:0] silence,
+                                                        logic [1:0] episode_enable);
+    // An unused or not-yet-validated Q is never effective: keep it at zero so
+    // the sentinel cannot leak into runtime state.
+    if ($isunknown(episode_enable) || !episode_enable) return 0;
+    if (!$isunknown(silence) && silence==BW_CFG_OMITTED)
+      return BW_DEFAULT_SILENCE_THRESHOLD;
+    return silence;
   endfunction
 
   function automatic void validate_window(logic [1:0] basis, logic [63:0] width,

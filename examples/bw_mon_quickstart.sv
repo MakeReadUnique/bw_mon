@@ -16,7 +16,6 @@ module bw_mon_quickstart;
 
   bw_point_mon #(
     .POINT_ID("master0"),
-    .CLOCK_CONTEXT("soc_clk"),
     .PROTOCOL(BW_VALID_READY),
     .FIXED_BYTES(64),
     .WINDOW_BASIS(BW_NS),

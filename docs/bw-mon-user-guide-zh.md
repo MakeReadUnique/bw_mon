@@ -54,7 +54,6 @@ module bw_mon_quickstart;
 
   bw_point_mon #(
     .POINT_ID("master0"),
-    .CLOCK_CONTEXT("soc_clk"),
     .PROTOCOL(BW_VALID_READY),
     .FIXED_BYTES(64),
     .WINDOW_BASIS(BW_NS),
@@ -169,15 +168,14 @@ BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=1 scopes_e
 | 参数 | 默认值 | 用户怎么填 |
 | --- | --- | --- |
 | `POINT_ID` | 自动使用监测器实例的完整层次路径 | 可以填 `"master0"`、`"mem0"` 等名字；所有点的 ID 必须唯一且非空 |
-| `CLOCK_CONTEXT` | `"default"` | 时钟域名称，例如 `"soc_clk"`；同组必须相同，且实际连接同一时钟 |
 | `PROTOCOL` | `BW_VALID_ONLY` | 根据第 5 节选择传输规则 |
 | `FIXED_BYTES` | `0` | 固定计量时，每次成功传输的字节数；范围为 0 到 4294967295 |
 | `DYNAMIC_BYTES` | `0` | 每拍大小不同就设为 `1`，并连接 `size_bytes`、`size_known` |
 | `WINDOW_BASIS` | `BW_NS` | 按时间统计用 `BW_NS`，按本地时钟周期统计用 `BW_CYCLE` |
 | `WINDOW_WIDTH` | `0`，必须修改 | 一个窗口覆盖多少 ns 或周期；必须大于 0 |
-| `UPDATE_STRIDE` | `0`，必须修改 | 每隔多少 ns 或周期更新结果；要求 `0 < UPDATE_STRIDE <= WINDOW_WIDTH` |
+| `UPDATE_STRIDE` | 省略时取 `WINDOW_WIDTH` | 每隔多少 ns 或周期更新结果；要求 `0 < UPDATE_STRIDE <= WINDOW_WIDTH`。省略时每个窗口宽度发布一次；显式填 0 或超过 W 都会报错 |
 | `EPISODE_ENABLE` | `0` | 设为 `1` 才分析完整流量过程及全程平均带宽 |
-| `SILENCE_THRESHOLD` | `0` | 开启过程分析时必填正数，单位跟随 `WINDOW_BASIS` |
+| `SILENCE_THRESHOLD` | 省略时为 10 | 开启过程分析时默认 10（ns 模式为 10 ns，cycle 模式为 10 个本地周期）；显式合法正数可覆盖且允许大于 W；显式 0／未知值报错，不回退默认；过程关闭时不校验 |
 | `PHASE_ENABLE` | `0` | 设为 `1` 分析爬坡、稳定和下降；还需要第 8 节的完整参数 |
 
 参数是例化时的配置，仿真期间不能动态修改。开关参数填已知的 `0` 或 `1`。`FIXED_BYTES` 默认的 0 是合法值：忘记填写时会统计到传输次数，但字节数为 0。
@@ -311,7 +309,6 @@ bw_point_mon #(
 
 ```systemverilog
 bind noc_link bw_point_mon #(
-  .CLOCK_CONTEXT("soc_clk"),
   .PROTOCOL(bw_mon_pkg::BW_VALID_READY),
   .FIXED_BYTES(64),
   .WINDOW_WIDTH(10),
@@ -349,7 +346,7 @@ bw_mon_setup #(
 ) u_bw_setup();
 
 bw_point_mon #(
-  .POINT_ID("mem0"), .CLOCK_CONTEXT("soc_clk"),
+  .POINT_ID("mem0"),
   .PROTOCOL(BW_VALID_READY), .FIXED_BYTES(64),
   .WINDOW_BASIS(BW_NS), .WINDOW_WIDTH(10), .UPDATE_STRIDE(1)
 ) u_mem0_bw (
@@ -357,7 +354,7 @@ bw_point_mon #(
 );
 
 bw_point_mon #(
-  .POINT_ID("mem1"), .CLOCK_CONTEXT("soc_clk"),
+  .POINT_ID("mem1"),
   .PROTOCOL(BW_VALID_READY), .FIXED_BYTES(64),
   .WINDOW_BASIS(BW_NS), .WINDOW_WIDTH(10), .UPDATE_STRIDE(1)
 ) u_mem1_bw (
@@ -365,7 +362,7 @@ bw_point_mon #(
 );
 
 bw_group_mon #(
-  .GROUP_ID("all_mem"), .CLOCK_CONTEXT("soc_clk"),
+  .GROUP_ID("all_mem"),
   .WINDOW_BASIS(BW_NS), .WINDOW_WIDTH(10), .UPDATE_STRIDE(1)
 ) u_all_mem_bw (
   .clk(clk), .reset_n(reset_n)
@@ -384,7 +381,7 @@ end
 配置聚合组时，注意以下规则：
 
 - 组成员用 **Point ID** 引用。如果点写了 `.POINT_ID("mem0")`，成员就填 `"mem0"`；省略 Point ID 时，要填自动生成的完整路径。
-- 组和成员的 `CLOCK_CONTEXT`、`WINDOW_BASIS`、`WINDOW_WIDTH`、`UPDATE_STRIDE` 必须一致，并连接同一个实际时钟。只把时钟域名称写成相同，不能实现跨异步时钟汇总。
+- 组和成员的 `WINDOW_BASIS`、`WINDOW_WIDTH`、`UPDATE_STRIDE` 必须一致。监测器不再要求填写时钟域名称，也不做时钟一致性检查；聚合的前提仍然是各成员实际使用同一个采样时钟，跨异步时钟汇总不支持。
 - 组通过注册信息取得成员传输，不需要连接各点的带宽信号。组统计的是成员原始字节增量。
 - `finish_configuration()` 要放在所有组定义和成员配置之后；有组却漏掉这一步，监测不会启动。只有点、没有组时不需要调用。
 - 点和组分别控制自己的过程、阶段分析。若想得到组的全程平均带宽，也要在组实例上设置 `EPISODE_ENABLE(1)` 和正的 `SILENCE_THRESHOLD`。

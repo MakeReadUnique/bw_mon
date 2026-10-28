@@ -14,7 +14,7 @@ module tb_group_faults;
   initial begin
     if(!$value$plusargs("MODE=%s",mode))$fatal(1,"MODE required");
     define_group("fault.group",2);add_point_member("fault.group","fault");add_point_member("fault.group","good");
-    point_handle=register_point("fault","controlled.fault",BW_NS,1,1,"default");
+    point_handle=register_point("fault","controlled.fault",BW_NS,1,1);
     source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
     control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;
     publish_control(source,control);

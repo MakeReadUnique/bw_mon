@@ -1,9 +1,9 @@
 module bw_stats_core #(
   parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH = 0,
-  parameter logic [63:0] UPDATE_STRIDE = 0,
+  parameter logic [63:0] UPDATE_STRIDE = bw_mon_pkg::BW_CFG_OMITTED,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
   parameter logic [1:0] PHASE_ENABLE = 0,
   parameter logic [63:0] PHASE_N = 0,
   parameter logic [63:0] PHASE_MIN_SPAN = 0,
@@ -153,6 +153,10 @@ module bw_stats_core #(
   bw_u64_t cycle_origin, next_update_cycle;
   bit cycle_initialized = 0;
   bit initialized = 0;
+  // Effective public configuration after omission defaults are applied. Both
+  // stay unknown until the validation entry resolves them, so an accidental
+  // early use fails loudly instead of silently publishing wrong boundaries.
+  bw_u64_t stride_cfg, silence_cfg;
 
   bit silence_active=0;
   bw_u64_t silence_start_ticks=0, silence_start_cycle=0;
@@ -235,7 +239,7 @@ module bw_stats_core #(
   endtask
 
   function automatic bw_variation_result_t empty_variation_result();
-    return '{window_basis:bw_basis_t'(WINDOW_BASIS),window_width:WINDOW_WIDTH,update_stride:UPDATE_STRIDE,
+    return '{window_basis:bw_basis_t'(WINDOW_BASIS),window_width:WINDOW_WIDTH,update_stride:stride_cfg,
       minmax_reason:BW_METRIC_NO_SAMPLES,stddev_reason:BW_METRIC_TOO_FEW_SAMPLES,
       cv_reason:BW_METRIC_TOO_FEW_SAMPLES,default:0};
   endfunction
@@ -599,7 +603,7 @@ module bw_stats_core #(
   endtask
 
   function automatic bw_u64_t silence_deadline_ticks();
-    return checked_add(silence_start_ticks,ns_to_ticks(SILENCE_THRESHOLD,scope_id),scope_id);
+    return checked_add(silence_start_ticks,ns_to_ticks(silence_cfg,scope_id),scope_id);
   endfunction
 
   task automatic update_episode_duration();
@@ -734,7 +738,7 @@ module bw_stats_core #(
     if (WINDOW_BASIS==BW_NS && safe_ticks>=silence_deadline_ticks()) begin
       reached=1; confirmation=silence_deadline_ticks();
     end else if (WINDOW_BASIS==BW_CYCLE && is_edge &&
-                 at_cycle>=checked_add(silence_start_cycle,SILENCE_THRESHOLD,scope_id)) reached=1;
+                 at_cycle>=checked_add(silence_start_cycle,silence_cfg,scope_id)) reached=1;
     if (reached) begin
       if (episode_active) finish_episode(BW_EPISODE_COMPLETE,confirmation);
       else begin pre_episode_gap=0; silence_active=0; end
@@ -863,7 +867,7 @@ module bw_stats_core #(
   task automatic initialize_state();
     if (!initialized) begin
       next_update_ticks = checked_add(stats_start_ticks,
-                          ns_to_ticks(UPDATE_STRIDE,scope_id),scope_id);
+                          ns_to_ticks(stride_cfg,scope_id),scope_id);
       initialized = 1;
     end
   endtask
@@ -1034,7 +1038,7 @@ module bw_stats_core #(
     initialize_state();
     while (next_update_ticks <= safe_ticks) begin
       publish_window(next_update_ticks);
-      next_update_ticks=checked_add(next_update_ticks,ns_to_ticks(UPDATE_STRIDE,scope_id),scope_id);
+      next_update_ticks=checked_add(next_update_ticks,ns_to_ticks(stride_cfg,scope_id),scope_id);
     end
   endtask
 
@@ -1064,7 +1068,7 @@ module bw_stats_core #(
       if (WINDOW_BASIS == BW_CYCLE) begin
         if (!cycle_initialized) begin
           cycle_origin=incoming.edge_index;
-          next_update_cycle=checked_add(cycle_origin,UPDATE_STRIDE,scope_id);
+          next_update_cycle=checked_add(cycle_origin,stride_cfg,scope_id);
           cycle_initialized=1;
         end
         append_clock_boundary(incoming.timestamp_ticks,incoming.edge_index);
@@ -1074,7 +1078,7 @@ module bw_stats_core #(
         if(core_failure_seen)return;
         if (incoming.edge_index == next_update_cycle) begin
           publish_window(now_ticks,incoming.edge_index);
-          next_update_cycle=checked_add(next_update_cycle,UPDATE_STRIDE,scope_id);
+          next_update_cycle=checked_add(next_update_cycle,stride_cfg,scope_id);
         end
       end
     end
@@ -1218,8 +1222,10 @@ module bw_stats_core #(
 
   initial begin
     wait(scope_id.len()!=0);
-    validate_window(WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
-    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
+    stride_cfg=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    silence_cfg=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
+    validate_window(WINDOW_BASIS,WINDOW_WIDTH,stride_cfg,scope_id);
+    validate_episode_config(EPISODE_ENABLE,silence_cfg,WINDOW_BASIS,scope_id);
     validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
       PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,

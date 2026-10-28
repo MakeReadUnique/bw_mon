@@ -33,7 +33,7 @@ module tb_member_control_error;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   initial begin
-    handle=register_point("origin.point","tb_member_control_error",BW_NS,2,1,"clk");
+    handle=register_point("origin.point","tb_member_control_error",BW_NS,2,1);
     void'($value$plusargs("INVALID_POINT=%d",invalid_point));
     wait(monitor_ready);
     #1000000;

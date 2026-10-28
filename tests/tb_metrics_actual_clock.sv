@@ -6,7 +6,7 @@ module tb_metrics_actual_clock;
   bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("metrics.clock%0d",g)),.WINDOW_BASIS(BW_CYCLE),
-      .CLOCK_CONTEXT(g==0 ? "normal" : "half"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
+      .WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
       .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(1),
       .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
       .PHASE_STEADY_ENTER_ABS(0.1),.PHASE_STEADY_ENTER_REL(0.0),

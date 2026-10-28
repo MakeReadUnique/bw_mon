@@ -1,11 +1,10 @@
 module bw_group_mon #(
   parameter string GROUP_ID="",
-  parameter string CLOCK_CONTEXT="default",
   parameter logic [1:0] WINDOW_BASIS=bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH=0,
-  parameter logic [63:0] UPDATE_STRIDE=0,
+  parameter logic [63:0] UPDATE_STRIDE=bw_mon_pkg::BW_CFG_OMITTED,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
   parameter logic [1:0] PHASE_ENABLE = 0,
   parameter logic [63:0] PHASE_N = 0,
   parameter logic [63:0] PHASE_MIN_SPAN = 0,
@@ -28,6 +27,8 @@ module bw_group_mon #(
   import bw_mon_pkg::*;
   string scope_id,monitor_path;
   bw_scope_t scope_kind=BW_GROUP;
+  // Effective public configuration after omission defaults are applied.
+  bw_u64_t effective_stride,effective_silence;
   int group_handle,transport_source,direct_member_count,recursive_point_count;
   bw_record_t raw_record;
   bw_control_t raw_control,core_control;
@@ -59,22 +60,24 @@ module bw_group_mon #(
   initial begin
     core.use_external_reset_capture();
     monitor_path=$sformatf("%m");scope_id=GROUP_ID;
+    effective_stride=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    effective_silence=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     // Reject raw configuration before narrowing into legacy internal enums/bits.
-    if($isunknown({WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE}) || !(WINDOW_BASIS inside {BW_NS,BW_CYCLE}))
+    if($isunknown({WINDOW_BASIS,WINDOW_WIDTH,effective_stride}) || !(WINDOW_BASIS inside {BW_NS,BW_CYCLE}))
       core_error("WINDOW_CONFIG",scope_id,"basis, W and S must be known; basis must be BW_NS/BW_CYCLE");
-    validate_window(bw_basis_t'(WINDOW_BASIS),WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
+    validate_window(bw_basis_t'(WINDOW_BASIS),WINDOW_WIDTH,effective_stride,scope_id);
     if($isunknown(EPISODE_ENABLE) || !(EPISODE_ENABLE inside {0,1}))
       core_error("EPISODE_CONFIG",scope_id,"episode enable must be known0/1");
     if($isunknown(PHASE_ENABLE) || !(PHASE_ENABLE inside {0,1}))
       core_error("PHASE_CONFIG",scope_id,"phase enable must be known0/1");
-    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,bw_basis_t'(WINDOW_BASIS),scope_id);
+    validate_episode_config(EPISODE_ENABLE,effective_silence,bw_basis_t'(WINDOW_BASIS),scope_id);
     validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,bw_basis_t'(WINDOW_BASIS),PHASE_N,PHASE_MIN_SPAN,PHASE_K,
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
       PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
       PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
     initialize_reset_capture(monitor_path,"reset_n");
     group_handle=register_group_owner(scope_id,monitor_path,bw_basis_t'(WINDOW_BASIS),
-                                      WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
+                                      WINDOW_WIDTH,effective_stride);
     transport_source=group_source_handle(group_handle);
     raw_record='0;raw_control='0;core_control='0;
     wait(monitor_ready);

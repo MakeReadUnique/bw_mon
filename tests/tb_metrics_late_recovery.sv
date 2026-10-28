@@ -51,7 +51,7 @@ module tb_metrics_late_recovery;
   endtask
   initial begin
     void'($value$plusargs("MODE=%d",mode));
-    handle=register_point("metrics.late.source","tb_metrics_late_recovery",BW_NS,4,1,"clock");
+    handle=register_point("metrics.late.source","tb_metrics_late_recovery",BW_NS,4,1);
     wait(monitor_ready);
     #1000000;deliver(1000000,1,1);#1000000;deliver(2000000,2,0);
     #500000;deliver_control(2500000,1,1'bx);watermark=3500000;

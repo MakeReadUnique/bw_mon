@@ -36,7 +36,7 @@ module tb_settle_storage_failure;
     void'($value$plusargs("MODE=%d",mode));
     if(mode==0)bw_native_fail_reset_allocation();
     else inject_growth_failure("native.observer","scheduler.reset_capture");
-    handle=register_point("native.observer","tb_settle_storage_failure.core",BW_NS,2,1,"clock");
+    handle=register_point("native.observer","tb_settle_storage_failure.core",BW_NS,2,1);
     scope_id="native.observer";
     #1;$fatal(1,"expected core error did not occur");
   end

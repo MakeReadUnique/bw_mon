@@ -9,9 +9,9 @@ module tb_transport_retention;
   initial begin
     define_group("first",1);add_point_member("first","p");
     define_group("second",1);add_point_member("second","p");
-    first=register_group_owner("first","component.first",BW_NS,1,1,"clk");
-    second=register_group_owner("second","component.second",BW_NS,1,1,"clk");
-    point_handle=register_point("p","component.point",BW_NS,1,1,"clk");
+    first=register_group_owner("first","component.first",BW_NS,1,1);
+    second=register_group_owner("second","component.second",BW_NS,1,1);
+    point_handle=register_point("p","component.point",BW_NS,1,1);
     source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
     control='0;control.point_handle=point_handle;control.control_seq=1;control.reset_n=1;
     publish_control(source,control);

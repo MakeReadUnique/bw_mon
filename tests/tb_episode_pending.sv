@@ -45,7 +45,7 @@ module tb_episode_pending;
   endtask
   initial begin
     void'($value$plusargs("MODE=%d",mode));
-    handle=register_point("episode.pending.source","tb_episode_pending",BW_NS,4,1,"clock");
+    handle=register_point("episode.pending.source","tb_episode_pending",BW_NS,4,1);
     wait(monitor_ready);
     #1000000;deliver(1000000,1,1);#1000000;deliver(2000000,2,0);
     #1000000;watermark=3000000;

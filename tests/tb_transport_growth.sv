@@ -17,7 +17,7 @@ module tb_transport_growth;
   initial begin
     define_group("growth.delayed",2);add_point_member("growth.delayed","growth.fast");add_point_member("growth.delayed","growth.slow");
     define_group("growth.prompt",1);add_point_member("growth.prompt","growth.fast");
-    slow_point=register_point("growth.slow","controlled.source",BW_NS,100,100,"default");
+    slow_point=register_point("growth.slow","controlled.source",BW_NS,100,100);
     slow_source=point_source_handle(slow_point);finish_configuration();wait(monitor_ready);
     fast_source=point_source_handle(point_handle_for_id("growth.fast"));
     control='0;control.point_handle=slow_point;control.control_seq=1;control.reset_n=1;

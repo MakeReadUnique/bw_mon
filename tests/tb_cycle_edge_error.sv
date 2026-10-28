@@ -32,7 +32,7 @@ module tb_cycle_edge_error;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   initial begin
-    source_handle=register_point("cycle.component","tb_cycle_edge_error.core",BW_CYCLE,2,1,"clk");
+    source_handle=register_point("cycle.component","tb_cycle_edge_error.core",BW_CYCLE,2,1);
     wait(monitor_ready);
     #1000000;
     record='0;

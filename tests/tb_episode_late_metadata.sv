@@ -50,7 +50,7 @@ module tb_episode_late_metadata;
   end
   initial begin
     void'($value$plusargs("MODE=%d",mode));
-    handle=register_point("episode.late_metadata","tb_episode_late_metadata",BW_NS,2,1,"clock");
+    handle=register_point("episode.late_metadata","tb_episode_late_metadata",BW_NS,2,1);
     wait(monitor_ready);
     #1000000;
     frame.timestamp_ticks=1000000;frame.edge_index=1;frame.record_seq=1;

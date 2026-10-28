@@ -62,10 +62,17 @@ decision. An edge at the common start itself is excluded.
 | setup | `STARTUP_TIMEOUT_NS` | four-state unsigned logic [63:0] integer ns | Default 100, positive; missing points at deadline are fatal |
 | point/group/core | `WINDOW_BASIS` | raw logic [1:0], validated before enum conversion | `BW_NS` (default) or `BW_CYCLE`; fixed before startup |
 | point/group/core | `WINDOW_WIDTH` | raw unsigned logic [63:0] integer ns or cycles | Required, 1..40,000 ns or 1..80,000 cycles according to basis |
-| point/group/core | `UPDATE_STRIDE` | raw unsigned logic [63:0] integer ns or cycles | Required, `0<S<=W`; uses the same basis as W |
+| point/group/core | `UPDATE_STRIDE` | raw unsigned logic [63:0] integer ns or cycles | Omitted: effective W; explicit must be known `0<S<=W`; uses the same basis as W |
 | point | `POINT_ID` | string | Default `__BW_AUTO__`; otherwise nonempty, unique exact ID |
-| point | `CLOCK_CONTEXT` | string | Default `default`, nonempty; an integration declaration, not proof of physical wiring |
 | point/recorder | `FIXED_BYTES` | four-state 64-bit parameter, bytes/transfer | Default 0 (legal zero-byte transfers); fixed mode requires known value at most 2^32−1 |
+
+Omitted numeric configuration is recognized by a sentinel parameter default; only
+true omission takes the effective defaults above. Explicit zero, unknown or
+out-of-range values remain configuration errors and are never silently replaced.
+`CLOCK_CONTEXT` is removed: points, type binds and groups no longer declare or
+check a clock label, and no clock-consistency probing replaces it. A shared
+sampling clock remains a documented usage prerequisite of hierarchical
+aggregation; asynchronous aggregation stays out of scope.
 
 The selected protocol determines whether a transfer occurred (see below). The recorder samples control
 at the actual positive edge, creates one normalized record per edge, including
@@ -724,12 +731,14 @@ blocks before they emit results.
 ## Traffic episodes and e2e results
 
 Episode analysis uses the shared `bw_stats_core` behind ordinary point/group
-input paths. The raw logic [1:0] `EPISODE_ENABLE` policy accepts known0/1. Set `EPISODE_ENABLE=1` and explicitly configure
+input paths. The raw logic [1:0] `EPISODE_ENABLE` policy accepts known0/1. Set `EPISODE_ENABLE=1` and optionally configure
 `SILENCE_THRESHOLD=Q`. Q is a positive known unsigned 64-bit integer in the
-selected `WINDOW_BASIS` (ns or local cycles). There is no cross-interface Q
-default. `EPISODE_ENABLE=0` is the default window-only mode; Q is then unused.
-An enabled missing/zero/unknown Q is `EPISODE_CONFIG` before the point registers
-and before ready. An unrepresentable ns-to-tick conversion is a core arithmetic
+selected `WINDOW_BASIS` (ns or local cycles). An omitted Q defaults to 10 in
+the selected basis (10 ns or ten local cycles) when episode analysis is enabled.
+`EPISODE_ENABLE=0` is the default window-only mode; Q is then unused and not
+validated. An enabled zero/unknown/unrepresentable Q is `EPISODE_CONFIG` before
+the point registers and before ready; illegal effective values never fall back
+to the default. An unrepresentable ns-to-tick conversion is a core arithmetic
 error. These are startup parameters and cannot be changed during simulation.
 
 A definite transfer starts or extends an episode, including a zero-byte

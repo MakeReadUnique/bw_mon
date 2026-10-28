@@ -13,7 +13,7 @@ module tb_group_metadata_order;
   initial begin
     void'($value$plusargs("REACTIVE_CLOCK=%d",reactive_clock));
     define_group("metadata",1);add_point_member("metadata","p");
-    point_handle=register_point("p","controlled.point",BW_NS,1,1,"default");
+    point_handle=register_point("p","controlled.point",BW_NS,1,1);
     source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
     control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;
     publish_control(source,control);

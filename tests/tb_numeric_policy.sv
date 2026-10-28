@@ -13,8 +13,8 @@ module tb_numeric_policy;
     else if(mode=="episode_x" || mode=="episode_2")validate_episode_config(policy,1,BW_NS,"episode.policy");
     else if(mode=="phase_x" || mode=="phase_2")validate_phase_config(policy,1,BW_NS,3,1,1,0,0,0,0,0,0,0,0,1,0,"phase.policy");
     else if(mode=="hint_x" || mode=="hint_2")validate_hint_config(1,policy,BW_NS,1,"hint.policy","backpressure");
-    else if(mode=="basis_x" || mode=="basis_2")point_handle=register_point("basis.policy","component",policy,1,1,"clk");
-    else if(mode=="stride_x")point_handle=register_point("stride.policy","component",BW_NS,1,64'hx000000000000001,"clk");
+    else if(mode=="basis_x" || mode=="basis_2")point_handle=register_point("basis.policy","component",policy,1,1);
+    else if(mode=="stride_x")point_handle=register_point("stride.policy","component",BW_NS,1,64'hx000000000000001);
     else if(mode=="disabled")begin
       validate_point_protocol(BW_VALID_ONLY,0,0,"fixed.zero");
       validate_credit_config(BW_CREDIT,0,'x,'x,0,bw_credit_return_t'(2'bxx),"credit.disabled");

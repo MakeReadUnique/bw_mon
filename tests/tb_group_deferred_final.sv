@@ -21,7 +21,7 @@ module tb_group_deferred_final;
   initial begin
     void'($value$plusargs("LATE=%d",late));
     define_group("deferred.g",1);add_point_member("deferred.g","fault");
-    point_handle=register_point("fault","controlled.fault",BW_NS,1,1,"default");
+    point_handle=register_point("fault","controlled.fault",BW_NS,1,1);
     source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
     control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;
     publish_control(source,control);

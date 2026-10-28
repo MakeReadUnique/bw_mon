@@ -1,9 +1,8 @@
 module bw_point_mon #(
   parameter string POINT_ID = "__BW_AUTO__",
-  parameter string CLOCK_CONTEXT = "default",
   parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH = 0,
-  parameter logic [63:0] UPDATE_STRIDE = 0,
+  parameter logic [63:0] UPDATE_STRIDE = bw_mon_pkg::BW_CFG_OMITTED,
   parameter logic [63:0] FIXED_BYTES = 64'b0,
   parameter bw_mon_pkg::bw_protocol_t PROTOCOL = bw_mon_pkg::BW_VALID_ONLY,
   parameter logic [1:0] DYNAMIC_BYTES = 0,
@@ -19,7 +18,7 @@ module bw_point_mon #(
   parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
   parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = 0,
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
   parameter logic [1:0] PHASE_ENABLE = 0,
   parameter logic [63:0] PHASE_N = 0,
   parameter logic [63:0] PHASE_MIN_SPAN = 0,
@@ -48,6 +47,8 @@ module bw_point_mon #(
   import bw_mon_pkg::*;
   string scope_id, monitor_path;
   bw_scope_t scope_kind = BW_POINT;
+  // Effective public configuration after omission defaults are applied.
+  bw_u64_t effective_stride, effective_silence;
   int source_handle;
   int transport_source;
   bw_record_t raw_record;
@@ -146,6 +147,8 @@ module bw_point_mon #(
     core.use_external_reset_capture();hints.use_external_reset_capture();
     monitor_path=$sformatf("%m");
     scope_id=(POINT_ID=="__BW_AUTO__") ? monitor_path : POINT_ID;
+    effective_stride=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    effective_silence=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
     validate_credit_config(PROTOCOL,CREDIT_ENABLE,CREDIT_CAPACITY,CREDIT_INITIAL,
                            CREDIT_INITIAL_KNOWN,CREDIT_RETURN_TIMING,scope_id);
@@ -153,15 +156,15 @@ module bw_point_mon #(
                          BACKPRESSURE_THRESHOLD,scope_id,"backpressure");
     validate_hint_config(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE,SHORTAGE_BASIS,
                          SHORTAGE_THRESHOLD,scope_id,"credit_shortage");
-    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
+    validate_episode_config(EPISODE_ENABLE,effective_silence,WINDOW_BASIS,scope_id);
     validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
       PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
       PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
       PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
-    validate_window(WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
+    validate_window(WINDOW_BASIS,WINDOW_WIDTH,effective_stride,scope_id);
     initialize_reset_capture(monitor_path,"reset_n");
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
-                                 WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
+                                 WINDOW_WIDTH,effective_stride);
     transport_source=point_source_handle(source_handle);
     // Ready is monotonic. Subscribe to per-instance identity only after the
     // global barrier, avoiding a global cross-module string callback fanout.

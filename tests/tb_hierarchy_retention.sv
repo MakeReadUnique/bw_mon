@@ -52,7 +52,7 @@ module tb_hierarchy_retention;
     first_mixed_bytes=(point_reset_case || size_case) ? 320 : 384;
     first_all_events=point_reset_case ? 7 : 8;first_mixed_events=point_reset_case ? 5 : 6;
     for(int p=0;p<12;p++)begin
-      point_handles[p]=register_point($sformatf("p%0d",p),$sformatf("controlled.p%0d",p),BW_NS,1,1,"default");
+      point_handles[p]=register_point($sformatf("p%0d",p),$sformatf("controlled.p%0d",p),BW_NS,1,1);
       sources[p]=point_source_handle(point_handles[p]);
     end
     define_group("die0_dmc",4);define_group("die1_dmc",4);define_group("all_dmc",2);define_group("mixed",3);

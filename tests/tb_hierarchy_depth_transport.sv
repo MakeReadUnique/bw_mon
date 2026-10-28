@@ -28,7 +28,7 @@ module tb_hierarchy_depth_transport;
   initial begin
     if(!$value$plusargs("MISSING=%d",missing))missing=0;
     for(int p=0;p<3;p++)begin
-      point_handles[p]=register_point($sformatf("p%0d",p),$sformatf("controlled.p%0d",p),BW_NS,1,1,"default");
+      point_handles[p]=register_point($sformatf("p%0d",p),$sformatf("controlled.p%0d",p),BW_NS,1,1);
       sources[p]=point_source_handle(point_handles[p]);
     end
     for(int g=7;g>=0;g--)define_group($sformatf("g%0d",g),(g==0 || g==7) ? 2 : 1);
