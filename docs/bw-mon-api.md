@@ -187,7 +187,7 @@ once older than the maximum retained cycle window.
 Core errors print `BW_CORE_ERROR code=... scope=... time_ticks=...` with relevant
 expected/received counts, identities or arithmetic operands and terminate using
 `$fatal`. Current codes cover empty/duplicate identities, bad window/byte/count
-configuration, startup timeout, frozen registration/configuration, out-of-order
+configuration, missing setup/incomplete startup, frozen registration/configuration, out-of-order
 record time/sequence, actual-edge sequence and exact unsigned arithmetic overflow. Counters widen before
 checking addition/multiplication; they never silently wrap or clamp.
 
@@ -207,7 +207,8 @@ This numerical tolerance is separate from the cfg performance tolerance.
 | --- | --- |
 | `ns_bind` | One type bind to two real target instances; default IDs; transfers at 1, 2.5 and 10 ns of 64 B; `[0,10)`=128 B/12.8 GB/s, `[1,11)`=192 B/19.2 GB/s, `[2,12)`=128 B/12.8 GB/s; empty point stays independent; stopped clock eventually zero |
 | `ns_stride` | Explicit identity; 8 B events at 0.25 and 2.75 ns; W=10/S=3, T=3 warmup=16 B/3 ns, first full publication T=12 with `[2,12)`=8 B/10 ns; no T=10 insertion |
-| `startup_*` | Empty/duplicate ID, illegal W/S, missing point, late registration and repeated configuration terminate with precise diagnostic; exact deadline arrival succeeds |
+| `startup_*` | Empty/duplicate ID, illegal W/S, positive-time registration and repeated configuration terminate with precise diagnostics |
+| `auto_*` | Automatic bind discovery with different actual counts, finite t=0 scheduling, prepared reset/hint/report snapshots before one ready, coarse-time lifecycle checks, real group topology errors and early finish |
 | `byte_config_error` | Per-transfer byte count above 2^32−1 terminates |
 | `cycle_window` | Independent .25/.75/1.25/2.25/12.25/12.75/13.25/13.75 ns edge table; W2/S1; sub-ns warmup, frequency change, stopped-clock hold and resume; actual-time GB/s and B/cycle; ns history expires during the same stop |
 | `cycle_stride` | 2 GHz known-valid event table with W5/S3 and W3/S3; no off-schedule first full result; left/right events and S=W adjacent windows |

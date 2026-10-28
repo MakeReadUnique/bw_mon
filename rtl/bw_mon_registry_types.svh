@@ -18,7 +18,7 @@
     string id, monitor_path;
     bw_basis_t basis;
     bw_u64_t width, stride;
-    bit requires_preparation=0;
+    bit requires_preparation=0,preparation_complete=0;
     int point_handle=-1, group_handle=-1;
     int parents[$];
     bw_record_t frames[$];
@@ -38,7 +38,6 @@
     bw_member_rule_t rules[$];
     bit [16383:0] recursive_points='0;
     int traversal_state=0, depth=0; // unvisited, active, resolved; nested group count
-    int initial_control_count=0;
     bw_notification notification;
     function new();
       notification=new;

@@ -6,7 +6,7 @@ Integrate the ordinary point/group and setup modules, enable episode analysis wi
 an explicit silence threshold, and pass one scene file:
 
 ```systemverilog
-bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+bw_mon_setup setup();
 bw_point_mon #(.POINT_ID("tb.port[0].bw"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
   .FIXED_BYTES(152), .EPISODE_ENABLE(1), .SILENCE_THRESHOLD(2)) bw
   (.clk(clk), .reset_n(reset_n), .valid(valid));
@@ -16,7 +16,8 @@ bw_point_mon #(.POINT_ID("tb.port[0].bw"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
 ./simv +BW_EXPECT=/path/to/scene.cfg
 ```
 
-The file is read once when registration freezes at Ready. Its rules survive
+The file is read once during preparation, after registration freezes and before
+the single Ready publication. Its rules survive
 statistics resets. There is no hot reload. With no file, statistics continue
 and the summary is `STATISTICS_ONLY`. An explicitly missing/unreadable file is
 a nonfatal cfg WARNING. Enabling a target does not enable episode analysis or
