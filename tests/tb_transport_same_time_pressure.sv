@@ -25,10 +25,10 @@ module tb_transport_same_time_pressure;
     #1000000;
     gate=bw_test_gate_for("pressure.slow");gate.resume_after_group="pressure.fast";gate.resume_after_seq=1;gate.paused=1;
     clk=1;
-    control='0;control.point_handle=points[0];control.control_seq=2;control.timestamp_ticks=$time;control.reset_n=0;control.source_epoch=1;publish_control(sources[0],control);
+    control='0;control.point_handle=points[0];control.control_seq=2;control.timestamp_ticks=$time;control.reset_n=1'bx;control.source_epoch=0;publish_control(sources[0],control);
     control.control_seq=3;control.reset_n=1;publish_control(sources[0],control);
     for(int p=0;p<4096;p++)begin
-      frame='0;frame.timestamp_ticks=$time;frame.record_seq=1;frame.edge_index=1;frame.source_epoch=(p==0)?1:0;
+      frame='0;frame.timestamp_ticks=$time;frame.record_seq=1;frame.edge_index=1;frame.source_epoch=0;
       frame.byte_inc=1;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;publish_frame(sources[p],frame);
     end
     #1;

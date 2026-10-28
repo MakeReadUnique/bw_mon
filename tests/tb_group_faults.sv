@@ -4,13 +4,14 @@ module tb_group_faults;
   logic clk=0;
   int point_handle,source;
   string mode;
+  wire group_clk=(mode=="unexpected")?1'b0:clk;
   bw_record_t frame,replayed;
   bw_control_t control;
   bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("good"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(8)) good
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_group_mon #(.GROUP_ID("fault.group"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) group_mon
-    (.clk(clk),.reset_n(1'b1));
+    (.clk(group_clk),.reset_n(1'b1));
   initial begin
     if(!$value$plusargs("MODE=%s",mode))$fatal(1,"MODE required");
     add_point_member("fault.group","fault");add_point_member("fault.group","good");
@@ -38,7 +39,7 @@ module tb_group_faults;
     end
     #(measurement_start_ticks+2000000-$time);
     if(!scope_disabled(BW_GROUP,"fault.group") || scope_disabled(BW_POINT,"good") ||
-       (!(mode inside {"missing_first","missing_second","wrong_time"}) && !scope_disabled(BW_POINT,"fault")))
+       (!(mode inside {"missing_first","missing_second","wrong_time","unexpected"}) && !scope_disabled(BW_POINT,"fault")))
       $fatal(1,"bad source/consumer ordering must disable its typed dependency path while healthy point continues");
     $display("TB_PASS group_faults runtime_warning mode=%s healthy_point=1",mode);$finish;
   end

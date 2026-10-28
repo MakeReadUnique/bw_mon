@@ -34,6 +34,11 @@
     group=registered_groups[group_handle];
     if(scope_failed(BW_GROUP,group.id))return;
     if(group.notification.seq==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,group.id,"INTEGER_OVERFLOW","group notification sequence exhausted");return;end
+`ifdef BW_MON_TEST_FAULTS
+    if(take_group_fault(group.id,"input_notice"))begin
+      group_work_requested(group.id,request_slot_settlement(group.id));return;
+    end
+`endif
     group.notification.seq++;
     group_work_requested(group.id,request_slot_settlement(group.id));
   endfunction
@@ -357,7 +362,8 @@
     int index;
     index=checked_group_index(group_handle,"acknowledged frame query");
     if($isunknown(group_handle) || group_handle>=registered_groups.size())return 0;
-    if($isunknown(member_index) || member_index>=registered_groups[index].members.size())begin
+    if($isunknown(member_index))begin runtime_scope_error(BW_GROUP,registered_groups[index].id,"INTEGER_UNKNOWN","unknown acknowledged frame query member");return 0;end
+    if(member_index>=registered_groups[index].members.size())begin
       runtime_scope_error(BW_GROUP,registered_groups[index].id,"MEMBER_REFERENCE","invalid acknowledged frame query member");return 0;
     end
     return registered_sources[registered_groups[index].members[int'(member_index)]].frame_acks[index];

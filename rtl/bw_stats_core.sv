@@ -1326,7 +1326,10 @@ module bw_stats_core #(
         reset_action=pending_resets.pop_front();
         apply_reset(reset_action);
         if(runtime_failed())return;
-        reset_receipts=checked_add(reset_receipts,1,scope_id);
+`ifdef BW_MON_TEST_FAULTS
+        if(!(monitor_ready && scope_kind==BW_GROUP && take_group_fault(scope_id,"reset_core")))
+`endif
+          reset_receipts=checked_add(reset_receipts,1,scope_id);
         if(runtime_failed())return;
       end else if (pending_member_controls.size()!=0) begin
         control=pending_member_controls.pop_front();
@@ -1340,7 +1343,10 @@ module bw_stats_core #(
         timer_tick=pending_timers.pop_front();
         dispatch(0,'0,timer_tick);
         if(runtime_failed())return;
-        timer_receipts=checked_add(timer_receipts,1,scope_id);
+`ifdef BW_MON_TEST_FAULTS
+        if(!(scope_kind==BW_GROUP && take_group_fault(scope_id,"timer_core")))
+`endif
+          timer_receipts=checked_add(timer_receipts,1,scope_id);
         if(runtime_failed())return;
       end
       consumed_actions=checked_add(consumed_actions,1,scope_id);
@@ -1349,6 +1355,16 @@ module bw_stats_core #(
       if(runtime_failed())return;
     end
   endtask
+
+  bit runtime_actions_cancelled=0;
+  function void cancel_runtime_work();
+    if(runtime_actions_cancelled)return;
+    runtime_actions_cancelled=1;
+    // Cancellation is terminal, not a successful processing receipt. Keep all
+    // original counters and reliable statistics/history for diagnosis.
+    pending_resets.delete();pending_member_controls.delete();
+    pending_frames.delete();pending_timers.delete();captured_resets.delete();
+  endfunction
 
   bw_stats_core_scheduler scheduler();
 

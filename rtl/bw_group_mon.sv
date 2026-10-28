@@ -37,17 +37,40 @@ module bw_group_mon #(
     bw_u64_t edge_index;
   } expected_edge_t;
   expected_edge_t expected_edges[$];
-  bit collector_stalled=0;
+  bit collector_stalled=0,collector_waiting=0,collector_recovery_pending=0;
+  bw_u64_t collector_recovery_grant=0,collector_recovery_receipts=0;
   bw_u64_t controls_held=0,controls_published=0,controls_accepted=0,controls_acked=0;
   bw_u64_t expected_notice=0,expected_edge_index=0,last_expected_ticks=0;
   bit reset_observer_ready=0;
   localparam bit external_reset_capture=0;
-  function void apply_captured_reset(logic value,bw_u64_t ticks);core.enqueue_reset(value,ticks);endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);
+`ifdef BW_MON_TEST_FAULTS
+    if(monitor_ready && take_group_fault(scope_id,"reset_post"))return;
+`endif
+    core.enqueue_reset(value,ticks);
+  endfunction
   `include "bw_reset_capture.svh"
 
   chandle clock_observer=null;
   import "DPI-C" context function chandle bw_native_watch_point_clock(input string scope_path);
   function void bw_native_point_edge();expect_group_edge(scope_id,$time);endfunction
+  function automatic bit collector_ready_work();
+    bw_control_frame_t candidate,control;
+    int selected;
+    selected=-1;candidate='0;
+    for(int m=0;m<direct_member_count;m++)
+      if(peek_member_control(group_handle,m,control) &&
+         (selected<0 || control.value.timestamp_ticks<candidate.value.timestamp_ticks))begin
+        selected=m;candidate=control;
+      end
+    if(selected>=0 && candidate.value.timestamp_ticks<=direct_source_watermark(group_handle) &&
+       (expected_edges.size()==0 || candidate.value.timestamp_ticks<=expected_edges[0].timestamp_ticks))return 1;
+    if(expected_edges.size()==0)return 0;
+    return group_frame_inputs_ready(group_handle,expected_edges[0].edge_index,expected_edges[0].timestamp_ticks);
+  endfunction
+  function automatic void completion_stage_error(string stage,string detail);
+    runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=%s original_ticks=%0d expected_edge=%0d control_held=%0d control_published=%0d control_accepted=%0d control_acked=%0d reset_expected=%0d reset_captured=%0d reset_requested=%0d reset_received=%0d timer_requested=%0d timer_received=%0d recovery_grant=%0d recovery_received=%0d %s",stage,$time,group_batches[scope_id].expected,controls_held,controls_published,controls_accepted,controls_acked,group_batches[scope_id].reset_expected,group_batches[scope_id].reset_captured,core.reset_requests,core.reset_receipts,core.timer_requests,core.timer_receipts,collector_recovery_grant,collector_recovery_receipts,detail));
+  endfunction
   function int bw_native_point_audit();
     bw_record_t unexpected;
     if(!monitor_ready || scope_failed(BW_GROUP,scope_id))return 0;
@@ -61,13 +84,13 @@ module bw_group_mon #(
        (bw_test_consumer_gates[scope_id].resume_after_group!="" || bw_test_consumer_gates[scope_id].resume_after_groups.size()!=0))begin
       foreach(bw_test_consumer_gates[scope_id].resume_after_groups[d])begin
         if(!group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_groups[d]))begin
-          runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=CONTINUATION unknown dependency");return 0;
+          completion_stage_error("CONTINUATION","unknown dependency");return 0;
         end
         if(group_batches[bw_test_consumer_gates[scope_id].resume_after_groups[d]].acked<
            bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_group))begin
-        runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=CONTINUATION unknown dependency");return 0;
+        completion_stage_error("CONTINUATION","unknown dependency");return 0;
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && group_batches[bw_test_consumer_gates[scope_id].resume_after_group].acked<
          bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
@@ -76,6 +99,40 @@ module bw_group_mon #(
       return 1;
     end
 `endif
+    // Advisory wake loss does not erase durable ready work. Post one named
+    // continuation, then require its receipt after its actual grant. Repeated
+    // empty/quiet callbacks are never used as a completion certificate.
+    if(collector_recovery_pending && collector_recovery_grant<=slot_settlement_generation)begin
+      completion_stage_error("COLLECTOR_RECEIPT","posted recovery continuation did not run");return 0;
+    end
+    if(collector_waiting && collector_ready_work())begin
+      if(!collector_recovery_pending)begin
+        collector_recovery_pending=1;notify_group(group_handle);
+        collector_recovery_grant=group_batches[scope_id].grant;
+      end
+      return 1;
+    end
+    if(group_batches[scope_id].reset_expected!=group_batches[scope_id].reset_captured)begin
+      completion_stage_error("RESET_CAPTURE","missing captured raw reset");return 0;
+    end
+    if(group_batches[scope_id].reset_captured!=core.reset_requests)begin
+      completion_stage_error("RESET_POST","captured reset missing core enqueue");return 0;
+    end
+    if(core.reset_requests!=core.reset_receipts)begin
+      completion_stage_error("RESET_CORE","reset processing receipt missing");return 0;
+    end
+    if(core.timer_requests!=core.timer_receipts)begin
+      completion_stage_error("TIMER_CORE","due timer processing receipt missing");return 0;
+    end
+    if(controls_held!=controls_published)begin
+      completion_stage_error("CONTROL_PUBLICATION","held control missing durable output");return 0;
+    end
+    if(controls_held!=controls_accepted)begin
+      completion_stage_error("CONTROL_CORE","local control receipt missing");return 0;
+    end
+    if(controls_held!=controls_acked)begin
+      completion_stage_error("CONTROL_ACK","input control ACK missing");return 0;
+    end
     close_group_batch(scope_id);
     if(scope_failed(BW_GROUP,scope_id))return 0;
     if(expected_edges.size()==0)for(int m=0;m<direct_member_count;m++)begin
@@ -87,11 +144,11 @@ module bw_group_mon #(
        core.requested_actions!=core.consumed_actions || core.reset_requests!=core.reset_receipts ||
        core.timer_requests!=core.timer_receipts || !group_preparation_ready(group_handle) ||
        controls_held!=controls_published || controls_held!=controls_accepted || controls_held!=controls_acked)
-      runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=POSTED_ACTION missing control/core/input receipt");
+      completion_stage_error("POSTED_ACTION","missing control/core/input receipt");
     if(!scope_failed(BW_GROUP,scope_id) && WINDOW_BASIS==BW_NS && core.reset_applied && core.current_reset_n!==1'b0 &&
        ((core.next_update_ticks<=$time && core.next_update_ticks<=progress_watermark_ticks) ||
         (core.scheduled_episode_deadline_valid && core.scheduled_episode_deadline<=$time && core.scheduled_episode_deadline<=progress_watermark_ticks)))
-      runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=DUE_TIMER no due timer receipt or continuation");
+      completion_stage_error("DUE_TIMER","no due timer receipt or continuation");
     return 0;
   endfunction
   export "DPI-C" function bw_native_point_edge;
@@ -147,6 +204,18 @@ module bw_group_mon #(
     note_scope_prepared(transport_source);
     wait(monitor_ready);
   end
+  initial begin : cancel_disabled_work
+    wait(monitor_ready);
+    forever begin
+      if(scope_failed(BW_GROUP,scope_id))begin
+        expected_edges.delete();captured_resets.delete();
+        collector_recovery_pending=0;collector_waiting=0;
+        core.cancel_runtime_work();
+        break;
+      end
+      @(monitoring_failure_count or monitoring_shared_disabled);
+    end
+  end
   final begin
     if(!monitor_configured && !core_failure_pending())
       core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
@@ -191,16 +260,27 @@ module bw_group_mon #(
     controls_held=checked_add(controls_held,1,scope_id);
     receipt=checked_add(accepted_control_count,1,scope_id);
     if(runtime_failed())return;
+`ifdef BW_MON_TEST_FAULTS
+    if(take_group_fault(scope_id,"control_publication"))begin collector_stalled=1;return;end
+`endif
     publish_control(transport_source,envelope.value);
     if(runtime_failed())return;
     controls_published=controls_held;
     raw_control=envelope.value;control_result_seq=checked_add(control_result_seq,1,scope_id);
     if(runtime_failed())return;
     control_toggle<=!control_toggle;
-    core_control=envelope.value;core_control_toggle<=!core_control_toggle;
+    core_control=envelope.value;
+`ifdef BW_MON_TEST_FAULTS
+    if(!take_group_fault(scope_id,"control_core"))core_control_toggle<=!core_control_toggle;
+`else
+    core_control_toggle<=!core_control_toggle;
+`endif
     wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id));
     if(scope_failed(BW_GROUP,scope_id))return;
     controls_accepted=controls_held;
+`ifdef BW_MON_TEST_FAULTS
+    if(take_group_fault(scope_id,"control_ack"))begin collector_stalled=1;return;end
+`endif
     acknowledge_member_control(group_handle,member_index,envelope.transport_seq);
     if(runtime_failed())return;
     controls_acked=controls_held;
@@ -289,7 +369,7 @@ module bw_group_mon #(
       end
       if (selected_control>=0 && candidate.value.timestamp_ticks<=direct_source_watermark(group_handle) &&
           (expected_edges.size()==0 || candidate.value.timestamp_ticks<=expected_edges[0].timestamp_ticks)) begin
-        commit_control(selected_control,candidate);continue;
+        commit_control(selected_control,candidate);if(collector_stalled)return;continue;
       end
       all_frames=(expected_edges.size()!=0);
       for (int m=0;m<direct_member_count;m++) begin
@@ -305,7 +385,18 @@ module bw_group_mon #(
       if (all_frames && expected_edges[0].timestamp_ticks<=direct_source_watermark(group_handle)) begin
         commit_frame(expected_edges[0]);if(collector_stalled)return;continue;
       end
+      collector_waiting=1;
       wait(notice.seq!=seen_notice || expected_notice!=seen_expected || scope_failed(BW_GROUP,scope_id));
+      collector_waiting=0;
+      if(runtime_failed())return;
+      if(collector_recovery_pending)begin
+`ifdef BW_MON_TEST_FAULTS
+        if(take_group_fault(scope_id,"collector_recovery"))return;
+`endif
+        collector_recovery_receipts=checked_add(collector_recovery_receipts,1,scope_id);
+        if(runtime_failed())return;
+        collector_recovery_pending=0;
+      end
     end
   endtask
 

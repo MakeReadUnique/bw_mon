@@ -24,6 +24,7 @@ module tb_transport_m4_capacity;
       end
       frame='0;frame.timestamp_ticks=$time;frame.edge_index=i;frame.record_seq=i;frame.source_epoch=(i>=199)?1:0;
       frame.byte_inc=(i%2)?8:16;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
+      if(i==199 || i==200)begin frame.byte_inc=0;frame.event_inc=0;frame.reset_n=0;frame.reset_points=1;end
       publish_frame(source,frame);
       if(i==204 && (retained_frame_count(source)!=6 || bw_test_storage_peak["transport.frames"]!=6))$fatal(1,"literal M4 allocator prefix peak6 differs");
       for(int g=0;g<15;g++)acknowledge_member_frame(groups[g],0,i);
@@ -35,7 +36,7 @@ module tb_transport_m4_capacity;
       end
     end
     for(int i=199;i<=204;i++)begin
-      if(!peek_member_frame(groups[15],0,readback) || readback.record_seq!=i || readback.timestamp_ticks!=measurement_start_ticks+bw_u64_t'(i)*500000 || readback.byte_inc!=((i%2)?8:16))$fatal(1,"M4 component retained original identity differs");
+      if(!peek_member_frame(groups[15],0,readback) || readback.record_seq!=i || readback.timestamp_ticks!=measurement_start_ticks+bw_u64_t'(i)*500000 || readback.byte_inc!=((i==199 || i==200)?0:((i%2)?8:16)) || readback.reset_points!=bw_u64_t'(i==199 || i==200))$fatal(1,"M4 component retained original identity differs");
       acknowledge_member_frame(groups[15],0,i);
     end
     for(int c=2;c<=3;c++)begin

@@ -2,6 +2,7 @@
   // clock edges establish obligations even when capture or publication fails.
   class bw_group_batch;
     bw_u64_t expected=0,captured=0,held=0,published=0,accepted=0,acked=0;
+    bw_u64_t reset_expected=0,reset_captured=0;
     bw_u64_t ticks=0,input_generation=0,closed_generation=0,grant=0;
     bit cancelled=0;
   endclass
@@ -26,6 +27,16 @@
     batch.expected++;batch.ticks=ticks;
     group_work_requested(id,request_slot_settlement(id));
   endfunction
+  function automatic void group_reset_expected(string id);
+    if(!group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
+    if(group_batches[id].reset_expected==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group reset ledger exhausted");return;end
+    group_batches[id].reset_expected++;
+  endfunction
+  function automatic void group_reset_captured(string id);
+    if(!group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
+    if(group_batches[id].reset_captured==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group reset capture ledger exhausted");return;end
+    group_batches[id].reset_captured++;
+  endfunction
   function automatic void group_core_receipt(string id,bw_u64_t seq);
     if(scope_failed(BW_GROUP,id))return;
     group_batches[id].accepted=seq;
@@ -35,7 +46,7 @@
     group_work_requested(id,request_slot_settlement(id));
   endfunction
   function automatic bit group_batch_complete(string id);
-    if(!group_batches.exists(id))return 0;
+    if(!group_batches.exists(id) || scope_failed(BW_GROUP,id) || group_batches[id].cancelled)return 0;
     return group_batches[id].input_generation==group_batches[id].closed_generation;
   endfunction
   function automatic bit group_producers_pending(int handle);
