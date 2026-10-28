@@ -121,7 +121,7 @@ cd .build/quickstart
 # 根据 PATH 中的 vcs 找到安装目录及 SDK 头文件。
 BW_VCS_ROOT="$(dirname "$(dirname "$(readlink -f "$(command -v vcs)")")")"
 
-vcs -full64 -sverilog +vpi -debug_access+all -assert svaext \
+vcs -full64 -sverilog -error=AOUP +vpi -debug_access+all -assert svaext \
   +incdir+../../rtl -CFLAGS "-I${BW_VCS_ROOT}/include" \
   ../../rtl/bw_mon_pkg.sv \
   ../../rtl/bw_check_report.sv \
@@ -154,6 +154,7 @@ BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=1 scopes_e
 
 集成到自己的编译脚本时，保留以下要求：
 
+- 保留 `-error=AOUP`，让已删除参数的覆盖在 VCS 编译阶段直接报原生错误。
 - `bw_mon_pkg.sv` 最先编译；`bw_check_report.sv` 必须放在 `bw_mon_setup.sv` 前面。
 - 加入上述 RTL 和 `bw_slot_settlement.c`。即使只监测一个点，也需要这个 C 文件及 `+vpi`、`-debug_access`、`-assert svaext`。
 - 通过 `+incdir+` 指定 `rtl` 目录，通过 `-CFLAGS` 指定 VCS 的 `include` 目录。`.svh` 文件由源码包含，不单独编译。
@@ -435,7 +436,7 @@ add_group_member("all_mem", "die1_mem");
 .EPISODE_ENABLE(1), .PHASE_ENABLE(0)
 ```
 
-两项开关都只接受已知的 0/1；过程关闭但阶段显式开启属于配置错误。省略 `EPISODE_ENABLE` 时两项均关闭。原有 N、K、最小跨度和十个 ABS/REL 算法参数已经删除，升级时移除这些参数并重新编译，不再需要人工调参。
+两项开关都只接受已知的 0/1；过程关闭但阶段显式开启属于配置错误。省略 `EPISODE_ENABLE` 时两项均关闭。原有 N、K、最小跨度和十个 ABS/REL 算法参数已经删除，升级时移除这些参数并重新编译，不再需要人工调参。仓库 VCS 编译入口使用 `-error=AOUP`，把 VCS 默认会忽略的未知参数覆盖诊断提升为原生编译错误；自有 VCS 命令也应保留此选项。
 
 内部策略版本为 `PAIR6_R2`：最近 6 条连续合格窗口，相邻两条配成 3 个均值，按实际物理发布时间拟合趋势；相同候选连续 2 次才确认，最小证据跨度为 `min(W,5×S)`。稳定进入／保持的拟合总变化门槛分别为平均带宽的 4%／8%，原始残差 RMS 门槛为 10%／12%；升降要求总变化至少 10%，配对拟合点残差 RMS 不超过 2.5%。全零有效活动可以确认零带宽稳定阶段，完全无活动则没有流量过程。
 

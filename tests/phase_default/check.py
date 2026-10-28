@@ -50,6 +50,19 @@ def check(log_path, family_id):
         for kind in ('point','group'):
             observed=windows.get((cid,kind),[])
             assert observed, (cid,kind,'no published windows')
+            if family['basis']=='cycle':
+                expected_ticks={origin+u*TICKS+1 for u in range(family['s'],len(c['rows']),family['s'])}
+            else:
+                expected_ticks=set();epoch_start=origin;asserted=False
+                reset_edges=[(at,bool(r['reset'])) for at,r in activity]
+                next_tick=origin+family['s']*TICKS
+                for at,reset in reset_edges+[(origin+len(c['rows'])*TICKS+(1 if cid==family['cases'][-1]['id'] else 0),False)]:
+                    while not asserted and next_tick<at:
+                        expected_ticks.add(next_tick);next_tick+=family['s']*TICKS
+                    if asserted and not reset:
+                        epoch_start=at;next_tick=at+family['s']*TICKS
+                    asserted=reset
+            assert {int(v['ticks']) for v in observed}==expected_ticks,(cid,kind,'publication schedule')
             unique=set()
             for v in observed:
                 end,left=int(v['ticks']),int(v['left'])
@@ -59,6 +72,7 @@ def check(log_path, family_id):
                 expected_bytes=sum(sum(r['members']) for r in raw if r['events'] and r['known'] and not r['reset'])
                 expected_complete=all(r['known'] for r in raw if not r['reset'])
                 assert int(v['bytes'])==expected_bytes, (cid,kind,end,'bytes',v['bytes'],expected_bytes)
+                assert bool(int(v['full']))==(end-left==family['w']*TICKS),(cid,kind,end,'full coverage')
                 assert bool(int(v['complete']))==expected_complete,(cid,kind,end,'quality',v['complete'],expected_complete)
                 assert abs(float(v['y'])-expected_bytes*TICKS/(end-left))<=1e-9,(cid,kind,end,'bandwidth')
                 count+=1
@@ -68,6 +82,9 @@ def check(log_path, family_id):
                 key=(cid,kind,p['phase']);m=metrics[key];v=variations[key]
                 start,end=int(p['start_ticks']),int(p['end_ticks'])
                 raw=[r for tick,r in activity if start<=tick<end]
+                if int(m['events_complete']) and int(p['end_known']):
+                    expected_events=sum(r['events'] for r in raw if not r['reset'])*(4 if kind=='group' else 1)
+                    assert int(m['events'])==expected_events,(cid,kind,'phase events',m,expected_events)
                 if int(m['bandwidth_valid']):
                     expected=sum(sum(r['members']) for r in raw if r['events'] and r['known'] and not r['reset'])
                     assert int(m['bytes'])==expected,(cid,kind,'phase raw bytes',m,expected)

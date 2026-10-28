@@ -845,6 +845,9 @@ remains independent of phase confirmation.
 Point, group and shared core use the internal `PAIR6_R2` policy. The old N,
 minimum-span, K and ABS/REL module parameters have been removed; there is no
 expert override. Existing integrations must remove those arguments and recompile.
+Repository VCS entries use `-error=AOUP`: VCS otherwise warns and ignores an
+undefined parameter override. Custom VCS build commands should retain this flag
+so removed options receive the simulator's native elaboration error.
 
 | Internal rule | Fixed behavior |
 | --- | --- |

@@ -13,6 +13,20 @@ module tb_phase_defaults;
     (.clk(clk),.reset_n(1'b1),.valid(valid));
   bw_group_mon #(.GROUP_ID("defaults.group"),.WINDOW_WIDTH(1),.EPISODE_ENABLE(1)) group_mon
     (.clk(clk),.reset_n(1'b1));
+  bw_group_mon #(.GROUP_ID("defaults.group_episode"),.WINDOW_WIDTH(1),.EPISODE_ENABLE(1),.PHASE_ENABLE(0)) group_episode
+    (.clk(clk),.reset_n(1'b1));
+  bw_group_mon #(.GROUP_ID("defaults.group_off"),.WINDOW_WIDTH(1),.EPISODE_ENABLE(0),.PHASE_ENABLE(0)) group_off
+    (.clk(clk),.reset_n(1'b1));
+  bw_group_mon #(.GROUP_ID("defaults.group_explicit"),.WINDOW_WIDTH(1),.EPISODE_ENABLE(1),.PHASE_ENABLE(1)) group_explicit
+    (.clk(clk),.reset_n(1'b1));
+  bw_phase_t core_phase;
+  bw_stats_core #(.WINDOW_WIDTH(1),.EPISODE_ENABLE(1)) core_default
+    (.scope_id("defaults.core"),.record(point.raw_record),.record_toggle(point.record_toggle),.phase_current(core_phase));
+  initial begin
+    add_point_member("defaults.group_episode","defaults.phase");
+    add_point_member("defaults.group_off","defaults.phase");
+    add_point_member("defaults.group_explicit","defaults.phase");
+  end
   initial add_point_member("defaults.group","defaults.phase");
   initial begin
     wait(monitor_ready);
@@ -28,12 +42,14 @@ module tb_phase_defaults;
           point.phase_reason!=BW_PHASE_CONFIRMING))
         $fatal(1,"six complete windows establish a candidate; confirmation requires two updates");
       if(update==7 && (point.phase_current!=BW_PHASE_STEADY || group_mon.phase_current!=BW_PHASE_STEADY ||
-          explicit_phase.phase_current!=BW_PHASE_STEADY || point.phase_start_ticks!=measurement_start_ticks+6000000 ||
+          explicit_phase.phase_current!=BW_PHASE_STEADY || group_explicit.phase_current!=BW_PHASE_STEADY ||
+          core_phase!=BW_PHASE_STEADY || point.phase_start_ticks!=measurement_start_ticks+6000000 ||
           point.phase_confirmation_ticks!=measurement_start_ticks+7000000 ||
           point.phase_reason!=BW_PHASE_CONFIRMED))
         $fatal(1,"default point and group must confirm the constant platform at update seven");
     end
-    if(!episode_only.episode_active || episode_only.phase_id!=0 || disabled.episode_id!=0 || disabled.phase_id!=0)
+    if(!episode_only.episode_active || episode_only.phase_id!=0 || disabled.episode_id!=0 || disabled.phase_id!=0 ||
+       !group_episode.episode_active || group_episode.phase_id!=0 || group_off.episode_id!=0 || group_off.phase_id!=0)
       $fatal(1,"episode-only and disabled controls must remain independent");
     $display("TB_PASS phase_defaults");$finish;
   end

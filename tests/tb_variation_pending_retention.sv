@@ -14,8 +14,8 @@ module tb_variation_pending_retention;
     #(measurement_start_ticks+64'd30003250001-$time);
     if(point_mon.raw_record.record_seq!=7 || point_mon.accepted_record_seq!=7 || point_mon.result_seq!=30003 ||
        point_mon.episode_result_seq!=1 || point_mon.episode_result.status!=BW_EPISODE_COMPLETE ||
-       point_mon.episode_result.first_ticks!=250001 || point_mon.episode_result.last_ticks!=2750001 ||
-       point_mon.episode_result.tail_ticks!=3250001 || point_mon.episode_result.confirmation_ticks!=measurement_start_ticks+64'd30003250000 ||
+       point_mon.episode_result.first_ticks!=measurement_start_ticks+250000 || point_mon.episode_result.last_ticks!=measurement_start_ticks+2750000 ||
+       point_mon.episode_result.tail_ticks!=measurement_start_ticks+3250000 || point_mon.episode_result.confirmation_ticks!=measurement_start_ticks+64'd30003250000 ||
        point_mon.episode_result.byte_count!=48 || point_mon.episode_result.event_count!=6 ||
        point_mon.episode_result.duration_ticks!=3000000 || !point_mon.episode_result.e2e_valid ||
        $abs(point_mon.episode_result.e2e_gbps-16.0)>1e-10)

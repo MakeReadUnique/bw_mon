@@ -19,10 +19,7 @@ module history_trace_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg
   bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("history.variable"),.DYNAMIC_BYTES(1),.WINDOW_BASIS(BASIS),
     .WINDOW_WIDTH(3),.UPDATE_STRIDE(2),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),
-    .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(2),
-    .PHASE_STEADY_ENTER_ABS(0),.PHASE_STEADY_ENTER_REL(0),.PHASE_STEADY_EXIT_ABS(0),.PHASE_STEADY_EXIT_REL(0),
-    .PHASE_RMS_ENTER_ABS(0),.PHASE_RMS_ENTER_REL(0),.PHASE_RMS_EXIT_ABS(0),.PHASE_RMS_EXIT_REL(0),
-    .PHASE_TREND_ABS(1),.PHASE_TREND_REL(0)) variable_point
+    .PHASE_ENABLE(1)) variable_point
     (.clk(clk),.reset_n(reset_n),.valid(valid),.size_bytes(bytes_now),.size_known(1'b1));
   bw_point_mon #(.POINT_ID("history.fixed"),.FIXED_BYTES(8),.WINDOW_BASIS(BASIS),.WINDOW_WIDTH(3),.UPDATE_STRIDE(2)) fixed_point
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));

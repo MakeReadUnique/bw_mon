@@ -1,35 +1,30 @@
 module tb_metrics_stopped_history;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  logic clk=0,reset_n=1;
+  logic clk=0;
   logic [63:0] bytes;
-  int values[6]='{10,10,10,20,30,40};
   bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
-    bw_point_mon #(.POINT_ID($sformatf("metrics.stopped%0d",g)),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
-      .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(4),
-      .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
-      .PHASE_STEADY_ENTER_ABS(0.0),.PHASE_STEADY_ENTER_REL(0.0),
-      .PHASE_STEADY_EXIT_ABS(0.0),.PHASE_STEADY_EXIT_REL(0.0),
-      .PHASE_RMS_ENTER_ABS(0.1),.PHASE_RMS_ENTER_REL(0.0),
-      .PHASE_RMS_EXIT_ABS(0.1),.PHASE_RMS_EXIT_REL(0.0),
-      .PHASE_TREND_ABS(1.0),.PHASE_TREND_REL(0.0)) point
-      (.clk(clk),.reset_n(g==0 ? reset_n : 1'b1),.valid(1'b1),.size_bytes(bytes),.size_known(1'b1));
+    bw_point_mon #(.POINT_ID($sformatf("metrics.stopped%0d",g)),.WINDOW_WIDTH(1),
+      .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1)) point
+      (.clk(clk),.reset_n(1'b1),.valid(1'b1),.size_bytes(bytes),.size_known(1'b1));
   end
   initial begin
     wait(monitor_ready);
-    for(int t=1;t<=6;t++)begin
-      #(ns_to_ticks(t)-$time);bytes=values[t-1];clk=1;#1;clk=0;
+    for(int t=0;t<9;t++)begin
+      #(measurement_start_ticks+250000+ns_to_ticks(t)-$time);bytes=(t+1)*10;clk=1;#1;clk=0;
     end
-    #(9000003-$time);
+    #(measurement_start_ticks+11500000-$time);
     if(scopes[0].point.episode_tail_known || scopes[0].point.episode_e2e_valid ||
-       scopes[0].point.phase_result_seq!=2 || scopes[0].point.phase_result.phase_kind!=BW_PHASE_RAMP ||
-       scopes[0].point.phase_result.start_ticks!=6000001 || scopes[0].point.phase_result.end_ticks!=8000001 ||
-       !scopes[0].point.phase_result.duration_valid || scopes[0].point.phase_result.duration_ticks!=2000000 ||
-       !scopes[0].point.phase_result.bandwidth_valid || scopes[0].point.phase_result.bandwidth_gbps!=20.0 ||
-       scopes[0].point.phase_result.variation.sample_count!=2 ||
-       !scopes[0].point.phase_result.variation.stddev_valid || scopes[0].point.phase_result.variation.stddev_gbps!=5.0)
-      $fatal(1,"absence of an actual next edge through8 proves earlier ramp[6,8) lies inside the still-unknown transfer cycle");
-    #(11000002-$time);$display("TB_PASS metrics_stopped_history");$finish;
+       scopes[0].point.phase_result_seq!=1 || scopes[0].point.phase_result.phase_kind!=BW_PHASE_RAMP ||
+       scopes[0].point.phase_result.start_ticks!=measurement_start_ticks+6000000 ||
+       scopes[0].point.phase_result.end_ticks!=measurement_start_ticks+10000000 ||
+       !scopes[0].point.phase_result.duration_valid || scopes[0].point.phase_result.duration_ticks!=4000000 ||
+       !scopes[0].point.phase_result.bandwidth_valid || scopes[0].point.phase_result.bandwidth_gbps!=60.0 ||
+       scopes[0].point.phase_result.variation.sample_count!=4 ||
+       scopes[0].point.phase_result.variation.mean_gbps!=75 ||
+       $abs(scopes[0].point.phase_result.variation.stddev_gbps-11.180339887498949)>1e-10)
+      $fatal(1,"stopped clock proves[6,10) is covered by actual elapsed time without inventing a tail edge");
+    $display("TB_PASS metrics_stopped_history");$finish;
   end
 endmodule

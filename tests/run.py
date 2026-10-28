@@ -42,7 +42,7 @@ def main():
         stamp = build / "source.sha256"
         if top not in compiled or compiled[top][0] != digest:
             if args.no_cache or not (build / "simv").exists() or not stamp.exists() or stamp.read_text() != digest:
-                cmd = ["vcs", "-full64", "-sverilog", "-timescale=1ns/1fs", "-debug_access+all",
+                cmd = ["vcs", "-full64", "-sverilog", "-error=AOUP", "-timescale=1ns/1fs", "-debug_access+all",
                        "+incdir+" + str(ROOT / "rtl"), "+vpi", "-CFLAGS", "-I" + str(vcs_include) +
                        (" -DBW_MON_TEST_FAULTS" if "BW_MON_TEST_FAULTS" in defines else ""), "-assert", "svaext",
                        "-top", top, "-o", str(build / "simv")] + ["+define+" + name for name in defines] + [str(path) for path in files]
