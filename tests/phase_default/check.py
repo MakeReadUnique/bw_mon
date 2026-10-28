@@ -6,6 +6,7 @@ product history. Phase expectations are frozen accepted R2 behavior, not labels
 inferred from this product run. This checker makes no 5% performance claims.
 """
 import json
+import math
 from pathlib import Path
 import re
 import sys
@@ -20,6 +21,7 @@ def check(log_path, family_id):
     family = next(f for f in json.loads((HERE/'fixed.json').read_text())['families'] if f['id']==family_id)
     cases = {c['id']:c for c in family['cases']}
     origins, windows, phases, enum = {}, {}, {}, {}
+    metrics, variations = {}, {}
     current = None
     for line in Path(log_path).read_text().splitlines():
         v = fields(line)
@@ -28,6 +30,13 @@ def check(log_path, family_id):
             current=int(v['case']);origins[current]=int(v['origin'])
         elif line.startswith('FIXED_WINDOW '):
             windows.setdefault((int(v['case']),v['kind']),[]).append(v)
+        elif line.startswith(('BW_PHASE_METRICS ','BW_VARIATION ')) and v.get('scope','').startswith('phase.fixed.'):
+            if line.startswith('BW_VARIATION ') and v.get('interval')!='PHASE':continue
+            scope=v['scope'].split('.')[-1]
+            if scope.startswith(('point','group')):
+                kind='point' if scope.startswith('point') else 'group'
+                target=metrics if line.startswith('BW_PHASE_METRICS ') else variations
+                target[(current,kind,v['phase'])]=v
         elif line.startswith('BW_PHASE ') and v.get('scope','').startswith('phase.fixed.'):
             scope=v['scope'].split('.')[-1]
             if scope.startswith(('point','group')):
@@ -53,6 +62,30 @@ def check(log_path, family_id):
                 assert bool(int(v['complete']))==expected_complete,(cid,kind,end,'quality',v['complete'],expected_complete)
                 assert abs(float(v['y'])-expected_bytes*TICKS/(end-left))<=1e-9,(cid,kind,end,'bandwidth')
                 count+=1
+            # Final phase bytes use raw events; variation equally weights the
+            # eligible full windows in that final interval. The sources differ.
+            for p in phases.get((cid,kind),[]):
+                key=(cid,kind,p['phase']);m=metrics[key];v=variations[key]
+                start,end=int(p['start_ticks']),int(p['end_ticks'])
+                raw=[r for tick,r in activity if start<=tick<end]
+                if int(m['bandwidth_valid']):
+                    expected=sum(sum(r['members']) for r in raw if r['events'] and r['known'] and not r['reset'])
+                    assert int(m['bytes'])==expected,(cid,kind,'phase raw bytes',m,expected)
+                    assert abs(float(m['bandwidth_gbps'])-expected*TICKS/(end-start))<=1e-9,(cid,kind,'phase raw bandwidth')
+                ys=[]
+                for w in observed:
+                    tick,left=int(w['ticks']),int(w['left'])
+                    selected=[r for at,r in activity if left<=at<tick]
+                    if start<=tick<end and tick-left==family['w']*TICKS and all(r['known'] for r in selected):
+                        ys.append(sum(sum(r['members']) for r in selected if r['events'] and not r['reset'])*TICKS/(tick-left))
+                assert int(v['samples'])==len(ys),(cid,kind,'phase window count',v,len(ys))
+                if ys:
+                    mean=sum(ys)/len(ys)
+                    assert abs(float(v['mean_gbps'])-mean)<=1e-9,(cid,kind,'phase window mean')
+                    assert float(v['min_gbps'])==min(ys) and float(v['max_gbps'])==max(ys),(cid,kind,'phase minmax')
+                    if int(v['stddev_valid']):
+                        sigma=math.sqrt(sum((y-mean)**2 for y in ys)/len(ys))
+                        assert abs(float(v['stddev_gbps'])-sigma)<=1e-9,(cid,kind,'phase population sigma')
             actual=[]
             for p in phases.get((cid,kind),[]):
                 actual.append({'label':enum[p['kind']],**{out:(int(p[at])-origin)//TICKS for out,at in

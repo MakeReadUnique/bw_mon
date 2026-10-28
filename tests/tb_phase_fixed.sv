@@ -1,3 +1,34 @@
+`define FIXED_SCOPE(STRIDE_OVERRIDE) \
+    bw_point_mon #(.POINT_ID($sformatf("phase.fixed.point%0d",f)),.WINDOW_BASIS(BASIS), \
+      .WINDOW_WIDTH(10),STRIDE_OVERRIDE .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1)) point \
+      (.clk(clk),.reset_n(reset_n),.valid(family==f ? valid : 1'b0),.size_bytes(point_bytes),.size_known(known)); \
+    for(genvar m=0;m<4;m++)begin:members \
+      bw_point_mon #(.POINT_ID($sformatf("phase.fixed.member%0d.%0d",f,m)),.WINDOW_BASIS(BASIS), \
+        .WINDOW_WIDTH(10),STRIDE_OVERRIDE .DYNAMIC_BYTES(1)) point \
+        (.clk(clk),.reset_n(reset_n),.valid(family==f ? valid : 1'b0),.size_bytes(member_bytes[m]),.size_known(known)); \
+      initial add_point_member($sformatf("phase.fixed.group%0d",f),$sformatf("phase.fixed.member%0d.%0d",f,m)); \
+    end \
+    bw_group_mon #(.GROUP_ID($sformatf("phase.fixed.group%0d",f)),.WINDOW_BASIS(BASIS), \
+      .WINDOW_WIDTH(10),STRIDE_OVERRIDE .EPISODE_ENABLE(1)) group_mon \
+      (.clk(clk),.reset_n(reset_n)); \
+    always @(point.result_seq)begin \
+      #1; \
+      if(recording && family==f && point.result_seq!=0) \
+        $display("FIXED_WINDOW case=%0d kind=point ticks=%0d left=%0d bytes=%0d full=%0b complete=%0b eligible=%0b y=%0.17g current=%s evidence=%0d candidate=%0d reason=%s", \
+          case_id,point.window_end_ticks,point.window_start_ticks,point.window_bytes, \
+          point.window_full,point.bytes_complete,point.phase_eligible,point.bandwidth_gbps, \
+          point.phase_current.name(),point.phase_evidence_count,point.phase_candidate_count,phase_reason_name(point.phase_reason)); \
+    end \
+    always @(group_mon.result_seq)begin \
+      #1; \
+      if(recording && family==f && group_mon.result_seq!=0) \
+        $display("FIXED_WINDOW case=%0d kind=group ticks=%0d left=%0d bytes=%0d full=%0b complete=%0b eligible=%0b y=%0.17g current=%s evidence=%0d candidate=%0d reason=%s", \
+          case_id,group_mon.window_end_ticks,group_mon.window_start_ticks,group_mon.window_bytes, \
+          group_mon.window_full,group_mon.bytes_complete,group_mon.phase_eligible,group_mon.bandwidth_gbps, \
+          group_mon.phase_current.name(),group_mon.phase_evidence_count,group_mon.phase_candidate_count,phase_reason_name(group_mon.phase_reason)); \
+    end
+
+`define FIXED_DENSE .UPDATE_STRIDE(1),
 // Spec 48 T4: four frozen input files, one compiled public-product program.
 module tb_phase_fixed;
   timeunit 1fs; timeprecision 1fs;
@@ -11,33 +42,10 @@ module tb_phase_fixed;
   bw_mon_setup setup();
   for(genvar f=0;f<4;f++)begin:families
     localparam logic [1:0] BASIS=(f==1 || f==2) ? BW_CYCLE : BW_NS;
-    bw_point_mon #(.POINT_ID($sformatf("phase.fixed.point%0d",f)),.WINDOW_BASIS(BASIS),
-      .WINDOW_WIDTH(10),.UPDATE_STRIDE(f<2 ? BW_CFG_OMITTED : 1),.DYNAMIC_BYTES(1),.EPISODE_ENABLE(1)) point
-      (.clk(clk),.reset_n(reset_n),.valid(family==f ? valid : 1'b0),.size_bytes(point_bytes),.size_known(known));
-    for(genvar m=0;m<4;m++)begin:members
-      bw_point_mon #(.POINT_ID($sformatf("phase.fixed.member%0d.%0d",f,m)),.WINDOW_BASIS(BASIS),
-        .WINDOW_WIDTH(10),.UPDATE_STRIDE(f<2 ? BW_CFG_OMITTED : 1),.DYNAMIC_BYTES(1)) point
-        (.clk(clk),.reset_n(reset_n),.valid(family==f ? valid : 1'b0),.size_bytes(member_bytes[m]),.size_known(known));
-      initial add_point_member($sformatf("phase.fixed.group%0d",f),$sformatf("phase.fixed.member%0d.%0d",f,m));
-    end
-    bw_group_mon #(.GROUP_ID($sformatf("phase.fixed.group%0d",f)),.WINDOW_BASIS(BASIS),
-      .WINDOW_WIDTH(10),.UPDATE_STRIDE(f<2 ? BW_CFG_OMITTED : 1),.EPISODE_ENABLE(1)) group_mon
-      (.clk(clk),.reset_n(reset_n));
-    always @(point.result_seq)begin
-      #1;
-      if(recording && family==f && point.result_seq!=0)
-        $display("FIXED_WINDOW case=%0d kind=point ticks=%0d left=%0d bytes=%0d full=%0b complete=%0b eligible=%0b y=%0.17g current=%s evidence=%0d candidate=%0d reason=%s",
-          case_id,point.window_end_ticks,point.window_start_ticks,point.window_bytes,
-          point.window_full,point.bytes_complete,point.phase_eligible,point.bandwidth_gbps,
-          point.phase_current.name(),point.phase_evidence_count,point.phase_candidate_count,phase_reason_name(point.phase_reason));
-    end
-    always @(group_mon.result_seq)begin
-      #1;
-      if(recording && family==f && group_mon.result_seq!=0)
-        $display("FIXED_WINDOW case=%0d kind=group ticks=%0d left=%0d bytes=%0d full=%0b complete=%0b eligible=%0b y=%0.17g current=%s evidence=%0d candidate=%0d reason=%s",
-          case_id,group_mon.window_end_ticks,group_mon.window_start_ticks,group_mon.window_bytes,
-          group_mon.window_full,group_mon.bytes_complete,group_mon.phase_eligible,group_mon.bandwidth_gbps,
-          group_mon.phase_current.name(),group_mon.phase_evidence_count,group_mon.phase_candidate_count,phase_reason_name(group_mon.phase_reason));
+    if(f<2)begin:default_stride
+      `FIXED_SCOPE()
+    end else begin:dense_stride
+      `FIXED_SCOPE(`FIXED_DENSE)
     end
   end
   initial begin
@@ -64,3 +72,6 @@ module tb_phase_fixed;
     #2;recording=0;$fclose(fd);$display("TB_PASS phase_fixed");$finish;
   end
 endmodule
+
+`undef FIXED_SCOPE
+`undef FIXED_DENSE

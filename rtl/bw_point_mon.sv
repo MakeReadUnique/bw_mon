@@ -2,7 +2,7 @@ module bw_point_mon #(
   parameter string POINT_ID = "__BW_AUTO__",
   parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH = 0,
-  parameter logic [63:0] UPDATE_STRIDE = bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] UPDATE_STRIDE = WINDOW_WIDTH,
   parameter logic [63:0] FIXED_BYTES = 64'b0,
   parameter bw_mon_pkg::bw_protocol_t PROTOCOL = bw_mon_pkg::BW_VALID_ONLY,
   parameter logic [1:0] DYNAMIC_BYTES = 0,
@@ -18,7 +18,7 @@ module bw_point_mon #(
   parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
   parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_DEFAULT_SILENCE_THRESHOLD,
   parameter logic [1:0] PHASE_ENABLE = EPISODE_ENABLE
 ) (
   input logic clk,
@@ -134,7 +134,7 @@ module bw_point_mon #(
     core.use_external_reset_capture();hints.use_external_reset_capture();
     monitor_path=$sformatf("%m");
     scope_id=(POINT_ID=="__BW_AUTO__") ? monitor_path : POINT_ID;
-    effective_stride=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    effective_stride=UPDATE_STRIDE;
     effective_silence=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
     validate_credit_config(PROTOCOL,CREDIT_ENABLE,CREDIT_CAPACITY,CREDIT_INITIAL,

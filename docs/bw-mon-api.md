@@ -66,9 +66,9 @@ decision. An edge at the common start itself is excluded.
 | point | `POINT_ID` | string | Default `__BW_AUTO__`; otherwise nonempty, unique exact ID |
 | point/recorder | `FIXED_BYTES` | four-state 64-bit parameter, bytes/transfer | Default 0 (legal zero-byte transfers); fixed mode requires known value at most 2^32−1 |
 
-Omitted numeric configuration is recognized by a sentinel parameter default; only
-true omission takes the effective defaults above. Explicit zero, unknown or
-out-of-range values remain configuration errors and are never silently replaced.
+Parameter defaults directly express `UPDATE_STRIDE=WINDOW_WIDTH` and Q=10.
+Explicit zero, unknown or out-of-range values remain configuration errors;
+there is no reserved integer value that silently becomes an omission.
 `CLOCK_CONTEXT` is removed: points, type binds and groups no longer declare or
 check a clock label, and no clock-consistency probing replaces it. A shared
 sampling clock remains a documented usage prerequisite of hierarchical

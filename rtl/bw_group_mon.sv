@@ -2,9 +2,9 @@ module bw_group_mon #(
   parameter string GROUP_ID="",
   parameter logic [1:0] WINDOW_BASIS=bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH=0,
-  parameter logic [63:0] UPDATE_STRIDE=bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] UPDATE_STRIDE=WINDOW_WIDTH,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_DEFAULT_SILENCE_THRESHOLD,
   parameter logic [1:0] PHASE_ENABLE = EPISODE_ENABLE
 ) (
   input logic clk,
@@ -47,7 +47,7 @@ module bw_group_mon #(
   initial begin
     core.use_external_reset_capture();
     monitor_path=$sformatf("%m");scope_id=GROUP_ID;
-    effective_stride=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    effective_stride=UPDATE_STRIDE;
     effective_silence=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     // Reject raw configuration before narrowing into legacy internal enums/bits.
     if($isunknown({WINDOW_BASIS,WINDOW_WIDTH,effective_stride}) || !(WINDOW_BASIS inside {BW_NS,BW_CYCLE}))

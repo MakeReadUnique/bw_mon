@@ -1,9 +1,9 @@
 module bw_stats_core #(
   parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH = 0,
-  parameter logic [63:0] UPDATE_STRIDE = bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] UPDATE_STRIDE = WINDOW_WIDTH,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_DEFAULT_SILENCE_THRESHOLD,
   parameter logic [1:0] PHASE_ENABLE = EPISODE_ENABLE
 ) (
   input string scope_id,
@@ -1245,7 +1245,7 @@ module bw_stats_core #(
 
   initial begin
     wait(scope_id.len()!=0);
-    stride_cfg=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    stride_cfg=UPDATE_STRIDE;
     silence_cfg=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     validate_window(WINDOW_BASIS,WINDOW_WIDTH,stride_cfg,scope_id);
     // Avoid overflow in 5*S; only multiply when its result is at most W.
