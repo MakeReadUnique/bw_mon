@@ -11,6 +11,7 @@ import fcntl
 import importlib.util
 import json
 import os
+import resource
 from pathlib import Path
 import shutil
 import subprocess
@@ -41,6 +42,7 @@ def main():
         command=list(map(str,command));name=Path(command[0]).name
         stage='compile' if name=='vcs' else 'simulation' if name=='simv' else 'verify'
         entry={'stage':stage,'command':command,'cwd':str(kwargs.get('cwd',ROOT))}
+        usage_before=resource.getrusage(resource.RUSAGE_CHILDREN)
         began=time.monotonic();remaining=deadline-began
         if remaining<=0:raise TimeoutError('fixed-phase budget exhausted before '+stage)
         timeout=min(kwargs.get('timeout',remaining),remaining)
@@ -69,6 +71,10 @@ def main():
         else:
             kwargs['timeout']=timeout
             completed=original_run(command,**kwargs)
+        usage_after=resource.getrusage(resource.RUSAGE_CHILDREN)
+        entry['child_user_seconds']=usage_after.ru_utime-usage_before.ru_utime
+        entry['child_system_seconds']=usage_after.ru_stime-usage_before.ru_stime
+        entry['child_peak_rss_kib_so_far']=usage_after.ru_maxrss
         entry['returncode']=completed.returncode;entry['seconds']=time.monotonic()-began
         report['commands'].append(entry)
         return completed
@@ -94,6 +100,8 @@ def main():
         counts={stage:sum(c['stage']==stage for c in report['commands']) for stage in ('compile','simulation','verify')}
         report['stage_command_counts']=counts
         report['completed']=result==0 and counts=={'compile':1,'simulation':4,'verify':4}
+    except KeyboardInterrupt:
+        report['error']='Interrupted by caller';report['interrupted']=True
     except Exception as error:
         report['error']=repr(error)
     finally:
@@ -106,6 +114,9 @@ def main():
             shutil.rmtree(str(build))
         report['cleanup_seconds']=time.monotonic()-cleanup
         report['total_seconds']=time.monotonic()-start
+        report['child_peak_rss_kib']=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
+        report['runner_peak_rss_kib']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        report['rss_scope']='ru_maxrss of waited children and runner separately; not summed and not simultaneous process-tree RSS'
         report['within_budget']=report['total_seconds']<=900
         report['passed']=bool(report['completed'] and report['within_budget'])
         (args.evidence/'timing.json').write_text(json.dumps(report,indent=2)+'\n')

@@ -30,6 +30,7 @@
 | storage_failure_phase_pending/final_phase | 故障注入方式和资源要求不变；触发移到已有固定策略确认后，不能靠短输入不走到目标资源通过。 |
 | variation_pending_retention | 原六次8B、Q30000原始输入不变；删除K60000后仍保留30000条待裁剪后缀并释放，最终只选原三条16GB/s窗口。规模wrapper独立核对真实高水位。 |
 | history_trace、storage其它分类、report_records | 去除多余算法参数；原计量/质量/数值/不可变报告输入和独立预期继续使用。T偏移由启动迁移核对。 |
+| metrics_small/independent/late_recovery | 原0/1/2样本、末拍未知字节与迟到历史质量恢复输入保留，修复共同T偏移；metrics_small明确PHASE_ENABLE=0以保持其过程独立接口场景，其余保留新默认分析。迟到恢复仍是已批准的归一化统计组件证据，不声称公开运输支持正时间补交。 |
 | cfg_explicit_max_* | 修复原省略sentinel将显式全1错误当默认的反例；自然S=W/Q10默认与显式非法值严格分开，未使用Q继续不校验。 |
 
 合并后的组件保留原 case 名称作为覆盖索引，指向共享 fixture；退役的参数专用 case 明确映射到上述原生拒绝或新的默认成功行为。不会为了保留旧测试数量而重复旧算法断言。
