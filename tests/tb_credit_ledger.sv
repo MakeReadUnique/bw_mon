@@ -9,8 +9,8 @@ module tb_credit_ledger;
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(32),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) disabled
     (.clk(clk),.reset_n(reset_n),.flitv(flitv),.lcrdv(lcrdv));
   task automatic sample_at(longint unsigned at_ticks,logic send_now,logic return_now);
-    #(at_ticks+1-$time);flitv=send_now;lcrdv=return_now;clk=1;#1fs;clk=0;
-    if(enabled.raw_record.timestamp_ticks!=at_ticks || disabled.raw_record.timestamp_ticks!=at_ticks)
+    #(at_ticks+measurement_start_ticks-$time);flitv=send_now;lcrdv=return_now;clk=1;#1fs;clk=0;
+    if(enabled.raw_record.timestamp_ticks!=measurement_start_ticks+at_ticks || disabled.raw_record.timestamp_ticks!=measurement_start_ticks+at_ticks)
       $fatal(1,"credit stimulus/table time must match the actual integer-fs source timestamp");
   endtask
   task automatic check_balance(logic [63:0] expected_balance);

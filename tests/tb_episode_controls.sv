@@ -42,58 +42,58 @@ module tb_episode_controls;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   task automatic sample_at(bw_u64_t ticks,bit transfer,bw_u64_t bytes);
-    #(ticks+1-$time);valid=transfer;size_bytes=bytes;clk=1;#1;clk=0;
+    #(ticks+measurement_start_ticks-$time);valid=transfer;size_bytes=bytes;clk=1;#1;clk=0;
   endtask
   initial begin
     wait(monitor_ready);
     sample_at(1000000,1,8);sample_at(2000000,0,0);
-    #(4500002-$time);reset_n=1'bx;
-    #(6250002-$time);
+    #(measurement_start_ticks+4500000-$time);reset_n=1'bx;
+    #(measurement_start_ticks+6250000-$time);
     if (!point.episode_active || !active || point.episode_result_seq!=0 || result_seq!=0)
       $fatal(1,"no-edge unknown reset must interrupt quiet before the original 6ns deadline");
-    #(6500002-$time);reset_n=1;
-    #(9000003-$time);
+    #(measurement_start_ticks+6500000-$time);reset_n=1;
+    #(measurement_start_ticks+9000001-$time);
     if (!point.bytes_complete || !point.episode_active || point.episode_bytes_complete ||
         point.episode_last_known)
       $fatal(1,"window recovery cannot repair an episode after a no-edge unknown observation");
-    #(10500003-$time);
+    #(measurement_start_ticks+10500001-$time);
     if (point.episode_active || active || point.episode_result_seq!=1 || result_seq!=1 ||
-        point.episode_result.confirmation_ticks!=10500001 || result.confirmation_ticks!=10500001 ||
+        point.episode_result.confirmation_ticks!=measurement_start_ticks+10500000 || result.confirmation_ticks!=measurement_start_ticks+10500000 ||
         point.episode_result.last_known || result.last_known || result.bytes_complete ||
         result.e2e_valid || result.scope_kind!=BW_GROUP || epoch!=0 || total_bytes!=8)
       $fatal(1,"quiet resumes at the actual control recovery time and preserves independent sticky quality");
     sample_at(12000000,1,0);sample_at(13000000,0,0);
-    #(14500002-$time);reset_n=0;
+    #(measurement_start_ticks+14500000-$time);reset_n=0;
     #1;
     if (point.episode_result_seq!=2 || point.episode_result.status!=BW_EPISODE_RESET_INTERRUPTED ||
         point.episode_result.stats_epoch!=0 || point.stats_epoch!=1 || point.episode_active ||
         !active || epoch!=0 || result_seq!=1)
       $fatal(1,"own reset interrupts only the point episode, while member reset leaves the ancestor alive");
-    #(17000003-$time);
+    #(measurement_start_ticks+17000001-$time);
     if (active || result_seq!=2 || !result.e2e_valid || result.e2e_gbps!=0.0 ||
         result.byte_count!=0 || result.event_count!=1 || result.member_reset_coverage ||
-        result.first_ticks!=12000001 || result.tail_ticks!=13000001)
+        result.first_ticks!=measurement_start_ticks+12000000 || result.tail_ticks!=measurement_start_ticks+13000000)
       $fatal(1,"a complete zero-byte ancestor episode excludes reset coverage after its tail");
-    #(18000002-$time);reset_n=1;
+    #(measurement_start_ticks+18000000-$time);reset_n=1;
     sample_at(19000000,1,8);
-    #(19500002-$time);reset_n=0;
+    #(measurement_start_ticks+19500000-$time);reset_n=0;
     sample_at(20000000,0,0);
     if (!ancestor.episode_tail_known || !ancestor.episode_member_reset_coverage)
       $fatal(1,"known member-reset coverage must be visible as soon as the actual tail establishes its overlap");
-    #(20500002-$time);reset_n=1;
-    #(24000003-$time);
+    #(measurement_start_ticks+20500000-$time);reset_n=1;
+    #(measurement_start_ticks+24000001-$time);
     if (active || result_seq!=3 || !result.e2e_valid || result.e2e_gbps!=8.0 ||
-        !result.member_reset_coverage || result.first_ticks!=19000001 || result.tail_ticks!=20000001 ||
+        !result.member_reset_coverage || result.first_ticks!=measurement_start_ticks+19000000 || result.tail_ticks!=measurement_start_ticks+20000000 ||
         total_bytes!=16 || epoch!=0 || point.episode_result_seq!=3)
       $fatal(1,"an actual member reset intersecting the transfer cycle is coverage, not lost known bytes");
-    #(25000002-$time);scope_reset_n=0;
-    #(25500002-$time);reset_n=1'bx;
-    #(26000002-$time);reset_n=1;
-    #(27000002-$time);scope_reset_n=1;
+    #(measurement_start_ticks+25000000-$time);scope_reset_n=0;
+    #(measurement_start_ticks+25500000-$time);reset_n=1'bx;
+    #(measurement_start_ticks+26000000-$time);reset_n=1;
+    #(measurement_start_ticks+27000000-$time);scope_reset_n=1;
     sample_at(28000000,1,8);sample_at(29000000,0,0);
-    #(33000003-$time);
+    #(measurement_start_ticks+33000001-$time);
     if (active || result_seq!=4 || !result.e2e_valid || !result.first_known ||
-        !result.bytes_complete || result.first_ticks!=28000001 || result.tail_ticks!=29000001 ||
+        !result.bytes_complete || result.first_ticks!=measurement_start_ticks+28000000 || result.tail_ticks!=measurement_start_ticks+29000000 ||
         result.e2e_gbps!=8.0 || epoch!=1 || total_bytes!=8)
       $fatal(1,"unknown member controls wholly inside own reset cannot poison the new analysis epoch");
     $display("TB_PASS episode_controls");$finish;

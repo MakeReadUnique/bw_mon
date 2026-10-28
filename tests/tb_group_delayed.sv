@@ -22,7 +22,7 @@ module tb_group_delayed;
     initial_control.reset_n=1;initial_control.timestamp_ticks=measurement_start_ticks;
     publish_control(transport_source,initial_control);
     slow_frame='0;slow_frame.record_seq=1;slow_frame.edge_index=1;
-    slow_frame.timestamp_ticks=250000;slow_frame.byte_inc=32;slow_frame.event_inc=1;
+    slow_frame.timestamp_ticks=measurement_start_ticks+250000;slow_frame.byte_inc=32;slow_frame.event_inc=1;
     slow_frame.bytes_complete=1;slow_frame.events_complete=1;slow_frame.reset_n=1;
     #250000;clk=1;#1;clk=0;
     #750000;

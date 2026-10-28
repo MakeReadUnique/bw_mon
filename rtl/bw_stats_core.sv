@@ -1151,8 +1151,8 @@ module bw_stats_core #(
     end
   end
   always @(member_control_toggle) begin
-    if(monitor_ready)validate_control_numeric(member_control,scope_id);
-    if (monitor_ready && !core_failure_seen && member_control.control_seq!=0) begin
+    if(configuration_sealed)validate_control_numeric(member_control,scope_id);
+    if (configuration_sealed && !core_failure_seen && member_control.control_seq!=0) begin
       check_storage_growth(pending_member_controls.size(),scope_id,"core.controls",member_control.timestamp_ticks,last_edge_index,last_record_seq);
       if(!core_failure_seen)begin
         pending_member_controls.push_back(member_control);

@@ -37,7 +37,7 @@ module tb_cfg_defaults;
     (.scope_id("cfg.stride.core"),.record(core_frame),.record_toggle(core_toggle),
      .result_seq(core_results),.window_end_ticks(core_window_end),.total_bytes(core_total));
   task automatic edge_at(bw_u64_t ticks);
-    #(ticks+1-$time);clk=1;#1;clk=0;
+    #(ticks+measurement_start_ticks-$time);clk=1;#1;clk=0;
   endtask
   initial begin
     add_point_member("cfg.stride.group","cfg.stride.point");
@@ -46,7 +46,7 @@ module tb_cfg_defaults;
       begin
         wait(stride_point.result_seq>=1);e1=stride_point.window_end_ticks;
         wait(stride_point.result_seq>=2);e2=stride_point.window_end_ticks;
-        if (e1!=ns_to_ticks(10) || e2-e1!=ns_to_ticks(10))
+        if (e1!=measurement_start_ticks+ns_to_ticks(10) || e2-e1!=ns_to_ticks(10))
           $fatal(1,"omitted S must default to W for a point (ns basis)");
       end
       begin
@@ -62,10 +62,10 @@ module tb_cfg_defaults;
         #3;
         if (silence_ns_point.episode_active || silence_ns_point.episode_result_seq!=1 ||
             silence_ns_point.episode_result.status!=BW_EPISODE_COMPLETE ||
-            silence_ns_point.episode_result.confirmation_ticks!=ns_to_ticks(14) ||
-            silence_ns_point.episode_result.first_ticks!=ns_to_ticks(1) ||
-            silence_ns_point.episode_result.last_ticks!=ns_to_ticks(3) ||
-            silence_ns_point.episode_result.tail_ticks!=ns_to_ticks(4) ||
+            silence_ns_point.episode_result.confirmation_ticks!=measurement_start_ticks+ns_to_ticks(14) ||
+            silence_ns_point.episode_result.first_ticks!=measurement_start_ticks+ns_to_ticks(1) ||
+            silence_ns_point.episode_result.last_ticks!=measurement_start_ticks+ns_to_ticks(3) ||
+            silence_ns_point.episode_result.tail_ticks!=measurement_start_ticks+ns_to_ticks(4) ||
             silence_ns_point.episode_result.byte_count!=24 ||
             silence_ns_point.episode_result.event_count!=3 ||
             !silence_ns_point.episode_result.e2e_valid ||
@@ -79,7 +79,7 @@ module tb_cfg_defaults;
         #(ns_to_ticks(14)-ns_to_ticks(13));
         if (silence_cycle_point.episode_active || silence_cycle_point.episode_result_seq!=1 ||
             silence_cycle_point.episode_result.status!=BW_EPISODE_COMPLETE ||
-            silence_cycle_point.episode_result.confirmation_ticks!=ns_to_ticks(14) ||
+            silence_cycle_point.episode_result.confirmation_ticks!=measurement_start_ticks+ns_to_ticks(14) ||
             silence_cycle_point.episode_result.first_cycle!=1 ||
             silence_cycle_point.episode_result.last_cycle!=3 ||
             silence_cycle_point.episode_result.tail_cycle!=4)
@@ -91,7 +91,7 @@ module tb_cfg_defaults;
           $fatal(1,"explicit Q=20 must not fall back to the 10 ns default");
         #(ns_to_ticks(24)-ns_to_ticks(15)+2);
         if (override_point.episode_active || override_point.episode_result_seq!=1 ||
-            override_point.episode_result.confirmation_ticks!=ns_to_ticks(24))
+            override_point.episode_result.confirmation_ticks!=measurement_start_ticks+ns_to_ticks(24))
           $fatal(1,"explicit Q>W must complete at its own deadline");
       end
       begin
@@ -104,8 +104,8 @@ module tb_cfg_defaults;
       end
       begin
         for (int t=1;t<=25;t++) begin
-          #(ns_to_ticks(t)-$time);
-          core_frame='0;core_frame.timestamp_ticks=ns_to_ticks(t);core_frame.edge_index=t;
+          #(measurement_start_ticks+ns_to_ticks(t)-$time);
+          core_frame='0;core_frame.timestamp_ticks=measurement_start_ticks+ns_to_ticks(t);core_frame.edge_index=t;
           core_frame.record_seq=t;core_frame.reset_n=1'b1;core_frame.bytes_complete=1'b1;
           core_frame.events_complete=1'b1;core_frame.byte_inc=8;core_frame.event_inc=1;
           core_toggle<=!core_toggle;
@@ -119,15 +119,15 @@ module tb_cfg_defaults;
     end
     wait fork;
     if (stride_point.result_seq!=2 || !stride_point.window_full ||
-        stride_point.window_start_ticks!=ns_to_ticks(10) ||
+        stride_point.window_start_ticks!=measurement_start_ticks+ns_to_ticks(10) ||
         stride_point.window_bytes!=80 || $abs(stride_point.bandwidth_gbps-8.0)>1e-9 ||
         stride_point.total_bytes!=200)
       $fatal(1,"omitted S=W must keep exact 10 ns point windows");
     if (stride_group.result_seq!=2 || !stride_group.window_full ||
-        stride_group.window_start_ticks!=ns_to_ticks(10) ||
+        stride_group.window_start_ticks!=measurement_start_ticks+ns_to_ticks(10) ||
         stride_group.window_bytes!=80 || stride_group.total_bytes!=200)
       $fatal(1,"omitted S=W must keep exact 10 ns group windows");
-    if (core_results!=2 || core_window_end!=ns_to_ticks(20) || core_total!=200)
+    if (core_results!=2 || core_window_end!=measurement_start_ticks+ns_to_ticks(20) || core_total!=200)
       $fatal(1,"omitted S=W must keep exact 10 ns core windows");
     if (cycle_point.result_seq!=6)
       $fatal(1,"omitted S=W must publish once per W cycles");

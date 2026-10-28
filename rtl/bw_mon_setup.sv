@@ -19,4 +19,8 @@ module bw_mon_setup();
     wait(prepared_scopes==preparing_scopes);
     start_monitor();
   end
+  final begin
+    if(!monitor_ready && !core_failure_pending())
+      core_error("STARTUP_INCOMPLETE","setup",startup_status());
+  end
 endmodule

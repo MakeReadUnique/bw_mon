@@ -2,7 +2,7 @@
 
 `bw_mon` 用于 SystemVerilog 仿真，可以观察接口传了多少字节、最近一段时间的带宽，以及一次流量过程的平均带宽。接入时，把监测器连接到接口的时钟、复位和传输控制信号即可，不需要 UVM。
 
-第一次使用，可以先运行第 2、3 节的小例子。接到自己的 DUT 时，主要修改 **协议类型、每拍字节数、窗口大小、信号连接和观测点总数**。多接口汇总、阶段分析和性能检查可以按需增加。
+第一次使用，可以先运行第 2、3 节的小例子。接到自己的 DUT 时，主要修改 **协议类型、每拍字节数、窗口大小和信号连接**。点、组和直接成员数由监测器自动发现。多接口汇总、阶段分析和性能检查可以按需增加。
 
 目录：
 
@@ -24,7 +24,7 @@
 | 模块 | 放几个 | 用途 |
 | --- | --- | --- |
 | `bw_point_mon` | 每个要观察的接口放一个 | 统计这个接口的传输和带宽，称为一个“观测点” |
-| `bw_mon_setup` | 整个仿真放一个 | 声明观测点和聚合组的总数，统一启动监测 |
+| `bw_mon_setup` | 整个仿真放一个 | 自动完成注册、成员解析和准备，统一启动监测 |
 | `bw_group_mon` | 每个聚合组放一个，可选 | 汇总一组接口的原始传输，统计总带宽 |
 
 这些模块用于仿真，不用于综合。点和组的结果直接放在各自实例内，通过层次路径或波形查看，不需要另接带宽输出端口。
@@ -49,8 +49,8 @@ module bw_mon_quickstart;
   // 1 GHz 时钟，每个周期为 1 ns。
   always #0.5ns clk = ~clk;
 
-  // 整个 testbench 只放一个 setup，填写实际观测点总数。
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) u_bw_setup();
+  // 整个 testbench 只放一个 setup，自动发现实际点和组。
+  bw_mon_setup u_bw_setup();
 
   bw_point_mon #(
     .POINT_ID("master0"),
@@ -183,16 +183,15 @@ BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=1 scopes_e
 
 后面的参数片段都写在模块的 `#(...)` 内。参数之间用逗号分隔，整个参数列表的最后一项不加逗号。修改这些参数后需要重新编译。
 
-### setup 参数
+### 自动启动与共同计量起点
 
-| 参数 | 默认值 | 用户怎么填 |
-| --- | --- | --- |
-| `EXPECTED_POINT_COUNT` | `0`，必须修改 | 仿真里全部观测点的数量，包括没有加入组的点；范围 1 到 16384 |
-| `EXPECTED_GROUP_COUNT` | `0` | 全部 `bw_group_mon` 的数量；范围 0 到 4096 |
-| `STARTUP_TIMEOUT_NS` | `100` | 等待注册和配置完成的最长时间，必须为正整数 ns |
-| `MISSING_RECORD_TIMEOUT_NS` | `1` | 聚合组等待某个采样沿的成员记录送达的最长时间，必须为正整数 ns |
+`bw_mon_setup u_bw_setup();` 没有参数，整个仿真保留一个即可。所有点（包括未归组点）及全部层级的真实组实例自动进入统计和报告，点数、组数和去重后的直接成员数无需填写。
 
-`MISSING_RECORD_TIMEOUT_NS` 不是允许接口空闲的时间。空闲采样沿也有记录；这里检查的是组所需的数据是否送达。
+注册和成员调用只允许发生在实际 t=0。有限的 `initial`、`#0`、NBA 及后续同刻调度都能参与；成员引用可以早于目标注册。setup 在初始化槽之后第一个可表示的正时间槽封口，解析和冻结全图，完成初始复位快照、内部准备和报告登记后才一次发布 `monitor_ready`。初始复位未释放或时钟尚未运行都不会阻止合法启动。正时间的调用无论发生在封口动作前还是 ready 后都报错。
+
+用持久状态 `wait (bw_mon_pkg::monitor_ready);` 等待，再安排严格晚于 `measurement_start_ticks` 的首个采样沿。这个公布值就是共同计量起点 T，不要写死为 1 fs。T 同刻沿不计入，未复位时 ns 窗口从 T+S 起发布；初始快照不算窗口发布。所有范围共用到 T+40 μs（含端点）的预算，局部复位不延长它，报告时间戳仍为绝对时间。`BW_READY` 给出实际范围、T、时间刻度、预算和截止时间。
+
+升级旧接入时删除 setup 的人工数量和 timeout 参数，以及单独声明组、手工结束配置的调用；每个组保留真实 `bw_group_mon` 实例和 t=0 成员调用，然后重新编译。空范围、缺少或重复 setup、非法拓扑和 ready 前结束会终止启动，不产生正常完成汇总。
 
 ### 按时间还是按周期统计
 
@@ -328,7 +327,7 @@ tb.link0.u_bw
 tb.link1.u_bw
 ```
 
-因此，setup 的 `EXPECTED_POINT_COUNT` 应填实际生成的监测器总数，而不是 bind 语句的数量。类型 bind 时保留自动 ID，可以避免多个实例都被命名为同一个 `"master0"`。自动 ID 的完整内容可以在实例的 `scope_id` 中查看。
+一个类型 bind 会自动发现该类型的全部实际实例；增减 DUT 实例无需同步修改数量配置。类型 bind 时保留自动 ID，可以避免多个实例都被命名为同一个 `"master0"`。自动 ID 的完整内容可以在实例的 `scope_id` 中查看。
 
 完成注册后，用 `wait (bw_mon_pkg::monitor_ready);` 等待启动。真正计入统计的采样沿必须晚于 ready 所在的物理时刻；像第 2 节那样在后续下降沿准备激励即可。
 
@@ -336,15 +335,12 @@ tb.link1.u_bw
 
 例如两个 memory 接口分别命名为 `mem0`、`mem1`，想同时查看它们各自的带宽和合计带宽。需要两个点、一个组，以及一个 setup。
 
-以下代码放进已有 testbench，假设已经有 `clk`、`reset_n`、`valid0`、`ready0`、`valid1`、`ready1` 信号。它使用一个全新的 setup；如果工程已经有 setup，应合并数量并保留一个。
+以下代码放进已有 testbench，假设已经有 `clk`、`reset_n`、`valid0`、`ready0`、`valid1`、`ready1` 信号。如果工程已经有 setup，只需保留已有的一个。
 
 ```systemverilog
 import bw_mon_pkg::*;
 
-bw_mon_setup #(
-  .EXPECTED_POINT_COUNT(2),
-  .EXPECTED_GROUP_COUNT(1)
-) u_bw_setup();
+bw_mon_setup u_bw_setup();
 
 bw_point_mon #(
   .POINT_ID("mem0"),
@@ -370,10 +366,8 @@ bw_group_mon #(
 );
 
 initial begin
-  define_group("all_mem", 2); // 这个组有两个直接成员。
   add_point_member("all_mem", "mem0");
   add_point_member("all_mem", "mem1");
-  finish_configuration();    // 所有组和成员都配置好后，只调用一次。
 end
 ```
 
@@ -384,18 +378,17 @@ end
 - 组成员用 **Point ID** 引用。如果点写了 `.POINT_ID("mem0")`，成员就填 `"mem0"`；省略 Point ID 时，要填自动生成的完整路径。
 - 组和成员的 `WINDOW_BASIS`、`WINDOW_WIDTH`、`UPDATE_STRIDE` 必须一致。监测器不再要求填写时钟域名称，也不做时钟一致性检查；聚合的前提仍然是各成员实际使用同一个采样时钟，跨异步时钟汇总不支持。
 - 组通过注册信息取得成员传输，不需要连接各点的带宽信号。组统计的是成员原始字节增量。
-- `finish_configuration()` 要放在所有组定义和成员配置之后；有组却漏掉这一步，监测不会启动。只有点、没有组时不需要调用。
+- 一个真实组实例就是一项组声明；成员调用全部放在实际 t=0，setup 自动封口。相同类型的同一直接成员重复命中只计一次，无需手工结束配置；只有点时也无需空配置过程。
 - 点和组分别控制自己的过程、阶段分析。若想得到组的全程平均带宽，也要在组实例上设置 `EPISODE_ENABLE(1)` 和正的 `SILENCE_THRESHOLD`。
 
 也可以让一个组包含两个已经配置好的下级组：
 
 ```systemverilog
-define_group("all_mem", 2);
 add_group_member("all_mem", "die0_mem");
 add_group_member("all_mem", "die1_mem");
 ```
 
-此时三个 Group ID 都要有对应的 `bw_group_mon`，setup 的组数要包括三者；`all_mem` 的直接成员数是 2。上述语句应与下级组配置一起放在唯一一次 `finish_configuration()` 前。同一个上级组不能沿不同成员路径重复包含同一个点，也不能形成循环关系。更多分层用法见[完整接口说明](bw-mon-api.md#typed-hierarchy-and-independent-statistics)。
+此时三个 Group ID 都要有对应的 `bw_group_mon`；`all_mem` 的直接成员数自动得出为 2，不按叶子点数计算。上述语句与下级组成员配置都放在实际 t=0。同一个上级组不能沿不同成员路径重复包含同一个点，也不能形成循环关系。更多分层用法见[完整接口说明](bw-mon-api.md#typed-hierarchy-and-independent-statistics)。
 
 ## 8 配置流量过程和阶段分析
 
@@ -576,10 +569,11 @@ CV 是标准差除以平均值，再乘 100%，数值越大表示窗口带宽波
 
 | 现象 | 优先检查 |
 | --- | --- |
-| 一直等不到 `monitor_ready` 或报 `STARTUP_TIMEOUT` | 点数、组数是否和实际例化一致；有组时是否调用 `finish_configuration()`；每个组是否有实例和定义 |
+| 启动报错或未出现 `monitor_ready` | 是否恰好一个 setup、有实际观测点、每个组有真实实例且非空；成员引用和拓扑是否合法；查看错误中的阶段、对象和实际数量 |
+| 报 `LATE_CONFIG` | 是否在实际正时间调用注册或添加成员；即使粗 TB timescale 显示为 0 也必须放回 t=0 |
 | 报 `DUPLICATE_POINT` | 是否给多个点写了相同的 Point ID；类型 bind 时可保留自动 ID |
 | 报 `WINDOW_CONFIG` | 是否漏填宽度或步长，或步长大于宽度；检查所选基准的上限 |
-| 报 `GROUP_CONTEXT` | 组和成员的时钟域名称、窗口基准、宽度、步长是否一致 |
+| 报 `GROUP_CONTEXT` | 组和成员的窗口基准、宽度、有效步长是否一致；共同采样时钟仍需正确连接 |
 | 组等待记录超时 | 检查组和成员的实际时钟连接，以及是否有成员缺少对应采样沿的记录 |
 | 有传输次数，但字节数一直为 0 | 是否忘记填 `FIXED_BYTES`；动态模式下是否提供正确的 `size_bytes` 和 `size_known` |
 | `ready=0` 仍在计数 | 是否忘记设置 `PROTOCOL(BW_VALID_READY)` |
@@ -589,7 +583,7 @@ CV 是标准差除以平均值，再乘 100%，数值越大表示窗口带宽波
 | 没有稳定段结果 | 是否填写全部阶段参数；是否有足够连续满窗结果，跨度和门槛是否合适 |
 | 输出 `STATISTICS_ONLY` | 没有配置参与比较的性能目标；可按第 10 节传入 `+BW_EXPECT` |
 | 性能 FAIL 后仿真仍运行 | 这是正常行为；自动化脚本需要检查 `BW_CHECK` 和最终 `BW_SUMMARY` |
-| 报 `SIM_TIME_LIMIT` | 是否超过 setup 配置起的 40 μs 总监测时限；复位不能延长它 |
+| 报 `SIM_TIME_LIMIT` | 是否超过公布的 T+40 μs 总监测截止时间；复位不能延长它 |
 | 编译缺少 DPI/VPI 符号或头文件 | 是否加入 `bw_slot_settlement.c`、`+vpi`、调试选项和正确的 VCS SDK include 路径 |
 
 需要查看全部参数、公开字段和边界规则时，使用[完整接口说明](bw-mon-api.md)。

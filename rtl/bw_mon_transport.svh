@@ -93,7 +93,7 @@
     bw_u64_t expected;
     source=registered_sources[checked_source_index(source_handle)];
     if(core_failure_seen)return;
-    if (!monitor_ready) core_error("NOT_READY",source.id,"control before ready");
+    if (!configuration_sealed) core_error("NOT_READY",source.id,"control before configuration seal");
     check_monitor_time($time,source.id);
     validate_control_numeric(control,source.id);
     if(core_failure_seen)return;

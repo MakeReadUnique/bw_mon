@@ -13,7 +13,7 @@ module tb_group_cycle_quality;
   bw_group_mon #(.GROUP_ID("cycle.quality"),.WINDOW_BASIS(BW_CYCLE),
     .WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) group_mon (.clk(clk),.reset_n(1'b1));
   task automatic sample(bw_u64_t ticks,logic ready_now,logic [63:0] bytes_now);
-    #(ticks-$time-1);ready=ready_now;size_bytes=bytes_now;
+    #(measurement_start_ticks+ticks-$time-1);ready=ready_now;size_bytes=bytes_now;
     #1;clk=1;#1;clk=0;
   endtask
   initial begin
@@ -41,12 +41,12 @@ module tb_group_cycle_quality;
        !group_mon.events_complete || group_mon.result_seq!=6 || group_mon.total_bytes!=136 ||
        group_mon.total_events!=12 || $abs(group_mon.bytes_per_cycle-20.0)>1e-10)
       $fatal(1,"group quality must recover when old unknown positions expire exactly");
-    #(10000002-$time);
-    if(group_mon.result_seq!=6 || group_mon.window_end_ticks!=3250001 || group_mon.window_bytes!=40)
+    #(measurement_start_ticks+10000000-$time);
+    if(group_mon.result_seq!=6 || group_mon.window_end_ticks!=measurement_start_ticks+3250000 || group_mon.window_bytes!=40)
       $fatal(1,"cycle group must hold original snapshot and sequence throughout clock stop");
     sample(10250000,1,8);
-    if(group_mon.result_seq!=7 || group_mon.window_start_ticks!=2750001 ||
-       group_mon.window_end_ticks!=10250001 || group_mon.window_bytes!=48 ||
+    if(group_mon.result_seq!=7 || group_mon.window_start_ticks!=measurement_start_ticks+2750000 ||
+       group_mon.window_end_ticks!=measurement_start_ticks+10250000 || group_mon.window_bytes!=48 ||
        group_mon.window_events!=4 || $abs(group_mon.bandwidth_gbps-6.4)>1e-10 ||
        $abs(group_mon.bytes_per_cycle-24.0)>1e-10 || group_mon.total_bytes!=160 ||
        group_mon.total_events!=14 || !group_mon.window_valid || group_mon.accepted_record_seq!=8)

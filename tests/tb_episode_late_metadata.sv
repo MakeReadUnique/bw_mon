@@ -39,11 +39,11 @@ module tb_episode_late_metadata;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   task automatic deliver_idle_tail();
-    frame.timestamp_ticks=2000000;frame.edge_index=2;frame.record_seq=2;
+    frame.timestamp_ticks=measurement_start_ticks+2000000;frame.edge_index=2;frame.record_seq=2;
     frame.event_inc=0;frame_toggle<=!frame_toggle;
   endtask
   always @(window_seq) begin
-    if (mode==1 && $time==2000000 && window_seq==2) begin
+    if (mode==1 && $time==measurement_start_ticks+2000000 && window_seq==2) begin
       if (accepted!=1) $fatal(1,"timer-first fixture must still be awaiting the second edge metadata");
       timer_preceded_metadata=1;deliver_idle_tail();
     end
@@ -53,17 +53,17 @@ module tb_episode_late_metadata;
     handle=register_point("episode.late_metadata","tb_episode_late_metadata",BW_NS,2,1);
     wait(monitor_ready);
     #1000000;
-    frame.timestamp_ticks=1000000;frame.edge_index=1;frame.record_seq=1;
+    frame.timestamp_ticks=measurement_start_ticks+1000000;frame.edge_index=1;frame.record_seq=1;
     frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
     frame_toggle<=!frame_toggle;
     #1000000;if(mode==0)deliver_idle_tail();
     #1;
-    if (!tail_known || tail_ticks!=2000001 || final_seq!=0 || accepted!=2)
+    if (!tail_known || tail_ticks!=measurement_start_ticks+2000000 || final_seq!=0 || accepted!=2)
       $fatal(1,"the later same-T frame must still establish the real tail after timer publication");
     #1000000;
     if (active || final_seq!=1 || !result.e2e_valid || result.byte_count!=0 ||
         result.event_count!=1 || result.duration_ticks!=1000000 || result.e2e_gbps!=0.0 ||
-        result.confirmation_ticks!=3000001 || window_seq!=3)
+        result.confirmation_ticks!=measurement_start_ticks+3000000 || window_seq!=3)
       $fatal(1,"zero-byte activity completes once after tail metadata, without an extra window");
     if(mode==1 && !timer_preceded_metadata)$fatal(1,"timer-first scenario was not exercised");
     if(timer_preceded_metadata)$display("EPISODE_TIMER_FIRST_METADATA");
