@@ -150,12 +150,7 @@ and current/requested use. Ordinary builds expose neither that API nor a capacit
 configuration. Tests cover every storage owner and final-reachable failure;
 injection does not prove nominal-scale correctness or real malloc recovery.
 
-Fatal handling respects observed VCS behavior: `$fatal` in a final block can return
-to the caller. Runtime Seen is latched before fatal; final boundaries additionally
-consult read-only Pending deferred candidates. A cancelable same-slot timeout
-candidate never suppresses valid runtime records. A real failure suppresses later
-formal phase/episode/check/summary output, and ScopeDone remains the last final
-hook. Deferred Postponed actions remain read-only.
+Fatal startup/configuration handling latches terminal failure before `$fatal`, which may return from a VCS final block. Runtime numeric/storage failures instead warn and quarantine their typed owner and dependent ancestors. Active consumer responsibilities are cancelled independently of frozen ancestry; a healthy sibling keeps its unread data until its own ACK. Same-time completion diagnostics run in the writable coordinator after posted grants and producer certificates. Read-only contract observers only inspect settled state. The unified final report responsibility audit is a separate follow-up.
 
 The runner hashes its options, absolute sources, recursive RTL headers, explicit
 fixture units and each case's compile defines. Fault builds cannot reuse an
@@ -168,12 +163,9 @@ metrics, valid zero and duplicate final summaries.
 slice. `history_trace_{ns,cycle}` checks an independently worked17-edge,2-point/
 group table with W3/S2, zero/sizeX/validX, partial cuts, reset and changed/stopped
 clock. `variation_pending_retention` checks six raw transfers followed by30000ns
-quiet and unresolved K60000, selecting exactly the three owned windows. The
-4096-frame `transport_growth` scene verifies a prompt peer, durable backlog and
-controls, late automatic original-time collection, known partial quality and
-all-consumer release. Arithmetic/MAX/D16, raw numeric/policy/query/core failures
+quiet and unresolved K60000, selecting exactly the three owned windows. The4096-edge `transport_growth` scene now preserves the original byte/event/window/quality literals with synchronous original-time delivery. `transport_capacity4096` separately verifies4096 real distinct-edge records retained in one source at the storage component seam. `transport_same_time_pressure4096` verifies4096 aggregate frames plus two controls held at one timestamp by real group consumers over controlled producers; its cancellation counterpart checks release of only the failed consumer's responsibilities. These are distinct scopes, not a relabelled positive-time backlog success. Arithmetic/MAX/D16, raw numeric/policy/query/core failures
 and the `storage_failure_*` owner matrix have their exact expectations in
-`tests/cases.json`; existing hierarchy/deadline/alignment/epoch tests are retained.
+`tests/cases.json`; existing hierarchy/completion/alignment/epoch tests are retained.
 
 Public-point resource pilots preserve exact source snapshots, driver hashes,
 commands, configuration, GNU time-v compile/simulation RSS and all online result

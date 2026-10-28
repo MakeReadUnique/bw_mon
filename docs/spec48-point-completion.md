@@ -67,22 +67,11 @@ false diagnosis. Red/green traces, the mutation source and immutable run notes
 are kept in the external spec48 evidence directory, not presented as full-scale
 acceptance.
 
-## Deliberate remaining migration
+## Hierarchy follow-up and remaining migration
 
-This implements the point portion of spec48 D7–D10. Group expected work, direct
-subscriber ACK/cancellation, subscriber-aware retention/release and arbitrary
-hierarchical continuation closure remain ticket55. In particular,
-`missing_record_timeout_ticks=BW_TICKS_PER_NS` is still present for groups; its
-1ns timeout has not been renamed or claimed removed. Group runtime source gates
-here stop propagation from a disabled point, but do not constitute the new
-hierarchical protocol.
+Ticket55 extends independent actual-edge expectations, durable held/publication/core/input ACK receipts, control/reset/timer inventory and producer-certificate dependencies to groups. The hidden group1ns timeout is removed. Runtime consumer faults retain typed ownership; quarantine cancels only the disabled groups' inbound subscriptions. Frozen graph ancestry remains intact, and healthy consumers retain unread data until their own ACK.
 
-The original `tb_transport_growth.sv` 4096-record retention oracle, retention
-counts and raw input remain intact. Its positive-time paused consumer is not a
-valid revised completion scenario. Ticket55 must map it to real same-time
-retention pressure without deleting or weakening its property. The same applies
-to `tb_transport_retention.sv`, `tb_hierarchy_depth_transport.sv`,
-`tb_group_deferred_final.sv` and scale M4/H6 paused-consumer constructions.
+The original4096-frame and M4/H6 pressure quantities require separate capacity, same-time aggregate retention and public quality/window evidence; see `spec48-group-completion.md` for the property/count mapping and qualification scope. Historical positive-time delivery is not a legal revised completion scenario.
 
 One centralized audit/report owner, all report responsibilities, exactly one
 report-complete marker, final control/timer audits, arbitrary module-final order
@@ -93,10 +82,6 @@ remaining audit; a point's early terminal log must not replace the final typed
 trust query. Full history/scale/resource budgets and user waveform acceptance
 remain later tickets.
 
-The native coordinator currently scans registered point observers on each cut.
+The native coordinator currently scans registered scope observers on each cut.
 That cost is not a scale acceptance result; ticket60 must measure it against the
-unchanged budgets and may replace the scan with active-work indexing. Legacy
-group consumer numeric/ACK helpers still conservatively use the shared failure
-fallback; ticket55 must give them typed consumer ownership and cancel/release
-only the affected subscription. Numeric source publication, point/core/hint
-work and raw point reset capture already have typed ownership here.
+unchanged budgets and may replace the scan with active-work indexing. Typed consumer reference/ACK errors now cancel the affected dependency path. Numeric source publication, point/core/hint work and raw reset capture retain typed ownership.

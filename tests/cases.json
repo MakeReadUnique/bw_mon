@@ -1349,7 +1349,10 @@
   "plusargs": [
    "+MODE=missing_first"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001.*expected_edge=1.*expected_ticks=250001.*deadline_ticks=1250001.*missing_point=fault"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_missing_second",
@@ -1357,7 +1360,10 @@
   "plusargs": [
    "+MODE=missing_second"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1750001.*expected_edge=2.*expected_ticks=750001.*deadline_ticks=1750001.*missing_point=fault"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_duplicate",
@@ -1398,7 +1404,7 @@
   "plusargs": [
    "+MODE=wrong_time"
   ],
-  "expect_warning": "BW_CORE_WARNING code=FRAME_ALIGNMENT",
+  "expect_warning": "BW_CORE_WARNING code=RECORD_TIME",
   "expect_counts": {
    "BW_CORE_WARNING": 1
   }
@@ -1543,10 +1549,12 @@
   "plusargs": [
    "+LATE=0"
   ],
-  "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001",
   "expect_log": [
-   "DEFERRED_FINAL_GUARD pending=1 seen=0"
-  ]
+   "DEFERRED_FINAL_GUARD_CLEAR",
+   "BW_EPISODE[^\\n]*scope=sentinel",
+   "BW_HINT_END scope=stalled"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION"
  },
  {
   "name": "report_group_barrier",
@@ -1885,6 +1893,9 @@
   "top": "tb_hierarchy_retention",
   "plusargs": [
    "+ORDER=all_first"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1892,6 +1903,9 @@
   "top": "tb_hierarchy_retention",
   "plusargs": [
    "+ORDER=mixed_first"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1917,7 +1931,10 @@
   "plusargs": [
    "+MISSING=1"
   ],
-  "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250001[^\\n]*expected_ticks=250001 deadline_ticks=1250001"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "hierarchy_invalid_kind",
@@ -1933,6 +1950,9 @@
   "plusargs": [
    "+ORDER=all_first",
    "+MODE=child_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1941,6 +1961,9 @@
   "plusargs": [
    "+ORDER=all_first",
    "+MODE=point_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1949,6 +1972,9 @@
   "plusargs": [
    "+ORDER=all_first",
    "+MODE=size_unknown"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1957,6 +1983,9 @@
   "plusargs": [
    "+ORDER=mixed_first",
    "+MODE=child_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1965,6 +1994,9 @@
   "plusargs": [
    "+ORDER=mixed_first",
    "+MODE=point_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1973,6 +2005,9 @@
   "plusargs": [
    "+ORDER=mixed_first",
    "+MODE=size_unknown"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -4655,44 +4690,6 @@
   "name": "auto_core_origin",
   "top": "tb_auto_core_origin"
  },
- {"name": "checker_default_constant", "top": "tb_checker_default", "verify": ["python3", "tests/checker_default/check.py", "{log}", "constant"]},
- {"name": "checker_default_alternating", "top": "tb_checker_default", "plusargs": ["+ALTERNATE"], "verify": ["python3", "tests/checker_default/check.py", "{log}", "alternating"]},
- {"name":"checker_numeric_low_equal","top":"tb_checker_numeric"},
- {"name": "checker_numeric_high_equal", "top": "tb_checker_numeric", "plusargs": ["+CASE=high_equal"]},
- {"name": "checker_numeric_high_inside", "top": "tb_checker_numeric", "plusargs": ["+CASE=high_inside"]},
- {"name": "checker_numeric_low_inside", "top": "tb_checker_numeric", "plusargs": ["+CASE=low_inside"]},
- {"name": "checker_numeric_high_over", "top": "tb_checker_numeric", "plusargs": ["+CASE=high_over"]},
- {"name": "checker_numeric_low_over", "top": "tb_checker_numeric", "plusargs": ["+CASE=low_over"]},
- {"name": "checker_numeric_alternating", "top": "tb_checker_numeric", "plusargs": ["+CASE=alternating"]},
- {"name": "checker_numeric_reference_backcheck", "top": "tb_checker_numeric", "plusargs": ["+CASE=reference_backcheck"]},
- {"name": "checker_numeric_nearzero", "top": "tb_checker_numeric", "plusargs": ["+CASE=nearzero"]},
- {"name": "checker_numeric_reset_fail", "top": "tb_checker_numeric", "plusargs": ["+CASE=reset_fail"]},
- {"name": "checker_numeric_cycle", "top": "tb_checker_numeric", "plusargs": ["+CASE=cycle"]},
- {"name": "checker_numeric_dense_short", "top": "tb_checker_numeric", "plusargs": ["+CASE=dense_short"]},
- {"name": "checker_numeric_dense_fail", "top": "tb_checker_numeric", "plusargs": ["+CASE=dense_fail"]},
- {"name": "checker_numeric_coverage", "top": "tb_checker_numeric", "plusargs": ["+CASE=coverage"]},
- {"name": "checker_numeric_gap", "top": "tb_checker_numeric", "plusargs": ["+CASE=gap"]},
- {"name": "checker_numeric_zero", "top": "tb_checker_numeric", "plusargs": ["+CASE=zero"]},
- {"name": "checker_numeric_reference_short", "top": "tb_checker_numeric", "plusargs": ["+CASE=reference_short"]},
- {"name": "checker_numeric_truncated", "top": "tb_checker_numeric", "plusargs": ["+CASE=truncated"]},
- {"name": "checker_numeric_single_peak", "top": "tb_checker_numeric", "plusargs": ["+CASE=single_peak"]},
- {"name": "checker_numeric_expanded", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded"], "expect_log": ["B=100 steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=5 max_deviation_gbps=5 max_deviation_pct=5 .*conclusion=PASS"]},
- {"name":"checker_empty","top":"tb_checker_empty","expect_counts":{"BW_DEFAULT_CHECK .*reason=NO_EPISODE":2},"expect_log":["BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=3 scopes_expected=3"]},
- {"name":"checker_default_explicit","top":"tb_checker_default","plusargs":["+ALTERNATE","+BW_EXPECT=../../../tests/expect/checker_default.cfg"],"expect_counts":{"BW_CHECK .*conclusion=PASS":3,"BW_DEFAULT_CHECK .*conclusion=FAIL":5},"expect_log":["BW_SUMMARY status=FAIL pass=3 fail=5 warning=0"]},
- {"name":"checker_numeric_platform_replay","top":"tb_checker_numeric","plusargs":["+CASE=platform_replay"]},
- {"name": "checker_default_reset", "top": "tb_checker_default", "plusargs": ["+ALTERNATE", "+RESET"], "expect_counts": {"BW_DEFAULT_CHECK .*conclusion=FAIL": 5}, "expect_log": ["BW_SUMMARY status=FAIL pass=0 fail=5 warning=0"]},
- {"name": "checker_default_gap", "top": "tb_checker_default", "plusargs": ["+ALTERNATE", "+GAP"], "expect_counts": {"BW_DEFAULT_CHECK .*conclusion=FAIL": 5}, "expect_log": ["BW_SUMMARY status=FAIL pass=0 fail=5 warning=0"]},
- {"name": "checker_default_truncated", "top": "tb_checker_default", "plusargs": ["+ALTERNATE", "+TRUNCATED"], "expect_counts": {"BW_DEFAULT_CHECK .*conclusion=FAIL": 5}, "expect_log": ["BW_SUMMARY status=FAIL pass=0 fail=5 warning=0"]},
- {"name": "checker_numeric_expanded_high_equal", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded_high_equal"]},
- {"name": "checker_numeric_expanded_high_over", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded_high_over"]},
- {"name": "checker_numeric_expanded_low_over", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded_low_over"]},
- {"name": "checker_cycle_alternating", "top": "tb_checker_cycle", "expect_counts": {"BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*max_deviation_gbps=8 .*longest_span=17 .*conclusion=FAIL": 2}, "verify": ["python3", "tests/checker_default/check_cycle.py", "{log}", "alternating"]},
- {"name": "checker_cycle_constant", "top": "tb_checker_cycle", "plusargs": ["+CONSTANT"], "expect_counts": {"BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*conclusion=PASS": 2}, "verify": ["python3", "tests/checker_default/check_cycle.py", "{log}", "constant"]},
- {"name":"checker_history","top":"tb_checker_history","expect_counts":{"BW_DEFAULT_CHECK .*episode=1 .*conclusion=FAIL":2,"BW_DEFAULT_CHECK .*episode=2 .*conclusion=PASS":2},"expect_log":["BW_SUMMARY status=FAIL pass=2 fail=2 warning=0"]},
- {"name":"checker_numeric_explicit_time","top":"tb_checker_numeric","plusargs":["+CASE=explicit_time","+BW_EXPECT=../../../tests/expect/checker_numeric_time.cfg"],"expect_counts":{"BW_CHECK .*metric=ramp_time .*actual=10 .*conclusion=PASS":1,"BW_DEFAULT_CHECK .*conclusion=FAIL":1},"expect_log":["BW_SUMMARY status=FAIL pass=1 fail=1 warning=0"]},
- {"name": "checker_numeric_terminal_crop", "top": "tb_checker_numeric", "plusargs": ["+CASE=terminal_crop"]},
- {"name": "checker_numeric_start_unknown", "top": "tb_checker_numeric", "plusargs": ["+CASE=start_unknown"]},
- {"name": "checker_numeric_nearzero_pass", "top": "tb_checker_numeric", "plusargs": ["+CASE=nearzero_pass"]},
  {
   "name": "point_runtime_isolation",
   "top": "tb_point_runtime_isolation",
@@ -4977,39 +4974,1270 @@
    "BW_CORE_WARNING": 1
   }
  },
- {"name": "checker_disabled", "top": "tb_checker_disabled", "defines": ["BW_MON_TEST_FAULTS", "BW_MON_TEST_SCHEDULING"], "expect_counts": {"BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1, "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1, "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1}, "expect_log": ["BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"]},
- {"name": "checker_disabled_phase", "top": "tb_checker_disabled", "defines": ["BW_MON_TEST_FAULTS", "BW_MON_TEST_SCHEDULING"], "expect_counts": {"BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1, "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1, "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1}, "expect_log": ["BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"], "plusargs": ["+PHASE_FAULT"]},
- {"name": "checker_equivalence_low_equal", "top": "tb_checker_equivalence", "plusargs": ["+CASE=low_equal"], "verify": ["python3", "tests/checker_default/check_equivalence.py", "{log}"]},
- {"name": "checker_equivalence_high_equal", "top": "tb_checker_equivalence", "plusargs": ["+CASE=high_equal"], "verify": ["python3", "tests/checker_default/check_equivalence.py", "{log}"]},
- {"name": "checker_equivalence_high_over", "top": "tb_checker_equivalence", "plusargs": ["+CASE=high_over"], "verify": ["python3", "tests/checker_default/check_equivalence.py", "{log}"]},
- {"name": "checker_equivalence_low_over", "top": "tb_checker_equivalence", "plusargs": ["+CASE=low_over"], "verify": ["python3", "tests/checker_default/check_equivalence.py", "{log}"]},
- {"name":"checker_numeric_unknown_status","top":"tb_checker_numeric","plusargs":["+CASE=unknown_status"]},
- {"top": "tb_checker_quickstart", "sources": ["../examples/bw_mon_quickstart.sv"], "expect_log": ["QUICKSTART window_bytes=640 bandwidth_gbps=64.000 window_valid=1", "QUICKSTART total_bytes=1280 total_events=20 e2e_gbps=64.000 e2e_valid=1", "BW_DEFAULT_CHECK .*reference_valid=0 .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT", "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=1"], "name": "checker_quickstart_default"},
- {"top": "tb_checker_quickstart", "sources": ["../examples/bw_mon_quickstart.sv"], "expect_log": ["QUICKSTART window_bytes=640 bandwidth_gbps=64.000 window_valid=1", "QUICKSTART total_bytes=1280 total_events=20 e2e_gbps=64.000 e2e_valid=1", "BW_DEFAULT_CHECK .*reference_valid=0 .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT", "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=1 scopes_expected=1"], "name": "checker_quickstart_explicit", "plusargs": ["+BW_EXPECT=../../../examples/bw_mon_quickstart.cfg"]},
- {"name": "checker_empty_immediate", "top": "tb_checker_empty", "expect_counts": {"BW_DEFAULT_CHECK .*reason=NO_EPISODE": 2}, "expect_log": ["BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=3 scopes_expected=3"], "plusargs": ["+IMMEDIATE"]},
- {"name": "checker_prefix_default", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "expect_log": ["BW_SUMMARY status=PASS pass=2 fail=0 warning=0"], "verify": ["python3", "tests/checker_default/check_prefix.py", "{log}"]},
- {"name": "checker_prefix_explicit", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "plusargs": ["+BW_EXPECT=../../../tests/expect/checker_prefix.cfg"], "expect_log": ["BW_SUMMARY status=WARNING pass=2 fail=0 warning=1", "BW_CHECK .*metric=e2e_bw .*conclusion=WARNING reason=BYTES_INCOMPLETE"], "verify": ["python3", "tests/checker_default/check_prefix.py", "{log}"]},
- {"name": "checker_prefix_gap", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "plusargs": ["+GAP"], "expect_log": ["BW_SUMMARY status=WARNING pass=0 fail=0 warning=2"]},
- {"name": "checker_prefix_truncated", "top": "tb_checker_prefix", "expect_counts": {"BW_DEFAULT_CHECK ": 2}, "plusargs": ["+TRUNCATED"], "expect_log": ["BW_SUMMARY status=WARNING pass=0 fail=0 warning=2"]},
- {"name": "checker_replay", "top": "tb_checker_replay", "plusargs": ["+BW_EXPECT=../../../tests/expect/checker_replay.cfg"], "expect_counts": {"BW_DEFAULT_CHECK ": 6, "BW_CHECK ": 6}, "expect_log": ["BW_SUMMARY status=PASS pass=12 fail=0 warning=0"]},
- {"name":"checker_ownership_five_reference","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"expect_counts":{"BW_DEFAULT_CHECK .*conclusion=PASS":2,"BW_DEFAULT_CHECK .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT":2},"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","five"]},
- {"name":"checker_ownership_early_fail","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+EARLY_FAIL"],"expect_counts":{"BW_DEFAULT_CHECK .*conclusion=FAIL":2,"BW_DEFAULT_CHECK .*conclusion=PASS":2},"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","early"]},
- {"name":"checker_ownership_crop","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=1"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","crop"]},
- {"name":"checker_ownership_crop_reset","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=1"],"plusargs":["+RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","reset"]},
- {"name":"checker_ownership_crop_truncated","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=1"],"plusargs":["+TRUNCATED"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","crop"]},
-{"name": "checker_ownership_records_normal", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=normal"], "expect_log": ["BW_STAGE_STEP .*valid=1"]},
-{"name": "checker_ownership_records_crop", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=crop"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
-{"name": "checker_ownership_records_gap", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=gap"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
-{"name": "checker_ownership_records_old_fail", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=old_fail"], "expect_log": ["BW_STAGE_STEP .*valid=1"]},
-{"name": "checker_ownership_records_bad_support", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=bad_support"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
-{"name": "checker_ownership_records_overlap", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=overlap"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
-{"name": "checker_ownership_records_reverse", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=reverse"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
-{"name": "checker_ownership_records_long_bridge", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=long_bridge"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
-{"name": "checker_ownership_records_reset_bridge", "top": "tb_checker_ownership_records", "plusargs": ["+CASE=reset_bridge"], "expect_log": ["BW_STAGE_STEP .*valid=0"]},
- {"name":"checker_ownership_late_reset","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+LATE_RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","late_reset"]},
-{"name": "checker_ownership_member_reset", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_RESET"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_reset"]},
-{"name": "checker_ownership_member_unknown", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_UNKNOWN"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_unknown"]},
-{"name": "checker_ownership_member_gap", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_GAP"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_gap"]},
- {"name":"checker_ownership_member_held","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+MEMBER_HELD"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","member_held"]},
- {"name":"checker_ownership_member_bridge","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+MEMBER_RESET","+BRIDGE_RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","member_bridge"]}
+ {
+  "name": "transport_consumer_cancellation",
+  "top": "tb_transport_retention",
+  "plusargs": [
+   "+CANCEL_FIRST"
+  ],
+  "expect_warning": "TEST_CONSUMER_FAILURE"
+ },
+ {
+  "name": "group_completion_capture",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=capture"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CAPTURE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_none",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=none"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ]
+ },
+ {
+  "name": "group_completion_notice",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=notice"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ]
+ },
+ {
+  "name": "group_completion_publication",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=publication"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=PUBLICATION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_core",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=core"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CORE_RECEIPT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_ack",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=ack"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=INPUT_ACK",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_held",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=held"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=HELD",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_reactive",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=reactive"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001",
+   "TB_GROUP_RENBA assertions=20 point_controls=41"
+  ]
+ },
+ {
+  "name": "transport_capacity4096",
+  "top": "tb_transport_capacity"
+ },
+ {
+  "name": "transport_same_time_pressure4096",
+  "top": "tb_transport_same_time_pressure",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ],
+  "sources": [
+   "group_completion_observer.c"
+  ]
+ },
+ {
+  "name": "group_completion_source_failure",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=source"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=POINT_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "transport_bad_ack_cancellation",
+  "top": "tb_transport_retention",
+  "plusargs": [
+   "+CANCEL_FIRST",
+   "+BAD_ACK"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=ACK_SEQUENCE scope_kind=1 scope=first",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "transport_same_time_pressure_cancel",
+  "top": "tb_transport_same_time_pressure",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ],
+  "plusargs": [
+   "+CANCEL_SLOW"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=TEST_CONSUMER_FAILURE scope_kind=1 scope=pressure.slow",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  },
+  "sources": [
+   "group_completion_observer.c"
+  ]
+ },
+ {
+  "name": "transport_m4_capacity",
+  "top": "tb_transport_m4_capacity",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ]
+ },
+ {
+  "name": "group_public_pressure",
+  "top": "tb_group_public_pressure",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING",
+   "BW_MON_TEST_FAULTS"
+  ]
+ },
+ {
+  "name": "group_completion_control_core",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=control_core"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CONTROL_CORE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_control_publication",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=control_publication"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CONTROL_PUBLICATION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_control_ack",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=control_ack"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CONTROL_ACK",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_reset_capture",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=reset_capture"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=RESET_CAPTURE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_reset_post",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=reset_post"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=RESET_POST",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_reset_core",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=reset_core"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=RESET_CORE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_control_lost_notice",
+  "top": "tb_group_control_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ]
+ },
+ {
+  "name": "group_timer_missing_receipt",
+  "top": "tb_group_timer_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=TIMER_CORE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_control_missing_continuation",
+  "top": "tb_group_control_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+DROP_RECOVERY"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=COLLECTOR_RECEIPT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_fault_unexpected_frame",
+  "top": "tb_group_faults",
+  "plusargs": [
+   "+MODE=unexpected"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=UNEXPECTED_FRAME",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_public_pressure_failed_parent",
+  "top": "tb_group_public_pressure",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING",
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+FAIL_PARENT"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION scope_kind=1 scope=parent0[^\\n]*stage=CORE_RECEIPT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "checker_default_constant",
+  "top": "tb_checker_default",
+  "verify": [
+   "python3",
+   "tests/checker_default/check.py",
+   "{log}",
+   "constant"
+  ]
+ },
+ {
+  "name": "checker_default_alternating",
+  "top": "tb_checker_default",
+  "plusargs": [
+   "+ALTERNATE"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check.py",
+   "{log}",
+   "alternating"
+  ]
+ },
+ {
+  "name": "checker_numeric_low_equal",
+  "top": "tb_checker_numeric"
+ },
+ {
+  "name": "checker_numeric_high_equal",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=high_equal"
+  ]
+ },
+ {
+  "name": "checker_numeric_high_inside",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=high_inside"
+  ]
+ },
+ {
+  "name": "checker_numeric_low_inside",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=low_inside"
+  ]
+ },
+ {
+  "name": "checker_numeric_high_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=high_over"
+  ]
+ },
+ {
+  "name": "checker_numeric_low_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=low_over"
+  ]
+ },
+ {
+  "name": "checker_numeric_alternating",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=alternating"
+  ]
+ },
+ {
+  "name": "checker_numeric_reference_backcheck",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=reference_backcheck"
+  ]
+ },
+ {
+  "name": "checker_numeric_nearzero",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=nearzero"
+  ]
+ },
+ {
+  "name": "checker_numeric_reset_fail",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=reset_fail"
+  ]
+ },
+ {
+  "name": "checker_numeric_cycle",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=cycle"
+  ]
+ },
+ {
+  "name": "checker_numeric_dense_short",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=dense_short"
+  ]
+ },
+ {
+  "name": "checker_numeric_dense_fail",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=dense_fail"
+  ]
+ },
+ {
+  "name": "checker_numeric_coverage",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=coverage"
+  ]
+ },
+ {
+  "name": "checker_numeric_gap",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=gap"
+  ]
+ },
+ {
+  "name": "checker_numeric_zero",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=zero"
+  ]
+ },
+ {
+  "name": "checker_numeric_reference_short",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=reference_short"
+  ]
+ },
+ {
+  "name": "checker_numeric_truncated",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=truncated"
+  ]
+ },
+ {
+  "name": "checker_numeric_single_peak",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=single_peak"
+  ]
+ },
+ {
+  "name": "checker_numeric_expanded",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=expanded"
+  ],
+  "expect_log": [
+   "B=100 steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=5 max_deviation_gbps=5 max_deviation_pct=5 .*conclusion=PASS"
+  ]
+ },
+ {
+  "name": "checker_empty",
+  "top": "tb_checker_empty",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*reason=NO_EPISODE": 2
+  },
+  "expect_log": [
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=3 scopes_expected=3"
+  ]
+ },
+ {
+  "name": "checker_default_explicit",
+  "top": "tb_checker_default",
+  "plusargs": [
+   "+ALTERNATE",
+   "+BW_EXPECT=../../../tests/expect/checker_default.cfg"
+  ],
+  "expect_counts": {
+   "BW_CHECK .*conclusion=PASS": 3,
+   "BW_DEFAULT_CHECK .*conclusion=FAIL": 5
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=3 fail=5 warning=0"
+  ]
+ },
+ {
+  "name": "checker_numeric_platform_replay",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=platform_replay"
+  ]
+ },
+ {
+  "name": "checker_default_reset",
+  "top": "tb_checker_default",
+  "plusargs": [
+   "+ALTERNATE",
+   "+RESET"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*conclusion=FAIL": 5
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=0 fail=5 warning=0"
+  ]
+ },
+ {
+  "name": "checker_default_gap",
+  "top": "tb_checker_default",
+  "plusargs": [
+   "+ALTERNATE",
+   "+GAP"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*conclusion=FAIL": 5
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=0 fail=5 warning=0"
+  ]
+ },
+ {
+  "name": "checker_default_truncated",
+  "top": "tb_checker_default",
+  "plusargs": [
+   "+ALTERNATE",
+   "+TRUNCATED"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*conclusion=FAIL": 5
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=0 fail=5 warning=0"
+  ]
+ },
+ {
+  "name": "checker_numeric_expanded_high_equal",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=expanded_high_equal"
+  ]
+ },
+ {
+  "name": "checker_numeric_expanded_high_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=expanded_high_over"
+  ]
+ },
+ {
+  "name": "checker_numeric_expanded_low_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=expanded_low_over"
+  ]
+ },
+ {
+  "name": "checker_cycle_alternating",
+  "top": "tb_checker_cycle",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*max_deviation_gbps=8 .*longest_span=17 .*conclusion=FAIL": 2
+  },
+  "verify": [
+   "python3",
+   "tests/checker_default/check_cycle.py",
+   "{log}",
+   "alternating"
+  ]
+ },
+ {
+  "name": "checker_cycle_constant",
+  "top": "tb_checker_cycle",
+  "plusargs": [
+   "+CONSTANT"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*conclusion=PASS": 2
+  },
+  "verify": [
+   "python3",
+   "tests/checker_default/check_cycle.py",
+   "{log}",
+   "constant"
+  ]
+ },
+ {
+  "name": "checker_history",
+  "top": "tb_checker_history",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*episode=1 .*conclusion=FAIL": 2,
+   "BW_DEFAULT_CHECK .*episode=2 .*conclusion=PASS": 2
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=2 fail=2 warning=0"
+  ]
+ },
+ {
+  "name": "checker_numeric_explicit_time",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=explicit_time",
+   "+BW_EXPECT=../../../tests/expect/checker_numeric_time.cfg"
+  ],
+  "expect_counts": {
+   "BW_CHECK .*metric=ramp_time .*actual=10 .*conclusion=PASS": 1,
+   "BW_DEFAULT_CHECK .*conclusion=FAIL": 1
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=0"
+  ]
+ },
+ {
+  "name": "checker_numeric_terminal_crop",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=terminal_crop"
+  ]
+ },
+ {
+  "name": "checker_numeric_start_unknown",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=start_unknown"
+  ]
+ },
+ {
+  "name": "checker_numeric_nearzero_pass",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=nearzero_pass"
+  ]
+ },
+ {
+  "name": "checker_disabled",
+  "top": "tb_checker_disabled",
+  "defines": [
+   "BW_MON_TEST_FAULTS",
+   "BW_MON_TEST_SCHEDULING"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1,
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1,
+   "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+  ]
+ },
+ {
+  "name": "checker_disabled_phase",
+  "top": "tb_checker_disabled",
+  "defines": [
+   "BW_MON_TEST_FAULTS",
+   "BW_MON_TEST_SCHEDULING"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1,
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1,
+   "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1
+  },
+  "expect_log": [
+   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+  ],
+  "plusargs": [
+   "+PHASE_FAULT"
+  ]
+ },
+ {
+  "name": "checker_equivalence_low_equal",
+  "top": "tb_checker_equivalence",
+  "plusargs": [
+   "+CASE=low_equal"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_equivalence.py",
+   "{log}"
+  ]
+ },
+ {
+  "name": "checker_equivalence_high_equal",
+  "top": "tb_checker_equivalence",
+  "plusargs": [
+   "+CASE=high_equal"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_equivalence.py",
+   "{log}"
+  ]
+ },
+ {
+  "name": "checker_equivalence_high_over",
+  "top": "tb_checker_equivalence",
+  "plusargs": [
+   "+CASE=high_over"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_equivalence.py",
+   "{log}"
+  ]
+ },
+ {
+  "name": "checker_equivalence_low_over",
+  "top": "tb_checker_equivalence",
+  "plusargs": [
+   "+CASE=low_over"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_equivalence.py",
+   "{log}"
+  ]
+ },
+ {
+  "name": "checker_numeric_unknown_status",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=unknown_status"
+  ]
+ },
+ {
+  "top": "tb_checker_quickstart",
+  "sources": [
+   "../examples/bw_mon_quickstart.sv"
+  ],
+  "expect_log": [
+   "QUICKSTART window_bytes=640 bandwidth_gbps=64.000 window_valid=1",
+   "QUICKSTART total_bytes=1280 total_events=20 e2e_gbps=64.000 e2e_valid=1",
+   "BW_DEFAULT_CHECK .*reference_valid=0 .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT",
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=1"
+  ],
+  "name": "checker_quickstart_default"
+ },
+ {
+  "top": "tb_checker_quickstart",
+  "sources": [
+   "../examples/bw_mon_quickstart.sv"
+  ],
+  "expect_log": [
+   "QUICKSTART window_bytes=640 bandwidth_gbps=64.000 window_valid=1",
+   "QUICKSTART total_bytes=1280 total_events=20 e2e_gbps=64.000 e2e_valid=1",
+   "BW_DEFAULT_CHECK .*reference_valid=0 .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT",
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=1 scopes_expected=1"
+  ],
+  "name": "checker_quickstart_explicit",
+  "plusargs": [
+   "+BW_EXPECT=../../../examples/bw_mon_quickstart.cfg"
+  ]
+ },
+ {
+  "name": "checker_empty_immediate",
+  "top": "tb_checker_empty",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*reason=NO_EPISODE": 2
+  },
+  "expect_log": [
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=3 scopes_expected=3"
+  ],
+  "plusargs": [
+   "+IMMEDIATE"
+  ]
+ },
+ {
+  "name": "checker_prefix_default",
+  "top": "tb_checker_prefix",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  },
+  "expect_log": [
+   "BW_SUMMARY status=PASS pass=2 fail=0 warning=0"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_prefix.py",
+   "{log}"
+  ]
+ },
+ {
+  "name": "checker_prefix_explicit",
+  "top": "tb_checker_prefix",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  },
+  "plusargs": [
+   "+BW_EXPECT=../../../tests/expect/checker_prefix.cfg"
+  ],
+  "expect_log": [
+   "BW_SUMMARY status=WARNING pass=2 fail=0 warning=1",
+   "BW_CHECK .*metric=e2e_bw .*conclusion=WARNING reason=BYTES_INCOMPLETE"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_prefix.py",
+   "{log}"
+  ]
+ },
+ {
+  "name": "checker_prefix_gap",
+  "top": "tb_checker_prefix",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  },
+  "plusargs": [
+   "+GAP"
+  ],
+  "expect_log": [
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=2"
+  ]
+ },
+ {
+  "name": "checker_prefix_truncated",
+  "top": "tb_checker_prefix",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 2
+  },
+  "plusargs": [
+   "+TRUNCATED"
+  ],
+  "expect_log": [
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=2"
+  ]
+ },
+ {
+  "name": "checker_replay",
+  "top": "tb_checker_replay",
+  "plusargs": [
+   "+BW_EXPECT=../../../tests/expect/checker_replay.cfg"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK ": 6,
+   "BW_CHECK ": 6
+  },
+  "expect_log": [
+   "BW_SUMMARY status=PASS pass=12 fail=0 warning=0"
+  ]
+ },
+ {
+  "name": "point_group_future_timer_cancellation",
+  "top": "tb_point_group_future_cancel",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=POINT_COMPLETION scope_kind=0 scope=p[^\\n]*stage=CAPTURE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_timer_missing_receipt_siblings",
+  "top": "tb_group_timer_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+SIBLINGS"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=TIMER_CORE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "numeric_transport_late_control",
+  "top": "tb_numeric_transport",
+  "plusargs": [
+   "+MODE=late_control"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=CONTROL_TIME scope_kind=0 scope=transport.point",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_all_disabled_continues",
+  "top": "tb_group_all_cancel_continue",
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION scope_kind=1 scope=g[^\\n]*stage=HELD",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "checker_ownership_five_reference",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*conclusion=PASS": 2,
+   "BW_DEFAULT_CHECK .*conclusion=WARNING reason=REFERENCE_INSUFFICIENT": 2
+  },
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "five"
+  ]
+ },
+ {
+  "name": "checker_ownership_early_fail",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+EARLY_FAIL"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*conclusion=FAIL": 2,
+   "BW_DEFAULT_CHECK .*conclusion=PASS": 2
+  },
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "early"
+  ]
+ },
+ {
+  "name": "checker_ownership_crop",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=1"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "crop"
+  ]
+ },
+ {
+  "name": "checker_ownership_crop_reset",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=1"
+  ],
+  "plusargs": [
+   "+RESET"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "reset"
+  ]
+ },
+ {
+  "name": "checker_ownership_crop_truncated",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=1"
+  ],
+  "plusargs": [
+   "+TRUNCATED"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "crop"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_normal",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=normal"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=1"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_crop",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=crop"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_gap",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=gap"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_old_fail",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=old_fail"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=1"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_bad_support",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=bad_support"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_overlap",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=overlap"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_reverse",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=reverse"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_long_bridge",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=long_bridge"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_records_reset_bridge",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=reset_bridge"
+  ],
+  "expect_log": [
+   "BW_STAGE_STEP .*valid=0"
+  ]
+ },
+ {
+  "name": "checker_ownership_late_reset",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+LATE_RESET"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "late_reset"
+  ]
+ },
+ {
+  "name": "checker_ownership_member_reset",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+MEMBER_RESET"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "member_reset"
+  ]
+ },
+ {
+  "name": "checker_ownership_member_unknown",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+MEMBER_UNKNOWN"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "member_unknown"
+  ]
+ },
+ {
+  "name": "checker_ownership_member_gap",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+MEMBER_GAP"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "member_gap"
+  ]
+ },
+ {
+  "name": "checker_ownership_member_held",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+MEMBER_HELD"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "member_held"
+  ]
+ },
+ {
+  "name": "checker_ownership_member_bridge",
+  "top": "tb_checker_ownership",
+  "defines": [
+   "OWNERSHIP_STRIDE=10"
+  ],
+  "plusargs": [
+   "+MEMBER_RESET",
+   "+BRIDGE_RESET"
+  ],
+  "verify": [
+   "python3",
+   "tests/checker_default/check_public_ownership.py",
+   "{log}",
+   "member_bridge"
+  ]
+ }
 ]

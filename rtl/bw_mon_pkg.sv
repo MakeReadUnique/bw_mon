@@ -330,6 +330,7 @@ package bw_mon_pkg;
     if(scope_disabled(kind,id))return;
     monitoring_disabled[key]=1;monitoring_root_cause[key]=key;monitoring_failure_code[key]=code;
     if(kind==BW_POINT)cancel_point_completion(id);
+    else begin cancel_group_subscriptions(id);if(group_batches.exists(id))group_batches[id].cancelled=1;end
     monitoring_failure_count++;
     $warning("BW_CORE_WARNING code=%s scope_kind=%0d scope=%s time_ticks=%0d %s",code,kind,id,$time,detail);
     if(kind==BW_POINT && point_by_id.exists(id))pending_sources.push_back(registered_points[point_by_id[id]].transport_source);
@@ -342,6 +343,8 @@ package bw_mon_pkg;
           monitoring_disabled[scope_key(BW_GROUP,registered_groups[parent].id)]=1;
           monitoring_root_cause[scope_key(BW_GROUP,registered_groups[parent].id)]=key;
           $display("BW_SCOPE_DISABLED scope_kind=1 scope=%s root=%s time_ticks=%0d",registered_groups[parent].id,key,$time);
+          cancel_group_subscriptions(registered_groups[parent].id);
+          if(group_batches.exists(registered_groups[parent].id))group_batches[registered_groups[parent].id].cancelled=1;
           pending_sources.push_back(registered_groups[parent].source_handle);
         end
       end
@@ -352,6 +355,8 @@ package bw_mon_pkg;
     if(!monitor_ready)begin core_error(code,id,detail);return;end
     if(monitoring_shared_disabled)return;
     monitoring_shared_disabled=1;monitoring_failure_count++;
+    foreach(registered_groups[g])cancel_group_subscriptions(registered_groups[g].id);
+    cancel_all_group_completion();
     monitoring_shared_failure_code=code;monitoring_shared_failure_scope=id;monitoring_shared_failure_detail=detail;
     $warning("BW_CORE_WARNING code=%s scope_kind=SHARED scope=%s time_ticks=%0d %s",code,id,$time,detail);
   endfunction
@@ -623,6 +628,12 @@ package bw_mon_pkg;
   // One-shot semantic allocation rejection for contract tests only. It is not
   // a capacity limit, module parameter or ordinary-build configuration API.
   bit injected_growth_failures[string][string];
+  bit injected_group_faults[string][string];
+  function automatic void inject_group_fault(string id,string stage);injected_group_faults[id][stage]=1;endfunction
+  function automatic bit take_group_fault(string id,string stage);
+    if(!injected_group_faults.exists(id) || !injected_group_faults[id].exists(stage))return 0;
+    injected_group_faults[id].delete(stage);return 1;
+  endfunction
   bit injected_point_faults[string][string];
   function automatic void inject_point_fault(string id,string stage);
     injected_point_faults[id][stage]=1;
@@ -698,6 +709,11 @@ package bw_mon_pkg;
   // changing records, counters, acknowledgements, clocks or statistics state.
   class bw_test_consumer_gate;
     bit paused=0;
+    // Explicit test continuation depends on a named consumer receipt, rather
+    // than elapsed time or a chosen number of scheduler rounds.
+    string resume_after_group="";
+    string resume_after_groups[$];
+    bw_u64_t resume_after_seq=0;
   endclass
   bw_test_consumer_gate bw_test_consumer_gates[string];
   function automatic bw_test_consumer_gate bw_test_gate_for(string id);
@@ -709,4 +725,5 @@ package bw_mon_pkg;
   `include "bw_mon_registry.svh"
   `include "bw_mon_transport.svh"
   `include "bw_point_completion.svh"
+  `include "bw_group_completion.svh"
 endpackage

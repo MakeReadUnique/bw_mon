@@ -13,11 +13,16 @@
   function automatic void append_captured_reset(logic value,bw_u64_t ticks);
     captured_reset_t action;
     if(reset_capture_initialized && reset_capture_last===value)return;
+    if(scope_kind==BW_GROUP)group_reset_expected(scope_id);
+`ifdef BW_MON_TEST_FAULTS
+    if(monitor_ready && scope_kind==BW_GROUP && take_group_fault(scope_id,"reset_capture"))return;
+`endif
     // An initial snapshot is preparation even for an isolated component whose
     // caller does not participate in the public ready handshake.
     check_storage_growth(captured_resets.size(),scope_id,"scheduler.reset_capture",ticks,0,0,!reset_capture_initialized);
     if(scope_failed(bw_scope_t'(scope_kind),scope_id))return;
     action.ticks=ticks;action.level=value;captured_resets.push_back(action);
+    if(scope_kind==BW_GROUP)group_reset_captured(scope_id);
     reset_capture_initialized=1;reset_capture_last=value;
   endfunction
 

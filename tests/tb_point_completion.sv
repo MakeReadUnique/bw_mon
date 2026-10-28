@@ -10,6 +10,9 @@ module tb_point_completion;
     if($time!=1000001 || scope_disabled(BW_POINT,"damaged")!=damaged ||
        scope_disabled(BW_POINT,"healthy") || q.total_bytes!=16)
       $fatal(1,"read-only original-time verdict differs from independent input expectation");
+    if(damaged && (!p.recorder.scheduler_cancelled || p.recorder.scheduler_running || !p.core.scheduler_cancelled || p.core.scheduler_running))
+      $fatal(1,"actual point workers did not exit quarantine at original time");
+    if(q.runtime_cancelled || q.recorder.runtime_cancelled || q.core.runtime_cancelled)$fatal(1,"point failure cancellation reached healthy peer");
     if(!damaged && (p.total_bytes!=8 || !point_batch_complete("damaged")))
       $fatal(1,"read-only verdict lacks durable point completion");
     $display("TB_READ_ONLY_CLOSURE ticks=%0d damaged=%0b healthy_bytes=%0d",$time,damaged,q.total_bytes);

@@ -22,6 +22,7 @@ module bw_point_recorder #(
   import bw_mon_pkg::*;
   localparam bw_scope_t scope_kind=BW_POINT;
   `include "bw_scope_runtime.svh"
+  bit scheduler_running=0,scheduler_cancelled=0;
   bw_u64_t record_seq = 0, edge_index = 0;
   bw_u64_t control_seq = 0, source_epoch = 0;
   bw_u64_t requested_actions = 0, consumed_actions = 0;
@@ -147,21 +148,22 @@ module bw_point_recorder #(
     pending_sample_t sample;
     logic transfer;
     while (consumed_actions != requested_actions && !scope_failed(BW_POINT,scope_id)) begin
-      wait(slot_settlement_generation>=settlement_required || scope_failed(BW_POINT,scope_id));
+      wait(slot_settlement_generation>=settlement_required || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
       if(scope_failed(BW_POINT,scope_id))return;
       if (pending_controls.size()!=0) begin
         control=pending_controls.pop_front();
         consumed_actions=checked_add(consumed_actions,1,scope_id);
         if(runtime_failed())return;
         control_toggle<=!control_toggle;
-        @(control_toggle);
-        if(publication_receipts)wait(published_control_seq>=control.control_seq || scope_failed(BW_POINT,scope_id));
+        @(control_toggle or runtime_cancelled);
+        if(runtime_failed())return;
+        if(publication_receipts)wait(published_control_seq>=control.control_seq || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
         if(scope_failed(BW_POINT,scope_id))return;
         // A ReNBA waiter can wake before module consumers copy the payload.
         // Hold it through a writable quiescent generation before exposing the
         // next item, including multiple controls captured at the same tick.
         settlement_required=request_slot_settlement(scope_id);
-        wait(slot_settlement_generation>=settlement_required || runtime_failed());
+        wait(slot_settlement_generation>=settlement_required || runtime_failed() || runtime_cancelled);
         if(runtime_failed())return;
         continue;
       end
@@ -170,7 +172,7 @@ module bw_point_recorder #(
 `ifdef BW_MON_TEST_FAULTS
       if(take_point_fault(scope_id,"held"))begin
         // A held tuple remains an obligation even though its queue is empty.
-        wait(scope_failed(BW_POINT,scope_id));return;
+        wait(scope_failed(BW_POINT,scope_id) || runtime_cancelled);return;
       end
 `endif
       sampled_view=sample.sample;
@@ -211,11 +213,12 @@ module bw_point_recorder #(
       consumed_actions=checked_add(consumed_actions,1,scope_id);
       if(runtime_failed())return;
       record_toggle <= !record_toggle;
-      @(record_toggle);
-      if(publication_receipts)wait(published_record_seq>=record.record_seq || scope_failed(BW_POINT,scope_id));
+      @(record_toggle or runtime_cancelled);
+      if(runtime_failed())return;
+      if(publication_receipts)wait(published_record_seq>=record.record_seq || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
       if(scope_failed(BW_POINT,scope_id))return;
       settlement_required=request_slot_settlement(scope_id);
-      wait(slot_settlement_generation>=settlement_required || runtime_failed());
+      wait(slot_settlement_generation>=settlement_required || runtime_failed() || runtime_cancelled);
       if(runtime_failed())return;
     end
   endtask
@@ -226,9 +229,20 @@ endmodule
 // A private coordinator waits for the shared writable end-of-slot generation.
 // Upward module-type references bind to each owning instance.
 program bw_point_record_scheduler;
-  timeunit 1fs; timeprecision 1fs;
-  initial forever begin
-    wait(!bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_point_recorder.scope_kind),bw_point_recorder.scope_id) && bw_point_recorder.requested_actions != bw_point_recorder.consumed_actions);
-    bw_point_recorder.drain_actions();
+  timeunit 1fs;timeprecision 1fs;
+  initial begin
+    fork begin : actual_worker
+    bw_point_recorder.scheduler_running=1;
+    forever begin
+      wait(bw_point_recorder.runtime_cancelled || bw_point_recorder.requested_actions!=bw_point_recorder.consumed_actions);
+      if(bw_point_recorder.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_point_recorder.scope_kind),bw_point_recorder.scope_id))break;
+      bw_point_recorder.drain_actions();
+    end
+    bw_point_recorder.scheduler_running=0;
+    bw_point_recorder.scheduler_cancelled=bw_point_recorder.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_point_recorder.scope_kind),bw_point_recorder.scope_id);
+    end join_none
+    // VCS implicitly ends simulation when all program containers finish.
+    // This inert host owns no monitor action; the actual worker above exits.
+    wait(1'b0);
   end
 endprogram

@@ -21,23 +21,24 @@ module tb_transport_growth;
     slow_source=point_source_handle(slow_point);wait(monitor_ready);
     fast_source=point_source_handle(point_handle_for_id("growth.fast"));
     control='0;control.point_handle=slow_point;control.control_seq=1;control.reset_n=1;control.timestamp_ticks=measurement_start_ticks;
-    publish_control(slow_source,control);set_source_progress(slow_source,measurement_start_ticks+250000);
+    publish_control(slow_source,control);
     #250000;
-    repeat(4096)begin clk=1;#1;clk=0;#499999;end
-    if(fast.raw_record.record_seq!=4096 || prompt.accepted_record_seq!=4096 ||
-       delayed.accepted_record_seq!=0 || delayed.result_seq!=0 || prompt_checks!=20 ||
-       retained_frame_count(fast_source)!=4096 || retained_control_count(slow_source)!=2 ||
-       acknowledged_frame_seq(prompt.group_handle,0)!=4096 || acknowledged_frame_seq(delayed.group_handle,0)!=0)
-      $fatal(1,"a prompt direct consumer must progress while4096 original frames and earlier controls remain durable for the other");
     for(int i=0;i<4096;i++)begin
+      clk=1;
       frame='0;frame.record_seq=bw_u64_t'(i)+1;frame.edge_index=frame.record_seq;
-      frame.timestamp_ticks=measurement_start_ticks+250000+bw_u64_t'(i)*500000;frame.reset_n=1;
+      frame.timestamp_ticks=$time;frame.reset_n=1;
       frame.byte_inc=8;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;
       if(frame.timestamp_ticks>=measurement_start_ticks+500000000 && frame.timestamp_ticks<measurement_start_ticks+501000000)begin
         frame.reset_n=1'bx;frame.byte_inc=0;frame.event_inc=0;frame.bytes_complete=0;frame.events_complete=0;
       end
       publish_frame(slow_source,frame);
+      #1;clk=0;#499999;
     end
+    if(fast.raw_record.record_seq!=4096 || prompt.accepted_record_seq!=4096 || delayed.accepted_record_seq!=4096 ||
+       prompt_checks!=20 || delayed_checks!=20 || retained_frame_count(fast_source)!=0 ||
+       retained_control_count(slow_source)!=0 || acknowledged_frame_seq(prompt.group_handle,0)!=4096 ||
+       acknowledged_frame_seq(delayed.group_handle,0)!=4096)
+      $fatal(1,"4096 synchronous original-edge records must preserve both consumers' exact progress and release");
     set_source_progress(slow_source,BW_U64_MAX);
     wait(delayed.accepted_record_seq==4096);#1;
     if(delayed.raw_record.timestamp_ticks!=measurement_start_ticks+2047750000 || delayed.raw_record.edge_index!=4096 ||

@@ -20,7 +20,8 @@
     bw_u64_t width, stride;
     bit requires_preparation=0,preparation_complete=0;
     int point_handle=-1, group_handle=-1;
-    int parents[$];
+    int parents[$]; // frozen dependency graph
+    bit active_consumers[int]; // mutable direct subscription responsibilities
     bw_record_t frames[$];
     bw_control_frame_t controls[$];
     bw_u64_t frame_acks[int], control_acks[int];
@@ -49,4 +50,3 @@
   int point_by_id[string], group_by_id[string];
   bit configuration_finished=0;
   bw_u64_t configuration_seq=0;
-  bw_u64_t missing_record_timeout_ticks=BW_TICKS_PER_NS;
