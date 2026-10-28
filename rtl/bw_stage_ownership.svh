@@ -42,10 +42,13 @@ class bw_stage_evidence;
     end
     return 0;
   endfunction
-  function bit continuous(bw_check_window_t a,bw_check_window_t b);
-    return a.valid && b.valid && !a.reset_coverage && !b.reset_coverage &&
-      a.stats_epoch==b.stats_epoch && a.episode_id==b.episode_id &&
+  function bit publication_successor(bw_check_window_t a,bw_check_window_t b);
+    return a.valid && b.valid && a.stats_epoch==b.stats_epoch && a.episode_id==b.episode_id &&
       b.seq==a.seq+1 && b.u>a.u && b.ticks>a.ticks;
+  endfunction
+  function bit continuous(bw_check_window_t a,bw_check_window_t b);
+    // A normal-step bridge/support cannot cross known member reset coverage.
+    return publication_successor(a,b) && !a.reset_coverage && !b.reset_coverage;
   endfunction
   function bit same_episode(bw_check_window_t row,bw_phase_result_t p);
     return row.stats_epoch==p.stats_epoch && row.episode_id==p.episode_id;
@@ -62,8 +65,10 @@ class bw_stage_evidence;
     foreach(raw[r])for(bw_u64_t n=0;n<raw[r].count;n++)begin
       row=row_at(raw[r],n);
       if(!same_episode(row,p) || row.ticks<p.start_ticks || row.ticks>=stop)continue;
-      if(!row.valid || row.reset_coverage)begin result.count=0;continue;end
-      if(result.count!=0 && !continuous(previous,row))result.count=0;
+      // Known member resets retain known byte-complete publications. They do
+      // not interrupt the group episode or invalidate handoff evidence.
+      if(!row.valid)begin result.count=0;continue;end
+      if(result.count!=0 && !publication_successor(previous,row))result.count=0;
       if(result.count==0)begin
         result.first_seq=row.seq;result.first_u=row.u;result.first_ticks=row.ticks;
       end
@@ -73,7 +78,7 @@ class bw_stage_evidence;
     end
     return result;
   endfunction
-  function bit support_valid(bw_phase_result_t p,bw_u64_t terminal);
+  function bit support_valid(bw_phase_result_t p,bw_u64_t terminal,bit allow_member_reset=0);
     bw_check_window_t row,previous,first;
     bw_u64_t stop,min_span;
     real low,high;
@@ -83,9 +88,9 @@ class bw_stage_evidence;
        p.support_last_seq-p.support_first_seq!=6)return 0;
     for(int i=0;i<7;i++)begin
       if(!find_seq(p.support_first_seq+i,row) || !same_episode(row,p) ||
-         !row.valid || row.reset_coverage || row.ticks>=stop || row.ticks>p.confirmation_ticks)return 0;
+         !row.valid || (!allow_member_reset && row.reset_coverage) || row.ticks>=stop || row.ticks>p.confirmation_ticks)return 0;
       if(i==0)begin first=row;low=row.value;high=row.value;end
-      else if(!continuous(previous,row))return 0;
+      else if(!publication_successor(previous,row))return 0;
       if(row.value<low)low=row.value;
       if(row.value>high)high=row.value;
       previous=row;
@@ -95,7 +100,7 @@ class bw_stage_evidence;
   function bit confirmed_transition(bw_phase_result_t p,bw_u64_t terminal);
     return p.phase_kind inside {BW_PHASE_RAMP,BW_PHASE_FALL} &&
       p.start_known && p.start_ticks<p.end_ticks &&
-      p.start_ticks<terminal && support_valid(p,terminal);
+      p.start_ticks<terminal && support_valid(p,terminal,1);
   endfunction
   function bit in_envelope(bw_check_window_t row,bw_phase_result_t p);
     return row.value>=p.support_min_gbps && row.value<=p.support_max_gbps;

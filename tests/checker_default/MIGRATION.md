@@ -117,6 +117,7 @@ explicit +1 offset). No test supplies recognizer labels through a public API.
 | 100→200 bridge160→170, wait170→220, retained60→170 | `phase_fixed_continuous`; original7 supports1..7/17..23, all4 platforms PASS, RAMP/FALL remain independently attributed |
 | Short pause u81..92,12rows/span11 | `phase_fixed_activity`; old FAIL, `[88,91)` WARNING, recovery PASS; actual local cycle indices82..93 due first counted edge |
 | Sustained anomaly u111..156,46rows/span45ns across3short platforms | `phase_fixed_recovery`; old FAIL and late PASS, independent FALL106..111/RAMP157..164 |
+| New-platform identity avoids old/new STEADY chatter miscount; original boundaries/confirmations unchanged | all four unchanged `phase_fixed_*` frozen phase lists are compared exactly before joint checker assertions |
 | Original shorter anomaly remains PASS | unchanged case12 in `phase_fixed_recovery`; no retuning or deletion |
 | STEADY and FAIL; early FAIL then later PASS | `phase_fixed_platforms`, exact original phase timelines and references |
 | Qualified handoff without6reference rows | `checker_ownership_five_reference`; exact tail240ns, final platform180..240, handoff180/190, candidate refs190..230 only5 |
@@ -136,3 +137,13 @@ five-reference WARNING behavior without rounding that1fs away.
 This is focused component/public joint qualification, not the later full formal
 fixed-input/scale/resource campaign. Runtime-disabled active-scope partial
 terminal hooks remain with their own integration ticket.
+
+
+`checker_ownership_member_reset` drives a real named group with a zero-byte
+member held in known reset while the active member retains the original step
+schedule. Known byte-complete publications still qualify the final180/190ns
+handoff; they cannot prove a no-reset normal step, so old reliable FAIL remains.
+The unknown-reset and unknown-size-gap variants break group evidence, leave
+handoff unavailable and preserve earlier FAIL. The independent primary point
+continues to PASS/WARNING. Known member reset is not a group episode reset or a
+new byte-quality invalidity; own-scope epoch changes never join.

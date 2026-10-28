@@ -10,6 +10,18 @@ for kind in ('0','1'):
     rows=[fields(l) for l in lines if l.startswith('BW_DEFAULT_CHECK ') and fields(l)['scope_kind']==kind]
     phases=[fields(l) for l in lines if l.startswith('BW_PHASE ') and fields(l)['scope_kind']==kind]
     steps=[fields(l) for l in lines if l.startswith('BW_STAGE_STEP ') and fields(l)['scope_kind']==kind]
+    if mode.startswith('member_'):
+        assert [r['conclusion'] for r in rows]==(['PASS','WARNING'] if kind=='0' else
+          (['FAIL','WARNING'] if mode=='member_reset' else ['FAIL'])),(mode,kind,rows)
+        if kind=='1':
+            if mode=='member_reset':
+                qualifications=[fields(l) for l in lines if l.startswith('BW_STAGE_HANDOFF ') and fields(l)['scope_kind']==kind]
+                assert qualifications[-1]['valid']=='1' and int(qualifications[-1]['span'])==10_000_000,qualifications
+                assert int(rows[0]['check_end_ticks'])==T+180_000_000,rows[0]
+                assert rows[0]['handoff_platform']!='0' and steps[0]['valid']=='0',(rows,steps)
+            else:
+                assert rows[0]['handoff_platform']=='0' and rows[0]['quality_incomplete']=='1',rows
+        continue
     assert len(rows)==2,(mode,kind,rows)
     if mode=='five':
         assert [r['conclusion'] for r in rows]==['PASS','WARNING'],rows

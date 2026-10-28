@@ -11,7 +11,7 @@ log,family=sys.argv[1:]
 check(log,family)
 frozen=json.loads((Path(__file__).resolve().parents[1]/"phase_default/fixed.json").read_text())
 configuration=next(f for f in frozen['families'] if f['id']==family)
-references=reference_family(configuration)
+references=reference_family(configuration,int(next(fields(line)["time_ticks"] for line in Path(log).read_text().splitlines() if line.startswith("BW_READY "))))
 # Literal earliest reference endpoints from the adopted intervals. The expected
 # values/geometry below come from original protocol sums, not product windows.
 ref_starts={1:[70,230,540,850],2:[70,190],3:[70],4:[70],5:[70,310],
