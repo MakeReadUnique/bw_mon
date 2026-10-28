@@ -52,9 +52,10 @@ bit-identical real values/quality plus affine sequence and all four endpoints.
 `support_min_gbps` and `support_max_gbps` freeze the original seven recognition
 rows and envelope. Those rows remain reconstructible from the pending stream;
 the latest six-fit ring is not substituted. Pending rows include undetermined
-regions and are released only after terminal episode settlement. The following
-ownership ticket must add independent handoff/step qualification and recropping;
-current single-platform coverage makes no claim for that contract.
+regions and are released only after terminal episode settlement. The private phase evidence owner now qualifies final handoffs, original-seven
+normal-step proofs and RAMP/FALL exclusions from these retained fields,
+independently of checker reference/threshold/verdict. Final crop recomputes the
+proofs and never flushes the unresolved old prefix prematurely.
 
 Runtime-disabled active scopes require the later partial-terminal hook to settle
 from an actual finalized platform/cutoff and original last trusted endpoint.
@@ -101,3 +102,76 @@ counters or a growing history map. Watermarks/receipts commit after successful
 settlement and pending raw evidence is not cleared on failed attempts. Numeric
 fixtures explicitly state scoped byte completeness for their valid raw streams;
 whole-episode flags remain separate from scoped platform/check quality.
+
+
+Cross-platform joint coverage uses the same `tb_phase_fixed` source and all four
+unchanged protocol input files. `check_ownership.py` first runs the independent
+raw-window/frozen-phase checker, then checks literal per-platform verdicts and
+reference endpoints. Expected B/membership comes from independent raw protocol
+sums and publication order. Physical ticks and actual local cycle indices are
+kept distinct (the first counted edge gives prototype-relative cycle u an
+explicit +1 offset). No test supplies recognizer labels through a public API.
+
+| Adopted R2 case/repair | Product evidence |
+| --- | --- |
+| 100→200 bridge160→170, wait170→220, retained60→170 | `phase_fixed_continuous`; original7 supports1..7/17..23, all4 platforms PASS, RAMP/FALL remain independently attributed |
+| Short pause u81..92,12rows/span11 | `phase_fixed_activity`; old FAIL, `[88,91)` WARNING, recovery PASS; actual local cycle indices82..93 due first counted edge |
+| Sustained anomaly u111..156,46rows/span45ns across3short platforms | `phase_fixed_recovery`; old FAIL and late PASS, independent FALL106..111/RAMP157..164 |
+| New-platform identity avoids old/new STEADY chatter miscount; original boundaries/confirmations unchanged | all four unchanged `phase_fixed_*` frozen phase lists are compared exactly before joint checker assertions |
+| Original shorter anomaly remains PASS | unchanged case12 in `phase_fixed_recovery`; no retuning or deletion |
+| STEADY and FAIL; early FAIL then later PASS | `phase_fixed_platforms`, exact original phase timelines and references |
+| Qualified handoff without6reference rows | `checker_ownership_five_reference`; exact tail240ns, final platform180..240, handoff180/190, candidate refs190..230 only5 |
+| Earlier130/140 anomaly retained through step170..220 | `checker_ownership_early_fail`; real point/group recognizer, old FAIL/new PASS |
+| Final short platform cannot hand off | `checker_ownership_crop{,_reset,_truncated}`; actual final94..100ns, old reliable49..61ns FAIL retained |
+| Final crop withdraws an otherwise valid step | `checker_ownership_records_crop` supplement at approved immutable-record seam; complete original raw rows, final225ns invalidates new220..321 handoff/support and old FAIL returns |
+| Rejected gap/reset/reversed/long bridge, original7 envelope overlap | `checker_ownership_records_*` supplements; raw values/geometry supplied, never B or exemptions |
+| Late reset preserves already supported earlier handoff | `checker_ownership_late_reset`; old PASS/new WARNING, no manufactured old-reference FAIL |
+
+Frozen continuous case2 intentionally differs from the prototype's five-reference
+result: its actual final phase is `[T_case+180ns,T_case+240ns+1fs)`, so the window
+ending at240ns is wholly inside and six references190..240ns exist. The original
+four input files, phase boundaries and the independent exact-geometry oracle are
+unchanged. The exactly aligned separate public fixture establishes the adopted
+five-reference WARNING behavior without rounding that1fs away.
+
+This is focused component/public joint qualification, not the later full formal
+fixed-input/scale/resource campaign. Runtime-disabled active-scope partial
+terminal hooks remain with their own integration ticket.
+
+
+`checker_ownership_member_reset` drives a real named group with a zero-byte
+member held in known reset while the active member retains the original step
+schedule. Known byte-complete publications still qualify the final180/190ns
+handoff; the actual reset transition within original confirmation support
+prevents a normal-step proof, so old reliable FAIL remains.
+The unknown-reset and unknown-size-gap variants break group evidence, leave
+handoff unavailable and preserve earlier FAIL. The independent primary point
+continues to PASS/WARNING. Known member reset is not a group episode reset or a
+new byte-quality invalidity; own-scope epoch changes never join.
+
+
+`checker_ownership_member_held` keeps the same zero-byte member in reset from
+before all support, without any transition or earlier anomaly. Its exact phase
+boundaries/confirmations, original7 envelopes and bridge12->13 match the no-reset
+baseline; old PASS/new WARNING remain identical. Coverage alone cannot reject a
+step. `checker_ownership_member_bridge` instead introduces an actual member
+reset event inside bridge120->130ns; it keeps handoff qualified but rejects the
+step and preserves old FAIL. The existing reset-during-support variant records
+its actual event169ns+2fs after T, while the bridge event is124ns+2fs after T.
+The initial control snapshot establishes a level without counting a reset event.
+
+Private raw evidence now carries actual member-control transition generation and
+last original event time; held duplicate levels never advance it. Original7
+support may not mix generations or windows crossing an actual event, and bridge
+publications must be consecutive in one generation with no mixed reset window.
+Old/new proof supports must retain compatible generations. Lossless compression
+also compares these fields, so a held coverage flag cannot absorb a real event.
+The fields use scoped checked arithmetic, are captured before summary release,
+and preserve unknown/gap and own-scope epoch rules.
+
+The joint verifier requires every expected `(case, point/group)` result set and
+its literal platform count, including no-platform case7 and excluding no-episode
+case9. `sensitivity_ownership.py --logs SAVED_LOG_DIR --output OUTPUT_DIR
+--producer-commit COMMIT` accepts the four saved families and rejects24 synthetic
+missing-family/case/kind/result or duplicate-result mutations. It records consumed
+log hashes; synthetic negatives are offline verifier checks, not product runs.

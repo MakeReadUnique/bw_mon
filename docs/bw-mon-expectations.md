@@ -67,12 +67,42 @@ deviation, threshold, over-limit run count and longest run endpoints/count/span,
 quality, conclusion and reason. Ns logical positions/spans use original fs ticks;
 cycle positions/spans use original local cycle indices.
 
-The single-platform product cases include real four-point/named-group constant
-traffic and alternating ±8% traffic that remains STEADY while this check FAILs.
-Cross-platform handoff and independent normal-step attribution are delivered by
-the following ownership work; these single-platform results do not establish
-that contract. Pending raw publications and original seven-row recognition
-support remain lossless until episode settlement for that work.
+Each platform keeps ownership through undetermined intervals and intervening
+short platforms, until the next independently qualified platform boundary or
+the trusted final episode cutoff. Handoff requires at least two consecutive
+valid publications inside the new final interval with logical span at least W.
+It does not require a reference: a platform with five contained reference
+windows may take ownership and still report WARNING.
+
+Normal steps use the original seven confirmation samples of both platforms,
+with disjoint raw min/max envelopes and a continuous monotonic bridge no longer
+than W+S. Private reset-event generations and original event timestamps distinguish
+an actual member reset transition from held known reset coverage. Held reset
+before both supports does not invent a crossing; actual reset transitions in
+support/bridge evidence prevent a normal-step exemption. The phase evidence owner never reads B, the 5% threshold or a checker
+verdict. It reports the physical change separately from the arrived-new-level
+recognition suffix, the exact exemption and the retained old prefix. Existing
+independently confirmed RAMP/FALL ranges retain their own exclusions. Final
+crop rechecks support, handoff and reference eligibility from retained raw
+publications. A later reset can leave an earlier handoff fully supported within
+the trusted prefix; uncertainty still attaches to the terminal platform.
+
+`BW_STAGE_HANDOFF` reports final qualification publications and logical span.
+`BW_STAGE_STEP` reports typed platform identities, original seven-row support
+ranges/envelopes, bridge sequence range and span, arrival/wait suffix,
+exemption/preserved-prefix bounds and acceptance/rejection reason.
+`BW_DEFAULT_CHECK.handoff_platform` identifies the next owner. Insufficient
+reference rows are reported as candidate membership with unavailable B.
+
+Product coverage includes real normal 100→200 steps, independent RAMP/FALL,
+short-platform pauses and sustained anomalies, early FAIL followed by later
+PASS, and alternating ±8% traffic that remains STEADY while checking FAIL.
+The four frozen input files and phase timelines remain unchanged. Actual
+endpoint geometry governs reference qualification: the frozen NS harness's
+final tail is 1fs after its last publication, so its twelve-window terminal
+case contains six full reference rows. A separate exactly aligned public
+fixture has five and warns. This is an explicit timing applicability difference
+from the prototype, not a changed rule or an arbitrary-step recognition claim.
 
 ## File grammar and complete supported keys
 
