@@ -44,6 +44,9 @@ module tb_member_control_error;
     #1000000;
     control.timestamp_ticks=$time;
     control_toggle<=!control_toggle;
-    #1; $fatal(1,"expected core error did not occur");
+    #1;
+    if(!scope_disabled(BW_POINT,"control.scope") || core.accepted_control_count!=(invalid_point ? 0 : 1))
+      $fatal(1,"invalid control must stop before map/receipt mutation");
+    $display("TB_PASS member_control_error quarantined");$finish;
   end
 endmodule

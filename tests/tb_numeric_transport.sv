@@ -34,6 +34,12 @@ module tb_numeric_transport;
         $display("TB_PASS numeric_transport valid_reset");$finish;
       end else $fatal(1,"bad MODE");
     end
-    $fatal(1,"expected core error did not occur");
+    if(mode=="progress")begin
+      if(!scope_disabled(BW_POINT,"transport.point"))$fatal(1,"invalid source progress must disable its source");
+    end else if(!monitoring_shared_disabled)$fatal(1,"invalid unowned transport handle must disable shared monitoring");
+    if(mode!="publish_handle" && (retained_frame_count(source)!=1 || retained_control_count(source)!=1 ||
+       acknowledged_frame_seq(group_handle,0)!=0))
+      $fatal(1,"rejected numeric transport operation must not ACK or release durable data");
+    $display("TB_PASS numeric_transport quarantined mode=%s",mode);$finish;
   end
 endmodule

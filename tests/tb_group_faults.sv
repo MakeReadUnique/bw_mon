@@ -35,6 +35,11 @@ module tb_group_faults;
         publish_frame(source,frame);publish_frame(source,replayed);
       end
     end
-    #(measurement_start_ticks+2000000-$time);$fatal(1,"expected core error did not occur");
+    #(measurement_start_ticks+2000000-$time);
+    if(mode inside {"missing_first","missing_second"})$fatal(1,"expected core error did not occur");
+    if(!scope_disabled(BW_GROUP,"fault.group") || scope_disabled(BW_POINT,"good") ||
+       (mode!="wrong_time" && !scope_disabled(BW_POINT,"fault")))
+      $fatal(1,"bad source/consumer ordering must disable its typed dependency path while healthy point continues");
+    $display("TB_PASS group_faults runtime_warning mode=%s healthy_point=1",mode);$finish;
   end
 endmodule

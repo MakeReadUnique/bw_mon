@@ -11,6 +11,8 @@ module tb_reset_time_budget;
     #39999000000; reset_n=0;
     #500000; reset_n=1;
     #1000000; clk=1;
-    #1; $fatal(1,"expected core error did not occur");
+    #1;
+    if(!scope_disabled(BW_POINT,"global.budget") || point.accepted_record_seq!=0)$fatal(1,"time failure must not accept input");
+    $display("TB_PASS reset_time_budget quarantined");$finish;
   end
 endmodule
