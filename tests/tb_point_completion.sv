@@ -40,6 +40,9 @@ module tb_point_completion;
     // No new edge exists during the stopped clock. None may be invented.
     #10000000;
     if(scope_disabled(BW_POINT,"healthy"))$fatal(1,"stopped clock was treated as missing input");
-    $display("TB_PASS point_completion stage=%s healthy_bytes=32",stage);$finish;
+    clk=0;#3212345;clk=1;#1;
+    if(q.total_bytes!=48 || scope_disabled(BW_POINT,"healthy"))$fatal(1,"resumed changed-period clock must accept only its real edge");
+    if(!damaged && p.total_bytes!=24)$fatal(1,"reliable point lost the resumed edge");
+    $display("TB_PASS point_completion stage=%s healthy_bytes=48",stage);$finish;
   end
 endmodule
