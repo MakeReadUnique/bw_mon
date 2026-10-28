@@ -32,7 +32,7 @@ module tb_settle_hint_renba;
       point.backpressure_duration_cycles,point.backpressure_start_cycle,point.backpressure_end_cycle,
       point.backpressure_trigger_ticks,point.backpressure_end_ticks,point.backpressure_end_reason,
       observed_raw_late_edge);
-    if(point.accepted_record_seq!==64'd3 || point.raw_record.timestamp_ticks!==64'd3000000 ||
+    if(point.accepted_record_seq!==64'd3 || point.raw_record.timestamp_ticks!==64'd3000001 ||
        point.sampled_valid!==1'b1 || point.sampled_ready!==(mode==1) || point.sampled_reset_n!==1'b1 ||
        point.total_bytes!==(mode==1 ? 64'd8 : 64'd0) || point.total_events!==(mode==1 ? 64'd1 : 64'd0) ||
        observed_raw_late_edge!==(mode==1))
@@ -40,8 +40,8 @@ module tb_settle_hint_renba;
     if(point.backpressure_active!==1'b0 || point.backpressure_hit!==1'b1 ||
        point.backpressure_hit_count!==64'd1 || point.backpressure_interval_count!==64'd1 ||
        point.backpressure_duration_cycles!==64'd2 || point.backpressure_start_cycle!==64'd1 ||
-       point.backpressure_end_cycle!==64'd3 || point.backpressure_trigger_ticks!==64'd3000000 ||
-       point.backpressure_end_ticks!==64'd3000000 || point.backpressure_end_reason!==BW_HINT_RELEASED)
+       point.backpressure_end_cycle!==64'd3 || point.backpressure_trigger_ticks!==64'd3000001 ||
+       point.backpressure_end_ticks!==64'd3000001 || point.backpressure_end_reason!==BW_HINT_RELEASED)
       $fatal(1,"same-T late edge lost complete prior hint cycle/hit");
     $display("TB_PASS preflight_hint_late_clock mode=%0d",mode);$finish;
   end

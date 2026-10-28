@@ -18,7 +18,7 @@ module tb_settle_reset_stream;
   bw_group_mon #(.GROUP_ID("stream.parent"),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5)) parent(.clk(clk),.reset_n(1'b1));
   settle_reset_stream_driver driver();
-  always @(p0.control_toggle)if(monitor_ready && p0.raw_control.control_seq!=0)begin
+  always @(p0.control_toggle)if(configuration_sealed && p0.raw_control.control_seq!=0)begin
     n0++;
     if(p0.raw_control.control_seq!=n0 || p0.raw_control.timestamp_ticks!=(n0==1?1:2000001) ||
        p0.raw_control.point_handle!=point_handle_for_id("stream.p0"))
@@ -26,9 +26,9 @@ module tb_settle_reset_stream;
     levels0.push_back(p0.raw_control.reset_n);epochs0.push_back(p0.raw_control.source_epoch);
     $display("RESET_STREAM p0 seq=%0d ticks=%0d level=%b epoch=%0d",n0,p0.raw_control.timestamp_ticks,p0.raw_control.reset_n,p0.raw_control.source_epoch);
   end
-  always @(p1.control_toggle)if(monitor_ready && p1.raw_control.control_seq!=0)begin
+  always @(p1.control_toggle)if(configuration_sealed && p1.raw_control.control_seq!=0)begin
     n1++;
-    if(p1.raw_control.control_seq!=n1 || p1.raw_control.timestamp_ticks!=(n1==1?0:2000000) ||
+    if(p1.raw_control.control_seq!=n1 || p1.raw_control.timestamp_ticks!=(n1==1?1:2000001) ||
        p1.raw_control.point_handle!=point_handle_for_id("stream.p1"))
       $fatal(1,"p1 control tuple/receipt must preserve original sequence, time and origin");
     levels1.push_back(p1.raw_control.reset_n);
@@ -40,7 +40,7 @@ module tb_settle_reset_stream;
     add_group_member("stream.parent","stream.child");
     add_point_member("stream.parent","stream.p1");wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
-    #(2000002-$time);clk=1;stage<=1;
+    #(2000001-$time);clk=1;stage<=1;
     #1;clk=0;
     if(mode==0)begin
       if(n0!=5 || levels0[0]!==1'b1 || levels0[1]!==1'bz || levels0[2]!==1'bx ||
@@ -69,7 +69,7 @@ module tb_settle_reset_stream;
        child.accepted_control_count!=(mode==0?5:1) || parent.accepted_control_count!=(mode==0?8:2) ||
        retained_frame_count(p0.transport_source)!=0 || retained_frame_count(child.transport_source)!=0)
       $fatal(1,"group reset still collects/publishes original-time frames and confirms only after its own receipt");
-    #(3000003-$time);
+    #(3000002-$time);
     if(child.window_bytes!=0 || parent.window_bytes!=(mode==0?16:24) ||
        !child.bytes_complete || !parent.bytes_complete || !parent.events_complete ||
        parent.member_reset_coverage!=(mode==0))

@@ -10,6 +10,68 @@ extern "C" {
 #endif
 extern void bw_slot_settlement_arrived(void);
 extern void bw_native_reset_seen(svBit prepare, svLogic previous, svLogic current);
+extern void bw_native_point_edge(void);
+extern int bw_native_point_audit(void);
+extern void bw_native_scheduler_failed(void);
+
+typedef struct point_watch {
+    svScope scope;
+    vpiHandle object, callback;
+    s_vpi_time time;
+    s_vpi_value value;
+    svLogic previous;
+    struct point_watch *next;
+} point_watch;
+static point_watch *point_watches;
+
+static PLI_INT32 point_clock_changed(p_cb_data callback)
+{
+    point_watch *watch = (point_watch *)callback->user_data;
+    svLogic old = watch->previous;
+    int raw = callback->value->value.scalar;
+    svLogic value = raw == vpi0 ? sv_0 : raw == vpi1 ? sv_1 : raw == vpiZ ? sv_z : sv_x;
+    svScope previous;
+    watch->previous = value;
+    /* IEEE four-state posedge: 0->1/X/Z, X/Z->1. */
+    if ((old == sv_0 && value != sv_0) ||
+        ((old == sv_x || old == sv_z) && value == sv_1)) {
+        previous = svSetScope(watch->scope);
+        bw_native_point_edge();
+        if (previous) svSetScope(previous);
+    }
+    return 0;
+}
+
+void *bw_native_watch_point_clock(const char *scope_path)
+{
+    point_watch *watch;
+    s_cb_data callback;
+    s_vpi_value value;
+    size_t length = strlen(scope_path);
+    char *path;
+    if (length > SIZE_MAX - 5) return NULL;
+    watch = (point_watch *)calloc(1, sizeof(*watch));
+    path = (char *)malloc(length + 5);
+    if (!watch || !path) { free(watch); free(path); return NULL; }
+    memcpy(path, scope_path, length); memcpy(path + length, ".clk", 5);
+    watch->scope = svGetScopeFromName(scope_path);
+    watch->object = vpi_handle_by_name((PLI_BYTE8 *)path, NULL);
+    free(path);
+    if (!watch->scope || !watch->object) { free(watch); return NULL; }
+    memset(&value, 0, sizeof(value)); value.format = vpiScalarVal;
+    vpi_get_value(watch->object, &value);
+    watch->previous = value.value.scalar == vpi0 ? sv_0 : value.value.scalar == vpi1 ? sv_1 :
+                      value.value.scalar == vpiZ ? sv_z : sv_x;
+    watch->time.type = vpiSimTime; watch->value.format = vpiScalarVal;
+    memset(&callback, 0, sizeof(callback));
+    callback.reason = cbValueChange; callback.cb_rtn = point_clock_changed;
+    callback.obj = watch->object; callback.time = &watch->time; callback.value = &watch->value;
+    callback.user_data = (PLI_BYTE8 *)watch;
+    watch->callback = vpi_register_cb(&callback);
+    if (!watch->callback) { free(watch); return NULL; }
+    watch->next = point_watches; point_watches = watch;
+    return watch;
+}
 
 typedef struct reset_watch {
     svScope scope;
@@ -25,7 +87,9 @@ static unsigned long long reset_watch_count;
 static int reset_watch_error;
 #ifdef BW_MON_TEST_FAULTS
 static int fail_next_reset_allocation;
+static int fail_next_slot_registration;
 void bw_native_fail_reset_allocation(void) { fail_next_reset_allocation = 1; }
+void bw_native_fail_slot_registration(void) { fail_next_slot_registration = 1; }
 #endif
 
 static svLogic scalar_logic(int value)
@@ -59,6 +123,7 @@ static PLI_INT32 reset_changed(p_cb_data callback)
 static PLI_INT32 release_reset_watches(p_cb_data callback)
 {
     reset_watch *watch;
+    point_watch *point;
     (void)callback;
     dirty_resets = NULL;
     while (reset_watches) {
@@ -68,6 +133,10 @@ static PLI_INT32 release_reset_watches(p_cb_data callback)
         free(watch);
     }
     reset_watch_count = 0;
+    while (point_watches) {
+        point = point_watches; point_watches = point->next;
+        vpi_remove_cb(point->callback); free(point);
+    }
     return 0;
 }
 
@@ -150,11 +219,14 @@ void bw_native_reset_snapshot(void *handle)
 
 static int callback_pending = 0;
 static svScope package_scope;
+int bw_native_request_slot_settlement(void);
 
 static PLI_INT32 settle_slot(p_cb_data callback)
 {
     svScope previous;
     reset_watch *watch;
+    point_watch *point;
+    int reaudit = 0;
     (void)callback;
     // Capture is ordered at value change; dispatch waits until all raw input
     // and combinational-condition updates have settled, before granting work.
@@ -166,8 +238,16 @@ static PLI_INT32 settle_slot(p_cb_data callback)
         if (previous) svSetScope(previous);
     }
     callback_pending = 0;
+    /* Audit the PREVIOUS grant only after its SV continuations. A callback is
+       not a completion receipt and callback registration order is irrelevant. */
+    for (point = point_watches; point; point = point->next) {
+        previous = svSetScope(point->scope);
+        if (bw_native_point_audit()) reaudit = 1;
+        if (previous) svSetScope(previous);
+    }
     previous = svSetScope(package_scope);
     bw_slot_settlement_arrived();
+    if (reaudit && !bw_native_request_slot_settlement()) bw_native_scheduler_failed();
     if (previous) svSetScope(previous);
     return 0;
 }
@@ -178,6 +258,9 @@ int bw_native_request_slot_settlement(void)
     s_vpi_time delay;
     vpiHandle handle;
     if (callback_pending) return 1;
+#ifdef BW_MON_TEST_FAULTS
+    if (fail_next_slot_registration) { fail_next_slot_registration = 0; return 0; }
+#endif
     package_scope = svGetScope();
     if (!package_scope) return 0;
     memset(&callback, 0, sizeof(callback));

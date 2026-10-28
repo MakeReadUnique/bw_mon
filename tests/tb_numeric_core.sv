@@ -112,6 +112,10 @@ module tb_numeric_core;
         $fatal(1,"known partial raw sums and X/Z reset quality must remain legitimate normalized input");
       $display("TB_PASS numeric_core known_partial");$finish;
     end
-    $fatal(1,"expected core error did not occur");
+    if(mode=="kind")begin
+      if(!monitoring_shared_disabled)$fatal(1,"unknown owner must conservatively disable shared monitoring");
+    end else if(!scope_disabled(BW_GROUP,"numeric.core"))$fatal(1,"numeric core owner was not disabled");
+    if(accepted!=0 || controls!=0)$fatal(1,"failed numeric input received a success receipt");
+    $display("TB_PASS numeric_core quarantined mode=%s",mode);$finish;
   end
 endmodule

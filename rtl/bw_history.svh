@@ -8,12 +8,13 @@
          run.bytes_complete==incoming.bytes_complete && run.events_complete==incoming.events_complete &&
          run.has_reset==(incoming.reset_points!=0))begin
         delta_ticks=checked_sub(incoming.timestamp_ticks,run.last_ticks,scope_id);
+        if(runtime_failed())return;
         delta_edges=checked_sub(incoming.edge_index,run.last_edge,scope_id);
-        if(core_failure_seen)return;
+        if(runtime_failed())return;
         if(run.count==1 || (delta_ticks==run.step_ticks && delta_edges==run.step_edges))begin
           if(run.count==1)begin run.step_ticks=delta_ticks;run.step_edges=delta_edges;end
           run.count=checked_add(run.count,1,{scope_id," history count"});
-          if(core_failure_seen)return;
+          if(runtime_failed())return;
           run.last_ticks=incoming.timestamp_ticks;run.last_edge=incoming.edge_index;
           history[$]=run;return;
         end
@@ -25,7 +26,7 @@
     run.bytes_complete=incoming.bytes_complete;run.events_complete=incoming.events_complete;
     run.has_reset=(incoming.reset_points!=0);
     check_storage_growth(history.size(),scope_id,"history.events",incoming.timestamp_ticks,incoming.edge_index,incoming.record_seq);
-    if(core_failure_seen)return;
+    if(runtime_failed())return;
     history.push_back(run);
   endtask
 
@@ -35,10 +36,13 @@
     if(count==1)return 1;
     if(step==0 || count==0)begin
       core_error("HISTORY_STATE",scope_id,$sformatf("first=%0d step=%0d count=%0d left=%0d",first,step,count,left));
+      if(runtime_failed())return '0;
       return 0;
     end
-    delta=checked_sub(left,first,scope_id);n=delta/step;
+    delta=checked_sub(left,first,scope_id);
+    if(runtime_failed())return '0;n=delta/step;
     if(delta%step!=0)n=checked_add(n,1,scope_id);
+    if(runtime_failed())return '0;
     return n<count ? n : count;
   endfunction
 
@@ -49,21 +53,28 @@
       run=history[0];
       n=(WINDOW_BASIS==BW_NS) ? count_before(run.first_ticks,run.step_ticks,run.count,left_ticks) :
                               count_before(run.first_edge,run.step_edges,run.count,left_cycle);
-      if(core_failure_seen || n==0)return;
+      if(runtime_failed())return;
+      if(runtime_failed() || n==0)return;
       next_bytes=checked_sub(retained_bytes,checked_mul(n,run.byte_inc,scope_id),scope_id);
+      if(runtime_failed())return;
       next_events=checked_sub(retained_events,checked_mul(n,run.event_inc,scope_id),scope_id);
+      if(runtime_failed())return;
       next_unknown_bytes=run.bytes_complete ? unknown_bytes : checked_sub(unknown_bytes,n,scope_id);
+      if(runtime_failed())return;
       next_unknown_events=run.events_complete ? unknown_events : checked_sub(unknown_events,n,scope_id);
+      if(runtime_failed())return;
       next_resets=run.has_reset ? checked_sub(reset_entries,n,scope_id) : reset_entries;
-      if(core_failure_seen)return;
+      if(runtime_failed())return;
       retained_bytes=next_bytes;retained_events=next_events;
       unknown_bytes=next_unknown_bytes;unknown_events=next_unknown_events;reset_entries=next_resets;
       if(n==run.count)discarded=history.pop_front();
       else begin
         run.first_ticks=checked_add(run.first_ticks,checked_mul(n,run.step_ticks,scope_id),scope_id);
+        if(runtime_failed())return;
         run.first_edge=checked_add(run.first_edge,checked_mul(n,run.step_edges,scope_id),scope_id);
+        if(runtime_failed())return;
         run.count=checked_sub(run.count,n,scope_id);
-        if(core_failure_seen)return;
+        if(runtime_failed())return;
         history[0]=run;return;
       end
     end
@@ -74,17 +85,17 @@
     bw_u64_t delta_ticks;
     if(clock_runs.size()!=0)begin
       run=clock_runs[$];delta_ticks=checked_sub(at_ticks,run.last_ticks,scope_id);
-      if(core_failure_seen)return;
+      if(runtime_failed())return;
       if(run.count==1 || delta_ticks==run.step_ticks)begin
         if(run.count==1)run.step_ticks=delta_ticks;
         run.count=checked_add(run.count,1,{scope_id," clock count"});
-        if(core_failure_seen)return;
+        if(runtime_failed())return;
         run.last_ticks=at_ticks;clock_runs[$]=run;return;
       end
     end
     run='0;run.first_ticks=at_ticks;run.last_ticks=at_ticks;run.first_edge=at_edge;run.count=1;
     check_storage_growth(clock_runs.size(),scope_id,"history.clock",at_ticks,at_edge,last_record_seq);
-    if(core_failure_seen)return;
+    if(runtime_failed())return;
     clock_runs.push_back(run);
   endtask
 
@@ -93,11 +104,14 @@
     bw_u64_t n;
     while(clock_runs.size()!=0 && clock_runs[0].first_edge<left_cycle)begin
       run=clock_runs[0];n=checked_sub(left_cycle,run.first_edge,scope_id);
+      if(runtime_failed())return;
       if(n>=run.count)discarded=clock_runs.pop_front();
       else begin
         run.first_ticks=checked_add(run.first_ticks,checked_mul(n,run.step_ticks,scope_id),scope_id);
-        run.first_edge=checked_add(run.first_edge,n,scope_id);run.count=checked_sub(run.count,n,scope_id);
-        if(core_failure_seen)return;
+        if(runtime_failed())return;
+        run.first_edge=checked_add(run.first_edge,n,scope_id);
+        if(runtime_failed())return;run.count=checked_sub(run.count,n,scope_id);
+        if(runtime_failed())return;
         clock_runs[0]=run;return;
       end
     end
@@ -105,7 +119,8 @@
 
   function automatic bw_u64_t left_clock_tick();
     if(clock_runs.size()==0)begin
-      core_error("HISTORY_STATE",scope_id,"actual left clock boundary is absent");return 0;
+      core_error("HISTORY_STATE",scope_id,"actual left clock boundary is absent");
+      if(runtime_failed())return '0;return 0;
     end
     return clock_runs[0].first_ticks;
   endfunction

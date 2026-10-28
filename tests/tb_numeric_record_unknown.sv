@@ -22,6 +22,7 @@ module tb_numeric_record_unknown;
     $display("NUMERIC_RECORD byte_unknown=%0b seq_unknown=%0b control_unknown=%0b",$isunknown(frame.byte_inc),$isunknown(frame.record_seq),$isunknown(control.control_seq));
     if(mode=="control_sequence" || mode=="control_origin")publish_control(source,control);
     else publish_frame(source,frame);
-    $fatal(1,"expected core error did not occur");
+    if(!scope_disabled(BW_POINT,"record.subject"))$fatal(1,"unknown source metadata must disable its publication owner");
+    $display("TB_PASS numeric_record_unknown quarantined mode=%s",mode);$finish;
   end
 endmodule

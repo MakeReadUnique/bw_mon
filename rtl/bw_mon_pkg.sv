@@ -292,14 +292,75 @@ package bw_mon_pkg;
   bw_u64_t monitor_start_ticks = 0;
   bw_u64_t registration_seq = 0;
 
-  function automatic void core_error(string code, string scope_id, string detail);
-    // VCS can return from $fatal while executing final blocks. Retain a shared
-    // terminal-failure fact before reporting, so no finalizer emits new results.
+  // A typed owner is never inferred from the spelling of a diagnostic context.
+  // Point and group IDs may deliberately be identical.
+  bit monitoring_disabled[string];
+  string monitoring_root_cause[string];
+  string monitoring_failure_code[string];
+  bit monitoring_shared_disabled=0;
+  string monitoring_shared_failure_code,monitoring_shared_failure_scope,monitoring_shared_failure_detail;
+  bw_u64_t monitoring_failure_count=0;
+  function automatic string scope_key(bw_scope_t kind,string id);
+    return $sformatf("%0d:%s",kind,id);
+  endfunction
+  function automatic bit scope_disabled(bw_scope_t kind,string id);
+    return monitoring_shared_disabled || monitoring_disabled.exists(scope_key(kind,id));
+  endfunction
+  function automatic bit scope_failed(bw_scope_t kind,string id);
+    return core_failure_seen || scope_disabled(kind,id);
+  endfunction
+  function automatic void runtime_scope_error(bw_scope_t kind,string id,string code,string detail);
+    string key;
+    int pending_sources[$];
+    int source,parent;
+    if(!monitor_ready)begin core_error(code,id,detail);return;end
+    key=scope_key(kind,id);
+    if(scope_disabled(kind,id))return;
+    monitoring_disabled[key]=1;monitoring_root_cause[key]=key;monitoring_failure_code[key]=code;
+    if(kind==BW_POINT)cancel_point_completion(id);
+    monitoring_failure_count++;
+    $warning("BW_CORE_WARNING code=%s scope_kind=%0d scope=%s time_ticks=%0d %s",code,kind,id,$time,detail);
+    if(kind==BW_POINT && point_by_id.exists(id))pending_sources.push_back(registered_points[point_by_id[id]].transport_source);
+    if(kind==BW_GROUP && group_by_id.exists(id))pending_sources.push_back(registered_groups[group_by_id[id]].source_handle);
+    while(pending_sources.size()!=0)begin
+      source=pending_sources.pop_front();
+      foreach(registered_sources[source].parents[p])begin
+        parent=registered_sources[source].parents[p];
+        if(!monitoring_disabled.exists(scope_key(BW_GROUP,registered_groups[parent].id)))begin
+          monitoring_disabled[scope_key(BW_GROUP,registered_groups[parent].id)]=1;
+          monitoring_root_cause[scope_key(BW_GROUP,registered_groups[parent].id)]=key;
+          $display("BW_SCOPE_DISABLED scope_kind=1 scope=%s root=%s time_ticks=%0d",registered_groups[parent].id,key,$time);
+          pending_sources.push_back(registered_groups[parent].source_handle);
+        end
+      end
+    end
+  endfunction
+
+  function automatic void runtime_shared_error(string code,string id,string detail);
+    if(!monitor_ready)begin core_error(code,id,detail);return;end
+    if(monitoring_shared_disabled)return;
+    monitoring_shared_disabled=1;monitoring_failure_count++;
+    monitoring_shared_failure_code=code;monitoring_shared_failure_scope=id;monitoring_shared_failure_detail=detail;
+    $warning("BW_CORE_WARNING code=%s scope_kind=SHARED scope=%s time_ticks=%0d %s",code,id,$time,detail);
+  endfunction
+
+  function automatic void fatal_core_error(string code,string scope_id,string detail);
     core_failure_seen=1;
     if(!monitor_ready)
       $display("BW_STARTUP_FAILURE stage=%s scope=%s %s",startup_stage,scope_id,startup_status());
-    $fatal(1, "BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",
-           code, scope_id, $time, detail);
+    $fatal(1,"BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",code,scope_id,$time,detail);
+  endfunction
+  function automatic void core_error(string code, string scope_id, string detail);
+    // Lifecycle violations remain fatal even after readiness. Runtime callers
+    // without an explicitly typed owner conservatively disable all monitoring.
+    if(monitor_ready && !(code inside {"LATE_CONFIG","CONFIG_FROZEN","NOT_READY","REPORT_OWNER",
+       "STARTUP_STATE","STARTUP_INCOMPLETE","SETUP_MISSING","WINDOW_CONFIG","PROTOCOL_CONFIG",
+       "BYTE_CONFIG","CREDIT_CONFIG","HINT_CONFIG","EPISODE_CONFIG","PHASE_CONFIG"}))begin
+      runtime_shared_error(code,scope_id,detail);return;
+    end
+    // VCS can return from $fatal while executing final blocks. Retain a shared
+    // terminal-failure fact before reporting, so no finalizer emits new results.
+    fatal_core_error(code,scope_id,detail);
   endfunction
 
   function automatic string metric_reason_name(bw_metric_reason_t reason);
@@ -320,7 +381,7 @@ package bw_mon_pkg;
   function automatic void emit_variation_context(string scope_id,string interval_kind,
       bw_scope_t scope_kind,bw_u64_t epoch,bw_u64_t episode,bw_u64_t phase,bw_u64_t sequence_id,
       bw_u64_t start_ticks,bw_u64_t end_ticks,bw_variation_result_t result);
-    if(core_failure_seen)return;
+    if(scope_failed(scope_kind,scope_id))return;
     $display("BW_VARIATION scope_kind=%0d scope=%s epoch=%0d episode=%0d phase=%0d result_seq=%0d interval=%s start_ticks=%0d end_ticks=%0d basis=%0d W=%0d S=%0d samples=%0d first_sample_ticks=%0d last_sample_ticks=%0d sample_span_ticks=%0d mean_gbps=%0.17g min_gbps=%0.17g max_gbps=%0.17g stddev_gbps=%s cv_pct=%s interval_known=%0b coverage_complete=%0b minmax_valid=%0b stddev_valid=%0b cv_valid=%0b minmax_reason=%s stddev_reason=%s cv_reason=%s excluded_warmup=%0d excluded_foreign=%0d unknown_samples=%0d excluded_denominator=%0d",
       scope_kind,scope_id,epoch,episode,phase,sequence_id,interval_kind,start_ticks,end_ticks,
       result.window_basis,result.window_width,result.update_stride,result.sample_count,result.first_sample_ticks,
@@ -349,7 +410,7 @@ package bw_mon_pkg;
   endfunction
 
   function automatic void emit_episode_result(string scope_id, bw_episode_result_t result);
-    if (core_failure_seen) return;
+    if(scope_failed(result.scope_kind,scope_id))return;
     if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
     // Type/transport bridge for the dedicated check/report owner. Episode
     // arithmetic stays in bw_stats_core; this entry does no performance check.
@@ -370,7 +431,7 @@ package bw_mon_pkg;
   endfunction
 
   function automatic void emit_phase_result(string scope_id, bw_phase_result_t result);
-    if(core_failure_seen)return;
+    if(scope_failed(result.scope_kind,scope_id))return;
     if(!monitor_time_supported($time))begin check_monitor_time($time,scope_id);return;end
     $display("BW_PHASE scope_kind=%0d scope=%s epoch=%0d episode=%0d phase=%0d result_seq=%0d kind=%0d start_ticks=%0d end_ticks=%0d confirm_ticks=%0d start_known=%0b end_known=%0b start_bytes=%0d end_bytes=%0d start_events=%0d end_events=%0d delta=%0.17g rms=%0.17g reason=%0d",
       result.scope_kind,scope_id,result.stats_epoch,result.episode_id,result.phase_id,result.result_seq,
@@ -422,12 +483,12 @@ package bw_mon_pkg;
     bit [64:0] wide;
     if ($isunknown({a,b})) begin
       core_error("INTEGER_UNKNOWN",scope_context,$sformatf("addition a=%h b=%h",a,b));
-      return 0;
+      return a;
     end
     wide = {1'b0,a} + {1'b0,b};
     if (wide[64]) begin
       core_error("INTEGER_OVERFLOW", scope_context,$sformatf("addition a=%0d b=%0d", a, b));
-      return 0;
+      return a;
     end
     return wide[63:0];
   endfunction
@@ -436,12 +497,12 @@ package bw_mon_pkg;
     bit [127:0] wide;
     if ($isunknown({a,b})) begin
       core_error("INTEGER_UNKNOWN",scope_context,$sformatf("multiplication a=%h b=%h",a,b));
-      return 0;
+      return a;
     end
     wide = {64'b0,a} * {64'b0,b};
     if (wide[127:64] != 0) begin
       core_error("INTEGER_OVERFLOW", scope_context,$sformatf("multiplication a=%0d b=%0d", a, b));
-      return 0;
+      return a;
     end
     return wide[63:0];
   endfunction
@@ -449,11 +510,11 @@ package bw_mon_pkg;
   function automatic bw_u64_t checked_sub(logic [63:0] a,logic [63:0] b,string scope_context);
     if($isunknown({a,b}))begin
       core_error("INTEGER_UNKNOWN",scope_context,$sformatf("subtraction a=%h b=%h",a,b));
-      return 0;
+      return a;
     end
     if(b>a)begin
       core_error("INTEGER_UNDERFLOW",scope_context,$sformatf("subtraction a=%0d b=%0d",a,b));
-      return 0;
+      return a;
     end
     return a-b;
   endfunction
@@ -550,6 +611,14 @@ package bw_mon_pkg;
   // One-shot semantic allocation rejection for contract tests only. It is not
   // a capacity limit, module parameter or ordinary-build configuration API.
   bit injected_growth_failures[string][string];
+  bit injected_point_faults[string][string];
+  function automatic void inject_point_fault(string id,string stage);
+    injected_point_faults[id][stage]=1;
+  endfunction
+  function automatic bit take_point_fault(string id,string stage);
+    if(!injected_point_faults.exists(id) || !injected_point_faults[id].exists(stage))return 0;
+    injected_point_faults[id].delete(stage);return 1;
+  endfunction
   function automatic void inject_growth_failure(string id,string resource);
     injected_growth_failures[id][resource]=1;
   endfunction
@@ -617,4 +686,5 @@ package bw_mon_pkg;
   `include "bw_slot_settlement.svh"
   `include "bw_mon_registry.svh"
   `include "bw_mon_transport.svh"
+  `include "bw_point_completion.svh"
 endpackage

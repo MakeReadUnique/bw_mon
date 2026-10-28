@@ -14,6 +14,7 @@ module bw_group_mon #(
   import bw_mon_pkg::*;
   string scope_id,monitor_path;
   bw_scope_t scope_kind=BW_GROUP;
+  `include "bw_scope_runtime.svh"
   // Effective public configuration after omission defaults are applied.
   bw_u64_t effective_stride,effective_silence;
   int group_handle,transport_source,direct_member_count,recursive_point_count;
@@ -107,14 +108,18 @@ module bw_group_mon #(
 
   always @(posedge clk) begin : capture_expected_edge
     expected_edge_t expected;
-    if (monitor_ready && $time>measurement_start_ticks) begin
+    if (monitor_ready && $time>measurement_start_ticks && !scope_failed(BW_GROUP,scope_id)) begin
       check_monitor_time($time,scope_id);
+      if(runtime_failed())disable capture_expected_edge;
       if (expected_edge_index!=0 && $time<=last_expected_ticks)
         core_error("GROUP_CLOCK",scope_id,"actual sampling timestamps must strictly increase");
-      expected_edge_index=checked_add(expected_edge_index,1,scope_id);last_expected_ticks=$time;
+      if(runtime_failed())disable capture_expected_edge;
+      expected_edge_index=checked_add(expected_edge_index,1,scope_id);
+      if(runtime_failed())disable capture_expected_edge;
+      last_expected_ticks=$time;
       expected.timestamp_ticks=$time;expected.edge_index=expected_edge_index;
       check_storage_growth(expected_edges.size(),scope_id,"group.expected",expected.timestamp_ticks,expected.edge_index,expected.edge_index);
-      if(core_failure_seen)disable capture_expected_edge;
+      if(runtime_failed())disable capture_expected_edge;
       expected_edges.push_back(expected);
       expected_notice=checked_add(expected_notice,1,scope_id);refresh_progress();
     end
@@ -122,9 +127,11 @@ module bw_group_mon #(
 
   task automatic commit_control(int member_index,bw_control_frame_t envelope);
     bw_u64_t receipt;
+    if(runtime_failed())return;
     receipt=checked_add(accepted_control_count,1,scope_id);
     core_control=envelope.value;core_control_toggle<=!core_control_toggle;
-    wait(accepted_control_count>=receipt);
+    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id));
+    if(scope_failed(BW_GROUP,scope_id))return;
     publish_control(transport_source,envelope.value);
     raw_control=envelope.value;control_result_seq=checked_add(control_result_seq,1,scope_id);
     control_toggle<=!control_toggle;
@@ -135,6 +142,7 @@ module bw_group_mon #(
   task automatic commit_frame(expected_edge_t expected);
     bw_record_t member,frame;
     expected_edge_t discarded;
+    if(runtime_failed())return;
     frame='0;frame.timestamp_ticks=expected.timestamp_ticks;frame.edge_index=expected.edge_index;
     frame.record_seq=checked_add(raw_sequence,1,scope_id);
     frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1'b1;
@@ -148,7 +156,8 @@ module bw_group_mon #(
     end
     raw_sequence=frame.record_seq;raw_record=frame;
     publish_frame(transport_source,frame);record_toggle<=!record_toggle;
-    wait(accepted_record_seq>=frame.record_seq);
+    wait(accepted_record_seq>=frame.record_seq || scope_failed(BW_GROUP,scope_id));
+    if(scope_failed(BW_GROUP,scope_id))return;
     for (int m=0;m<direct_member_count;m++)
       acknowledge_member_frame(group_handle,m,frame.record_seq);
     discarded=expected_edges.pop_front();expected_notice=checked_add(expected_notice,1,scope_id);
@@ -171,6 +180,7 @@ module bw_group_mon #(
 `endif
     notice=group_notification(group_handle);
     forever begin
+      if(scope_failed(BW_GROUP,scope_id))return;
 `ifdef BW_MON_TEST_SCHEDULING
       wait(!test_gate.paused);
 `endif
@@ -196,10 +206,11 @@ module bw_group_mon #(
               expected_edges[0].edge_index,expected_edges[0].timestamp_ticks));
         end else all_frames=0;
       end
+      if(runtime_failed())return;
       if (all_frames && expected_edges[0].timestamp_ticks<=direct_source_watermark(group_handle)) begin
         commit_frame(expected_edges[0]);continue;
       end
-      wait(notice.seq!=seen_notice || expected_notice!=seen_expected);
+      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || scope_failed(BW_GROUP,scope_id));
     end
   endtask
 
@@ -207,6 +218,7 @@ module bw_group_mon #(
 
   function automatic bit deadline_ok();
     bw_record_t frame;
+    if(scope_failed(BW_GROUP,scope_id))return 1;
     if (expected_edges.size()==0) begin
       for (int m=0;m<direct_member_count;m++)
         if (peek_member_frame(group_handle,m,frame)) return 0;

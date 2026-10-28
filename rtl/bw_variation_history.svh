@@ -16,11 +16,11 @@
       excluded=sample.warmup || sample.foreign_activity || sample.unknown_observation || sample.bad_denominator;
       if(same_flags && (excluded || $realtobits(run.value)==$realtobits(sample.value)))begin
         delta_ticks=checked_sub(sample.ticks,run.last_ticks,scope_id);
-        if(core_failure_seen)return;
+        if(runtime_failed())return;
         if(run.count==1 || delta_ticks==run.step_ticks)begin
           if(run.count==1)run.step_ticks=delta_ticks;
           run.count=checked_add(run.count,1,{scope_id," pending publication count"});
-          if(core_failure_seen)return;
+          if(runtime_failed())return;
           run.last_ticks=sample.ticks;buffer[$]=run;return;
         end
       end
@@ -29,7 +29,7 @@
       warmup:sample.warmup,foreign_activity:sample.foreign_activity,
       unknown_observation:sample.unknown_observation,bad_denominator:sample.bad_denominator};
     check_storage_growth(buffer.size(),scope_id,resource,sample.ticks,last_edge_index,last_record_seq);
-    if(core_failure_seen)return;
+    if(runtime_failed())return;
     buffer.push_back(run);
   endtask
 
@@ -37,17 +37,20 @@
     variation_run_t run,discarded;
     if(buffer.size()==0)begin
       core_error("HISTORY_STATE",scope_id,"pending publication is absent");
+      if(runtime_failed())return;
       sample='{default:0};return;
     end
     run=buffer[0];sample=first_variation_sample(run);
     if(run.count==1)discarded=buffer.pop_front();
     else begin
       if(run.step_ticks==0 || run.count==0)begin
-        core_error("HISTORY_STATE",scope_id,"pending publication stride/count is invalid");return;
+        core_error("HISTORY_STATE",scope_id,"pending publication stride/count is invalid");
+        if(runtime_failed())return;return;
       end
       run.ticks=checked_add(run.ticks,run.step_ticks,scope_id);
+      if(runtime_failed())return;
       run.count=checked_sub(run.count,1,scope_id);
-      if(core_failure_seen)return;
+      if(runtime_failed())return;
       buffer[0]=run;
     end
   endtask

@@ -99,7 +99,10 @@
  {
   "name": "cycle_edge_error",
   "top": "tb_cycle_edge_error",
-  "expect_error": "BW_CORE_ERROR code=EDGE_SEQUENCE"
+  "expect_warning": "BW_CORE_WARNING code=EDGE_SEQUENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "protocol_recording",
@@ -120,7 +123,10 @@
  {
   "name": "dynamic_size_error",
   "top": "tb_dynamic_size_error",
-  "expect_error": "BW_CORE_ERROR code=TRANSFER_BYTES"
+  "expect_warning": "BW_CORE_WARNING code=TRANSFER_BYTES",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "protocol_config_error",
@@ -274,7 +280,10 @@
  {
   "name": "reset_time_budget",
   "top": "tb_reset_time_budget",
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "reset_member_controls",
@@ -291,7 +300,10 @@
  {
   "name": "member_control_error",
   "top": "tb_member_control_error",
-  "expect_error": "BW_CORE_ERROR code=CONTROL_SEQUENCE"
+  "expect_warning": "BW_CORE_WARNING code=CONTROL_SEQUENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "member_control_reference_error",
@@ -299,7 +311,10 @@
   "plusargs": [
    "+INVALID_POINT=1"
   ],
-  "expect_error": "BW_CORE_ERROR code=POINT_REFERENCE"
+  "expect_warning": "BW_CORE_WARNING code=POINT_REFERENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "reset_deassert_sample",
@@ -308,15 +323,23 @@
  {
   "name": "hint_time_budget",
   "top": "tb_hint_time_budget",
-  "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT",
   "expect_log": [
-   "CORE_FAILURE_LATCHED"
-  ]
+   "MONITOR_DISABLED"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1,
+   "BW_HINT_HIT": 0
+  }
  },
  {
   "name": "hint_final_budget",
   "top": "tb_hint_final_budget",
-  "expect_error": "(?s)^(?!.*BW_HINT_END).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1,
+   "BW_HINT_END": 0
+  }
  },
  {
   "name": "hint_same_cycle_stream",
@@ -361,7 +384,11 @@
  {
   "name": "episode_final_budget",
   "top": "tb_episode_final_budget",
-  "expect_error": "(?s)^(?!.*BW_EPISODE).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1,
+   "BW_EPISODE ": 0
+  }
  },
  {
   "name": "episode_config_error",
@@ -1072,12 +1099,13 @@
   "plusargs": [
    "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg"
   ],
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT",
   "expect_counts": {
    "BW_CHECK ": 0,
    "BW_SUMMARY ": 0,
-   "BW_EPISODE ": 0
-  }
+   "BW_EPISODE ": 0,
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT"
  },
  {
   "name": "report_directory",
@@ -1135,12 +1163,13 @@
    "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg",
    "+SUBMIT_LATE"
   ],
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT",
   "expect_counts": {
    "BW_CHECK ": 0,
    "BW_SUMMARY ": 0,
-   "BW_EPISODE ": 0
-  }
+   "BW_EPISODE ": 0,
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT"
  },
  {
   "name": "report_unrelated_plusargs",
@@ -1336,7 +1365,10 @@
   "plusargs": [
    "+MODE=duplicate"
   ],
-  "expect_error": "BW_CORE_ERROR code=RECORD_SEQUENCE"
+  "expect_warning": "BW_CORE_WARNING code=RECORD_SEQUENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_record_gap",
@@ -1344,7 +1376,10 @@
   "plusargs": [
    "+MODE=record_gap"
   ],
-  "expect_error": "BW_CORE_ERROR code=RECORD_SEQUENCE"
+  "expect_warning": "BW_CORE_WARNING code=RECORD_SEQUENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_wrong_edge",
@@ -1352,7 +1387,10 @@
   "plusargs": [
    "+MODE=wrong_edge"
   ],
-  "expect_error": "BW_CORE_ERROR code=EDGE_SEQUENCE"
+  "expect_warning": "BW_CORE_WARNING code=EDGE_SEQUENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_wrong_time",
@@ -1360,7 +1398,10 @@
   "plusargs": [
    "+MODE=wrong_time"
   ],
-  "expect_error": "BW_CORE_ERROR code=FRAME_ALIGNMENT"
+  "expect_warning": "BW_CORE_WARNING code=FRAME_ALIGNMENT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_reverse",
@@ -1368,7 +1409,10 @@
   "plusargs": [
    "+MODE=reverse"
   ],
-  "expect_error": "BW_CORE_ERROR code=RECORD_SEQUENCE"
+  "expect_warning": "BW_CORE_WARNING code=RECORD_SEQUENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_cycle_quality",
@@ -2310,9 +2354,10 @@
    "BW_CHECK ": 0,
    "BW_PHASE ": 0,
    "BW_EPISODE ": 0,
-   "BW_SUMMARY ": 0
+   "BW_SUMMARY ": 0,
+   "BW_CORE_WARNING": 1
   },
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT"
  },
  {
   "name": "report_metrics_invalid_e2e_bw",
@@ -3000,7 +3045,10 @@
   "plusargs": [
    "+MODE=frame_bytes"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_frame_ticks_unknown",
@@ -3008,7 +3056,10 @@
   "plusargs": [
    "+MODE=frame_ticks"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_frame_sequence_unknown",
@@ -3016,7 +3067,10 @@
   "plusargs": [
    "+MODE=frame_sequence"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_control_sequence_unknown",
@@ -3024,7 +3078,10 @@
   "plusargs": [
    "+MODE=control_sequence"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_control_origin_unknown",
@@ -3032,7 +3089,10 @@
   "plusargs": [
    "+MODE=control_origin"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_dynamic_policy",
@@ -3206,7 +3266,10 @@
   "plusargs": [
    "+MODE=publish_handle"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_ack_frame",
@@ -3214,7 +3277,10 @@
   "plusargs": [
    "+MODE=ack_frame"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_ack_control",
@@ -3222,7 +3288,10 @@
   "plusargs": [
    "+MODE=ack_control"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_group_handle",
@@ -3230,7 +3299,10 @@
   "plusargs": [
    "+MODE=group_handle"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_member_index",
@@ -3238,7 +3310,10 @@
   "plusargs": [
    "+MODE=member_index"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_progress",
@@ -3246,7 +3321,10 @@
   "plusargs": [
    "+MODE=progress"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_valid_reset",
@@ -3261,12 +3339,18 @@
   "defines": [
    "BW_MON_TEST_FAULTS"
   ],
-  "expect_error": "BW_CORE_ERROR code=STORAGE_FAILURE scope=fault.point.*resource=history.events.*edge=1 record_seq=1",
   "sources": [
    "storage_failure_fixture.sv"
   ],
   "plusargs": [
    "+RESOURCE=history.events"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=history\\.events",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  },
+  "expect_log": [
+   "TB_PASS storage_failure resource=history\\.events.*quarantined=1"
   ]
  },
  {
@@ -3281,10 +3365,13 @@
   "plusargs": [
    "+RESOURCE=core.frames"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=core\\.frames)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=core\\.frames",
+  "expect_log": [
+   "TB_PASS storage_failure resource=core\\.frames.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_core_controls",
@@ -3332,10 +3419,13 @@
   "plusargs": [
    "+RESOURCE=core.timers"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=core\\.timers)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=core\\.timers",
+  "expect_log": [
+   "TB_PASS storage_failure resource=core\\.timers.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_quality_window",
@@ -3349,10 +3439,13 @@
   "plusargs": [
    "+RESOURCE=quality.window"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=quality\\.window)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=quality\\.window",
+  "expect_log": [
+   "TB_PASS storage_failure resource=quality\\.window.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_quality_episode",
@@ -3366,10 +3459,13 @@
   "plusargs": [
    "+RESOURCE=quality.episode"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=quality\\.episode)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=quality\\.episode",
+  "expect_log": [
+   "TB_PASS storage_failure resource=quality\\.episode.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_phase_fit",
@@ -3383,10 +3479,13 @@
   "plusargs": [
    "+RESOURCE=phase.fit"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.fit)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=phase\\.fit",
+  "expect_log": [
+   "TB_PASS storage_failure resource=phase\\.fit.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_phase_pending",
@@ -3400,10 +3499,13 @@
   "plusargs": [
    "+RESOURCE=phase.pending"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.pending)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=phase\\.pending",
+  "expect_log": [
+   "TB_PASS storage_failure resource=phase\\.pending.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_variation_episode",
@@ -3417,10 +3519,13 @@
   "plusargs": [
    "+RESOURCE=variation.episode"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=variation\\.episode)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=variation\\.episode",
+  "expect_log": [
+   "TB_PASS storage_failure resource=variation\\.episode.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_variation_phase",
@@ -3434,10 +3539,13 @@
   "plusargs": [
    "+RESOURCE=variation.phase"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=variation\\.phase)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=variation\\.phase",
+  "expect_log": [
+   "TB_PASS storage_failure resource=variation\\.phase.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_recorder_samples",
@@ -3451,10 +3559,13 @@
   "plusargs": [
    "+RESOURCE=recorder.samples"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=recorder\\.samples)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=recorder\\.samples",
+  "expect_log": [
+   "TB_PASS storage_failure resource=recorder\\.samples.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_recorder_controls",
@@ -3485,10 +3596,13 @@
   "plusargs": [
    "+RESOURCE=transport.frames"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=transport\\.frames)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=transport\\.frames",
+  "expect_log": [
+   "TB_PASS storage_failure resource=transport\\.frames.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_transport_controls",
@@ -3536,10 +3650,13 @@
   "plusargs": [
    "+RESOURCE=group.expected"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=group\\.expected)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=group\\.expected",
+  "expect_log": [
+   "TB_PASS storage_failure resource=group\\.expected.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_hint_backpressure_status",
@@ -3570,10 +3687,13 @@
   "plusargs": [
    "+RESOURCE=hint.backpressure.edges"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=hint\\.backpressure\\.edges)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=hint\\.backpressure\\.edges",
+  "expect_log": [
+   "TB_PASS storage_failure resource=hint\\.backpressure\\.edges.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_hint_backpressure_timers",
@@ -3587,10 +3707,13 @@
   "plusargs": [
    "+RESOURCE=hint.backpressure.timers"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=hint\\.backpressure\\.timers)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=hint\\.backpressure\\.timers",
+  "expect_log": [
+   "TB_PASS storage_failure resource=hint\\.backpressure\\.timers.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_report_scopes",
@@ -3674,10 +3797,13 @@
   "plusargs": [
    "+RESOURCE=history.clock"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=history\\.clock)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=history\\.clock",
+  "expect_log": [
+   "TB_PASS storage_failure resource=history\\.clock.*quarantined=1"
+  ]
  },
  {
   "name": "storage_failure_final_phase",
@@ -3692,10 +3818,10 @@
    "+RESOURCE=phase.pending",
    "+FINAL=1"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.pending)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=phase\\.pending"
  },
  {
   "name": "storage_failure_registry_source",
@@ -3791,7 +3917,10 @@
   "plusargs": [
    "+MODE=time"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_scope_kind",
@@ -3799,7 +3928,10 @@
   "plusargs": [
    "+MODE=scope_kind"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_scope_index",
@@ -3807,7 +3939,10 @@
   "plusargs": [
    "+MODE=scope_index"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_scope_invalid",
@@ -3815,7 +3950,10 @@
   "plusargs": [
    "+MODE=scope_invalid"
   ],
-  "expect_error": "BW_CORE_ERROR code=SCOPE_REFERENCE"
+  "expect_warning": "BW_CORE_WARNING code=SCOPE_REFERENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_pure_time",
@@ -3837,7 +3975,10 @@
   "plusargs": [
    "+MODE=frame_bytes"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_core_frame_time",
@@ -3845,7 +3986,10 @@
   "plusargs": [
    "+MODE=frame_time"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_core_control_sequence",
@@ -3853,7 +3997,10 @@
   "plusargs": [
    "+MODE=control_sequence"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_core_kind",
@@ -3861,7 +4008,10 @@
   "plusargs": [
    "+MODE=kind"
   ],
-  "expect_error": "BW_CORE_ERROR code=SCOPE_KIND"
+  "expect_warning": "BW_CORE_WARNING code=SCOPE_KIND",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_core_progress",
@@ -3869,7 +4019,10 @@
   "plusargs": [
    "+MODE=progress"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_core_known_partial",
@@ -4539,5 +4692,289 @@
  {"name":"checker_numeric_explicit_time","top":"tb_checker_numeric","plusargs":["+CASE=explicit_time","+BW_EXPECT=../../../tests/expect/checker_numeric_time.cfg"],"expect_counts":{"BW_CHECK .*metric=ramp_time .*actual=10 .*conclusion=PASS":1,"BW_DEFAULT_CHECK .*conclusion=FAIL":1},"expect_log":["BW_SUMMARY status=FAIL pass=1 fail=1 warning=0"]},
  {"name": "checker_numeric_terminal_crop", "top": "tb_checker_numeric", "plusargs": ["+CASE=terminal_crop"]},
  {"name": "checker_numeric_start_unknown", "top": "tb_checker_numeric", "plusargs": ["+CASE=start_unknown"]},
- {"name": "checker_numeric_nearzero_pass", "top": "tb_checker_numeric", "plusargs": ["+CASE=nearzero_pass"]}
+ {"name": "checker_numeric_nearzero_pass", "top": "tb_checker_numeric", "plusargs": ["+CASE=nearzero_pass"]},
+ {
+  "name": "point_runtime_isolation",
+  "top": "tb_point_runtime_isolation",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "expect_log": [
+   "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=damaged time_ticks=1000001",
+   "TB_PASS point_runtime_isolation healthy_bytes=32 damaged_bytes=0"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "point_missing_capture",
+  "top": "tb_point_completion",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=capture"
+  ],
+  "expect_log": [
+   "BW_CORE_WARNING code=POINT_COMPLETION scope_kind=0 scope=damaged time_ticks=1000001 .*stage=CAPTURE",
+   "TB_PASS point_completion",
+   "TB_READ_ONLY_CLOSURE ticks=1000001 damaged=1 healthy_bytes=16"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  },
+  "sources": [
+   "point_completion_observer.c"
+  ]
+ },
+ {
+  "name": "point_missing_publication",
+  "top": "tb_point_completion",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=publication"
+  ],
+  "expect_log": [
+   "BW_CORE_WARNING code=POINT_COMPLETION scope_kind=0 scope=damaged time_ticks=1000001 .*stage=PUBLICATION",
+   "TB_READ_ONLY_CLOSURE ticks=1000001 damaged=1 healthy_bytes=16",
+   "TB_PASS point_completion"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "point_missing_core",
+  "top": "tb_point_completion",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=core"
+  ],
+  "expect_log": [
+   "BW_CORE_WARNING code=POINT_COMPLETION scope_kind=0 scope=damaged time_ticks=1000001 .*stage=CORE_RECEIPT",
+   "TB_READ_ONLY_CLOSURE ticks=1000001 damaged=1 healthy_bytes=16",
+   "TB_PASS point_completion"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "point_lost_notice",
+  "top": "tb_point_completion",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=notice"
+  ],
+  "expect_log": [
+   "TB_READ_ONLY_CLOSURE ticks=1000001 damaged=0 healthy_bytes=16",
+   "TB_PASS point_completion"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 0
+  }
+ },
+ {
+  "name": "point_stopped_clock",
+  "top": "tb_point_completion",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=none"
+  ],
+  "expect_log": [
+   "TB_READ_ONLY_CLOSURE ticks=1000001 damaged=0 healthy_bytes=16",
+   "TB_PASS point_completion"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 0
+  }
+ },
+ {
+  "name": "point_held_record",
+  "top": "tb_point_completion",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=held"
+  ],
+  "expect_log": [
+   "BW_CORE_WARNING code=POINT_COMPLETION scope_kind=0 scope=damaged time_ticks=1000001 .*stage=PUBLICATION",
+   "TB_READ_ONLY_CLOSURE ticks=1000001 damaged=1 healthy_bytes=16",
+   "TB_PASS point_completion"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "point_finish_immediate",
+  "top": "tb_point_finish",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=immediate"
+  ],
+  "expect_log": [
+   "BW_POINT_TERMINAL scope=finish.point state=INTERRUPTED.*time_ticks=1000001",
+   "TB_PASS point_finish immediate"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 0,
+   "BW_SUMMARY": 0
+  }
+ },
+ {
+  "name": "point_finish_normal",
+  "top": "tb_point_finish",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=normal"
+  ],
+  "expect_log": [
+   "BW_POINT_TERMINAL scope=finish.point state=NORMAL.*time_ticks=1000001",
+   "TB_PASS point_finish normal"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 0,
+   "BW_SUMMARY": 1
+  }
+ },
+ {
+  "name": "point_finish_control",
+  "top": "tb_point_finish",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=control"
+  ],
+  "expect_log": [
+   "BW_POINT_TERMINAL scope=finish.point state=INTERRUPTED.*time_ticks=1000001",
+   "TB_PASS point_finish control"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 0,
+   "BW_SUMMARY": 0
+  }
+ },
+ {
+  "name": "point_reactive_completion",
+  "top": "tb_point_reactive_completion",
+  "sources": [
+   "point_completion_observer.c"
+  ],
+  "expect_log": [
+   "TB_PASS point_reactive_completion original_ticks=1000001 assertions=20 peer_bytes=16",
+   "BW_POINT_TERMINAL scope=chain.point state=NORMAL"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 0
+  }
+ },
+ {
+  "name": "point_historical_fail",
+  "top": "tb_point_historical_fail",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+BW_EXPECT=../../../tests/expect/point_runtime_isolation.cfg"
+  ],
+  "expect_log": [
+   "TB_PASS point_historical_fail retained_fail=1 later_pass=1 typed_group_healthy=1",
+   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "point_four_state_edges",
+  "top": "tb_point_four_state_edges",
+  "expect_counts": {
+   "BW_CORE_WARNING": 0
+  },
+  "expect_log": [
+   "TB_PASS point_four_state_edges actual_edges=4 bytes=32",
+   "BW_POINT_TERMINAL scope=fourstate state=NORMAL expected=4"
+  ]
+ },
+ {
+  "name": "point_shared_scheduler",
+  "top": "tb_point_shared_scheduler",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=SLOT_SCHEDULER scope_kind=SHARED.*time_ticks=1000001",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  },
+  "expect_log": [
+   "TB_PASS point_shared_scheduler all_disabled=1 accepted=0"
+  ]
+ },
+ {
+  "name": "point_reset_capture_isolation",
+  "top": "tb_point_runtime_isolation",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "expect_log": [
+   "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=damaged time_ticks=1000001",
+   "TB_PASS point_runtime_isolation healthy_bytes=32 damaged_bytes=0"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  },
+  "plusargs": [
+   "+RESOURCE=scheduler.reset_capture"
+  ]
+ },
+ {
+  "name": "point_historical_shared_arithmetic",
+  "top": "tb_point_historical_fail",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+BW_EXPECT=../../../tests/expect/point_runtime_isolation.cfg",
+   "+SHARED_ARITHMETIC"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_OVERFLOW scope_kind=SHARED",
+  "expect_log": [
+   "TB_PASS point_historical_shared_arithmetic retained_fail=1 retained_counter=18446744073709551615",
+   "BW_SUMMARY status=FAIL pass=0 fail=1 warning=3 scopes_done=3 scopes_expected=3"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ }
 ]
