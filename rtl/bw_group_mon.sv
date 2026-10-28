@@ -208,7 +208,7 @@ module bw_group_mon #(
   initial begin : cancel_disabled_work
     wait(monitor_ready);
     forever begin
-      if(scope_failed(BW_GROUP,scope_id))begin
+      if(scope_disabled(BW_GROUP,scope_id))begin
         expected_edges.delete();captured_resets.delete();
         collector_recovery_pending=0;collector_waiting=0;
         core.cancel_runtime_work();
@@ -461,6 +461,6 @@ program bw_group_collector_scheduler;
     bw_group_mon.collector_running=1;
     bw_group_mon.collect_inputs();
     bw_group_mon.collector_running=0;bw_group_mon.collector_exited=1;
-    bw_group_mon.collector_cancelled=bw_mon_pkg::scope_failed(bw_mon_pkg::BW_GROUP,bw_group_mon.scope_id);
+    bw_group_mon.collector_cancelled=bw_group_mon.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::BW_GROUP,bw_group_mon.scope_id);
   end
 endprogram
