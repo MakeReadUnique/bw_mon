@@ -34,7 +34,8 @@ Enabling phase analysis also enables this rule in `bw_check_report`; no extra
 module, file, threshold, duration, reference-count or near-zero setting is needed.
 It settles each confirmed steady platform once at its episode's final boundary.
 No usable platform gives one episode WARNING; no episode gives one final scope
-WARNING. Ordinary warmup and reference waiting do not produce repeated warnings.
+WARNING. Effective analysis facts are prepared before Ready, including a finish
+immediately after Ready. Ordinary warmup and reference waiting do not produce repeated warnings.
 
 The reference is the earliest six consecutive valid windows fully contained in
 the final platform, spanning at least `min(W,5*S)` in the selected basis.
@@ -47,10 +48,15 @@ B=0 or insufficient reference/coverage gives WARNING.
 A FAIL needs at least two consecutive new valid exceedance rows whose original
 logical endpoints span at least W. Alternating high/low deviations continue the
 same run. Invalid evidence, an in-band row, reset or a confirmed exclusion breaks
-it. Replayed snapshots/final records add neither samples nor results. Original
+it. Replayed snapshots/final records add neither samples nor results, including
+a higher delivery number for an already settled logical identity. Durable
+logical episode/platform watermarks survive release of raw buffers. Original
 cycle positions govern cycle windows even when clocks stop or change frequency;
 record delivery time never supplies elapsed duration. A reliable FAIL survives
-later missing evidence or truncation; otherwise incomplete evidence gives WARNING.
+later missing evidence or truncation; otherwise incomplete evidence gives WARNING. Quality is scoped to the platform
+and its owned check interval: unknown bytes before a fully observed later
+platform do not taint that platform, while the explicit episode rule retains its
+own incomplete evidence.
 Explicit bandwidth, time and CV targets remain independent, and their PASS cannot
 overwrite this rule's FAIL. Summary priority is FAIL > WARNING > PASS > STATISTICS_ONLY.
 

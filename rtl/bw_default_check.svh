@@ -105,16 +105,19 @@ virtual function void submit_window(string id,bw_check_window_t sample);
   default_scopes[index].have_seq=1;default_scopes[index].last_seq=sample.seq;
 endfunction
 
-function automatic void default_result(int index,bw_episode_result_t episode,
+function automatic bit default_result(int index,bw_episode_result_t episode,
     bw_phase_result_t platform,bit have_platform);
   bw_check_window_t row,reference[$];
+  default_identity_t identity;
   bw_u64_t width,min_span,start_tick,end_tick,reference_end_tick,check_count,first_u,last_u;
   bw_u64_t run_count,run_first,run_last,runs,longest_count,longest_first,longest_last,longest_span;
   bw_u64_t reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,previous_seq,exclusion_count,excluded_left,excluded_right;
   real baseline,deviation,maximum;
   bit reference_valid,quality,failed,exempt,over;
   string reason,conclusion,reference_seqs,baseline_text,threshold_text,maximum_text,percent_text,steady_text;
-  if(scope_disabled(scopes[index].kind,scopes[index].id))return;
+  if(scope_disabled(scopes[index].kind,scopes[index].id))return 0;
+  identity='{epoch:episode.stats_epoch,episode:episode.episode_id,platform:have_platform ? platform.phase_id : 0};
+  if(default_scopes[index].have_default_identity && identity<=default_scopes[index].default_identity)return 1;
   width=default_scopes[index].width;
   min_span=default_scopes[index].stride>width/5 ? width : 5*default_scopes[index].stride;
   if(default_scopes[index].basis==BW_NS)begin width*=BW_TICKS_PER_NS;min_span*=BW_TICKS_PER_NS;end
@@ -127,8 +130,8 @@ function automatic void default_result(int index,bw_episode_result_t episode,
   reference_first_seq=0;reference_last_seq=0;reference_first_u=0;reference_last_u=0;reference_seqs="";
   run_count=0;run_first=0;run_last=0;runs=0;longest_count=0;longest_first=0;longest_last=0;longest_span=0;
   previous_seq=0;exclusion_count=0;
-  failed=0;quality=episode.status!==BW_EPISODE_COMPLETE || !episode.bytes_complete || !episode.first_known ||
-    !episode.tail_known || !episode.last_known;
+  failed=0;quality=episode.status!==BW_EPISODE_COMPLETE || !episode.tail_known || !episode.last_known ||
+    (have_platform && (!platform.bytes_complete || !platform.end_known));
   reason=have_platform ? "REFERENCE_INSUFFICIENT" : (episode.episode_id==0 ? "NO_EPISODE" : "NO_CONFIRMED_STEADY");
   if(have_platform)foreach(default_scopes[index].phases[p])begin
     if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
@@ -201,7 +204,7 @@ function automatic void default_result(int index,bw_episode_result_t episode,
           if(!over)begin run_count=0;continue;end
           if(run_count==0)begin run_first=row.u;runs=default_add(index,runs,1);end
           run_last=row.u;run_count=default_add(index,run_count,1);
-          if(scope_failed(scopes[index].kind,scopes[index].id))return;
+          if(scope_failed(scopes[index].kind,scopes[index].id))return 0;
           if(run_last-run_first>longest_span || (run_last-run_first==longest_span && run_count>longest_count))begin
             longest_count=run_count;longest_first=run_first;longest_last=run_last;longest_span=run_last-run_first;
           end
@@ -217,34 +220,38 @@ function automatic void default_result(int index,bw_episode_result_t episode,
   if(failed)begin conclusion="FAIL";totals.fail_count=checked_add(totals.fail_count,1,scopes[index].id);end
   else if(reason!="NONE")begin conclusion="WARNING";totals.warning_count=checked_add(totals.warning_count,1,scopes[index].id);end
   else begin conclusion="PASS";totals.pass_count=checked_add(totals.pass_count,1,scopes[index].id);end
-  if(scope_failed(scopes[index].kind,scopes[index].id))return;
+  if(scope_failed(scopes[index].kind,scopes[index].id))return 0;
   baseline_text=reference_valid ? $sformatf("%.17g",baseline) : "UNAVAILABLE";
   threshold_text=reference_valid && baseline>0 ? $sformatf("%.17g",0.05*baseline) : "UNAVAILABLE";
   maximum_text=reference_valid && baseline>0 ? $sformatf("%.17g",maximum) : "UNAVAILABLE";
   percent_text=reference_valid && baseline>0 ? $sformatf("%.17g",100.0*(maximum/baseline)) : "UNAVAILABLE";
   steady_text=platform.bandwidth_valid ? $sformatf("%.17g",platform.bandwidth_gbps) : "UNAVAILABLE";
-  $display("BW_DEFAULT_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d metric=sustained_variation basis=%0d W=%0d S=%0d platform_start_ticks=%0d platform_end_ticks=%0d check_start_ticks=%0d check_end_ticks=%0d reference_valid=%0b reference_count=%0d reference_seqs=%s reference_first_seq=%0d reference_last_seq=%0d reference_first_u=%0d reference_last_u=%0d reference_span=%0d B=%s steady_bandwidth_gbps=%s threshold_pct=5 threshold_gbps=%s max_deviation_gbps=%s max_deviation_pct=%s samples=%0d first_u=%0d last_u=%0d over_runs=%0d longest_count=%0d longest_first_u=%0d longest_last_u=%0d longest_span=%0d exclusion_count=%0d quality_incomplete=%0b episode_status=%0d episode_reason=%s bytes_complete=%0b first_known=%0b last_known=%0b tail_known=%0b conclusion=%s reason=%s",
+  $display("BW_DEFAULT_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d metric=sustained_variation basis=%0d W=%0d S=%0d platform_start_ticks=%0d platform_end_ticks=%0d check_start_ticks=%0d check_end_ticks=%0d reference_valid=%0b reference_count=%0d reference_seqs=%s reference_first_seq=%0d reference_last_seq=%0d reference_first_u=%0d reference_last_u=%0d reference_span=%0d B=%s steady_bandwidth_gbps=%s threshold_pct=5 threshold_gbps=%s max_deviation_gbps=%s max_deviation_pct=%s samples=%0d first_u=%0d last_u=%0d over_runs=%0d longest_count=%0d longest_first_u=%0d longest_last_u=%0d longest_span=%0d exclusion_count=%0d quality_incomplete=%0b episode_status=%0d episode_reason=%s platform_bytes_complete=%0b platform_start_known=%0b platform_end_known=%0b episode_bytes_complete=%0b episode_first_known=%0b episode_last_known=%0b episode_tail_known=%0b conclusion=%s reason=%s",
     scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
     default_scopes[index].basis,default_scopes[index].width,default_scopes[index].stride,
     platform.start_ticks,platform.end_ticks,start_tick,end_tick,reference_valid,reference_valid ? 6 : reference.size(),
     reference_seqs,reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,reference_last_u-reference_first_u,
     baseline_text,steady_text,threshold_text,maximum_text,percent_text,
-    check_count,first_u,last_u,runs,longest_count,longest_first,longest_last,longest_span,exclusion_count,quality,episode.status,episode_reason_name(episode.reason),episode.bytes_complete,
+    check_count,first_u,last_u,runs,longest_count,longest_first,longest_last,longest_span,exclusion_count,quality,episode.status,episode_reason_name(episode.reason),platform.bytes_complete,platform.start_known,platform.end_known,episode.bytes_complete,
     episode.first_known,episode.last_known,episode.tail_known,conclusion,reason);
+  default_scopes[index].have_default_identity=1;default_scopes[index].default_identity=identity;
+  return 1;
 endfunction
 
-function automatic void settle_default_episode(int index,bw_episode_result_t episode);
+function automatic bit settle_default_episode(int index,bw_episode_result_t episode);
   bit found;
   bw_phase_result_t empty_platform;
-  if(!default_scopes[index].enabled || scope_disabled(scopes[index].kind,scopes[index].id))return;
+  if(scope_disabled(scopes[index].kind,scopes[index].id))return 0;
+  if(!default_scopes[index].enabled)return 1;
   found=0;
   foreach(default_scopes[index].phases[p])begin
     if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
        default_scopes[index].phases[p].episode_id==episode.episode_id &&
        default_scopes[index].phases[p].phase_kind==BW_PHASE_STEADY)begin
-      default_result(index,episode,default_scopes[index].phases[p],1);found=1;
+      if(!default_result(index,episode,default_scopes[index].phases[p],1))return 0;
+      found=1;
     end
   end
-  if(!found)default_result(index,episode,empty_platform,0);
-  default_scopes[index].raw.delete();default_scopes[index].phases.delete();
+  if(!found && !default_result(index,episode,empty_platform,0))return 0;
+  return 1;
 endfunction

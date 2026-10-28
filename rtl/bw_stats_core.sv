@@ -1437,13 +1437,9 @@ module bw_stats_core #(
     $display("BW_ANALYSIS_CONFIG scope_kind=%0d scope=%s basis=%0d W=%0d S=%0d Q=%0d episode_enabled=%0b phase_enabled=%0b strategy=%s N=%0d K=%0d min_span=%0d scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0",
       scope_kind,scope_id,WINDOW_BASIS,WINDOW_WIDTH,stride_cfg,silence_cfg,
       EPISODE_ENABLE,PHASE_ENABLE,BW_PHASE_STRATEGY,PHASE_N,PHASE_K,phase_min_span_cfg);
-    initialize_reset_capture($sformatf("%m"),"stats_reset_n");
-  end
-
-  initial begin
-    wait(monitor_ready);
-    if(report_sink!=null)report_sink.analysis_scope(bw_scope_t'(scope_kind),scope_id,PHASE_ENABLE,
+    record_check_analysis(bw_scope_t'(scope_kind),scope_id,PHASE_ENABLE,
       bw_basis_t'(WINDOW_BASIS),WINDOW_WIDTH,stride_cfg);
+    initialize_reset_capture($sformatf("%m"),"stats_reset_n");
   end
 
   final begin

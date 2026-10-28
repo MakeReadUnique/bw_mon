@@ -6,10 +6,18 @@ package bw_check_report_pkg;
     bw_check_window_t first,last;
     bw_u64_t count;
   } default_run_t;
+  typedef struct packed {
+    bw_u64_t epoch,episode,platform;
+  } default_identity_t;
   class bw_default_scope;
     bit enabled=0,have_seq=0;
     bw_basis_t basis;
     bw_u64_t width,stride,last_seq;
+    // Core final streams are synchronous and ordered by logical epoch/episode,
+    // then immutable platform ID. Durable logical watermarks survive raw release;
+    // delivery counters never stand in for identity and cannot poison a new ID.
+    bit have_episode_identity=0,have_phase_identity=0,have_default_identity=0;
+    default_identity_t episode_identity,phase_identity,default_identity;
     default_run_t raw[$];
     bw_phase_result_t phases[$];
   endclass
@@ -270,7 +278,13 @@ package bw_check_report_pkg;
           if(core_failure_seen)return;
           scope_by_id[{entry.kind==BW_POINT ? "point:" : "group:",entry.id}]=scopes.size();
           scopes.push_back(entry);
-          default_scope=new();default_scopes.push_back(default_scope);
+          default_scope=new();
+          key=scope_key(entry.kind,entry.id);
+          if(check_analysis.exists(key))begin
+            default_scope.enabled=check_analysis[key].enabled;default_scope.basis=check_analysis[key].basis;
+            default_scope.width=check_analysis[key].width;default_scope.stride=check_analysis[key].stride;
+          end
+          default_scopes.push_back(default_scope);
           for(int m=0;m<METRIC_COUNT;m++) begin
             check_storage_growth(rules.size(),entry.id,"report.rules",$time);
             if(core_failure_seen)return;
@@ -555,36 +569,36 @@ package bw_check_report_pkg;
       int index,metric;
       string reason;
       real measured;
-      bit retained;
+      default_identity_t identity,episode_identity;
       if(scope_failed(result.scope_kind,scope_id) || totals.finalized || result.result_seq==0)return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
+      identity='{epoch:result.stats_epoch,episode:result.episode_id,platform:result.phase_id};
+      episode_identity='{epoch:result.stats_epoch,episode:result.episode_id,platform:0};
+      if(default_scopes[index].have_episode_identity && episode_identity<=default_scopes[index].episode_identity)return;
+      if(default_scopes[index].have_phase_identity && identity<=default_scopes[index].phase_identity)return;
       if(scopes[index].have_phase_seq && result.result_seq<=scopes[index].last_phase_seq) return;
-      retained=0;
-      foreach(default_scopes[index].phases[p])
-        if(default_scopes[index].phases[p].stats_epoch==result.stats_epoch &&
-           default_scopes[index].phases[p].episode_id==result.episode_id &&
-           default_scopes[index].phases[p].phase_id==result.phase_id)retained=1;
-      if(!retained)begin
-        default_growth(index,default_scopes[index].phases.size(),"default.phases",result.end_ticks);
+      default_growth(index,default_scopes[index].phases.size(),"default.phases",result.end_ticks);
+      if(scope_failed(result.scope_kind,scope_id))return;
+      default_scopes[index].phases.push_back(result);
+      if(result.phase_kind===BW_PHASE_RAMP || result.phase_kind===BW_PHASE_FALL)begin
+        if(scopes[index].time_epoch!=result.stats_epoch || scopes[index].time_episode!=result.episode_id) begin
+          scopes[index].time_epoch=result.stats_epoch;scopes[index].time_episode=result.episode_id;
+          scopes[index].saw_ramp=0;scopes[index].saw_fall=0;
+        end
+        if(result.phase_kind==BW_PHASE_RAMP) begin
+          metric=RAMP_TIME;scopes[index].saw_ramp=1;scopes[index].ever_ramp=1;
+        end else begin
+          metric=FALL_TIME;scopes[index].saw_fall=1;scopes[index].ever_fall=1;
+        end
+        reason=duration_evidence_reason(result);measured=0;
+        if(reason=="NONE") measured=real'(result.duration_ticks)/real'(BW_TICKS_PER_NS);
+        settle(index,metric,phase_context(result),"phase",measured,reason);
         if(scope_failed(result.scope_kind,scope_id))return;
-        default_scopes[index].phases.push_back(result);
       end
+      default_scopes[index].have_phase_identity=1;default_scopes[index].phase_identity=identity;
       scopes[index].have_phase_seq=1;scopes[index].last_phase_seq=result.result_seq;
-      if(result.phase_kind!==BW_PHASE_RAMP && result.phase_kind!==BW_PHASE_FALL) return;
-      if(scopes[index].time_epoch!=result.stats_epoch || scopes[index].time_episode!=result.episode_id) begin
-        scopes[index].time_epoch=result.stats_epoch;scopes[index].time_episode=result.episode_id;
-        scopes[index].saw_ramp=0;scopes[index].saw_fall=0;
-      end
-      if(result.phase_kind==BW_PHASE_RAMP) begin
-        metric=RAMP_TIME;scopes[index].saw_ramp=1;scopes[index].ever_ramp=1;
-      end else begin
-        metric=FALL_TIME;scopes[index].saw_fall=1;scopes[index].ever_fall=1;
-      end
-      reason=duration_evidence_reason(result);measured=0;
-      if(reason=="NONE") measured=real'(result.duration_ticks)/real'(BW_TICKS_PER_NS);
-      settle(index,metric,phase_context(result),"phase",measured,reason);
     endfunction
 
     function automatic string selection_evidence_reason(bw_episode_result_t result);
@@ -606,22 +620,26 @@ package bw_check_report_pkg;
       string reason,selection_reason,episode_reason;
       real measured;
       bit same_time_episode;
+      default_identity_t identity;
       if(scope_failed(result.scope_kind,scope_id) || totals.finalized || result.result_seq==0)return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
+      identity='{epoch:result.stats_epoch,episode:result.episode_id,platform:0};
+      if(default_scopes[index].have_episode_identity && identity<=default_scopes[index].episode_identity)return;
       if(scopes[index].have_seq && result.result_seq<=scopes[index].last_seq) return;
-      scopes[index].have_seq=1;scopes[index].last_seq=result.result_seq;scopes[index].saw_episode=1;
-      settle_default_episode(index,result);
+      if(!settle_default_episode(index,result))return;
       context_value=episode_context(result);
       reason=e2e_evidence_reason(result);measured=0;
       if(reason=="NONE") measured=result.e2e_gbps;
       settle(index,E2E_BW,context_value,"episode",measured,reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       episode_reason="NONE";
       if(result.status===BW_EPISODE_RESET_INTERRUPTED) episode_reason="RESET_INTERRUPTED";
       else if(result.status===BW_EPISODE_TRUNCATED) episode_reason="OBSERVATION_TRUNCATED";
       else if(result.status!==BW_EPISODE_COMPLETE) episode_reason="EPISODE_NOT_COMPLETE";
       settle_variation(index,context_value,"episode",0,episode_reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       selection_reason=selection_evidence_reason(result);
       steady_context=phase_context(result.last_steady);
       steady_context.scope_kind=result.scope_kind;steady_context.stats_epoch=result.stats_epoch;
@@ -636,12 +654,18 @@ package bw_check_report_pkg;
         if(reason=="NONE") measured=result.last_steady.bandwidth_gbps;
       end
       settle(index,STEADY_BW,steady_context,"last_steady",measured,reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       settle_variation(index,steady_context,"last_steady",1,selection_reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       same_time_episode=scopes[index].time_epoch==result.stats_epoch && scopes[index].time_episode==result.episode_id;
       if(!same_time_episode || !scopes[index].saw_ramp)
         settle(index,RAMP_TIME,context_value,"episode",0,episode_reason=="NONE" ? "NO_CONFIRMED_RAMP" : episode_reason);
       if(!same_time_episode || !scopes[index].saw_fall)
         settle(index,FALL_TIME,context_value,"episode",0,episode_reason=="NONE" ? "NO_CONFIRMED_FALL" : episode_reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
+      default_scopes[index].have_episode_identity=1;default_scopes[index].episode_identity=identity;
+      scopes[index].have_seq=1;scopes[index].last_seq=result.result_seq;scopes[index].saw_episode=1;
+      default_scopes[index].raw.delete();default_scopes[index].phases.delete();
     endfunction
 
     virtual function void scope_done(bw_scope_t kind,string scope_id,bw_u64_t stats_epoch);
@@ -662,7 +686,7 @@ package bw_check_report_pkg;
         empty_result.scope_kind=kind;empty_result.stats_epoch=stats_epoch;
         empty_result.variation='{window_basis:BW_NS,minmax_reason:BW_METRIC_NO_SAMPLES,
           stddev_reason:BW_METRIC_NO_SAMPLES,cv_reason:BW_METRIC_NO_SAMPLES,default:0};
-        settle_default_episode(index,empty_result);
+        if(!settle_default_episode(index,empty_result))return;
         context_value=episode_context(empty_result);
         for(int m=0;m<METRIC_COUNT;m++) begin
           if(m==RAMP_TIME && scopes[index].ever_ramp) continue;
@@ -670,6 +694,10 @@ package bw_check_report_pkg;
           settle(index,m,context_value,"scope_final",0,"NO_EPISODE",1);
           if(core_failure_pending()) return;
         end
+      end
+      if(!scope_disabled(kind,scope_id))begin
+        if(scope_failed(kind,scope_id))return;
+        default_scopes[index].raw.delete();default_scopes[index].phases.delete();
       end
       scopes[index].done=1;totals.scopes_done=checked_add(totals.scopes_done,1,scope_id);
       if(core_failure_pending() || totals.scopes_done!=totals.scopes_expected) return;

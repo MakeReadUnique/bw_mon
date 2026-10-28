@@ -37,7 +37,7 @@ module tb_checker_equivalence;
       end
       platform='{scope_kind:BW_POINT,episode_id:1,phase_id:1,result_seq:1,phase_kind:BW_PHASE_STEADY,
         start_ticks:measurement_start_ticks,end_ticks:measurement_start_ticks+100000000,
-        start_known:1,end_known:1,default:0};
+        start_known:1,end_known:1,bytes_complete:1,default:0};
       emit_phase_result(id,platform);
       episode='{scope_kind:BW_POINT,episode_id:1,result_seq:1,status:BW_EPISODE_COMPLETE,
         first_ticks:measurement_start_ticks,tail_ticks:measurement_start_ticks+100000000,

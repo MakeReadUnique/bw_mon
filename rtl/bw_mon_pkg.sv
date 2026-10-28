@@ -219,6 +219,15 @@ package bw_mon_pkg;
     bit valid,full,bytes_complete,denominator_valid,foreign_activity,reset_coverage;
   } bw_check_window_t;
 
+  typedef struct {
+    bit enabled;
+    bw_basis_t basis;
+    bw_u64_t width,stride;
+  } bw_check_analysis_t;
+  // Validated effective facts are collected during initialization, independently
+  // of report-owner construction order, and consumed before Ready publication.
+  bw_check_analysis_t check_analysis[string];
+
   // Dedicated synchronous report transport. The owner implements all cfg,
   // evidence and comparison state outside this package.
   virtual class bw_report_sink;
@@ -646,6 +655,16 @@ package bw_mon_pkg;
           resource,current_size,edge_index,record_number,at_ticks));
     end
 `endif
+  endfunction
+
+  function automatic void record_check_analysis(bw_scope_t kind,string id,bit enabled,
+      bw_basis_t basis,bw_u64_t width,bw_u64_t stride);
+    string key;
+    if(core_failure_pending())return;
+    key=scope_key(kind,id);
+    if(!check_analysis.exists(key))check_storage_growth(check_analysis.num(),id,"report.analysis",$time);
+    if(core_failure_pending())return;
+    check_analysis[key]='{enabled:enabled,basis:basis,width:width,stride:stride};
   endfunction
 
   function automatic bw_u64_t resolve_silence_threshold(logic [63:0] silence,

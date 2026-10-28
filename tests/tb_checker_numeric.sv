@@ -70,7 +70,7 @@ module tb_checker_numeric;
     platform.result_seq=1;platform.phase_kind=BW_PHASE_STEADY;
     platform.start_ticks=measurement_start_ticks;
     platform.end_ticks=row.ticks+1000000;
-    platform.start_known=mode!="start_unknown";platform.end_known=1;
+    platform.start_known=mode!="start_unknown";platform.end_known=1;platform.bytes_complete=1;
     if(mode=="explicit_time")begin
       platform.phase_kind=BW_PHASE_RAMP;platform.end_ticks=measurement_start_ticks+10000000;
       platform.duration_ticks=10000000;platform.duration_valid=1;platform.duration_reason=BW_METRIC_OK;

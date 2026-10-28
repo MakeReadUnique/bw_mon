@@ -81,3 +81,23 @@ quality; four-state metadata cannot be coerced into PASS.
 of64 bytes with W10 cannot supply six platform-contained reference windows, so
 its default WARNING remains beside its optional explicit e2e PASS. User-guide
 summaries now describe the measured result without changing the example input.
+
+Independent review regressions are retained as `checker_empty_immediate`,
+`checker_prefix_*` and `checker_replay`. Analysis facts now enter report
+preparation before Ready rather than racing its first consumer. Prefix fixtures
+keep the first unknown-size transfer and all later raw bytes/times unchanged:
+the later sole platform has scoped complete evidence and PASSes, while optional
+explicit e2e remains WARNING. Invalid rows within its check interval and terminal
+truncation still warn. `check_prefix.py` independently selects8..13 reference
+sequences and the7..24.5ns final interval from that raw input.
+
+The approved final-record replay fixture emits same-ID point/group packets,
+replays each settled episode/platform with new delivery numbers100/200, then
+accepts genuine next episode seq2 and a new epoch reusing episode/platform1 at
+seq3. Six default and six explicit results appear exactly once. Durable bounded
+watermarks use logical identities and the core's synchronous ordered immutable
+final streams (epoch, then episode, then platform ID), rather than delivery
+counters or a growing history map. Watermarks/receipts commit after successful
+settlement and pending raw evidence is not cleared on failed attempts. Numeric
+fixtures explicitly state scoped byte completeness for their valid raw streams;
+whole-episode flags remain separate from scoped platform/check quality.

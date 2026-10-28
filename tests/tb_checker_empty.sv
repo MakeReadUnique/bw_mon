@@ -11,7 +11,9 @@ module tb_checker_empty;
   initial add_point_member("shared.# bucket[2]","shared.# bucket[2]");
   initial begin
     bw_report_summary_t result;
-    wait(monitor_ready);#1;
+    wait(monitor_ready);
+    if($test$plusargs("IMMEDIATE"))begin $display("TB_PASS checker_empty immediate");$finish;end
+    #1;
     result=check_report_summary();
     if(result.status!=BW_REPORT_STATISTICS_ONLY || result.warning_count!=0)
       $fatal(1,"normal waiting must not emit warnings before terminal settlement");

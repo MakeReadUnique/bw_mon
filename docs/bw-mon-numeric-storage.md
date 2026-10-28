@@ -103,7 +103,11 @@ run. Invalid rows are retained as breaks, never filtered and rejoined. Original
 seven-row confirmation support seqs and min/max envelope are frozen by the phase
 owner independently of the latest six-row fit. This pending checker prefix is
 retained through terminal episode attribution; it is not recoverable from a
-variation mean/min/max summary. Disabled active scopes retain evidence for the
+variation mean/min/max summary. Scope-owned bounded semantic watermarks track
+ordered immutable `(epoch,episode,platform)` identities after buffers are released;
+replays with new delivery counters cannot resettle them or poison a new identity.
+Episode delivery/semantic receipts commit only after successful default and
+explicit settlement, then raw buffers release. Disabled active scopes retain evidence for the
 partial-terminal work rather than manufacturing a finalized platform.
 
 Package transport is a different owner: one durable frame/control stream per
