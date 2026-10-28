@@ -27,13 +27,14 @@ module tb_group_deferred_final;
     publish_control(source,control);
     frame='0;frame.timestamp_ticks=measurement_start_ticks+250000;frame.record_seq=1;frame.edge_index=1;
     frame.byte_inc=32;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
-    #250000;clk=1;#1;clk=0;sentinel_valid=0;
-    #999999;if(late)deliver<=1;
+    #250000;clk=1;if(late)deliver<=1;#1;clk=0;sentinel_valid=0;
+    if(scope_disabled(BW_GROUP,"deferred.g")==late || scope_disabled(BW_POINT,"sentinel") || scope_disabled(BW_POINT,"stalled"))
+      $fatal(1,"same-time closure must isolate only missing group");
+    #999999;if(!late)publish_frame(source,frame);
     #750001;
-    if(!late)$fatal(1,"expected core error did not occur");
-    if(core_failure_pending() || core_failure_seen || group_mon.accepted_record_seq!=1)
-      $fatal(1,"a satisfied late deadline must cancel its provisional failure");
-    $display("TB_PASS group_deferred_final_late");$finish;
+    if(core_failure_pending() || core_failure_seen || group_mon.accepted_record_seq!=(late?1:0))
+      $fatal(1,"same-time success or sticky late rejection differs");
+    $display("TB_PASS group_deferred_final late=%0b healthy_continues=1",late);$finish;
   end
   final begin
     if(core_failure_pending())$display("DEFERRED_FINAL_GUARD pending=1 seen=%0b",core_failure_seen);

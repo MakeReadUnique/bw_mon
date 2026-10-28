@@ -14,8 +14,7 @@ implementation tickets extend this same public contract.
 Compile `rtl/bw_mon_pkg.sv`, then `rtl/bw_check_report.sv`, then the other
 `rtl/*.sv` files, plus `rtl/bw_slot_settlement.c`. The report package must precede `bw_mon_setup.sv`. All production
 builds need `+vpi`, `-debug_access` (or waveform `-debug_access+all`), the installed
-VCS include directory through `-CFLAGS -I<VCS>/include`, `+incdir+rtl` and `-assert svaext` for the package headers and deferred
-deadline assertions, including point-only setups. Headers are included by the package or public modules and are not standalone
+VCS include directory through `-CFLAGS -I<VCS>/include`, `+incdir+rtl` and `-assert svaext` for the package headers and scheduler assertions, including point-only setups. Headers are included by the package or public modules and are not standalone
 compilation units. All production
 scopes use `timeunit 1fs; timeprecision 1fs`; timestamps are unsigned 64-bit integer
 femtosecond ticks, read directly with `$time` in that scope. A nanosecond is
@@ -642,7 +641,7 @@ support with `-assert svaext`. The registry/transport headers are part of
 these options and hashes included RTL headers recursively as well as compilation
 units, so editing a header invalidates the compile cache.
 
-## Group results, consumption and deadlines
+## Group results and same-time consumption
 
 A group exposes the same window identity/epoch/sequence, raw totals, endpoints,
 coverage, GB/s/B-cycle and independent quality scalars as a point, directly at
@@ -661,8 +660,7 @@ known bytes/events with checked unsigned 64-bit arithmetic, preserving the
 original timestamp and actual edge index. Byte and event completeness propagate
 separately. No child bandwidth or cumulative statistic is an input. Before input
 acknowledgement, the group output is durable and its own core has accepted or
-explicitly handled the frame during reset. All direct consumers must acknowledge
-before a source record is released. Ungrouped sources still validate publication
+explicitly handled the frame during reset. Every active direct consumer must acknowledge, or have its responsibility explicitly cancelled by quarantine, before a source record is released. The frozen dependency graph is retained separately from active subscriptions. Ungrouped sources still validate publication
 order but require no retained communication backlog.
 
 The group captures expected actual edges without blocking. Missing/duplicate/
@@ -674,10 +672,7 @@ original scheduled endpoint. The collector merges controls and frames in origina
 timestamp order; same-time controls precede the frame. Pending source progress is
 propagated through direct parent groups at every hierarchy level.
 
-Missing-frame deadlines use original expected T plus the configured physical
-interval, including when an earlier frame completed while a newer one was
-pending. Same-slot module NBA/ReNBA arrival and later same-T clock metadata settle
-before deferred failure. A stopped shared clock creates no new expected edges.
+Independent native actual-edge observers establish group obligations even if capture fails. Writable completion audits wait on explicit posted grants and durable producer certificates through the frozen DAG. Each group records capture, held input, output publication, local core/reset receipt and input ACK separately. Controls, captured resets and due core timer actions also require receipts. No physical missing-record timeout, fixed quiet-round count, next-edge wait or queue-empty certificate exists. A stopped shared clock creates no new expected edges.
 Ns windows continue when caught up; cycle snapshots hold. Known point reset keeps
 ancestor history until natural expiry and supplies timestamped reset coverage even
 without clocks. Group statistics reset clears only its core while collection,
@@ -694,11 +689,10 @@ Core diagnostics include `GROUP_COUNT`, `GROUP_REFERENCE`, `GROUP_DEFINITION`,
 `DUPLICATE_OWNER`, `EMPTY_GROUP`, `MEMBER_COUNT`, `MEMBER_RULE`, `GROUP_CONTEXT`,
 `GROUP_CYCLE`, `GROUP_OVERLAP`, `GROUP_DEPTH`,
 `TOPOLOGY_LIMIT`, `CONFIG_FROZEN`, `RECORD_SEQUENCE`, `EDGE_SEQUENCE`,
-`RECORD_TIME`, `FRAME_ALIGNMENT`, `UNEXPECTED_FRAME`, `FRAME_TIMEOUT`,
+`RECORD_TIME`, `FRAME_ALIGNMENT`, `GROUP_COMPLETION`,
 `CONTROL_SEQUENCE`, `CONTROL_ORIGIN`, `ACK_SEQUENCE` and unexpected premature
 release. Logs identify the group/source and expected/received time, edge or
-sequence as appropriate. These errors terminate; observation incompleteness
-continues with known contributions and explicit quality.
+sequence as appropriate. Runtime errors warn and quarantine the typed owner and its dependent ancestors. Failed consumers cancel only their own inbound obligations; reliable children and siblings continue. Quarantine is sticky across reset. Startup/configuration failures remain fatal. Observation incompleteness continues with known contributions and explicit quality.
 
 Reproduction uses `python3 tests/run.py group_basic group_matching group_delayed
 transport_retention group_metadata_order group_metadata_reactive
@@ -1091,14 +1085,7 @@ Reproduce with `python3 tests/run.py` or pass any listed case name. These
 component/raw-point vectors do not claim full group composition, waveform manual
 review or target-scale acceptance.
 
-Deferred deadline checks cache their current condition and error detail in Active,
-then use a read-only fatal action in Postponed. VCS forbids setting a failure latch
-from that action. `core_failure_pending()` therefore combines the runtime
-`core_failure_seen` latch with current per-owner deferred candidates at finalization
-boundaries. A same-slot arrival cancels its candidate. Runtime record emission
-continues to use the terminal runtime latch, so a provisional deadline candidate
-cannot discard a valid result. Tests cover both a late arrival retaining normal
-final output and a real timeout suppressing sibling episode/hint final results.
+Missing-stage diagnostics run in the writable native coordinator after explicit current continuations and producer certificates are exhausted. Read-only contract observers verify the final state at the original timestamp. A scoped runtime failure preserves healthy sibling episode/hint output. Positive-time old-edge input is invalid and cannot revive a disabled scope. The unified final-report responsibility audit remains separate from local completion.
 
 The compile-cache fingerprint includes ROOT, runner content/options, absolute
 compilation-unit paths/content, explicitly listed `case.sources` fixtures, the
@@ -1162,12 +1149,11 @@ exact; small-vector real calculations use absolute tolerance 1e-10.
 `hierarchy_retention_{all_first,mixed_first}` changes lawful parent completion
 order on consecutive original edges for all four E1 scenarios, and verifies
 retained frames, independent quality and final sums through the controlled
-package seam. `hierarchy_depth_transport` sends a leaf at the exact
-original T+1 ns deadline through two NBAs and eight group levels; all levels keep
+package seam. `hierarchy_depth_transport` sends a leaf through same-time
+NBAs and eight group levels at its actual original edge; all levels keep
 T/edge and complete in that same physical slot. Its three maximum-size point
 increments produce exactly 12,884,901,885 B at the root; the real tolerance 1e-4
-GB/s is below 8e-15 relative. The matching missing case terminates at the original
-deadline rather than adding a timeout per level. Clock-stop known/unknown point
+GB/s is below 8e-15 relative. The matching missing case quarantines the affected ancestor path at the original edge timestamp while reliable leaves continue. Clock-stop known/unknown point
 controls, their expiry and a reset of a middle group with existing history are
 also checked. A sampled observation gap retains the other points' known bytes
 and events through all eight levels, with both completeness flags false. A later

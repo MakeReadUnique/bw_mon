@@ -42,18 +42,18 @@ module tb_hierarchy_depth_transport;
     frame='0;frame.record_seq=1;frame.edge_index=1;frame.timestamp_ticks=$time;
     frame.byte_inc=64'd4294967295;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
     publish_frame(sources[0],frame);publish_frame(sources[2],frame);slow_frame=frame;
+    if(!missing)deliver<=1;
     #1;clk=0;
-    #(measurement_start_ticks+1000001-$time);
-    if(groups[7].mon.result_seq!=0 || receipts[7]!=0)
-      $fatal(1,"root must retain its logical window while an original leaf frame is pending");
-    #(measurement_start_ticks+1250000-$time);if(!missing)deliver<=1;
-    #1;
-    if(missing)$fatal(1,"expected core error did not occur");
+    if(missing)begin
+      if(!scope_disabled(BW_GROUP,"g0") || scope_disabled(BW_POINT,"p0") || scope_disabled(BW_POINT,"p2"))$fatal(1,"missing producer must isolate consumer ancestors only");
+      $display("TB_PASS hierarchy_depth_missing original_ticks=250001");$finish;
+    end
     for(int g=0;g<8;g++)begin
       if(raw_sequences[g]!=1 || raw_edges[g]!=1 || raw_ticks[g]!=measurement_start_ticks+250000 || receipts[g]!=1 ||
          raw_bytes[g]!=(g==7 ? 64'd12884901885 : 64'd8589934590) || epochs[g]!=0)
-        $fatal(1,"eight-level original-deadline NBA completion or wide increment failed atg%0d",g);
+        $fatal(1,"eight-level same-time NBA completion or wide increment failed atg%0d",g);
     end
+    #(measurement_start_ticks+1250001-$time);
     if(groups[7].mon.window_bytes!=64'd12884901885 || groups[7].mon.window_events!=3 ||
        groups[7].mon.window_end_ticks!=measurement_start_ticks+1000000 || !groups[7].mon.window_valid ||
        $abs(groups[7].mon.bandwidth_gbps-12884901885.0)>1e-4 || totals[3]!=64'd8589934590 ||
@@ -137,6 +137,6 @@ module tb_hierarchy_depth_transport;
        !groups[7].mon.window_valid || !groups[7].mon.bytes_complete || !groups[7].mon.events_complete ||
        groups[7].mon.member_reset_coverage || groups[3].mon.window_valid || totals[3]!=0)
       $fatal(1,"ancestor quality/history must recover naturally even while an upper member's local statistics remain reset");
-    $display("TB_PASS hierarchy_depth_transport originalT=250000 deadline=1250000 depth=8 root_bytes=12884901885");$finish;
+    $display("TB_PASS hierarchy_depth_transport originalT=250000 same_time=1 depth=8 root_bytes=12884901885");$finish;
   end
 endmodule

@@ -26,7 +26,8 @@ module tb_transport_retention;
     publish_frame(source,frame);
     if(!peek_member_frame(first,0,received) || received.byte_inc!=8)$fatal(1,"first frame missing");
     if(cancel_first)begin
-      runtime_scope_error(BW_GROUP,"first","TEST_CONSUMER_FAILURE","cancel first while second unread");
+      if($test$plusargs("BAD_ACK"))acknowledge_member_frame(first,0,2);
+      else runtime_scope_error(BW_GROUP,"first","TEST_CONSUMER_FAILURE","cancel first while second unread");
       if(scope_disabled(BW_POINT,"p") || scope_disabled(BW_GROUP,"second"))$fatal(1,"consumer failure disabled reliable source or sibling");
       if(retained_frame_count(source)!=1 || retained_control_count(source)!=1)$fatal(1,"cancellation lost sibling unread data");
       if(!peek_member_frame(second,0,received) || received.byte_inc!=8)$fatal(1,"sibling original frame missing");

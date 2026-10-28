@@ -1349,7 +1349,10 @@
   "plusargs": [
    "+MODE=missing_first"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001.*expected_edge=1.*expected_ticks=250001.*deadline_ticks=1250001.*missing_point=fault"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_missing_second",
@@ -1357,7 +1360,10 @@
   "plusargs": [
    "+MODE=missing_second"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1750001.*expected_edge=2.*expected_ticks=750001.*deadline_ticks=1750001.*missing_point=fault"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_fault_duplicate",
@@ -1398,7 +1404,7 @@
   "plusargs": [
    "+MODE=wrong_time"
   ],
-  "expect_warning": "BW_CORE_WARNING code=FRAME_ALIGNMENT",
+  "expect_warning": "BW_CORE_WARNING code=RECORD_TIME",
   "expect_counts": {
    "BW_CORE_WARNING": 1
   }
@@ -1543,10 +1549,12 @@
   "plusargs": [
    "+LATE=0"
   ],
-  "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001",
   "expect_log": [
-   "DEFERRED_FINAL_GUARD pending=1 seen=0"
-  ]
+   "DEFERRED_FINAL_GUARD_CLEAR",
+   "BW_EPISODE[^\\n]*scope=sentinel",
+   "BW_HINT_END scope=stalled"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION"
  },
  {
   "name": "report_group_barrier",
@@ -1885,6 +1893,9 @@
   "top": "tb_hierarchy_retention",
   "plusargs": [
    "+ORDER=all_first"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1892,6 +1903,9 @@
   "top": "tb_hierarchy_retention",
   "plusargs": [
    "+ORDER=mixed_first"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1917,7 +1931,10 @@
   "plusargs": [
    "+MISSING=1"
   ],
-  "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250001[^\\n]*expected_ticks=250001 deadline_ticks=1250001"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "hierarchy_invalid_kind",
@@ -1933,6 +1950,9 @@
   "plusargs": [
    "+ORDER=all_first",
    "+MODE=child_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1941,6 +1961,9 @@
   "plusargs": [
    "+ORDER=all_first",
    "+MODE=point_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1949,6 +1972,9 @@
   "plusargs": [
    "+ORDER=all_first",
    "+MODE=size_unknown"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1957,6 +1983,9 @@
   "plusargs": [
    "+ORDER=mixed_first",
    "+MODE=child_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1965,6 +1994,9 @@
   "plusargs": [
    "+ORDER=mixed_first",
    "+MODE=point_reset"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -1973,6 +2005,9 @@
   "plusargs": [
    "+ORDER=mixed_first",
    "+MODE=size_unknown"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
   ]
  },
  {
@@ -4962,7 +4997,10 @@
   "expect_log": [
    "TB_GROUP_READ_ONLY ticks=1000001"
   ],
-  "expect_warning": "GROUP_COMPLETION"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CAPTURE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_completion_none",
@@ -5011,7 +5049,10 @@
   "expect_log": [
    "TB_GROUP_READ_ONLY ticks=1000001"
   ],
-  "expect_warning": "GROUP_COMPLETION"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=PUBLICATION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_completion_core",
@@ -5028,7 +5069,10 @@
   "expect_log": [
    "TB_GROUP_READ_ONLY ticks=1000001"
   ],
-  "expect_warning": "GROUP_COMPLETION"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=CORE_RECEIPT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_completion_ack",
@@ -5045,7 +5089,10 @@
   "expect_log": [
    "TB_GROUP_READ_ONLY ticks=1000001"
   ],
-  "expect_warning": "GROUP_COMPLETION"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=INPUT_ACK",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "group_completion_held",
@@ -5062,6 +5109,97 @@
   "expect_log": [
    "TB_GROUP_READ_ONLY ticks=1000001"
   ],
-  "expect_warning": "GROUP_COMPLETION"
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=HELD",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_completion_reactive",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=reactive"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001",
+   "TB_GROUP_RENBA assertions=20 point_controls=41"
+  ]
+ },
+ {
+  "name": "transport_capacity4096",
+  "top": "tb_transport_capacity"
+ },
+ {
+  "name": "transport_same_time_pressure4096",
+  "top": "tb_transport_same_time_pressure",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ]
+ },
+ {
+  "name": "group_completion_source_failure",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=source"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=POINT_COMPLETION",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "transport_bad_ack_cancellation",
+  "top": "tb_transport_retention",
+  "plusargs": [
+   "+CANCEL_FIRST",
+   "+BAD_ACK"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=ACK_SEQUENCE scope_kind=1 scope=first",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "transport_same_time_pressure_cancel",
+  "top": "tb_transport_same_time_pressure",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ],
+  "plusargs": [
+   "+CANCEL_SLOW"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=TEST_CONSUMER_FAILURE scope_kind=1 scope=pressure.slow",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "transport_m4_capacity",
+  "top": "tb_transport_m4_capacity",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ]
+ },
+ {
+  "name": "group_public_pressure",
+  "top": "tb_group_public_pressure",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ]
  }
 ]

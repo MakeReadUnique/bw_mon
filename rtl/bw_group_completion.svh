@@ -6,6 +6,9 @@
     bit cancelled=0;
   endclass
   bw_group_batch group_batches[string];
+  function automatic void cancel_all_group_completion();
+    foreach(group_batches[id])group_batches[id].cancelled=1;
+  endfunction
   function automatic void register_group_completion(string id);
     if(!group_batches.exists(id))group_batches[id]=new;
   endfunction
@@ -21,6 +24,14 @@
     if(batch.expected!=0 && ticks<=batch.ticks)begin runtime_scope_error(BW_GROUP,id,"GROUP_CLOCK","actual group edges must strictly increase");return;end
     if(batch.expected==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group edge ledger exhausted");return;end
     batch.expected++;batch.ticks=ticks;
+    group_work_requested(id,request_slot_settlement(id));
+  endfunction
+  function automatic void group_core_receipt(string id,bw_u64_t seq);
+    if(scope_failed(BW_GROUP,id))return;
+    group_batches[id].accepted=seq;
+`ifdef BW_MON_TEST_FAULTS
+    if(take_group_fault(id,"notice"))return;
+`endif
     group_work_requested(id,request_slot_settlement(id));
   endfunction
   function automatic bit group_batch_complete(string id);

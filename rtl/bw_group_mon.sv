@@ -49,18 +49,49 @@ module bw_group_mon #(
   import "DPI-C" context function chandle bw_native_watch_point_clock(input string scope_path);
   function void bw_native_point_edge();expect_group_edge(scope_id,$time);endfunction
   function int bw_native_point_audit();
+    bw_record_t unexpected;
     if(!monitor_ready || scope_failed(BW_GROUP,scope_id))return 0;
     if(group_batches[scope_id].grant>slot_settlement_generation ||
        core.settlement_required>slot_settlement_generation)return 1;
     // A parent depends on each actual producer's durable certificate. This
     // frozen DAG dependency is independent of native watcher callback order.
     if(group_producers_pending(group_handle))return 1;
+`ifdef BW_MON_TEST_SCHEDULING
+    if(bw_test_consumer_gates.exists(scope_id) && bw_test_consumer_gates[scope_id].paused &&
+       (bw_test_consumer_gates[scope_id].resume_after_group!="" || bw_test_consumer_gates[scope_id].resume_after_groups.size()!=0))begin
+      foreach(bw_test_consumer_gates[scope_id].resume_after_groups[d])begin
+        if(!group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_groups[d]))begin
+          runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=CONTINUATION unknown dependency");return 0;
+        end
+        if(group_batches[bw_test_consumer_gates[scope_id].resume_after_groups[d]].acked<
+           bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
+      end
+      if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_group))begin
+        runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=CONTINUATION unknown dependency");return 0;
+      end
+      if(bw_test_consumer_gates[scope_id].resume_after_group!="" && group_batches[bw_test_consumer_gates[scope_id].resume_after_group].acked<
+         bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
+      bw_test_consumer_gates[scope_id].paused=0;
+      void'(request_slot_settlement(scope_id));
+      return 1;
+    end
+`endif
     close_group_batch(scope_id);
     if(scope_failed(BW_GROUP,scope_id))return 0;
+    if(expected_edges.size()==0)for(int m=0;m<direct_member_count;m++)begin
+      if(peek_member_frame(group_handle,m,unexpected))begin
+        runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=UNEXPECTED_FRAME source=%s original_ticks=%0d edge=%0d without actual group edge",source_name(member_source(group_handle,m)),unexpected.timestamp_ticks,unexpected.edge_index));return 0;
+      end
+    end
     if(expected_edges.size()!=0 || captured_resets.size()!=0 ||
-       core.requested_actions!=core.consumed_actions || !group_preparation_ready(group_handle) ||
+       core.requested_actions!=core.consumed_actions || core.reset_requests!=core.reset_receipts ||
+       core.timer_requests!=core.timer_receipts || !group_preparation_ready(group_handle) ||
        controls_held!=controls_published || controls_held!=controls_accepted || controls_held!=controls_acked)
       runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=POSTED_ACTION missing control/core/input receipt");
+    if(!scope_failed(BW_GROUP,scope_id) && WINDOW_BASIS==BW_NS && core.reset_applied && core.current_reset_n!==1'b0 &&
+       ((core.next_update_ticks<=$time && core.next_update_ticks<=progress_watermark_ticks) ||
+        (core.scheduled_episode_deadline_valid && core.scheduled_episode_deadline<=$time && core.scheduled_episode_deadline<=progress_watermark_ticks)))
+      runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION","stage=DUE_TIMER no due timer receipt or continuation");
     return 0;
   endfunction
   export "DPI-C" function bw_native_point_edge;
@@ -134,7 +165,7 @@ module bw_group_mon #(
     expected_edge_t expected;
     if (monitor_ready && $time>measurement_start_ticks && !scope_failed(BW_GROUP,scope_id)) begin
 `ifdef BW_MON_TEST_FAULTS
-      if(take_point_fault(scope_id,"capture"))disable capture_expected_edge;
+      if(take_group_fault(scope_id,"capture"))disable capture_expected_edge;
 `endif
       check_monitor_time($time,scope_id);
       if(runtime_failed())disable capture_expected_edge;
@@ -160,16 +191,16 @@ module bw_group_mon #(
     controls_held=checked_add(controls_held,1,scope_id);
     receipt=checked_add(accepted_control_count,1,scope_id);
     if(runtime_failed())return;
-    core_control=envelope.value;core_control_toggle<=!core_control_toggle;
-    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id));
-    if(scope_failed(BW_GROUP,scope_id))return;
-    controls_accepted=controls_held;
     publish_control(transport_source,envelope.value);
     if(runtime_failed())return;
     controls_published=controls_held;
     raw_control=envelope.value;control_result_seq=checked_add(control_result_seq,1,scope_id);
     if(runtime_failed())return;
     control_toggle<=!control_toggle;
+    core_control=envelope.value;core_control_toggle<=!core_control_toggle;
+    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id));
+    if(scope_failed(BW_GROUP,scope_id))return;
+    controls_accepted=controls_held;
     acknowledge_member_control(group_handle,member_index,envelope.transport_seq);
     if(runtime_failed())return;
     controls_acked=controls_held;
@@ -181,7 +212,7 @@ module bw_group_mon #(
     expected_edge_t discarded;
     if(runtime_failed())return;
 `ifdef BW_MON_TEST_FAULTS
-    if(take_point_fault(scope_id,"held"))begin collector_stalled=1;return;end
+    if(take_group_fault(scope_id,"held"))begin collector_stalled=1;return;end
 `endif
     group_batches[scope_id].held=expected.edge_index;
     frame='0;frame.timestamp_ticks=expected.timestamp_ticks;frame.edge_index=expected.edge_index;
@@ -202,21 +233,21 @@ module bw_group_mon #(
     end
     raw_sequence=frame.record_seq;raw_record=frame;
 `ifdef BW_MON_TEST_FAULTS
-    if(take_point_fault(scope_id,"publication"))begin collector_stalled=1;return;end
+    if(take_group_fault(scope_id,"publication"))begin collector_stalled=1;return;end
 `endif
     publish_frame(transport_source,frame);
     if(runtime_failed())return;
     group_batches[scope_id].published=frame.record_seq;
 `ifdef BW_MON_TEST_FAULTS
-    if(!take_point_fault(scope_id,"core"))record_toggle<=!record_toggle;
+    if(!take_group_fault(scope_id,"core"))record_toggle<=!record_toggle;
 `else
     record_toggle<=!record_toggle;
 `endif
     wait(accepted_record_seq>=frame.record_seq || scope_failed(BW_GROUP,scope_id));
     if(scope_failed(BW_GROUP,scope_id))return;
-    group_batches[scope_id].accepted=frame.record_seq;
+    group_core_receipt(scope_id,frame.record_seq);
 `ifdef BW_MON_TEST_FAULTS
-    if(take_point_fault(scope_id,"ack"))begin collector_stalled=1;return;end
+    if(take_group_fault(scope_id,"ack"))begin collector_stalled=1;return;end
 `endif
     for (int m=0;m<direct_member_count;m++)begin
       acknowledge_member_frame(group_handle,m,frame.record_seq);

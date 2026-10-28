@@ -131,6 +131,7 @@ module bw_stats_core #(
   bw_u64_t member_control_sequences[int];
   bw_u64_t member_control_times[int];
   bw_u64_t requested_actions=0, consumed_actions=0;
+  bw_u64_t reset_requests=0,reset_receipts=0;
   bw_u64_t settlement_required=0;
   bw_u64_t timer_requests=0, timer_receipts=0, timer_schedule_seq=0;
   bw_u64_t stats_start_ticks;
@@ -1060,6 +1061,8 @@ module bw_stats_core #(
     check_storage_growth(pending_resets.size(),scope_id,"core.resets",action.timestamp_ticks,last_edge_index,last_record_seq);
     if(runtime_failed())return;
     pending_resets.push_back(action);
+    reset_requests=checked_add(reset_requests,1,scope_id);
+    if(runtime_failed())return;
     requested_actions=checked_add(requested_actions,1,scope_id);
     if(runtime_failed())return;
     settlement_required=request_slot_settlement(scope_id);
@@ -1315,11 +1318,15 @@ module bw_stats_core #(
         // at T. Fold their level, without publishing or tainting the old epoch.
         repeat(reset_index)begin
           reset_action=pending_resets.pop_front();current_reset_n=reset_action.reset_n;
+          reset_receipts=checked_add(reset_receipts,1,scope_id);
+          if(runtime_failed())return;
           consumed_actions=checked_add(consumed_actions,1,scope_id);
           if(runtime_failed())return;
         end
         reset_action=pending_resets.pop_front();
         apply_reset(reset_action);
+        if(runtime_failed())return;
+        reset_receipts=checked_add(reset_receipts,1,scope_id);
         if(runtime_failed())return;
       end else if (pending_member_controls.size()!=0) begin
         control=pending_member_controls.pop_front();

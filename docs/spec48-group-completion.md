@@ -1,0 +1,40 @@
+# Group same-time completion
+
+The private group ledger independently records actual expected edges, collector capture, held input, durable upward publication, local core/reset acceptance and input ACK. The native clock observer also observes reset/unknown/zero-traffic edges. The existing native callback dispatches each module's scope export; the point native algorithm is unchanged.
+
+A writable audit first respects posted continuation grants, then each direct producer's durable completion certificate. The frozen acyclic graph supplies these causal dependencies; callback watch order does not. A group publishes before waiting for its own core and then ACKs its inputs. A child never waits for all parent ACKs before allowing a parent read. Control processing requires core receipt, upward publication and input ACK. Captured resets and posted core actions, including due timers, remain inventoried. Future statistics timers are legitimate future work.
+
+Quarantine records a typed root and disables only that owner and its frozen ancestors. Every disabled group cancels its inbound direct subscriptions. Frozen parents/members are preserved, ACK cursors are never advanced by cancellation, and release uses only effective subscribers. A healthy sibling retains its unread data. A failed source affects all its ancestors. Reset cannot restore a failed subscription or scope.
+
+The group physical1ns deadline and deferred timeout workers are removed. Frame/control publication must occur at the original timestamp; old input supplied later is rejected, and disabled owners ignore it without revival. Stopped clocks create no synthetic edges. Legal quality gaps and statistics resets continue raw supply.
+
+The test-only collector gate names one or more concrete group/sequence receipts as its continuation dependency. Once that receipt exists the coordinator releases the gate with a new explicit grant; it does not use physical delay, fixed callback counts or quiet rounds. This is scheduling instrumentation at the previously approved component seam, not user configuration.
+
+## Evidence scope and migration
+
+Ticket55 focused evidence is archived under `/tmp/bw-mon-spec48/ticket55`. Native read-only observers verify the real eight-layer public hierarchy at the original physical time, including missing capture/held/publication/core/ACK stages and healthy shared-source/sibling continuation. The public point implementation and native observer proof from54 remain separate evidence.
+
+`group_delayed` now delivers via same-time NBAs and retains its literal40-byte window and stopped-clock expiry oracle. `hierarchy_depth_transport` preserves its literal12884901885-byte wide root, eight layers, control origins, quality gap, middle statistics reset and held-reset raw-supply checks. The missing case quarantines at the original edge. `group_faults` supplies valid prefixes at original timestamps before injecting each actual ordering fault. `group_deferred_final` checks same-time success separately from missing isolation and sticky late rejection while healthy sentinel/hint scopes continue. `hierarchy_retention` changes consumer order through named same-time receipt dependencies while retaining512/384 and448/320-byte totals, quality and half-open window oracles.
+
+The unified final coordinator/report marker belongs to56. Full-scale/history budgets and full M4/H6 qualification belong to60; these focused checks do not claim those outcomes.
+
+## Frozen pressure obligations
+
+The old source fixture remains recoverable at commit6131d9a and the literal properties below remain requirements, not historical PASS relabelled as current evidence.
+
+| Original pressure/property | Legal replacement and required scope |
+| --- | --- |
+|4096 distinct-edge frames retained in one source, prompt ACK4096, delayed ACK0 | Storage-component capacity check with4096 real publications at distinct actual times and independent manual cursors; no public same-time closure claim |
+|4096 simultaneous effective unread frames | Aggregate same-time hold/read/ACK/release across4096 sources; does not alone prove one-source capacity |
+|20 prompt and20 delayed windows,65520 bytes/8190 events,32768/4096 prompt totals | Public synchronous original-edge delivery over the unchanged4096-edge traffic table |
+|3200B/400-event windows; sixth3184B/398-event incomplete | Preserve gap[T+500,T+501)ns and every independent literal window oracle |
+|M4/H6 fast203/slow198, five retained frames, two controls, allocator peak6, ACK204 release | `transport_m4_capacity` reproduces every literal with204 actual original-time publications and16 manual consumers; this is storage-component evidence |
+|M4/H6 history>=4 coupled with same-time multi-parent hold/control/core/ACK/release | `group_public_pressure` uses a real point, real shared group and16 real parents with automatic analysis enabled; it observes one held frame, two controls, actual fragmented history and exact same-time release; full-scale coupled evidence remains60 |
+
+Per-source capacity, simultaneous aggregate backlog, sampled allocator maximum and sum of per-scope maxima are different measurements. Actual focused results: `transport_capacity4096` retains4096 entries in one source, checks the fifth/sixth growth prefixes, prompt ACK4096 versus unread0, both controls, exact original record identities, and final release0. `transport_same_time_pressure4096` measures4096 simultaneous retained frames (one per source) and two controls with prompt ACK1 versus slow0 for every source, then both public group core receipts and release0. Its producer boundary is the controlled source seam, not4096 public point modules. `transport_growth` retains the unchanged4096-edge traffic/gap table and all20+20 independent windows, including65520/8190 and32768/4096 totals and the sixth3184/398 incomplete window.
+
+The first aggregate pilot additionally sent4096 initial controls and exceeded the component runner's120s cap; it is a failed performance diagnostic, not passing evidence. The minimal controlled-producer construction sends the one initial control stream and two held controls required by this pressure property and completed in0.62s simulation CPU at its initial checkpoint. Public point reset preparation remains covered by real point/group integration. Source/command qualification and later re-runs determine final applicability.
+
+`transport_m4_capacity` preserves the old literal fast203/slow198, retained5/2, allocator high-water6 and final ACK204/release0 at the storage component seam. All204 records and their distinct timestamps are produced through `publish_frame`; no sequence/ACK counter is preloaded. Its16 direct consumers are manual component consumers. `group_public_pressure` separately uses a real dynamic-byte point, real shared group and16 real parent modules with episode/phase analysis enabled. At its sixth actual edge, a same-time reset pulse supplies two real controls, the shared group retains a frame and both controls for the slow parent, all15 fast ACKs finish first, and actual history remains at least four segments. A native read-only verifier checks all16 core receipts and final release at the original timestamp. These distinct fixtures preserve capacity/count pressure and public legal coupling without claiming that five distinct physical edges occur at one timestamp.
+
+These quantities cover component capacity and legal aggregate pressure with their actual scopes. The later full-scale M4/H6 combination must separately prove those retained-count properties coupled to all topology/history/checker obligations; focused counts do not qualify that campaign.

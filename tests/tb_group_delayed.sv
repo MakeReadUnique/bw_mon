@@ -24,18 +24,14 @@ module tb_group_delayed;
     slow_frame='0;slow_frame.record_seq=1;slow_frame.edge_index=1;
     slow_frame.timestamp_ticks=measurement_start_ticks+250000;slow_frame.byte_inc=32;slow_frame.event_inc=1;
     slow_frame.bytes_complete=1;slow_frame.events_complete=1;slow_frame.reset_n=1;
-    #250000;clk=1;#1;clk=0;
-    #750000;
-    if (group_mon.result_seq!=0 || group_mon.denominator_valid || fast.result_seq!=1)
-      $fatal(1,"pending earlier group input must block publication rather than manufacture a complete partial total");
-    #249999;deliver<=1;
-    #1;
+    #250000;clk=1;deliver<=1;#1;clk=0;
+    #(measurement_start_ticks+1250001-$time);
     if (group_mon.raw_record.timestamp_ticks!=250001 || group_mon.raw_record.edge_index!=1 ||
         group_mon.raw_record.byte_inc!=40 || group_mon.accepted_record_seq!=1 ||
         group_mon.result_seq!=1 || group_mon.window_end_ticks!=1000001 ||
         group_mon.window_bytes!=40 || !group_mon.window_valid ||
         $abs(group_mon.bandwidth_gbps-40.0)>1e-10)
-      $fatal(1,"deadline-slot NBA arrival must produce the original logical window after complete input");
+      $fatal(1,"same-time NBA arrival must produce the original logical window after complete input");
     #750000;
     if (group_mon.result_seq!=2 || group_mon.window_end_ticks!=2000001 ||
         group_mon.window_bytes!=0 || !group_mon.window_valid)

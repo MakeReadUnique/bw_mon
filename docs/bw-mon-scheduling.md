@@ -81,9 +81,7 @@ the existing representation/storage guards. No history depth, slot count,
 positive-time drain, synthetic sampling edge or fixed number of delta rounds is
 introduced. Ordinary point traffic still has its direct local core path.
 
-Existing read-only deferred deadline checks continue to inspect durable state.
-The combined regressions cover startup/deadline arrivals, timer-first metadata,
-stopped clocks, reset/deassert sampling and final Pending/runtime Seen guards.
+The current group implementation uses independent actual-edge expectations and writable completion audits, with explicit continuation grants and producer certificates. Durable capture/held/publication/core/ACK receipts survive queue removal and advisory wake loss. Read-only observers verify original-time outcomes. Frozen topology supplies causality; active subscriptions supply release obligations. No physical missing deadline remains. The version-qualified results below describe their historical source only.
 
 ## Version-qualified evidence
 
