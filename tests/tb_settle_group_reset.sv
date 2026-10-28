@@ -28,27 +28,35 @@ module tb_settle_group_reset;
       mode,$time,reset_n,p0.sampled_reset_n,p0.raw_record.byte_inc,child.raw_record.byte_inc,parent.raw_record.byte_inc,
       p0.total_bytes,child.total_bytes,parent.total_bytes,p0.stats_epoch,p0.result_seq,bad_upstream_frames,
       p0.accepted_record_seq,child.accepted_record_seq,parent.accepted_record_seq,public_assertions);
+    // Edge views are the pre-NBA beat at the original posedge (2000002 after
+    // the 1fs seal): a same-time assertion overrides, a release before the
+    // edge preserves the normal view (reset evidence travels on controls),
+    // and an unknown reset leaves the edge incomplete instead of inventing
+    // byte counts. Modes 0/1 see reset at the edge, 2/3 keep the transfer,
+    // 4 stays unknown.
     if(p0.accepted_record_seq!=2 || child.accepted_record_seq!=2 || parent.accepted_record_seq!=2 ||
-       bad_upstream_frames!=0 || p0.raw_record.record_seq!=2 || p0.raw_record.timestamp_ticks!=2000001 ||
-       p0.raw_record.byte_inc!=(mode==4?8:0) || p0.raw_record.event_inc!=(mode==4?1:0) ||
-       p0.sampled_reset_n!==(mode==4?1'b1:1'b0) ||
+       bad_upstream_frames!=0 || p0.raw_record.record_seq!=2 || p0.raw_record.timestamp_ticks!=2000002 ||
+       p0.raw_record.byte_inc!=((mode==2||mode==3)?8:0) || p0.raw_record.event_inc!=((mode==2||mode==3)?1:0) ||
+       p0.sampled_reset_n!==(mode==4?1'bx:(mode>=2?1'b1:1'b0)) ||
+       p0.raw_record.bytes_complete!=(mode!=4) || p0.raw_record.events_complete!=(mode!=4) ||
        p0.raw_record.source_epoch!=(mode==4?0:1) ||
-       child.raw_record.byte_inc!=(mode==4?8:0) || parent.raw_record.byte_inc!=(mode==4?24:16) ||
+       child.raw_record.byte_inc!=((mode==2||mode==3)?8:0) || parent.raw_record.byte_inc!=((mode==2||mode==3)?24:16) ||
        child.raw_record.record_seq!=2 || parent.raw_record.record_seq!=2 ||
-       child.raw_record.timestamp_ticks!=2000001 || parent.raw_record.timestamp_ticks!=2000001 ||
+       child.raw_record.timestamp_ticks!=2000002 || parent.raw_record.timestamp_ticks!=2000002 ||
        child.stats_epoch!=0 || parent.stats_epoch!=0 || child.result_seq!=2 || parent.result_seq!=2 ||
        child.window_bytes!=(mode==3?0:8) || parent.window_bytes!=(mode==3?16:24) ||
-       child.total_bytes!=(mode==3?0:mode==4?16:8) || parent.total_bytes!=(mode==3?32:mode==4?48:40) ||
+       child.total_bytes!=(mode==2?16:8) || parent.total_bytes!=(mode==2?48:40) ||
        child.accepted_control_count!=(mode==2?3:2) || parent.accepted_control_count!=(mode==2?4:3) ||
        retained_frame_count(p0.transport_source)!=0 || retained_frame_count(child.transport_source)!=0)
       $fatal(1,"same-T reset/control ordering must preserve raw ancestor traffic, history, identities and receipt-before-ACK");
-    if(mode!=4 && (p0.stats_epoch!=1 || p0.total_bytes!=0))
+    if(mode!=4 && (p0.stats_epoch!=1 || p0.total_bytes!=((mode==2||mode==3)?8:0)))
       $fatal(1,"known reset must clear only the own point statistics");
     #(3000003-$time);
-    if(child.window_bytes!=(mode==4?8:0) || parent.window_bytes!=(mode==4?24:16) ||
+    if(child.window_bytes!=((mode==2||mode==3)?8:0) || parent.window_bytes!=((mode==2||mode==3)?24:16) ||
        child.bytes_complete!=(mode!=4) || parent.bytes_complete!=(mode!=4) ||
        child.events_complete!=(mode!=4) || parent.events_complete!=(mode!=4) ||
-       child.member_reset_coverage!=(mode!=4) || parent.member_reset_coverage!=(mode!=4))
+       child.member_reset_coverage!=((mode==2||mode==4)?1'b0:1'b1) ||
+       parent.member_reset_coverage!=((mode==2||mode==4)?1'b0:1'b1))
       $fatal(1,"positive unknown/reset coverage and known-part counts must remain independent upstream");
     $display("TB_PASS settle_group_reset mode=%0d",mode);$finish;
   end
