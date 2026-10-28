@@ -1204,10 +1204,14 @@ module bw_stats_core #(
 
   initial begin : core_timer_worker
     bw_u64_t observed_schedule, due_tick, request_number;
-    wait(monitor_ready);
+    // Standalone cores can receive initial member controls during preparation.
+    // Establish their own reset/origin before those controls schedule windows;
+    // only the normal timer worker waits for public readiness.
+    wait(configuration_sealed);
     if(!external_reset_capture)begin
       wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
     end
+    wait(monitor_ready);
     wait(reset_applied);
     if (WINDOW_BASIS == BW_NS) begin
       forever begin
