@@ -34,8 +34,8 @@
 `define PHASE_FIXED_FAMILY 0
 `endif
 module tb_phase_fixed;
-  localparam int CONFIG=`PHASE_FIXED_FAMILY;
   timeunit 1fs; timeprecision 1fs;
+  localparam int CONFIG=`PHASE_FIXED_FAMILY;
   import bw_mon_pkg::*;
   logic clk=0, reset_n=1, valid=0, known=1;
   logic [63:0] member_bytes[4]='{default:0};
