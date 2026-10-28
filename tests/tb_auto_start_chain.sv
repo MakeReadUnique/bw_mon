@@ -1,21 +1,21 @@
 module tb_auto_start_chain;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
-  logic clk=0,valid=0;
+  logic clk=0,valid=0,reset_n=0;
   int step=0;
   bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("chain.p0"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(2),.FIXED_BYTES(8),.PHASE_ENABLE(0)) p0
-    (.clk(clk),.reset_n(1'b1),.valid(valid));
+    (.clk(clk),.reset_n(reset_n),.valid(valid));
   bw_point_mon #(.POINT_ID("chain.p1"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(2),.FIXED_BYTES(16),.PHASE_ENABLE(0)) p1
-    (.clk(clk),.reset_n(1'b1),.valid(valid));
+    (.clk(clk),.reset_n(reset_n),.valid(valid));
   bw_point_mon #(.POINT_ID("chain.p2"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(2),.FIXED_BYTES(32),.PHASE_ENABLE(0)) p2
-    (.clk(clk),.reset_n(1'b1),.valid(valid));
+    (.clk(clk),.reset_n(reset_n),.valid(valid));
   bw_group_mon #(.GROUP_ID("chain.child"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(2),.PHASE_ENABLE(0)) child
-    (.clk(clk),.reset_n(1'b1));
+    (.clk(clk),.reset_n(reset_n));
   bw_group_mon #(.GROUP_ID("chain.root"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(2),.PHASE_ENABLE(0)) root_group
-    (.clk(clk),.reset_n(1'b1));
+    (.clk(clk),.reset_n(reset_n));
   bw_group_mon #(.GROUP_ID("chain.peer"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(2),.PHASE_ENABLE(0)) peer
-    (.clk(clk),.reset_n(1'b1));
+    (.clk(clk),.reset_n(reset_n));
   initial begin
     // Rules can reference owners/members before their own initial registration.
     add_group_member("chain.root","chain.child");
@@ -28,6 +28,7 @@ module tb_auto_start_chain;
       40: add_point_member("chain.child","chain.p1");
       79: add_point_member("chain.child","chain.p0"); // duplicate hit
       80: begin
+        reset_n<=1; // Final t=0 level is the initial monitored snapshot.
         add_group_member("chain.peer","chain.child");
         add_point_member("chain.root","chain.p2");
       end
@@ -39,6 +40,8 @@ module tb_auto_start_chain;
     wait(monitor_ready);
     if(step!=80 || $time!=measurement_start_ticks || measurement_start_ticks==0)
       $fatal(1,"finite #0/NBA collection must finish before one positive-slot start");
+    if(p0.stats_epoch!=0 || p1.stats_epoch!=0 || child.stats_epoch!=0 || root_group.stats_epoch!=0)
+      $fatal(1,"pre-start reset changes must not create a monitored reset epoch");
     if(child.direct_member_count!=2 || root_group.direct_member_count!=2 ||
        root_group.recursive_point_count!=3 || peer.direct_member_count!=1 || peer.recursive_point_count!=2)
       $fatal(1,"typed deduplication, mixed hierarchy and multiple parents must retain exact membership");

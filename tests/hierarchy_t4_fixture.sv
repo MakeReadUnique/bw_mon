@@ -52,12 +52,12 @@ module hierarchy_t4_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg:
       $fatal(1,"T4 full-window 2GHz/64B reference or direct/recursive cardinality failed");
     foreach(point_bandwidths[p])if($abs(point_bandwidths[p]-128.0)>1e-10)
       $fatal(1,"point p%0d including ungrouped points must independently measure 128GB/s",p);
-    #(103900002-$time);
+    #(measurement_start_ticks+103900000-$time);
     if(mode=="child_reset")child_reset_n=0;
     if(mode=="parent_reset")parent_reset_n=0;
     if(mode=="point_reset")point_reset_n[0]=0;
     if(mode=="size_unknown")size_bytes[0]='x;
-    #(104000003-$time);
+    #(measurement_start_ticks+104000001-$time);
     reset_case=(mode=="point_reset");size_case=(mode=="size_unknown");
     missing_bytes=(reset_case || size_case) ? 64 : 0;
     expected_child_bytes=(reset_case || size_case) ? 192 : 256;
@@ -73,8 +73,8 @@ module hierarchy_t4_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg:
       $fatal(1,"T5-E1 %s raw increments at104ns differ: child=%0d/%0d all=%0d/%0d mixed=%0d/%0d",mode,
         die0.raw_record.byte_inc,die0.raw_record.event_inc,all_dmc.raw_record.byte_inc,all_dmc.raw_record.event_inc,
         mixed.raw_record.byte_inc,mixed.raw_record.event_inc);
-    if(die0.raw_record.timestamp_ticks!=104000001 || all_dmc.raw_record.timestamp_ticks!=104000001 ||
-       mixed.raw_record.timestamp_ticks!=104000001 || die0.raw_record.edge_index!=208 ||
+    if(die0.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 || all_dmc.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 ||
+       mixed.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 || die0.raw_record.edge_index!=208 ||
        all_dmc.raw_record.edge_index!=208 || mixed.raw_record.edge_index!=208 ||
        die0.raw_record.record_seq!=208 || all_dmc.raw_record.record_seq!=208 || mixed.raw_record.record_seq!=208 ||
        die0.accepted_record_seq!=208 || all_dmc.accepted_record_seq!=208 || mixed.accepted_record_seq!=208 ||
@@ -98,8 +98,8 @@ module hierarchy_t4_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg:
        acknowledged_frame_seq(all_dmc.group_handle,0)!=208 || acknowledged_frame_seq(mixed.group_handle,0)!=208 ||
        acknowledged_frame_seq(die0.group_handle,0)!=208)
       $fatal(1,"all automatic direct consumers must acknowledge accepted durable source records");
-    #(104100002-$time);child_reset_n=1;parent_reset_n=1;point_reset_n[0]=1;size_bytes[0]=64;
-    #(105000003-$time);
+    #(measurement_start_ticks+104100000-$time);child_reset_n=1;parent_reset_n=1;point_reset_n[0]=1;size_bytes[0]=64;
+    #(measurement_start_ticks+105000001-$time);
     if(mode!="parent_reset" && (all_dmc.window_bytes!=10240-missing_bytes ||
        all_dmc.window_events!=(reset_case ? 159 : 160) || !all_dmc.window_full ||
        all_dmc.bytes_complete==size_case || all_dmc.member_reset_coverage!=reset_case))

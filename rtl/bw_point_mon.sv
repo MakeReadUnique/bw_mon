@@ -182,9 +182,10 @@ module bw_point_mon #(
       hints.backpressure_hint.reset_capture_ready && hints.credit_shortage_hint.reset_capture_ready);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
     wait(core.reset_applied && recorder.reset_observed &&
+      core.consumed_actions==core.requested_actions && captured_resets.size()==0 &&
       recorder.published_control_seq==recorder.control_seq &&
       hints.backpressure_hint.startup_prepared && hints.credit_shortage_hint.startup_prepared);
-    note_scope_prepared();
+    note_scope_prepared(transport_source);
     wait(monitor_ready);
   end
   final begin

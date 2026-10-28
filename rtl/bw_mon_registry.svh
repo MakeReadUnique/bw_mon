@@ -163,15 +163,14 @@
     if (group.traversal_state==1)
       core_error("GROUP_CYCLE",group.id,{"path=",path});
     if (group.traversal_state==2) return;
-    group.traversal_state=1;group.depth=1;group.recursive_points='0;group.initial_control_count=0;
+    group.traversal_state=1;group.depth=1;group.recursive_points='0;
     foreach (group.members[m]) begin
       member=registered_sources[group.members[m]];
       if (member.kind==BW_GROUP) begin
         validate_group_tree(member.group_handle,{path," -> group:",member.id});
         if (registered_groups[member.group_handle].depth+1>group.depth)
           group.depth=registered_groups[member.group_handle].depth+1;
-        group.initial_control_count+=registered_groups[member.group_handle].initial_control_count;
-      end else if(member.requires_preparation) group.initial_control_count++;
+      end
       mask=source_point_mask(group.members[m]);overlap=group.recursive_points & mask;
       if (overlap!='0) begin
         point_handle=0;
@@ -287,7 +286,9 @@
     preparing_scopes=checked_add(preparing_scopes,1,"setup");
   endfunction
 
-  function automatic void note_scope_prepared();
+  function automatic void note_scope_prepared(int source_handle);
+    registered_sources[source_handle].preparation_complete=1;
+    notify_parents(source_handle);
     prepared_scopes=checked_add(prepared_scopes,1,"setup");
   endfunction
 

@@ -21,6 +21,19 @@
     return registered_groups[checked_group_index(group_handle)].notification;
   endfunction
 
+  // Startup follows the frozen direct graph. A source closes its preparation
+  // only after publishing its initial controls. The consumer must then finish
+  // every corresponding core receipt, upward publication and direct ACK.
+  function automatic bit group_preparation_ready(int group_handle);
+    bw_source_state member;
+    foreach(registered_groups[group_handle].members[m])begin
+      member=registered_sources[registered_groups[group_handle].members[m]];
+      if(member.requires_preparation && !member.preparation_complete)return 0;
+      if(member.control_acks[group_handle]!=member.last_control_seq)return 0;
+    end
+    return 1;
+  endfunction
+
   function automatic int member_source(logic [63:0] group_handle,logic [63:0] member_index);
     int group_index;group_index=checked_group_index(group_handle,"member_source");
     if(core_failure_seen)return 0;

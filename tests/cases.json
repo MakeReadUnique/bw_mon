@@ -1591,7 +1591,7 @@
   "plusargs": [
    "+LATE=0"
   ],
-  "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250000",
+  "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001",
   "expect_log": [
    "DEFERRED_FINAL_GUARD pending=1 seen=0"
   ]
@@ -1965,7 +1965,7 @@
   "plusargs": [
    "+MISSING=1"
   ],
-  "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250000[^\\n]*expected_ticks=250000 deadline_ticks=1250000"
+  "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250001[^\\n]*expected_ticks=250001 deadline_ticks=1250001"
  },
  {
   "name": "hierarchy_invalid_kind",
@@ -4457,6 +4457,57 @@
   "expect_counts": {
    "BW_SUMMARY ": 0,
    "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_removed_point_count",
+  "top": "tb_auto_removed_point_count",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*EXPECTED_POINT_COUNT"
+ },
+ {
+  "name": "auto_removed_group_count",
+  "top": "tb_auto_removed_group_count",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*EXPECTED_GROUP_COUNT"
+ },
+ {
+  "name": "auto_removed_startup_timeout",
+  "top": "tb_auto_removed_startup_timeout",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*STARTUP_TIMEOUT_NS"
+ },
+ {
+  "name": "auto_removed_record_timeout",
+  "top": "tb_auto_removed_record_timeout",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*MISSING_RECORD_TIMEOUT_NS"
+ },
+ {
+  "name": "auto_removed_define_group",
+  "top": "tb_auto_removed_define_group",
+  "expect_compile_error": "(?s)Error-\\[MFNF\\].*Could not find member 'define_group' in package 'bw_mon_pkg'"
+ },
+ {
+  "name": "auto_removed_finish_configuration",
+  "top": "tb_auto_removed_finish_configuration",
+  "expect_compile_error": "(?s)Error-\\[MFNF\\].*Could not find member 'finish_configuration' in package 'bw_mon_pkg'"
+ },
+ {
+  "name": "auto_no_observations",
+  "top": "tb_auto_no_observations",
+  "expect_log": [
+   "BW_SUMMARY status=STATISTICS_ONLY .*scopes_done=1 scopes_expected=1"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1,
+   "BW_EPISODE ": 0,
+   "BW_PHASE ": 0
+  }
+ },
+ {
+  "name": "auto_reset_slot",
+  "top": "tb_auto_reset_slot",
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1
   }
  }
 ]

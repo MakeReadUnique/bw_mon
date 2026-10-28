@@ -30,7 +30,6 @@ module bw_group_mon #(
   // Effective public configuration after omission defaults are applied.
   bw_u64_t effective_stride,effective_silence;
   int group_handle,transport_source,direct_member_count,recursive_point_count;
-  int initial_control_count;
   bw_record_t raw_record;
   bw_control_t raw_control,core_control;
   bit record_toggle=0,control_toggle=0,core_control_toggle=0;
@@ -91,13 +90,21 @@ module bw_group_mon #(
     wait(configuration_sealed);
     direct_member_count=group_member_count(group_handle);
     recursive_point_count=group_recursive_point_count(group_handle);
-    initial_control_count=registered_groups[group_handle].initial_control_count;
     wait(core.scope_id==scope_id);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
-    // Public points supply initial quality through the real routes. A source
-    // registered directly at the component seam owns its own control stimulus.
-    wait(core.reset_applied && accepted_control_count==initial_control_count);
-    note_scope_prepared();
+    wait(core.reset_applied);
+    begin : prepare_inputs
+      bw_notification notice;
+      bw_u64_t seen;
+      notice=group_notification(group_handle);
+      forever begin
+        seen=notice.seq;
+        if(group_preparation_ready(group_handle))break;
+        wait(notice.seq!=seen);
+      end
+    end
+    wait(core.consumed_actions==core.requested_actions && captured_resets.size()==0);
+    note_scope_prepared(transport_source);
     wait(monitor_ready);
   end
   final begin
