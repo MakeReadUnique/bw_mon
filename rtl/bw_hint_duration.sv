@@ -16,6 +16,7 @@ module bw_hint_duration #(
   import bw_mon_pkg::*;
   localparam bw_scope_t scope_kind=BW_POINT;
   `include "bw_scope_runtime.svh"
+  bit scheduler_running=0,scheduler_cancelled=0,timer_worker_running=0,timer_worker_cancelled=0;
   typedef struct packed {bw_u64_t at_ticks;logic condition_value;logic reset_value;} status_action_t;
   typedef struct packed {bw_u64_t at_ticks;bw_u64_t index;} edge_action_t;
   typedef struct packed {bw_u64_t at_ticks;bw_u64_t generation;} timer_action_t;
@@ -241,31 +242,50 @@ module bw_hint_duration #(
     initial begin : hint_timer_worker
       bw_u64_t schedule,due_ticks,request;
       timer_action_t action;
-      wait(configured && monitor_ready);
+      wait((configured && monitor_ready) || runtime_cancelled);
+      timer_worker_running=1;
       forever begin
-        wait((result.active && !result.hit) || runtime_failed());
-        if(runtime_failed())disable hint_timer_worker;
+        wait((result.active && !result.hit) || runtime_failed() || runtime_cancelled);
+        if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable hint_timer_worker;
+        end
         schedule=timer_schedule_seq;due_ticks=checked_add(result.start_ticks,threshold_ticks,scope_id);
         if($time<due_ticks) begin
           fork : wait_for_hint
             begin #(due_ticks-$time);end
-            begin wait(timer_schedule_seq!=schedule || runtime_failed());end
+            begin wait(timer_schedule_seq!=schedule || runtime_failed() || runtime_cancelled);end
           join_any
           disable wait_for_hint;
         end
-        if(runtime_failed())disable hint_timer_worker;
+        if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable hint_timer_worker;
+        end
         if(timer_schedule_seq==schedule && result.active && !result.hit && $time>=due_ticks) begin
           begin_action(pending_timers.size(),"timers");
-          if(runtime_failed())disable hint_timer_worker;
+          if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable hint_timer_worker;
+        end
           action.at_ticks=due_ticks;action.generation=schedule;pending_timers.push_back(action);
           timer_requests=checked_add(timer_requests,1,scope_id);
-          if(runtime_failed())disable hint_timer_worker;
+          if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable hint_timer_worker;
+        end
           request=timer_requests;
           requested_actions=checked_add(requested_actions,1,scope_id);
-          if(runtime_failed())disable hint_timer_worker;
+          if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable hint_timer_worker;
+        end
           settlement_required=request_slot_settlement(scope_id);
-          wait(timer_receipts>=request || runtime_failed());
-          if(runtime_failed())disable hint_timer_worker;
+          wait(timer_receipts>=request || runtime_failed() || runtime_cancelled);
+          if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable hint_timer_worker;
+        end
         end
       end
     end
@@ -283,10 +303,16 @@ endmodule
 
 program bw_hint_duration_scheduler;
   timeunit 1fs;timeprecision 1fs;
-  initial forever begin
-    wait(!bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id) && bw_hint_duration.requested_actions!=bw_hint_duration.consumed_actions);
-    wait(bw_mon_pkg::slot_settlement_generation>=bw_hint_duration.settlement_required ||
-      bw_mon_pkg::scope_failed(bw_mon_pkg::BW_POINT,bw_hint_duration.scope_id));
-    bw_hint_duration.drain_actions();
+  initial begin
+    bw_hint_duration.scheduler_running=1;
+    forever begin
+      wait(bw_hint_duration.runtime_cancelled || bw_hint_duration.requested_actions!=bw_hint_duration.consumed_actions);
+      if(bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id))break;
+      wait(bw_mon_pkg::slot_settlement_generation>=bw_hint_duration.settlement_required || bw_hint_duration.runtime_cancelled);
+      if(bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id))break;
+      bw_hint_duration.drain_actions();
+    end
+    bw_hint_duration.scheduler_running=0;
+    bw_hint_duration.scheduler_cancelled=bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id);
   end
 endprogram

@@ -130,6 +130,7 @@ module bw_stats_core #(
   active_quality_t active_quality[int];
   bw_u64_t member_control_sequences[int];
   bw_u64_t member_control_times[int];
+  bit scheduler_running=0,scheduler_cancelled=0,timer_worker_running=0,timer_worker_cancelled=0;
   bw_u64_t requested_actions=0, consumed_actions=0;
   bw_u64_t reset_requests=0,reset_receipts=0;
   bw_u64_t settlement_required=0;
@@ -1407,40 +1408,63 @@ module bw_stats_core #(
       wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
     end
     wait(monitor_ready);
-    wait(reset_applied);
+    wait(reset_applied || runtime_cancelled);
     if (WINDOW_BASIS == BW_NS) begin
+      timer_worker_running=1;
       forever begin
-        if(runtime_failed())disable core_timer_worker;
+        if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable core_timer_worker;
+        end
         observed_schedule=timer_schedule_seq;
         if (current_reset_n === 1'b0) begin
-          wait(timer_schedule_seq != observed_schedule || runtime_failed());
+          wait(timer_schedule_seq != observed_schedule || runtime_failed() || runtime_cancelled);
         end else begin
           due_tick=next_update_ticks;
           if (scheduled_episode_deadline_valid && scheduled_episode_deadline<due_tick)
             due_tick=scheduled_episode_deadline;
           if (due_tick>progress_watermark_ticks)
-            wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks || runtime_failed());
+            wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks || runtime_failed() || runtime_cancelled);
+          if(runtime_failed())begin
+            timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+            disable core_timer_worker;
+          end
           if ($time < due_tick) begin
             fork : wait_for_timer
               begin #(due_tick-$time); end
-              begin wait(timer_schedule_seq != observed_schedule || runtime_failed()); end
+              begin wait(timer_schedule_seq != observed_schedule || runtime_failed() || runtime_cancelled); end
             join_any
             disable wait_for_timer;
           end
-          if(runtime_failed())disable core_timer_worker;
+          if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable core_timer_worker;
+        end
           if (timer_schedule_seq == observed_schedule && $time >= due_tick &&
               due_tick<=progress_watermark_ticks) begin
             check_storage_growth(pending_timers.size(),scope_id,"core.timers",$time,last_edge_index,last_record_seq);
-            if(runtime_failed())disable core_timer_worker;
+            if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable core_timer_worker;
+        end
             pending_timers.push_back($time);
             timer_requests=checked_add(timer_requests,1,scope_id);
-            if(runtime_failed())disable core_timer_worker;
+            if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable core_timer_worker;
+        end
             request_number=timer_requests;
             requested_actions=checked_add(requested_actions,1,scope_id);
-            if(runtime_failed())disable core_timer_worker;
+            if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable core_timer_worker;
+        end
             settlement_required=request_slot_settlement(scope_id);
-            wait(timer_receipts >= request_number || runtime_failed());
-            if(runtime_failed())disable core_timer_worker;
+            wait(timer_receipts >= request_number || runtime_failed() || runtime_cancelled);
+            if(runtime_failed())begin
+          timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
+          disable core_timer_worker;
+        end
           end
         end
       end
@@ -1484,11 +1508,17 @@ module bw_stats_core #(
 endmodule
 
 program bw_stats_core_scheduler;
-  timeunit 1fs; timeprecision 1fs;
-  initial forever begin
-    wait(!bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id) && bw_stats_core.requested_actions != bw_stats_core.consumed_actions);
-    wait(bw_mon_pkg::slot_settlement_generation>=bw_stats_core.settlement_required ||
-      bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id));
-    bw_stats_core.drain_actions();
+  timeunit 1fs;timeprecision 1fs;
+  initial begin
+    bw_stats_core.scheduler_running=1;
+    forever begin
+      wait(bw_stats_core.runtime_cancelled || bw_stats_core.requested_actions!=bw_stats_core.consumed_actions);
+      if(bw_stats_core.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id))break;
+      wait(bw_mon_pkg::slot_settlement_generation>=bw_stats_core.settlement_required || bw_stats_core.runtime_cancelled);
+      if(bw_stats_core.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id))break;
+      bw_stats_core.drain_actions();
+    end
+    bw_stats_core.scheduler_running=0;
+    bw_stats_core.scheduler_cancelled=bw_stats_core.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id);
   end
 endprogram

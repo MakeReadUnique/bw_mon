@@ -14,6 +14,8 @@ module tb_group_timer_completion;
        scope_disabled(BW_POINT,"g0") || scope_disabled(BW_GROUP,"peer") || p.result_seq!=1 || peer.result_seq!=1 || peer.window_bytes!=8 ||
        group_batches["g0"].expected!=1 || point_batches["g0"].expected!=1)
       $fatal(1,"due timer receipt failure must isolate its group path at original time without inventing clock edges");
+    if(!groups[0].mon.core.timer_worker_cancelled || !groups[0].mon.core.scheduler_cancelled || groups[0].mon.core.scheduler_running || !groups[0].mon.collector_cancelled)
+      $fatal(1,"actual timer/idle core/collector worker did not exit cancelled wait before nativeRO");
     if(monitoring_root_cause[scope_key(BW_GROUP,"g7")]!=scope_key(BW_GROUP,"g0"))$fatal(1,"timer failure lost typed root");
     $display("TB_PASS group_timer_completion original_ticks=%0d expected_edges=1 healthy_window=8",$time);$finish;
   endfunction

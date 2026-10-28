@@ -37,6 +37,7 @@ module bw_group_mon #(
     bw_u64_t edge_index;
   } expected_edge_t;
   expected_edge_t expected_edges[$];
+  bit collector_running=0,collector_exited=0,collector_cancelled=0;
   bit collector_stalled=0,collector_waiting=0,collector_recovery_pending=0;
   bw_u64_t collector_recovery_grant=0,collector_recovery_receipts=0;
   bw_u64_t controls_held=0,controls_published=0,controls_accepted=0,controls_acked=0;
@@ -275,7 +276,7 @@ module bw_group_mon #(
 `else
     core_control_toggle<=!core_control_toggle;
 `endif
-    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id));
+    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
     if(scope_failed(BW_GROUP,scope_id))return;
     controls_accepted=controls_held;
 `ifdef BW_MON_TEST_FAULTS
@@ -323,7 +324,7 @@ module bw_group_mon #(
 `else
     record_toggle<=!record_toggle;
 `endif
-    wait(accepted_record_seq>=frame.record_seq || scope_failed(BW_GROUP,scope_id));
+    wait(accepted_record_seq>=frame.record_seq || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
     if(scope_failed(BW_GROUP,scope_id))return;
     group_core_receipt(scope_id,frame.record_seq);
 `ifdef BW_MON_TEST_FAULTS
@@ -356,7 +357,7 @@ module bw_group_mon #(
     forever begin
       if(scope_failed(BW_GROUP,scope_id))return;
 `ifdef BW_MON_TEST_SCHEDULING
-      wait(!test_gate.paused || scope_failed(BW_GROUP,scope_id));
+      wait(!test_gate.paused || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
       if(runtime_failed())return;
 `endif
       seen_notice=notice.seq;seen_expected=expected_notice;refresh_progress();
@@ -386,7 +387,7 @@ module bw_group_mon #(
         commit_frame(expected_edges[0]);if(collector_stalled)return;continue;
       end
       collector_waiting=1;
-      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || scope_failed(BW_GROUP,scope_id));
+      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
       collector_waiting=0;
       if(runtime_failed())return;
       if(collector_recovery_pending)begin
@@ -456,5 +457,10 @@ endmodule
 
 program bw_group_collector_scheduler;
   timeunit 1fs;timeprecision 1fs;
-  initial bw_group_mon.collect_inputs();
+  initial begin
+    bw_group_mon.collector_running=1;
+    bw_group_mon.collect_inputs();
+    bw_group_mon.collector_running=0;bw_group_mon.collector_exited=1;
+    bw_group_mon.collector_cancelled=bw_mon_pkg::scope_failed(bw_mon_pkg::BW_GROUP,bw_group_mon.scope_id);
+  end
 endprogram

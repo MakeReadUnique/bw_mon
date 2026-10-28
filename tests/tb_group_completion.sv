@@ -15,6 +15,9 @@ module tb_group_completion;
       $fatal(1,"original-time healthy peer differs");
     if(scope_disabled(BW_GROUP,"g0")!=damaged || scope_disabled(BW_GROUP,"g7")!=damaged)
       $fatal(1,"original-time hierarchy trust differs");
+    if(damaged && (stage=="core" || stage=="control_core") &&
+       (groups[0].mon.collector_running || !groups[0].mon.collector_cancelled || !groups[0].mon.core.scheduler_cancelled || groups[0].mon.core.scheduler_running))
+      $fatal(1,"actual blocked collector/core worker did not exit cancellation at original time");
     if(damaged && (groups[0].mon.expected_edges.size()!=0 || !groups[0].mon.core.runtime_actions_cancelled ||
                    groups[0].mon.core.pending_frames.size()!=0 || groups[0].mon.core.pending_member_controls.size()!=0 || groups[0].mon.captured_resets.size()!=0))
       $fatal(1,"disabled group retained owned pending work instead of cancellation");

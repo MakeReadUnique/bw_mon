@@ -5140,6 +5140,9 @@
   "top": "tb_transport_same_time_pressure",
   "defines": [
    "BW_MON_TEST_SCHEDULING"
+  ],
+  "sources": [
+   "group_completion_observer.c"
   ]
  },
  {
@@ -5183,7 +5186,10 @@
   "expect_warning": "BW_CORE_WARNING code=TEST_CONSUMER_FAILURE scope_kind=1 scope=pressure.slow",
   "expect_counts": {
    "BW_CORE_WARNING": 1
-  }
+  },
+  "sources": [
+   "group_completion_observer.c"
+  ]
  },
  {
   "name": "transport_m4_capacity",
@@ -5914,5 +5920,19 @@
   "expect_log": [
    "BW_SUMMARY status=PASS pass=12 fail=0 warning=0"
   ]
+ },
+ {
+  "name": "point_group_future_timer_cancellation",
+  "top": "tb_point_group_future_cancel",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=POINT_COMPLETION scope_kind=0 scope=p[^\\n]*stage=CAPTURE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  }
 ]

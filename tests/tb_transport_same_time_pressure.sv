@@ -31,13 +31,20 @@ module tb_transport_same_time_pressure;
       frame='0;frame.timestamp_ticks=$time;frame.record_seq=1;frame.edge_index=1;frame.source_epoch=0;
       frame.byte_inc=1;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;publish_frame(sources[p],frame);
     end
-    #1;
+    if(!bw_test_observe_group_completion())$fatal(1,"cannot register aggregate nativeRO verifier");
+  end
+  import "DPI-C" context function int bw_test_observe_group_completion();
+  function void bw_test_group_completion_observed();
+    if($time!=1000001 || !group_batch_complete("pressure.fast") ||
+       (cancel_slow ? !scope_disabled(BW_GROUP,"pressure.slow") : (!group_batch_complete("pressure.slow") || scope_disabled(BW_GROUP,"pressure.slow"))) ||
+       scope_disabled(BW_GROUP,"pressure.fast"))$fatal(1,"aggregate closure trust/certificate differs at original time");
     if(!checked || fast.accepted_record_seq!=1 || slow.accepted_record_seq!=(cancel_slow?0:1) || fast.total_bytes!=4096 || slow.total_bytes!=(cancel_slow?0:4096))
       $fatal(1,"aggregate pressure did not complete public group/core receipts at original edge");
     for(int p=0;p<4096;p++)if(retained_frame_count(sources[p])!=0 || retained_control_count(sources[p])!=0)
       $fatal(1,"aggregate source%0d leaked after all effective ACKs",p);
     $display("TB_PASS transport_same_time_pressure scope=controlled_sources_public_groups original_ticks=1000001 aggregate_frames=4096 controls=2 per_source_frames=1 release=0");$finish;
-  end
+  endfunction
+  export "DPI-C" function bw_test_group_completion_observed;
   task automatic observe();
     int frames,controls;
     wait(group_batches.exists("pressure.fast"));

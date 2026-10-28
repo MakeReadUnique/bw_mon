@@ -1,5 +1,17 @@
+  // A wait must observe this primitive directly. Native quarantine mutates an
+  // associative owner map; VCS does not reliably wake wait(function_query()).
+  bit runtime_cancelled=0;
+  initial begin : observe_runtime_cancellation
+    wait(monitor_ready || core_failure_seen);
+    forever begin
+      if(scope_disabled(bw_scope_t'(scope_kind),scope_id) || (!monitor_ready && core_failure_seen))begin
+        runtime_cancelled=1;break;
+      end
+      @(monitoring_failure_count or monitoring_shared_disabled or core_failure_seen);
+    end
+  end
   function automatic bit runtime_failed();
-    return scope_failed(bw_scope_t'(scope_kind),scope_id);
+    return runtime_cancelled || scope_failed(bw_scope_t'(scope_kind),scope_id);
   endfunction
   function automatic bw_u64_t request_slot_settlement(string context_id);
     bw_u64_t grant;
