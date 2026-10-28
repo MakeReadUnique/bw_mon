@@ -4323,5 +4323,69 @@
    "auto_error_fixture.sv"
   ],
   "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
+ },
+ {
+  "name": "phase_defaults",
+  "top": "tb_phase_defaults"
+ },
+ {
+  "name": "phase_pair6",
+  "top": "tb_phase_pair6"
+ },
+ {
+  "name": "phase_fixed_continuous",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=0",
+   "+INPUT=../../../tests/phase_default/continuous.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "continuous"
+  ]
+ },
+ {
+  "name": "phase_fixed_platforms",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=1",
+   "+INPUT=../../../tests/phase_default/platforms.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "platforms"
+  ]
+ },
+ {
+  "name": "phase_fixed_activity",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=2",
+   "+INPUT=../../../tests/phase_default/activity.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "activity"
+  ]
+ },
+ {
+  "name": "phase_fixed_recovery",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=3",
+   "+INPUT=../../../tests/phase_default/recovery.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "recovery"
+  ]
  }
 ]

@@ -19,20 +19,7 @@ module bw_point_mon #(
   parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx,
   parameter logic [1:0] EPISODE_ENABLE = 0,
   parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
-  parameter logic [1:0] PHASE_ENABLE = 0,
-  parameter logic [63:0] PHASE_N = 0,
-  parameter logic [63:0] PHASE_MIN_SPAN = 0,
-  parameter logic [63:0] PHASE_K = 0,
-  parameter real PHASE_STEADY_ENTER_ABS = -1.0,
-  parameter real PHASE_STEADY_ENTER_REL = -1.0,
-  parameter real PHASE_STEADY_EXIT_ABS = -1.0,
-  parameter real PHASE_STEADY_EXIT_REL = -1.0,
-  parameter real PHASE_RMS_ENTER_ABS = -1.0,
-  parameter real PHASE_RMS_ENTER_REL = -1.0,
-  parameter real PHASE_RMS_EXIT_ABS = -1.0,
-  parameter real PHASE_RMS_EXIT_REL = -1.0,
-  parameter real PHASE_TREND_ABS = -1.0,
-  parameter real PHASE_TREND_REL = -1.0
+  parameter logic [1:0] PHASE_ENABLE = EPISODE_ENABLE
 ) (
   input logic clk,
   input logic reset_n,
@@ -157,10 +144,7 @@ module bw_point_mon #(
     validate_hint_config(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE,SHORTAGE_BASIS,
                          SHORTAGE_THRESHOLD,scope_id,"credit_shortage");
     validate_episode_config(EPISODE_ENABLE,effective_silence,WINDOW_BASIS,scope_id);
-    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
-      PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
-      PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
-      PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,scope_id);
     validate_window(WINDOW_BASIS,WINDOW_WIDTH,effective_stride,scope_id);
     initialize_reset_capture(monitor_path,"reset_n");
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
@@ -220,20 +204,7 @@ module bw_point_mon #(
   bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),
                   .UPDATE_STRIDE(UPDATE_STRIDE),.EPISODE_ENABLE(EPISODE_ENABLE),
                   .SILENCE_THRESHOLD(SILENCE_THRESHOLD),
-                  .PHASE_ENABLE(PHASE_ENABLE),
-                  .PHASE_N(PHASE_N),
-                  .PHASE_MIN_SPAN(PHASE_MIN_SPAN),
-                  .PHASE_K(PHASE_K),
-                  .PHASE_STEADY_ENTER_ABS(PHASE_STEADY_ENTER_ABS),
-                  .PHASE_STEADY_ENTER_REL(PHASE_STEADY_ENTER_REL),
-                  .PHASE_STEADY_EXIT_ABS(PHASE_STEADY_EXIT_ABS),
-                  .PHASE_STEADY_EXIT_REL(PHASE_STEADY_EXIT_REL),
-                  .PHASE_RMS_ENTER_ABS(PHASE_RMS_ENTER_ABS),
-                  .PHASE_RMS_ENTER_REL(PHASE_RMS_ENTER_REL),
-                  .PHASE_RMS_EXIT_ABS(PHASE_RMS_EXIT_ABS),
-                  .PHASE_RMS_EXIT_REL(PHASE_RMS_EXIT_REL),
-                  .PHASE_TREND_ABS(PHASE_TREND_ABS),
-                  .PHASE_TREND_REL(PHASE_TREND_REL)) core
+                  .PHASE_ENABLE(PHASE_ENABLE)) core
     (.scope_id(scope_id),.scope_kind(scope_kind),.record(raw_record),.record_toggle(record_toggle),
      .stats_reset_n(reset_n),.accepted_record_seq(accepted_record_seq),
      .progress_watermark_ticks(BW_U64_MAX),
@@ -258,7 +229,9 @@ module bw_point_mon #(
      .episode_events_complete(episode_events_complete),.episode_member_reset_coverage(episode_member_reset_coverage),
      .episode_duration_valid(episode_duration_valid),.episode_e2e_valid(episode_e2e_valid),
      .episode_e2e_gbps(episode_e2e_gbps),.episode_result(episode_result),
-     .phase_current(phase_current),
+     .phase_reason(phase_reason),.phase_evidence_required(phase_evidence_required),
+                  .phase_candidate_required(phase_candidate_required),.phase_minimum_span(phase_minimum_span),
+                  .phase_current(phase_current),
      .phase_candidate(phase_candidate),
      .phase_active(phase_active),
      .phase_eligible(phase_eligible),
@@ -278,6 +251,6 @@ module bw_point_mon #(
      .phase_confirmation_ticks(phase_confirmation_ticks),
      .phase_fit_mean(phase_fit_mean),
      .phase_fit_delta(phase_fit_delta),
-     .phase_fit_rms(phase_fit_rms),
+     .phase_fit_rms(phase_fit_rms),.phase_fit_trend_rms(phase_fit_trend_rms),
      .phase_result(phase_result));
 endmodule
