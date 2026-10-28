@@ -5,6 +5,7 @@
     bw_u64_t grant;
     grant=bw_mon_pkg::request_slot_settlement(context_id);
     if(scope_kind==BW_POINT)point_work_requested(scope_id,grant);
+    else group_work_requested(scope_id,grant);
     return grant;
   endfunction
   // Private typed runtime adapter. Configuration validation stays in the

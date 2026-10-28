@@ -253,7 +253,7 @@
               member.id,source_kind_name(source_handle),member.parents.size()+1));
         check_storage_growth(member.parents.size(),member.id,"registry.parents",$time);
         if(core_failure_seen)return;
-        member.parents.push_back(g);member.frame_acks[g]=0;member.control_acks[g]=0;
+        member.parents.push_back(g);member.active_consumers[g]=1;member.frame_acks[g]=0;member.control_acks[g]=0;
       end
     end
   endfunction

@@ -302,6 +302,7 @@ package bw_mon_pkg;
     if(scope_disabled(kind,id))return;
     monitoring_disabled[key]=1;monitoring_root_cause[key]=key;monitoring_failure_code[key]=code;
     if(kind==BW_POINT)cancel_point_completion(id);
+    else cancel_group_subscriptions(id);
     monitoring_failure_count++;
     $warning("BW_CORE_WARNING code=%s scope_kind=%0d scope=%s time_ticks=%0d %s",code,kind,id,$time,detail);
     if(kind==BW_POINT && point_by_id.exists(id))pending_sources.push_back(registered_points[point_by_id[id]].transport_source);
@@ -314,6 +315,7 @@ package bw_mon_pkg;
           monitoring_disabled[scope_key(BW_GROUP,registered_groups[parent].id)]=1;
           monitoring_root_cause[scope_key(BW_GROUP,registered_groups[parent].id)]=key;
           $display("BW_SCOPE_DISABLED scope_kind=1 scope=%s root=%s time_ticks=%0d",registered_groups[parent].id,key,$time);
+          cancel_group_subscriptions(registered_groups[parent].id);
           pending_sources.push_back(registered_groups[parent].source_handle);
         end
       end
@@ -671,4 +673,5 @@ package bw_mon_pkg;
   `include "bw_mon_registry.svh"
   `include "bw_mon_transport.svh"
   `include "bw_point_completion.svh"
+  `include "bw_group_completion.svh"
 endpackage

@@ -2,6 +2,7 @@ module tb_transport_retention;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   int point_handle,source,first,second;
+  bit cancel_first;
   bw_record_t frame,received;
   bw_control_t control;
   bw_control_frame_t received_control;
@@ -18,11 +19,24 @@ module tb_transport_retention;
     if(!peek_member_control(first,0,received_control))$fatal(1,"initial control missing");
     acknowledge_member_control(first,0,received_control.transport_seq);
     if(retained_control_count(source)!=1)$fatal(1,"slow second consumer must retain the original control");
+    cancel_first=$test$plusargs("CANCEL_FIRST");
     #250000;
     frame='0;frame.record_seq=1;frame.edge_index=1;frame.timestamp_ticks=$time;
     frame.byte_inc=8;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
     publish_frame(source,frame);
     if(!peek_member_frame(first,0,received) || received.byte_inc!=8)$fatal(1,"first frame missing");
+    if(cancel_first)begin
+      runtime_scope_error(BW_GROUP,"first","TEST_CONSUMER_FAILURE","cancel first while second unread");
+      if(scope_disabled(BW_POINT,"p") || scope_disabled(BW_GROUP,"second"))$fatal(1,"consumer failure disabled reliable source or sibling");
+      if(retained_frame_count(source)!=1 || retained_control_count(source)!=1)$fatal(1,"cancellation lost sibling unread data");
+      if(!peek_member_frame(second,0,received) || received.byte_inc!=8)$fatal(1,"sibling original frame missing");
+      acknowledge_member_frame(second,0,1);
+      if(!peek_member_control(second,0,received_control))$fatal(1,"sibling original reset missing");
+      acknowledge_member_control(second,0,received_control.transport_seq);
+      if(retained_frame_count(source)!=0 || retained_control_count(source)!=0)$fatal(1,"cancelled consumer retained data after all effective ACKs");
+      if(registered_sources[source].parents.size()!=2)$fatal(1,"failure mutated frozen graph");
+      $display("TB_PASS transport_consumer_cancellation");$finish;
+    end
     acknowledge_member_frame(first,0,1);
     if(retained_frame_count(source)!=1 || acknowledged_frame_seq(second,0)!=0)
       $fatal(1,"one acknowledgement must not release another direct consumer's frame");

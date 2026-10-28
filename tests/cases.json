@@ -4938,5 +4938,130 @@
   "expect_counts": {
    "BW_CORE_WARNING": 1
   }
+ },
+ {
+  "name": "transport_consumer_cancellation",
+  "top": "tb_transport_retention",
+  "plusargs": [
+   "+CANCEL_FIRST"
+  ],
+  "expect_warning": "TEST_CONSUMER_FAILURE"
+ },
+ {
+  "name": "group_completion_capture",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=capture"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "GROUP_COMPLETION"
+ },
+ {
+  "name": "group_completion_none",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=none"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ]
+ },
+ {
+  "name": "group_completion_notice",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=notice"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ]
+ },
+ {
+  "name": "group_completion_publication",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=publication"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "GROUP_COMPLETION"
+ },
+ {
+  "name": "group_completion_core",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=core"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "GROUP_COMPLETION"
+ },
+ {
+  "name": "group_completion_ack",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=ack"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "GROUP_COMPLETION"
+ },
+ {
+  "name": "group_completion_held",
+  "top": "tb_group_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+STAGE=held"
+  ],
+  "expect_log": [
+   "TB_GROUP_READ_ONLY ticks=1000001"
+  ],
+  "expect_warning": "GROUP_COMPLETION"
  }
 ]
