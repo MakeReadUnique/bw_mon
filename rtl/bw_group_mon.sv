@@ -175,6 +175,8 @@ module bw_group_mon #(
                                       WINDOW_WIDTH,effective_stride);
     transport_source=group_source_handle(group_handle);
     register_group_completion(scope_id);
+    register_end_role(scope_key(BW_GROUP,scope_id),"owner");
+    register_end_role(scope_key(BW_GROUP,scope_id),"core");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent group raw-clock observer");
     raw_record='0;raw_control='0;core_control='0;
@@ -220,6 +222,15 @@ module bw_group_mon #(
   final begin
     if(!monitor_configured && !core_failure_pending())
       core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
+    ensure_end_audit();
+    if(monitor_ready && !core_failure_seen)
+      note_group_terminal(scope_id,expected_edges.size()==0 && captured_resets.size()==0 &&
+        !collector_recovery_pending &&
+        core.requested_actions==core.consumed_actions &&
+        controls_held==controls_published && controls_held==controls_accepted &&
+        controls_held==controls_acked);
+    if(!core_failure_seen)
+      note_role_receipt(scope_key(BW_GROUP,scope_id),"owner",scope_disabled(BW_GROUP,scope_id));
   end
 
   task automatic refresh_progress();

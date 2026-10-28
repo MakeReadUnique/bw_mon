@@ -11,6 +11,7 @@ module bw_mon_setup();
     report=new;
     configure_monitor();
     install_check_report(report);
+    register_end_role("setup","coordinator");
     // Advance to the first representable positive time step. This is a real
     // time advance, not a delta-count guess; its actual value is published as
     // the common measurement start T.
@@ -22,5 +23,8 @@ module bw_mon_setup();
   final begin
     if(!monitor_ready && !core_failure_pending())
       core_error("STARTUP_INCOMPLETE","setup",startup_status());
+    ensure_end_audit();
+    if(!core_failure_seen)
+      note_role_receipt("setup","coordinator",!monitor_ready);
   end
 endmodule

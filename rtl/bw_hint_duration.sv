@@ -216,6 +216,10 @@ module bw_hint_duration #(
     if(SUPPORTED && ENABLED && BASIS==BW_NS) threshold_ticks=ns_to_ticks(THRESHOLD,scope_id);
     initialize_reset_capture($sformatf("%m"),"reset_n");
     configured=1;enqueue_status(reset_n,$time);
+    // Only a really configured duration hint owns end responsibilities;
+    // unsupported or disabled generate branches declare no role at all.
+    if(configured && SUPPORTED && ENABLED)
+      register_end_role(scope_key(bw_scope_t'(scope_kind),scope_id),"hint");
   end
   always @(raw_condition) enqueue_status(reset_n,$time);
   initial begin
@@ -291,6 +295,7 @@ module bw_hint_duration #(
     end
   end
   final begin
+    ensure_end_audit();
     if(configured && !core_failure_pending() && !scope_disabled(bw_scope_t'(scope_kind),scope_id) &&
         (!point_batches.exists(scope_id) || point_batch_complete(scope_id)) && requested_actions==consumed_actions)begin
       if(!core_failure_pending() && !scope_disabled(bw_scope_t'(scope_kind),scope_id) && result.active) begin
@@ -298,6 +303,9 @@ module bw_hint_duration #(
         else check_monitor_time($time,{scope_id," ",HINT_NAME," final"});
       end
     end
+    if(!core_failure_seen && configured && SUPPORTED && ENABLED)
+      note_role_receipt(scope_key(bw_scope_t'(scope_kind),scope_id),"hint",
+        scope_disabled(bw_scope_t'(scope_kind),scope_id));
   end
 endmodule
 

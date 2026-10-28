@@ -6262,5 +6262,78 @@
    "{log}",
    "member_bridge"
   ]
+ },
+ {
+  "name": "end_audit_normal",
+  "top": "tb_end_audit",
+  "expect_log": [
+   "TB_PASS end_audit",
+   "(?s)BW_END_AUDIT.*BW_POINT_TERMINAL scope=end\\.a",
+   "BW_REPORT_COMPLETE audit=1 roles="
+  ],
+  "expect_counts": {
+   "BW_END_AUDIT ": 1,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_GROUP_TERMINAL": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "end_audit_reverse",
+  "top": "tb_end_audit",
+  "defines": [
+   "REVERSE_DECL"
+  ],
+  "expect_log": [
+   "TB_PASS end_audit",
+   "(?s)BW_END_AUDIT.*BW_POINT_TERMINAL scope=end\\.a",
+   "BW_REPORT_COMPLETE audit=1 roles="
+  ],
+  "expect_counts": {
+   "BW_END_AUDIT ": 1,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_GROUP_TERMINAL": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "end_audit_suppress_hint",
+  "top": "tb_end_audit",
+  "defines": [
+   "BW_MON_TEST_END_FAULTS"
+  ],
+  "plusargs": [
+   "+MODE=suppress_hint"
+  ],
+  "expect_log": [
+   "TB_PASS end_audit",
+   "BW_REPORT_INCOMPLETE reason=MISSING_ROLE_RECEIPT owner=0:end\\.a role=hint"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 0,
+   "BW_REPORT_INCOMPLETE": 1,
+   "BW_END_AUDIT ": 1
+  }
+ },
+ {
+  "name": "end_audit_suppress_core",
+  "top": "tb_end_audit",
+  "defines": [
+   "BW_MON_TEST_END_FAULTS"
+  ],
+  "plusargs": [
+   "+MODE=suppress_core"
+  ],
+  "expect_log": [
+   "TB_PASS end_audit",
+   "BW_REPORT_INCOMPLETE reason=MISSING_ROLE_RECEIPT owner=0:end\\.a role=core"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 0,
+   "BW_REPORT_INCOMPLETE": 1,
+   "BW_END_AUDIT ": 1
+  }
  }
 ]

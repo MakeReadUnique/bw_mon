@@ -74,3 +74,23 @@
     end
     batch.closed_generation=batch.input_generation;
   endfunction
+  // Group twin of the point terminal: idempotent, evidence-based, and typed.
+  // The owner passes its durable action evidence; the frozen batch ledger
+  // decides NORMAL / UNOBSERVED / INTERRUPTED, never a queue-length proxy.
+  function automatic void note_group_terminal(string id,bit actions_complete);
+    string state,key;
+    bw_scope_terminal_t terminal;
+    key=scope_key(BW_GROUP,id);
+    if(scope_terminals.exists(key))return;
+    if(!group_batches.exists(id))group_batches[id]=new;
+    if(scope_disabled(BW_GROUP,id))begin terminal=BW_SCOPE_DISABLED;state="DISABLED";end
+    else if(!actions_complete || !group_batch_complete(id))begin terminal=BW_SCOPE_INTERRUPTED;state="INTERRUPTED";end
+    else if(group_batches[id].expected==0)begin terminal=BW_SCOPE_UNOBSERVED;state="UNOBSERVED";end
+    else begin terminal=BW_SCOPE_NORMAL;state="NORMAL";end
+    scope_terminals[key]=terminal;
+    $display("BW_GROUP_TERMINAL scope=%s state=%s expected=%0d captured=%0d held=%0d published=%0d accepted=%0d acked=%0d reset_expected=%0d reset_captured=%0d input_generation=%0d closed_generation=%0d time_ticks=%0d",
+      id,state,group_batches[id].expected,group_batches[id].captured,group_batches[id].held,
+      group_batches[id].published,group_batches[id].accepted,group_batches[id].acked,
+      group_batches[id].reset_expected,group_batches[id].reset_captured,
+      group_batches[id].input_generation,group_batches[id].closed_generation,$time);
+  endfunction
