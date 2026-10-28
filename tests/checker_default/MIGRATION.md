@@ -10,6 +10,7 @@ analysis-disabled scope in `checker_empty` retains STATISTICS_ONLY behavior.
 | --- | --- | --- |
 | `tb_report_e2e`, positive 100-transfer tables | one extra default PASS | Constant or one-byte table imbalance is below 5%; six contained windows exist |
 | `tb_report_e2e`, zero tables | one extra WARNING | Reference is exactly zero; explicit zero bandwidth still PASSes |
+| `tb_report_cfg` | two extra WARNINGs | Two one-transfer episodes have no platform; parser and explicit rule assertions unchanged |
 | `report_identity` | three extra WARNINGs | Each one-transfer episode has no confirmed platform; full IDs retained |
 | `report_quality` | three extra WARNINGs before final; five overall | Zero/gap/reset/active/idle each retains its own insufficient-platform result |
 | `report_final_forward/reverse` | two extra WARNINGs | Two short truncated episodes have no platform; final ordering unchanged |

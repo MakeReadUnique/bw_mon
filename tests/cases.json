@@ -464,7 +464,7 @@
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
    "BW_CHECK .*scope=cfg.good .*conclusion=PASS",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -475,7 +475,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -486,7 +486,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -497,7 +497,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -508,7 +508,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -519,7 +519,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -530,7 +530,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -541,7 +541,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -552,7 +552,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -563,7 +563,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -574,7 +574,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -585,7 +585,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw_min_gbps reason=INVALID_NUMBER",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -596,7 +596,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=3 scope=cfg.bad key=e2e_bw reason=CONFLICTING_BOUNDS",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -607,7 +607,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw reason=TOLERANCE_OVERFLOW",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -618,7 +618,7 @@
   ],
   "expect_log": [
    "BW_CFG WARNING .*line=2 scope=cfg.bad key=e2e_bw reason=BOUND_REQUIRED",
-   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=WARNING pass=1 fail=0 warning=3 scopes_done=2 scopes_expected=2"
   ]
  },
  {
@@ -4533,6 +4533,11 @@
  {"name": "checker_numeric_expanded_high_equal", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded_high_equal"]},
  {"name": "checker_numeric_expanded_high_over", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded_high_over"]},
  {"name": "checker_numeric_expanded_low_over", "top": "tb_checker_numeric", "plusargs": ["+CASE=expanded_low_over"]},
- {"name":"checker_cycle_alternating","top":"tb_checker_cycle","expect_counts":{"BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*max_deviation_gbps=8 .*longest_span=17 .*conclusion=FAIL":2}},
- {"name":"checker_cycle_constant","top":"tb_checker_cycle","plusargs":["+CONSTANT"],"expect_counts":{"BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*conclusion=PASS":2}}
+ {"name": "checker_cycle_alternating", "top": "tb_checker_cycle", "expect_counts": {"BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*max_deviation_gbps=8 .*longest_span=17 .*conclusion=FAIL": 2}, "verify": ["python3", "tests/checker_default/check_cycle.py", "{log}", "alternating"]},
+ {"name": "checker_cycle_constant", "top": "tb_checker_cycle", "plusargs": ["+CONSTANT"], "expect_counts": {"BW_DEFAULT_CHECK .*basis=1 W=1 S=1 .*B=100 .*conclusion=PASS": 2}, "verify": ["python3", "tests/checker_default/check_cycle.py", "{log}", "constant"]},
+ {"name":"checker_history","top":"tb_checker_history","expect_counts":{"BW_DEFAULT_CHECK .*episode=1 .*conclusion=FAIL":2,"BW_DEFAULT_CHECK .*episode=2 .*conclusion=PASS":2},"expect_log":["BW_SUMMARY status=FAIL pass=2 fail=2 warning=0"]},
+ {"name":"checker_numeric_explicit_time","top":"tb_checker_numeric","plusargs":["+CASE=explicit_time","+BW_EXPECT=../../../tests/expect/checker_numeric_time.cfg"],"expect_counts":{"BW_CHECK .*metric=ramp_time .*actual=10 .*conclusion=PASS":1,"BW_DEFAULT_CHECK .*conclusion=FAIL":1},"expect_log":["BW_SUMMARY status=FAIL pass=1 fail=1 warning=0"]},
+ {"name": "checker_numeric_terminal_crop", "top": "tb_checker_numeric", "plusargs": ["+CASE=terminal_crop"]},
+ {"name": "checker_numeric_start_unknown", "top": "tb_checker_numeric", "plusargs": ["+CASE=start_unknown"]},
+ {"name": "checker_numeric_nearzero_pass", "top": "tb_checker_numeric", "plusargs": ["+CASE=nearzero_pass"]}
 ]

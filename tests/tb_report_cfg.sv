@@ -23,7 +23,7 @@ module tb_report_cfg;
     summary=check_report_summary();
     if(bad.episode_result.byte_count!=10 || good.episode_result.byte_count!=10 ||
        summary.pass_count!=expected_pass || summary.fail_count!=expected_fail ||
-       summary.warning_count!=expected_warnings)
+       summary.warning_count!=expected_warnings+2)
       $fatal(1,"cfg isolation mismatch pass=%0d fail=%0d warning=%0d expected=%0d/%0d/%0d",
         summary.pass_count,summary.fail_count,summary.warning_count,expected_pass,expected_fail,expected_warnings);
     $display("TB_PASS report_cfg continued=1");$finish;
