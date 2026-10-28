@@ -2,6 +2,18 @@ package bw_check_report_pkg;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
 
+  typedef struct {
+    bw_check_window_t first,last;
+    bw_u64_t count;
+  } default_run_t;
+  class bw_default_scope;
+    bit enabled=0,have_seq=0;
+    bw_basis_t basis;
+    bw_u64_t width,stride,last_seq;
+    default_run_t raw[$];
+    bw_phase_result_t phases[$];
+  endclass
+
   class bw_check_report extends bw_report_sink;
     localparam int E2E_BW=0,STEADY_BW=1,RAMP_TIME=2,FALL_TIME=3,
       STEADY_WINDOW_MIN=4,STEADY_WINDOW_MAX=5,STEADY_STDDEV=6,STEADY_CV=7,
@@ -28,6 +40,8 @@ package bw_check_report_pkg;
       bw_variation_result_t variation;
     } check_context_t;
     local scope_state_t scopes[$];
+    local bw_default_scope default_scopes[$];
+    `include "bw_default_check.svh"
     local metric_rule_t rules[$];
     local int scope_by_id[string];
     local bw_report_summary_t totals;
@@ -238,6 +252,7 @@ package bw_check_report_pkg;
 
     virtual function void on_ready();
       scope_state_t entry;
+      bw_default_scope default_scope;
       metric_rule_t empty_rule;
       int fd,line_no,current,split,read_error,metric,part,rule;
       string line,body,kind,id,key,token,section_id,section_kind,io_detail,argument_suffix;
@@ -255,6 +270,7 @@ package bw_check_report_pkg;
           if(core_failure_seen)return;
           scope_by_id[{entry.kind==BW_POINT ? "point:" : "group:",entry.id}]=scopes.size();
           scopes.push_back(entry);
+          default_scope=new();default_scopes.push_back(default_scope);
           for(int m=0;m<METRIC_COUNT;m++) begin
             check_storage_growth(rules.size(),entry.id,"report.rules",$time);
             if(core_failure_seen)return;
@@ -539,12 +555,23 @@ package bw_check_report_pkg;
       int index,metric;
       string reason;
       real measured;
+      bit retained;
       if(core_failure_seen || totals.finalized || result.result_seq==0) return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
       if(scopes[index].have_phase_seq && result.result_seq<=scopes[index].last_phase_seq) return;
       scopes[index].have_phase_seq=1;scopes[index].last_phase_seq=result.result_seq;
+      retained=0;
+      foreach(default_scopes[index].phases[p])
+        if(default_scopes[index].phases[p].stats_epoch==result.stats_epoch &&
+           default_scopes[index].phases[p].episode_id==result.episode_id &&
+           default_scopes[index].phases[p].phase_id==result.phase_id)retained=1;
+      if(!retained)begin
+        check_storage_growth(default_scopes[index].phases.size(),scope_id,"default.phases",result.end_ticks);
+        if(core_failure_seen)return;
+        default_scopes[index].phases.push_back(result);
+      end
       if(result.phase_kind!==BW_PHASE_RAMP && result.phase_kind!==BW_PHASE_FALL) return;
       if(scopes[index].time_epoch!=result.stats_epoch || scopes[index].time_episode!=result.episode_id) begin
         scopes[index].time_epoch=result.stats_epoch;scopes[index].time_episode=result.episode_id;
@@ -585,6 +612,7 @@ package bw_check_report_pkg;
       if(index<0 || scopes[index].done) return;
       if(scopes[index].have_seq && result.result_seq<=scopes[index].last_seq) return;
       scopes[index].have_seq=1;scopes[index].last_seq=result.result_seq;scopes[index].saw_episode=1;
+      settle_default_episode(index,result);
       context_value=episode_context(result);
       reason=e2e_evidence_reason(result);measured=0;
       if(reason=="NONE") measured=result.e2e_gbps;
@@ -631,6 +659,7 @@ package bw_check_report_pkg;
         empty_result.scope_kind=kind;empty_result.stats_epoch=stats_epoch;
         empty_result.variation='{window_basis:BW_NS,minmax_reason:BW_METRIC_NO_SAMPLES,
           stddev_reason:BW_METRIC_NO_SAMPLES,cv_reason:BW_METRIC_NO_SAMPLES,default:0};
+        settle_default_episode(index,empty_result);
         context_value=episode_context(empty_result);
         for(int m=0;m<METRIC_COUNT;m++) begin
           if(m==RAMP_TIME && scopes[index].ever_ramp) continue;

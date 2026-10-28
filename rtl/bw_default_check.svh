@@ -1,0 +1,206 @@
+// Private implementation of the fixed per-platform check, inside bw_check_report.
+// Raw rows are retained until episode settlement. Equal-valued rows compress
+// only when every original endpoint, cycle position and sequence is affine.
+virtual function void analysis_scope(bw_scope_t kind,string id,bit enabled,
+    bw_basis_t basis,bw_u64_t width,bw_u64_t stride);
+  int index;
+  index=find_scope(kind,id);
+  if(index<0)return;
+  default_scopes[index].enabled=enabled;
+  default_scopes[index].basis=basis;
+  default_scopes[index].width=width;default_scopes[index].stride=stride;
+endfunction
+
+function automatic bw_check_window_t default_row(default_run_t run,bw_u64_t offset);
+  bw_check_window_t row;
+  row=run.first;
+  if(run.count>1)begin
+    row.seq+=offset*((run.last.seq-run.first.seq)/(run.count-1));
+    row.ticks+=offset*((run.last.ticks-run.first.ticks)/(run.count-1));
+    row.left_ticks+=offset*((run.last.left_ticks-run.first.left_ticks)/(run.count-1));
+    row.u+=offset*((run.last.u-run.first.u)/(run.count-1));
+    row.left_u+=offset*((run.last.left_u-run.first.left_u)/(run.count-1));
+  end
+  return row;
+endfunction
+
+virtual function void submit_window(string id,bw_check_window_t sample);
+  int index,last;
+  default_run_t run;
+  bw_check_window_t previous;
+  bit extend_run;
+  index=find_scope(sample.scope_kind,id);
+  if(index<0 || scopes[index].done || totals.finalized || core_failure_seen || sample.seq==0)return;
+  if(default_scopes[index].have_seq && sample.seq<=default_scopes[index].last_seq)return;
+  default_scopes[index].have_seq=1;default_scopes[index].last_seq=sample.seq;
+  sample.valid=sample.valid && sample.full && sample.bytes_complete && sample.denominator_valid && !sample.foreign_activity;
+  if(!finite_real(sample.value) || sample.value<0)sample.valid=0;
+  last=default_scopes[index].raw.size()-1;extend_run=0;
+  if(last>=0)begin
+    run=default_scopes[index].raw[last];previous=run.last;
+    extend_run=sample.stats_epoch==previous.stats_epoch && sample.episode_id==previous.episode_id &&
+      sample.seq==previous.seq+1 && sample.valid==previous.valid &&
+      sample.full==previous.full && sample.bytes_complete==previous.bytes_complete &&
+      sample.denominator_valid==previous.denominator_valid && sample.foreign_activity==previous.foreign_activity &&
+      sample.reset_coverage==previous.reset_coverage &&
+      $realtobits(sample.value)==$realtobits(previous.value) &&
+      sample.ticks>previous.ticks && sample.left_ticks>=previous.left_ticks &&
+      sample.u>previous.u && sample.left_u>=previous.left_u;
+    if(extend_run && run.count>1)extend_run=
+      sample.ticks-previous.ticks==(run.last.ticks-run.first.ticks)/(run.count-1) &&
+      sample.left_ticks-previous.left_ticks==(run.last.left_ticks-run.first.left_ticks)/(run.count-1) &&
+      sample.u-previous.u==(run.last.u-run.first.u)/(run.count-1) &&
+      sample.left_u-previous.left_u==(run.last.left_u-run.first.left_u)/(run.count-1);
+  end
+  if(extend_run)begin
+    run.last=sample;run.count=checked_add(run.count,1,id);
+    if(core_failure_seen)return;
+    default_scopes[index].raw[last]=run;
+  end else begin
+    check_storage_growth(default_scopes[index].raw.size(),id,"default.raw",sample.ticks);
+    if(core_failure_seen)return;
+    run.first=sample;run.last=sample;run.count=1;default_scopes[index].raw.push_back(run);
+  end
+endfunction
+
+function automatic void default_result(int index,bw_episode_result_t episode,
+    bw_phase_result_t platform,bit have_platform);
+  bw_check_window_t row,reference[$];
+  bw_u64_t width,min_span,start_tick,end_tick,reference_end_tick,check_count,first_u,last_u;
+  bw_u64_t run_count,run_first,run_last,runs,longest_count,longest_first,longest_last,longest_span;
+  bw_u64_t reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,previous_seq,exclusion_count,excluded_left,excluded_right;
+  real baseline,deviation,maximum;
+  bit reference_valid,quality,failed,exempt,over;
+  string reason,conclusion,reference_seqs,baseline_text,threshold_text,maximum_text,percent_text,steady_text;
+  width=default_scopes[index].width;
+  min_span=default_scopes[index].stride>width/5 ? width : 5*default_scopes[index].stride;
+  if(default_scopes[index].basis==BW_NS)begin width*=BW_TICKS_PER_NS;min_span*=BW_TICKS_PER_NS;end
+  start_tick=platform.start_ticks;
+  // Until the independent handoff proof is applied, retain ownership through
+  // the terminal episode bound, including all undetermined/short-phase rows.
+  end_tick=episode.tail_known ? episode.tail_ticks : episode.last_ticks;
+  reference_end_tick=platform.end_ticks<end_tick ? platform.end_ticks : end_tick;
+  baseline=0;reference_valid=0;maximum=0;check_count=0;first_u=0;last_u=0;
+  reference_first_seq=0;reference_last_seq=0;reference_first_u=0;reference_last_u=0;reference_seqs="";
+  run_count=0;run_first=0;run_last=0;runs=0;longest_count=0;longest_first=0;longest_last=0;longest_span=0;
+  previous_seq=0;exclusion_count=0;
+  failed=0;quality=episode.status!=BW_EPISODE_COMPLETE || !episode.bytes_complete || !episode.first_known ||
+    !episode.tail_known || !episode.last_known;
+  reason=have_platform ? "REFERENCE_INSUFFICIENT" : (episode.episode_id==0 ? "NO_EPISODE" : "NO_CONFIRMED_STEADY");
+  if(have_platform)foreach(default_scopes[index].phases[p])begin
+    if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
+       default_scopes[index].phases[p].episode_id==episode.episode_id &&
+       default_scopes[index].phases[p].start_known && default_scopes[index].phases[p].end_known &&
+       default_scopes[index].phases[p].phase_kind inside {BW_PHASE_RAMP,BW_PHASE_FALL})begin
+      excluded_left=default_scopes[index].phases[p].start_ticks>start_tick ?
+        default_scopes[index].phases[p].start_ticks : start_tick;
+      excluded_right=default_scopes[index].phases[p].end_ticks<end_tick ?
+        default_scopes[index].phases[p].end_ticks : end_tick;
+      if(excluded_right>excluded_left)begin
+        exclusion_count=checked_add(exclusion_count,1,scopes[index].id);
+        $display("BW_DEFAULT_EXCLUSION scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d source_phase=%0d phase_kind=%0d start_ticks=%0d end_ticks=%0d reason=CONFIRMED_PHASE",
+          scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
+          default_scopes[index].phases[p].phase_id,default_scopes[index].phases[p].phase_kind,excluded_left,excluded_right);
+      end
+    end
+  end
+  if(have_platform && platform.start_known && reference_end_tick>platform.start_ticks)begin
+    // The earliest consecutive six full final-contained rows establish B.
+    foreach(default_scopes[index].raw[r])begin
+      for(bw_u64_t n=0;n<default_scopes[index].raw[r].count;n++)begin
+        row=default_row(default_scopes[index].raw[r],n);
+        if(row.stats_epoch!=episode.stats_epoch || row.episode_id!=episode.episode_id ||
+           row.ticks<platform.start_ticks || row.ticks>=reference_end_tick)continue;
+        if(!row.valid || row.left_ticks<platform.start_ticks)begin reference.delete();continue;end
+        if(reference.size()!=0 && row.seq!=reference[$].seq+1)reference.delete();
+        reference.push_back(row);
+        if(reference.size()>6)row=reference.pop_front();
+        if(reference.size()==6 && reference[5].u-reference[0].u>=min_span)begin
+          foreach(reference[j])begin
+            baseline+=reference[j].value;
+            reference_seqs={reference_seqs,j==0 ? "" : ",",$sformatf("%0d",reference[j].seq)};
+          end
+          baseline/=6.0;
+          reference_first_seq=reference[0].seq;reference_last_seq=reference[5].seq;
+          reference_first_u=reference[0].u;reference_last_u=reference[5].u;
+          reference_valid=finite_real(baseline) && baseline>=0;break;
+        end
+      end
+      if(reference_valid)break;
+    end
+    if(reference_valid && baseline==0)reason="ZERO_REFERENCE";
+    if(reference_valid && baseline>0)begin
+      foreach(default_scopes[index].raw[r])begin
+        for(bw_u64_t n=0;n<default_scopes[index].raw[r].count;n++)begin
+          row=default_row(default_scopes[index].raw[r],n);
+          if(row.stats_epoch!=episode.stats_epoch || row.episode_id!=episode.episode_id ||
+             row.ticks<start_tick || row.ticks>=end_tick)continue;
+          if(previous_seq!=0 && row.seq!=previous_seq+1)begin quality=1;run_count=0;end
+          previous_seq=row.seq;
+          exempt=0;
+          foreach(default_scopes[index].phases[p])begin
+            if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
+               default_scopes[index].phases[p].episode_id==episode.episode_id &&
+               default_scopes[index].phases[p].start_known && default_scopes[index].phases[p].end_known &&
+               default_scopes[index].phases[p].phase_kind inside {BW_PHASE_RAMP,BW_PHASE_FALL} &&
+               row.ticks>=default_scopes[index].phases[p].start_ticks &&
+               row.ticks<default_scopes[index].phases[p].end_ticks)exempt=1;
+          end
+          if(!row.valid || exempt)begin
+            if(!row.valid)quality=1;
+            run_count=0;continue;
+          end
+          if(check_count==0)first_u=row.u;
+          last_u=row.u;check_count=checked_add(check_count,1,scopes[index].id);
+          deviation=$abs(row.value-baseline);
+          if(deviation>maximum)maximum=deviation;
+          over=deviation>0.05*baseline;
+          if(!over)begin run_count=0;continue;end
+          if(run_count==0)begin run_first=row.u;runs=checked_add(runs,1,scopes[index].id);end
+          run_last=row.u;run_count=checked_add(run_count,1,scopes[index].id);
+          if(core_failure_seen)return;
+          if(run_last-run_first>longest_span || (run_last-run_first==longest_span && run_count>longest_count))begin
+            longest_count=run_count;longest_first=run_first;longest_last=run_last;longest_span=run_last-run_first;
+          end
+          if(run_count>=2 && run_last-run_first>=width)failed=1;
+        end
+      end
+      if(failed)reason="SUSTAINED_EXCEEDANCE";
+      else if(quality)reason="OBSERVATION_INCOMPLETE";
+      else if(check_count<2 || last_u-first_u<width)reason="CHECK_COVERAGE_INSUFFICIENT";
+      else reason="NONE";
+    end
+  end
+  if(failed)begin conclusion="FAIL";totals.fail_count=checked_add(totals.fail_count,1,scopes[index].id);end
+  else if(reason!="NONE")begin conclusion="WARNING";totals.warning_count=checked_add(totals.warning_count,1,scopes[index].id);end
+  else begin conclusion="PASS";totals.pass_count=checked_add(totals.pass_count,1,scopes[index].id);end
+  baseline_text=reference_valid ? $sformatf("%.17g",baseline) : "UNAVAILABLE";
+  threshold_text=reference_valid && baseline>0 ? $sformatf("%.17g",0.05*baseline) : "UNAVAILABLE";
+  maximum_text=reference_valid && baseline>0 ? $sformatf("%.17g",maximum) : "UNAVAILABLE";
+  percent_text=reference_valid && baseline>0 ? $sformatf("%.17g",100.0*(maximum/baseline)) : "UNAVAILABLE";
+  steady_text=platform.bandwidth_valid ? $sformatf("%.17g",platform.bandwidth_gbps) : "UNAVAILABLE";
+  $display("BW_DEFAULT_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d metric=sustained_variation basis=%0d W=%0d S=%0d platform_start_ticks=%0d platform_end_ticks=%0d check_start_ticks=%0d check_end_ticks=%0d reference_valid=%0b reference_count=%0d reference_seqs=%s reference_first_seq=%0d reference_last_seq=%0d reference_first_u=%0d reference_last_u=%0d reference_span=%0d B=%s steady_bandwidth_gbps=%s threshold_pct=5 threshold_gbps=%s max_deviation_gbps=%s max_deviation_pct=%s samples=%0d first_u=%0d last_u=%0d over_runs=%0d longest_count=%0d longest_first_u=%0d longest_last_u=%0d longest_span=%0d exclusion_count=%0d quality_incomplete=%0b episode_status=%0d episode_reason=%s bytes_complete=%0b first_known=%0b last_known=%0b tail_known=%0b conclusion=%s reason=%s",
+    scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
+    default_scopes[index].basis,default_scopes[index].width,default_scopes[index].stride,
+    platform.start_ticks,platform.end_ticks,start_tick,end_tick,reference_valid,reference_valid ? 6 : reference.size(),
+    reference_seqs,reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,reference_last_u-reference_first_u,
+    baseline_text,steady_text,threshold_text,maximum_text,percent_text,
+    check_count,first_u,last_u,runs,longest_count,longest_first,longest_last,longest_span,exclusion_count,quality,episode.status,episode_reason_name(episode.reason),episode.bytes_complete,
+    episode.first_known,episode.last_known,episode.tail_known,conclusion,reason);
+endfunction
+
+function automatic void settle_default_episode(int index,bw_episode_result_t episode);
+  bit found;
+  bw_phase_result_t empty_platform;
+  if(!default_scopes[index].enabled)return;
+  found=0;
+  foreach(default_scopes[index].phases[p])begin
+    if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
+       default_scopes[index].phases[p].episode_id==episode.episode_id &&
+       default_scopes[index].phases[p].phase_kind==BW_PHASE_STEADY)begin
+      default_result(index,episode,default_scopes[index].phases[p],1);found=1;
+    end
+  end
+  if(!found)default_result(index,episode,empty_platform,0);
+  default_scopes[index].raw.delete();default_scopes[index].phases.delete();
+endfunction

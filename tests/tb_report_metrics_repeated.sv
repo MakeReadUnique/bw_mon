@@ -46,7 +46,7 @@ module tb_report_metrics_repeated;
     if($test$plusargs("BW_EXPECT"))begin
       bw_report_summary_t checked;
       checked=check_report_summary();
-      if(checked.pass_count!=($test$plusargs("FULL_METRICS") ? 17 : 2) || checked.fail_count!=($test$plusargs("FULL_METRICS") ? 3 : 2) || checked.warning_count!=4 || checked.finalized)
+      if(checked.pass_count!=($test$plusargs("FULL_METRICS") ? 17 : 2) || checked.fail_count!=($test$plusargs("FULL_METRICS") ? 3 : 2) || checked.warning_count!=6 || checked.finalized)
         $fatal(1,"short earlier trends remain unconfirmed; raw steady36 and whole-episode CV retain independent explicit verdicts");
     end
     $display("TB_PASS report_metrics_repeated continued_after_metric_fail=1");$finish;

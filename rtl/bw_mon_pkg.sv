@@ -163,6 +163,10 @@ package bw_mon_pkg;
     bw_u64_t start_total_bytes,end_total_bytes,start_total_events,end_total_events;
     bit start_known,end_known;
     real confirmation_delta,confirmation_rms;
+    // Frozen original N+K-1 recognition support; raw members remain in the
+    // private checker stream even after the six-row fit ring has advanced.
+    bw_u64_t support_first_seq,support_last_seq,support_count;
+    real support_min_gbps,support_max_gbps;
     bw_u64_t byte_count,event_count,duration_ticks;
     bw_u64_t start_unknown_records,end_unknown_records,start_unknown_event_records,end_unknown_event_records;
     bw_u64_t start_unknown_ticks,end_unknown_ticks,start_reset_records,end_reset_records;
@@ -206,10 +210,22 @@ package bw_mon_pkg;
     bit finalized;
   } bw_report_summary_t;
 
+  // Private lossless evidence transport for the default platform check. Logical
+  // positions are original ticks (ns basis) or actual local cycle indices.
+  typedef struct {
+    bw_scope_t scope_kind;
+    bw_u64_t stats_epoch,episode_id,seq,left_ticks,ticks,left_u,u;
+    real value;
+    bit valid,full,bytes_complete,denominator_valid,foreign_activity,reset_coverage;
+  } bw_check_window_t;
+
   // Dedicated synchronous report transport. The owner implements all cfg,
   // evidence and comparison state outside this package.
   virtual class bw_report_sink;
     pure virtual function void on_ready();
+    virtual function void analysis_scope(bw_scope_t kind,string id,bit enabled,
+        bw_basis_t basis,bw_u64_t width,bw_u64_t stride); endfunction
+    virtual function void submit_window(string id,bw_check_window_t sample); endfunction
     pure virtual function void submit_episode(string scope_id,bw_episode_result_t result);
     pure virtual function void submit_phase(string scope_id,bw_phase_result_t result);
     pure virtual function void scope_done(bw_scope_t kind,string scope_id,bw_u64_t stats_epoch);

@@ -18,13 +18,55 @@ bw_point_mon #(.POINT_ID("tb.port[0].bw"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
 
 The file is read once during preparation, after registration freezes and before
 the single Ready publication. Its rules survive
-statistics resets. There is no hot reload. With no file, statistics continue
-and the summary is `STATISTICS_ONLY`. An explicitly missing/unreadable file is
+statistics resets. There is no hot reload. Phase-enabled scopes also run the
+fixed default sustained-variation check without an expectation file. With phase
+analysis disabled and no explicit rule, the summary is `STATISTICS_ONLY`.
+An explicitly missing/unreadable file is
 a nonfatal cfg WARNING. Enabling a target does not enable episode analysis or
 choose Q; missing episode evidence produces WARNING.
 An empty `+BW_EXPECT=` value warns before file I/O, and a bare `+BW_EXPECT` warns
 that a path is required. Unrelated names such as `+BW_EXPECTED` do not select
 expectation checking.
+
+## Default sustained-variation check
+
+Enabling phase analysis also enables this rule in `bw_check_report`; no extra
+module, file, threshold, duration, reference-count or near-zero setting is needed.
+It settles each confirmed steady platform once at its episode's final boundary.
+No usable platform gives one episode WARNING; no episode gives one final scope
+WARNING. Ordinary warmup and reference waiting do not produce repeated warnings.
+
+The reference is the earliest six consecutive valid windows fully contained in
+the final platform, spanning at least `min(W,5*S)` in the selected basis.
+`B=sum(y)/6` is frozen and the reference rows themselves are checked. It differs
+from the steady phase's raw bytes divided by duration; both are reported.
+For positive B, a row exceeds the limit exactly when `abs(y-B)>0.05*B`.
+Equality passes, with no epsilon, file tolerance, or positive near-zero floor.
+B=0 or insufficient reference/coverage gives WARNING.
+
+A FAIL needs at least two consecutive new valid exceedance rows whose original
+logical endpoints span at least W. Alternating high/low deviations continue the
+same run. Invalid evidence, an in-band row, reset or a confirmed exclusion breaks
+it. Replayed snapshots/final records add neither samples nor results. Original
+cycle positions govern cycle windows even when clocks stop or change frequency;
+record delivery time never supplies elapsed duration. A reliable FAIL survives
+later missing evidence or truncation; otherwise incomplete evidence gives WARNING.
+Explicit bandwidth, time and CV targets remain independent, and their PASS cannot
+overwrite this rule's FAIL. Summary priority is FAIL > WARNING > PASS > STATISTICS_ONLY.
+
+`BW_DEFAULT_CHECK` reports typed full scope identity, epoch/episode/platform,
+window basis/W/S, final platform and check boundaries, exact reference sequence
+membership/count/span, B and raw steady bandwidth, absolute/relative peak
+deviation, threshold, over-limit run count and longest run endpoints/count/span,
+quality, conclusion and reason. Ns logical positions/spans use original fs ticks;
+cycle positions/spans use original local cycle indices.
+
+The single-platform product cases include real four-point/named-group constant
+traffic and alternating ±8% traffic that remains STEADY while this check FAILs.
+Cross-platform handoff and independent normal-step attribution are delivered by
+the following ownership work; these single-platform results do not establish
+that contract. Pending raw publications and original seven-row recognition
+support remain lossless until episode settlement for that work.
 
 ## File grammar and complete supported keys
 
