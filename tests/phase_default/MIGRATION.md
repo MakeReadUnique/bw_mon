@@ -33,3 +33,11 @@
 | cfg_explicit_max_* | 修复原省略sentinel将显式全1错误当默认的反例；自然S=W/Q10默认与显式非法值严格分开，未使用Q继续不校验。 |
 
 合并后的组件保留原 case 名称作为覆盖索引，指向共享 fixture；退役的参数专用 case 明确映射到上述原生拒绝或新的默认成功行为。不会为了保留旧测试数量而重复旧算法断言。
+
+冷构建专项入口（`--lock` 与同机其它正式运行共用；锁等待计入900秒）：
+
+```bash
+python3 tests/phase_default/run.py --evidence /tmp/phase-fixed-evidence --lock /tmp/bw-mon-spec48/acceptance.lock
+```
+
+该入口复用 `tests/run.py`，只编译一次并执行四固定输入；归档原始日志、独立核验 JSON、完整命令和分项耗时后清理派生构建目录。初始化耗时采用宿主进程启动至观察到既有 `BW_READY` 行的时间，明确包含装载及管道观察延迟，不能当作单独的 RTL 初始化 CPU 计时。阶段计时与总预算不会把这项观测子区间重复相加。
