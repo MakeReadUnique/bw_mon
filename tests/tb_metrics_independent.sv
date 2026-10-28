@@ -10,7 +10,7 @@ module tb_metrics_independent;
   initial begin
     wait(monitor_ready);
     for(int t=1;t<=6;t++)begin
-      #(ns_to_ticks(t)-$time);valid=t<=3;bytes=t==3 ? 64'bx : t*10;clk=1;#1;clk=0;
+      #(measurement_start_ticks+ns_to_ticks(t)-$time);valid=t<=3;bytes=t==3 ? 64'bx : t*10;clk=1;#1;clk=0;
     end
     if(point.episode_result.e2e_valid || point.episode_result.bytes_complete ||
        !point.episode_result.events_complete || !point.episode_result.duration_valid ||

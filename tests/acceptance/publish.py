@@ -3,6 +3,7 @@
 import argparse,csv,hashlib,io,json,platform,re,shutil,subprocess,tarfile
 from pathlib import Path
 from evidence import runtime_evidence,scene_runtime_evidence,dependency_bytes,runtime_sources,canonical_sha
+from model import require_scene_inventory
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/acceptance'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -75,7 +76,7 @@ def main():
    for file in directory.glob('*.md'):
     text=file.read_text().replace('(stimulus.txt)','(trace.tar.gz)').replace('(run.log)','(trace.tar.gz)').replace('(fsdb-values.csv)','(trace.tar.gz)');file.write_text(text)
  for file in (OUT/'component-proof').glob('*.tar.gz'):assert file.stat().st_size>0
- assert len(scenes)==42,len(scenes)
+ assert len(scenes)==require_scene_inventory([scene['configuration'] for scene in scenes])
  previous_review=json.loads((OUT/'review.json').read_text()) if (OUT/'review.json').exists() else {}
  review_objects=[]
  for directory in OUT.iterdir():
@@ -97,7 +98,7 @@ def main():
  release=json.loads((OUT/'asset-release.json').read_text()) if (OUT/'asset-release.json').exists() else {}
  asset_commit=release.get('asset_commit') if release.get('asset_fingerprint')==fingerprint else None
  (OUT/'verification.json').write_text(json.dumps({'status':'PASS','asset_commit':asset_commit,'asset_fingerprint':fingerprint,'production_base':next(iter(runtimes.values()))['head'] if len(runtimes)==1 else None,'production_sources':list(runtimes.values()),'harness_revisions':sorted(revisions),'runtime_source_manifest':'runtime-source.json','runtime_source_unchanged':all(record['rtl_sha256']==runtime_sources(ROOT) for record in runtimes.values()),'current_component_proof':component['directory']+'/verification.json','historical_component_proof':'component-proof/verification.json','component_proof_source_head':component['source_head'],'component_proof_production_matches':all(record['rtl_sha256']==runtime['rtl_sha256'] for record in runtimes.values()),'historical424_component_proof':'current-component-proof/verification.json','scenes':scenes,'totals':totals,'analysis_totals':analysis,'fresh_actual_pngs':len(pictures),'human_review':human_status,'human_review_scope':'Only named objects and intervals in review.json; no per-scene approval inferred','python':platform.python_version(),'window_real_tolerance_gbps':1e-10,'metric_real_tolerance':1e-8,'formal_tolerance':'cfg only; no hidden epsilon'},indent=2)+'\n')
- index='# Actual12-point/four-group acceptance assets\n\nAutomated **42/42PASS**; **human T6 ledger status: '+human_status+'**. Agent image inspection is separate.\n\n'
+ index='# Actual12-point/four-group acceptance assets\n\nAutomated **'+str(len(scenes))+'/'+str(len(scenes))+'PASS**; **human T6 ledger status: '+human_status+'**. Agent image inspection is separate.\n\n'
  if asset_commit:index+='Fixed data bundle: [`'+asset_commit+'`](https://github.com/MakeReadUnique/bw_mon/tree/'+asset_commit+'/artifacts/acceptance), asset fingerprint `'+fingerprint+'`. Later documentation/review-status commits do not change that data identity.\n\n'
  index+='Human status covers only the ledger\'s named objects and intervals. Scene rows describe automated results only; no per-scene human approval is inferred. PENDING entries in original comparison/capture/table files record generation-time state.\n\n'
  if review['human'].get('primary_confirmation_url'):

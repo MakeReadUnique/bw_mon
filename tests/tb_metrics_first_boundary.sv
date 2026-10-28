@@ -5,21 +5,11 @@ module tb_metrics_first_boundary;
   bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("metrics.first_boundary"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .FIXED_BYTES(10),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),
-    .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
-    .PHASE_STEADY_ENTER_ABS(0.0),.PHASE_STEADY_ENTER_REL(0.0),
-    .PHASE_STEADY_EXIT_ABS(0.0),.PHASE_STEADY_EXIT_REL(0.0),
-    .PHASE_RMS_ENTER_ABS(0.0),.PHASE_RMS_ENTER_REL(0.0),
-    .PHASE_RMS_EXIT_ABS(0.0),.PHASE_RMS_EXIT_REL(0.0),
-    .PHASE_TREND_ABS(1.0),.PHASE_TREND_REL(0.0)) point
+    .PHASE_ENABLE(1)) point
     (.clk(clk),.reset_n(1'b1),.valid(valid));
   bw_group_mon #(.GROUP_ID("metrics.first_boundary_group"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),
-    .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
-    .PHASE_STEADY_ENTER_ABS(0.0),.PHASE_STEADY_ENTER_REL(0.0),
-    .PHASE_STEADY_EXIT_ABS(0.0),.PHASE_STEADY_EXIT_REL(0.0),
-    .PHASE_RMS_ENTER_ABS(0.0),.PHASE_RMS_ENTER_REL(0.0),
-    .PHASE_RMS_EXIT_ABS(0.0),.PHASE_RMS_EXIT_REL(0.0),
-    .PHASE_TREND_ABS(1.0),.PHASE_TREND_REL(0.0)) aggregate
+    .PHASE_ENABLE(1)) aggregate
     (.clk(clk),.reset_n(1'b1));
   task automatic check_result(bw_episode_result_t result);
     if(result.status!=BW_EPISODE_COMPLETE ||
@@ -34,15 +24,15 @@ module tb_metrics_first_boundary;
         $fatal(1,"later unknown activity leaves the last transfer uncertain despite an earlier actual tail");
       return;
     end
-    if(result.last_steady.start_ticks!=4000001 || result.last_steady.end_ticks!=11250001 ||
-       result.last_steady.byte_count!=70 || result.last_steady.duration_ticks!=7250000 ||
+    if(result.last_steady.start_ticks!=measurement_start_ticks+7000000 || result.last_steady.end_ticks!=measurement_start_ticks+11250000 ||
+       result.last_steady.byte_count!=40 || result.last_steady.duration_ticks!=4250000 ||
        !result.last_steady.bytes_complete || !result.last_steady.duration_valid ||
        !result.last_steady.bandwidth_valid ||
-       $abs(result.last_steady.bandwidth_gbps-9.655172413793103)>1e-12 ||
+       $abs(result.last_steady.bandwidth_gbps-9.411764705882353)>1e-12 ||
        !result.last_steady.variation.stddev_valid ||
-       result.last_steady.variation.sample_count!=8 ||
+       result.last_steady.variation.sample_count!=5 ||
        result.last_steady.variation.mean_gbps!=10 || result.last_steady.variation.stddev_gbps!=0)
-      $fatal(1,"complete final steady is70B/7.25ns and eight10GB/s windows, sigma0");
+      $fatal(1,"complete final steady is40B/4.25ns and five10GB/s windows, sigma0");
   endtask
   initial begin
     bw_report_summary_t summary;
@@ -50,14 +40,14 @@ module tb_metrics_first_boundary;
     wait(monitor_ready);
     #250000;valid=($test$plusargs("KNOWN_START") || $test$plusargs("UNKNOWN_END")) ? 1'b0 : 1'bx;clk=1;#1;clk=0;
     for(int n=1;n<=10;n++)begin
-      #(250000+ns_to_ticks(n)-$time);valid=1;clk=1;#1;clk=0;
+      #(measurement_start_ticks+250000+ns_to_ticks(n)-$time);valid=1;clk=1;#1;clk=0;
     end
-    #(11250002-$time);valid=0;clk=1;#1;clk=0;
+    #(measurement_start_ticks+11250000-$time);valid=0;clk=1;#1;clk=0;
     if($test$plusargs("UNKNOWN_END"))begin
-      #(12250002-$time);valid=1'bx;clk=1;#1;clk=0;
-      #(13250002-$time);valid=0;clk=1;#1;clk=0;
-      #(19250003-$time);
-    end else #(17250003-$time);
+      #(measurement_start_ticks+12250000-$time);valid=1'bx;clk=1;#1;clk=0;
+      #(measurement_start_ticks+13250000-$time);valid=0;clk=1;#1;clk=0;
+      #(measurement_start_ticks+19250002-$time);
+    end else #(measurement_start_ticks+17250002-$time);
     check_result(point.episode_result);check_result(aggregate.episode_result);
     summary=check_report_summary();
     if(summary.pass_count!=($test$plusargs("UNKNOWN_END") ? 0 : 2) ||

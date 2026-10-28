@@ -1,69 +1,39 @@
 module tb_phase_actual_time;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  logic [1:0] clk=0,valid=0;
-  logic [63:0] bytes[2];
+  logic clk=0,valid=1;
+  logic [63:0] bytes=0;
+  bw_u64_t ticks[9]='{250000,1250000,2250000,4250000,4750000,5250000,6250000,8250000,10250000};
+  int values[9]='{110,118,268,69,71,150,332,364,0};
   bw_mon_setup setup();
-  for(genvar g=0;g<6;g++)begin:scopes
-    bw_point_mon #(.POINT_ID($sformatf("phase.actual_time%0d",g)),.WINDOW_BASIS(BW_CYCLE),
-      
-      .WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(20),
-      .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(g%3==1 ? 3 : 2),.PHASE_K(1),
-      .PHASE_STEADY_ENTER_ABS(g%3==2 ? 0.0 : 0.1),.PHASE_STEADY_ENTER_REL(g%3==2 ? 0.5 : 0.0),
-      .PHASE_STEADY_EXIT_ABS(g%3==2 ? 0.0 : 0.2),.PHASE_STEADY_EXIT_REL(g%3==2 ? 0.6 : 0.0),
-      .PHASE_RMS_ENTER_ABS(0.01),.PHASE_RMS_ENTER_REL(0.0),
-      .PHASE_RMS_EXIT_ABS(0.01),.PHASE_RMS_EXIT_REL(0.0),
-      .PHASE_TREND_ABS(g%3==2 ? 1.0 : 5.0),.PHASE_TREND_REL(g%3==2 ? 0.7 : 0.0)) point
-      (.clk(clk[g<3 ? 0 : 1]),.reset_n(1'b1),.valid(valid[g<3 ? 0 : 1]),
-       .size_bytes(bytes[g<3 ? 0 : 1]),.size_known(1'b1));
-  end
-  task automatic sample_at(int group_index,bw_u64_t tick,bit transfer,bw_u64_t count);
-    #(tick+1-$time);valid[group_index]=transfer;bytes[group_index]=count;clk[group_index]=1;
-    #1;clk[group_index]=0;
-  endtask
+  bw_point_mon #(.POINT_ID("phase.actual"),.WINDOW_BASIS(BW_CYCLE),.WINDOW_WIDTH(1),
+    .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2)) point
+    (.clk(clk),.reset_n(1'b1),.valid(valid),.size_bytes(bytes),.size_known(1'b1));
   initial begin
+    bw_u64_t seq,identity;
     wait(monitor_ready);
-    fork
-      begin
-        sample_at(0,10000000,1,10);sample_at(0,11000000,1,12);
-        sample_at(0,12000000,1,32);sample_at(0,14000000,1,8);
-      end
-      begin
-        sample_at(1,10000000,1,5);sample_at(1,10500000,1,6);
-        sample_at(1,11000000,1,16);sample_at(1,12000000,1,8);
-      end
-    join
-    if(scopes[0].point.phase_current!=BW_PHASE_RAMP || scopes[0].point.phase_start_ticks!=14000001 ||
-       $abs(scopes[0].point.phase_fit_mean-12.666666666666666)>1e-10 ||
-       $abs(scopes[0].point.phase_fit_delta-6.0)>1e-10 ||
-       $abs(scopes[0].point.phase_fit_rms)>1e-10 || scopes[0].point.phase_evidence_span!=2)
-      $fatal(1,"10/12/16GBps at11/12/14ns is a physical-time line with delta6 and zero residual");
-    if(scopes[1].point.phase_evidence_count!=3 || scopes[1].point.phase_evidence_sufficient ||
-       scopes[1].point.phase_fit_valid || scopes[1].point.phase_current!=BW_PHASE_UNDETERMINED)
-      $fatal(1,"N samples alone cannot bypass the configured span in local cycles");
-    if(scopes[2].point.phase_current!=BW_PHASE_STEADY ||
-       $abs(scopes[2].point.phase_fit_delta-6.0)>1e-10)
-      $fatal(1,"absolute plus relative-times-mean thresholds can classify a nonzero trend as steady");
-    if(scopes[3].point.phase_current!=BW_PHASE_RAMP || scopes[3].point.phase_start_ticks!=12000001 ||
-       $abs(scopes[3].point.phase_fit_mean-12.666666666666666)>1e-10 ||
-       $abs(scopes[3].point.phase_fit_delta-6.0)>1e-10 || $abs(scopes[3].point.phase_fit_rms)>1e-10 ||
-       scopes[4].point.phase_fit_valid || scopes[5].point.phase_current!=BW_PHASE_STEADY)
-      $fatal(1,"10.5/11/12ns publication times must retain sub-ns precision through a 2GHz frequency change");
-    #(99000002-$time);
-    if(scopes[0].point.result_seq!=3 || scopes[0].point.phase_window_seq!=3 ||
-       scopes[0].point.phase_evidence_count!=3 || scopes[0].point.phase_id!=1 ||
-       scopes[0].point.phase_result_seq!=0 || scopes[0].point.phase_confirmation_ticks!=14000001 ||
-       scopes[3].point.phase_window_seq!=3 || scopes[3].point.phase_evidence_count!=3)
-      $fatal(1,"held cycle snapshots cannot create new evidence, confirmation or final records");
-    fork sample_at(0,100000000,0,0);sample_at(1,100000000,0,0);join
-    if(scopes[0].point.phase_result_seq!=1 || scopes[0].point.phase_result.phase_kind!=BW_PHASE_RAMP ||
-       scopes[0].point.phase_result.start_ticks!=14000001 || scopes[0].point.phase_result.end_ticks!=100000001 ||
-       !scopes[0].point.phase_result.end_known || scopes[0].point.phase_result.start_total_bytes!=54 ||
-       scopes[0].point.phase_result.end_total_bytes!=62 || scopes[1].point.phase_fit_valid ||
-       scopes[3].point.phase_result_seq!=1 || scopes[3].point.phase_result.start_ticks!=12000001 ||
-       scopes[3].point.phase_result.end_ticks!=100000001 || !scopes[3].point.phase_result.end_known ||
-       scopes[3].point.phase_result.start_total_bytes!=27 || scopes[3].point.phase_result.end_total_bytes!=35)
-      $fatal(1,"the resumed actual edge finalizes earlier phase bounds without weighting old held windows");
+    for(int i=0;i<9;i++)begin
+      #(measurement_start_ticks+ticks[i]-$time);bytes=values[i];valid=i<8;
+      clk=1;#1;clk=0;
+      if(i==6 && (point.phase_candidate!=BW_PHASE_RAMP || point.phase_candidate_count!=1 ||
+         $abs(point.phase_fit_delta-40.0)>1e-10 || point.phase_fit_rms>1e-10 || point.phase_fit_trend_rms>1e-10))
+        $fatal(1,"six unequal-spaced physical-time points on y=100+8t must form a paired linear fit");
+      if(i==7 && (point.phase_current!=BW_PHASE_RAMP ||
+         point.phase_start_ticks!=measurement_start_ticks+6250000 ||
+         point.phase_confirmation_ticks!=measurement_start_ticks+8250000 ||
+         point.phase_fit_rms>1e-10 || point.phase_fit_trend_rms>1e-10))
+        $fatal(1,"sub-ns frequency changes preserve physical fit and independent confirmation time");
+    end
+    seq=point.result_seq;identity=point.phase_id;#2000000;
+    if(point.result_seq!=seq || point.phase_id!=identity || point.episode_result_seq!=0)
+      $fatal(1,"held cycle snapshots cannot add samples, confirm stages or advance cycle silence");
+    clk=1;#1;clk=0;#1000000;clk=1;#1;clk=0;
+    if(point.phase_result_seq!=1 || point.phase_result.phase_kind!=BW_PHASE_RAMP ||
+       point.phase_result.duration_ticks!=4000000 || point.phase_result.byte_count!=696 ||
+       !point.phase_result.bandwidth_valid || point.phase_result.bandwidth_gbps!=174.0 ||
+       point.phase_result.variation.sample_count!=2 || point.phase_result.variation.mean_gbps!=158.0 ||
+       point.phase_result.variation.stddev_gbps!=8.0 || !point.phase_result.variation.cv_valid)
+      $fatal(1,"raw696B/4ns differs from equal-weight150/166 window mean158 sigma8");
     $display("TB_PASS phase_actual_time");$finish;
   end
 endmodule

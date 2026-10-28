@@ -12,18 +12,10 @@ module tb_report_group_metrics #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_p
       (.clk(clk),.reset_n(point_reset_n[p]),.valid(valid),.size_bytes(bytes[p]),.size_known(1'b1));
   end
   bw_group_mon #(.GROUP_ID("shared"),.WINDOW_BASIS(BASIS),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
-    .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
-    .PHASE_STEADY_ENTER_ABS(0.0),.PHASE_STEADY_ENTER_REL(0.0),
-    .PHASE_STEADY_EXIT_ABS(0.0),.PHASE_STEADY_EXIT_REL(0.0),
-    .PHASE_RMS_ENTER_ABS(0.0),.PHASE_RMS_ENTER_REL(0.0),
-    .PHASE_RMS_EXIT_ABS(0.0),.PHASE_RMS_EXIT_REL(0.0),.PHASE_TREND_ABS(1.0),.PHASE_TREND_REL(0.0)) child
+    .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),.PHASE_ENABLE(1)) child
     (.clk(clk),.reset_n(child_reset_n));
   bw_group_mon #(.GROUP_ID("parent"),.WINDOW_BASIS(BASIS),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
-    .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
-    .PHASE_STEADY_ENTER_ABS(0.0),.PHASE_STEADY_ENTER_REL(0.0),
-    .PHASE_STEADY_EXIT_ABS(0.0),.PHASE_STEADY_EXIT_REL(0.0),
-    .PHASE_RMS_ENTER_ABS(0.0),.PHASE_RMS_ENTER_REL(0.0),
-    .PHASE_RMS_EXIT_ABS(0.0),.PHASE_RMS_EXIT_REL(0.0),.PHASE_TREND_ABS(1.0),.PHASE_TREND_REL(0.0)) parent
+    .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),.PHASE_ENABLE(1)) parent
     (.clk(clk),.reset_n(1'b1));
   initial begin
     if(!$value$plusargs("MODE=%s",mode))mode="normal";
@@ -32,13 +24,13 @@ module tb_report_group_metrics #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_p
     wait(monitor_ready);
     bytes[0]=40;bytes[1]=60;bytes[2]=20;
     for(int t=1;t<=13;t++)begin
-      #(ns_to_ticks(t)-100000-$time);
+      #(measurement_start_ticks+ns_to_ticks(t)-100000-$time);
       if(t==5)begin
         if(mode=="child_reset")child_reset_n=0;
         if(mode=="point_reset")point_reset_n[0]=0;
         if(mode=="size_unknown")bytes[0]='x;
       end
-      #(ns_to_ticks(t)-$time);valid=t<=10;clk=1;#1;clk=0;
+      #(measurement_start_ticks+ns_to_ticks(t)-$time);valid=t<=10;clk=1;#1;clk=0;
       if(t==5)begin
         if(parent.raw_record.byte_inc!=((mode=="point_reset" || mode=="size_unknown") ? 80 : 120) ||
            parent.raw_record.event_inc!=(mode=="point_reset" ? 2 : 3) || parent.stats_epoch!=0 ||
@@ -69,7 +61,7 @@ module tb_report_group_metrics #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_p
       $fatal(1,"child epoch reset must split only child episodes while parent complete1200/10 remains intact");
     if($test$plusargs("REPEAT"))begin
       for(int t=14;t<=17;t++)begin
-        #(ns_to_ticks(t)-$time);valid=t==14;clk=1;#1;clk=0;
+        #(measurement_start_ticks+ns_to_ticks(t)-$time);valid=t==14;clk=1;#1;clk=0;
         if(t==14 && (parent.episode_id!=2 || !parent.episode_active ||
            parent.episode_result_episode_id!=1 || parent.episode_result_first_ticks!=1000001 ||
            parent.episode_result_byte_count!=1200 || parent.phase_result_episode_id!=1))

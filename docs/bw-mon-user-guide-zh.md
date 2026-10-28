@@ -121,7 +121,7 @@ cd .build/quickstart
 # 根据 PATH 中的 vcs 找到安装目录及 SDK 头文件。
 BW_VCS_ROOT="$(dirname "$(dirname "$(readlink -f "$(command -v vcs)")")")"
 
-vcs -full64 -sverilog +vpi -debug_access+all -assert svaext \
+vcs -full64 -sverilog -error=AOUP +vpi -debug_access+all -assert svaext \
   +incdir+../../rtl -CFLAGS "-I${BW_VCS_ROOT}/include" \
   ../../rtl/bw_mon_pkg.sv \
   ../../rtl/bw_check_report.sv \
@@ -154,6 +154,7 @@ BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=1 scopes_e
 
 集成到自己的编译脚本时，保留以下要求：
 
+- 保留 `-error=AOUP`，让已删除参数的覆盖在 VCS 编译阶段直接报原生错误。
 - `bw_mon_pkg.sv` 最先编译；`bw_check_report.sv` 必须放在 `bw_mon_setup.sv` 前面。
 - 加入上述 RTL 和 `bw_slot_settlement.c`。即使只监测一个点，也需要这个 C 文件及 `+vpi`、`-debug_access`、`-assert svaext`。
 - 通过 `+incdir+` 指定 `rtl` 目录，通过 `-CFLAGS` 指定 VCS 的 `include` 目录。`.svh` 文件由源码包含，不单独编译。
@@ -416,37 +417,23 @@ add_group_member("all_mem", "die1_mem");
 
 ### 识别爬坡 稳定和下降
 
-只需要滑窗或全程带宽时，可以不打开阶段分析。如果需要稳定段带宽或爬坡、下降时间，在点或组上额外配置下面的参数。
-
-这是配合 **ns 窗口、步长 1 ns** 的合法示例，具体门槛要按自己的流量波动调整：
+开启过程分析时，省略阶段开关就会使用已经确认的默认策略。点和具名组采用相同规则：
 
 ```systemverilog
-.EPISODE_ENABLE(1),
-.SILENCE_THRESHOLD(20),
-.PHASE_ENABLE(1),
-.PHASE_N(5),
-.PHASE_MIN_SPAN(4),
-.PHASE_K(3),
-.PHASE_STEADY_ENTER_ABS(0.2), .PHASE_STEADY_ENTER_REL(0.0),
-.PHASE_STEADY_EXIT_ABS(0.3),  .PHASE_STEADY_EXIT_REL(0.0),
-.PHASE_RMS_ENTER_ABS(0.1),    .PHASE_RMS_ENTER_REL(0.0),
-.PHASE_RMS_EXIT_ABS(0.2),     .PHASE_RMS_EXIT_REL(0.0),
-.PHASE_TREND_ABS(1.0),       .PHASE_TREND_REL(0.0)
+.EPISODE_ENABLE(1) // 同时开启过程和默认阶段分析；Q 默认 10
 ```
 
-| 参数 | 简单解释 |
-| --- | --- |
-| `PHASE_N` | 用最近多少个连续合格的窗口结果判断趋势，至少为 3 |
-| `PHASE_MIN_SPAN` | 这些结果的首末发布时刻至少相隔多少 ns 或周期，单位跟随窗口基准，必须大于 0 |
-| `PHASE_K` | 相同候选阶段连续出现多少次，才正式确认，必须大于 0 |
-| `PHASE_STEADY_ENTER_*` | 进入稳定阶段时，允许多大的整体带宽变化 |
-| `PHASE_STEADY_EXIT_*` | 保持稳定阶段时允许的变化范围，给小幅抖动留余地 |
-| `PHASE_RMS_ENTER_*`、`PHASE_RMS_EXIT_*` | 实际窗口值偏离拟合趋势的容忍范围 |
-| `PHASE_TREND_*` | 判为爬坡或下降所需的整体变化门槛 |
+若只需要全程平均带宽，可以显式保留过程并关闭阶段：
 
-每个门槛按 `ABS + REL × 平均带宽` 计算。`ABS` 的单位是 GB/s，`REL` 是比例，`0.05` 表示 5%。每个 EXIT 系数必须大于等于对应 ENTER 系数；`TREND_ABS` 必须大于 `STEADY_EXIT_ABS`，`TREND_REL` 必须大于等于 `STEADY_EXIT_REL`。
+```systemverilog
+.EPISODE_ENABLE(1), .PHASE_ENABLE(0)
+```
 
-开启阶段分析时，上面的十个实数系数都要明确填写，即使填 0 也要写出来。`PHASE_MIN_SPAN` 还要与样本数和步长匹配：示例中 5 个相邻结果间隔 1 ns，首末跨度就是 4 ns。
+两项开关都只接受已知的 0/1；过程关闭但阶段显式开启属于配置错误。省略 `EPISODE_ENABLE` 时两项均关闭。原有 N、K、最小跨度和十个 ABS/REL 算法参数已经删除，升级时移除这些参数并重新编译，不再需要人工调参。仓库 VCS 编译入口使用 `-error=AOUP`，把 VCS 默认会忽略的未知参数覆盖诊断提升为原生编译错误；自有 VCS 命令也应保留此选项。
+
+内部策略版本为 `PAIR6_R2`：最近 6 条连续合格窗口，相邻两条配成 3 个均值，按实际物理发布时间拟合趋势；相同候选连续 2 次才确认，最小证据跨度为 `min(W,5×S)`。稳定进入／保持的拟合总变化门槛分别为平均带宽的 4%／8%，原始残差 RMS 门槛为 10%／12%；升降要求总变化至少 10%，配对拟合点残差 RMS 不超过 2.5%。全零有效活动可以确认零带宽稳定阶段，完全无活动则没有流量过程。
+
+这些内部门槛只解释阶段识别，不代表性能达标。原始窗口不会被配对拟合替换；阶段原始残差也不同于性能波动。Q 独立决定过程结束，不会为了等阶段确认而延长。
 
 窗口预热、字节不完整或连续结果不足时，阶段可能保持 `BW_PHASE_UNDETERMINED`，表示暂时不能判断。一次流量可以没有稳定段，也可以反复出现多个稳定段；最终代表值采用该过程最后一个已确认的稳定段。阶段边界与稍后的确认时刻分别可见，不能把确认延迟当成阶段持续时间。
 

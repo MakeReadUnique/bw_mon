@@ -7,15 +7,15 @@ def packets(log,prefix):
  return [dict(re.findall(r'(\w+)=([^\s]+)',line)) for line in log.splitlines() if line.startswith(prefix+' ')]
 
 def interval_quality(c,name,frames,a,b):
- data=[f for f in frames if a<=f['t']<b]
- physical_unknown=c['scene']=='reset_unknown' and 0 in LEAVES[name] and a<104100000 and b>103900000
- member=(c['scene']=='point_reset' and 0 in LEAVES[name] and a<104100000 and b>103900000) or any(f['reset_points'] for f in data)
+ data=[f for f in frames if a<=f['t']<b];start=c.get('start_ticks',0)
+ physical_unknown=c['scene']=='reset_unknown' and 0 in LEAVES[name] and a<start+104100000 and b>start+103900000
+ member=(c['scene']=='point_reset' and 0 in LEAVES[name] and a<start+104100000 and b>start+103900000) or any(f['reset_points'] for f in data)
  return all(f['bc'] for f in data) and not physical_unknown,all(f['ec'] for f in data) and not physical_unknown,bool(member)
 
 def episode_reference(c,rows,frames):
- clocks=[r[0] for r in rows if r[1]];index={t:i for i,t in enumerate(clocks)};result={}
+ clocks=[r[0] for r in rows if r[1]];index={t:i for i,t in enumerate(clocks)};result={};start=c.get('start_ticks',0)
  for name,data in frames.items():
-  reset=own_reset(c['scene'],name);segments=[(0,reset[0],0,3),(reset[1],c['end_ticks'],1,4)] if reset else [(0,c['end_ticks'],0,4)]
+  reset=own_reset(c['scene'],name,start);segments=[(start,reset[0],0,3),(reset[1],c['end_ticks'],1,4)] if reset else [(start,c['end_ticks'],0,4)]
   found=[]
   def tail_due(last):
    i=index[last]+1;tail=clocks[i] if i<len(clocks) else None
@@ -63,7 +63,7 @@ def variation(samples):
  mean=sum(values,Fraction(0))/n;variance=sum((x-mean)**2 for x in values)/n;sigma=math.sqrt(float(variance))
  return {'n':n,'mean':float(mean),'min':float(min(values)),'max':float(max(values)),'sigma':sigma,'cv':100*sigma/float(mean) if mean>0 else None}
 
-def phase_reference(c,name,windows,episode):
+def phase_reference(c,name,windows,episode,prior_last=-1):
  evidence=[];current=0;candidate=0;count=0;candidate_time=0;start=confirm=None;fragments=[]
  def close(at,known):
   if current and start is not None:
@@ -71,23 +71,31 @@ def phase_reference(c,name,windows,episode):
    if end>start:fragments.append({'kind':current,'start':start,'end':end,'confirm':confirm,'known':known})
  for w in windows:
   if w['epoch']!=episode['epoch'] or not episode['first']<w['end']<=episode['confirm']:continue
-  eligible=w['full'] and w['bc'] and w['denom']
+  eligible=w['full'] and w['bc'] and w['denom'] and w['start']>prior_last
   if not eligible:
    close(w['end'],True);current=0;start=confirm=None;evidence=[];candidate=count=0;continue
-  evidence=(evidence+[w])[-c['N']:];target=0
-  if len(evidence)==c['N']:
+  evidence=(evidence+[w])[-6:];target=0
+  if len(evidence)==6:
    span=evidence[-1]['end']-evidence[0]['end'] if c['basis']=='ns' else evidence[-1]['end_cycle']-evidence[0]['end_cycle']
    if span>=(c['span']*TICKS if c['basis']=='ns' else c['span']):
-    xs=[Fraction(v['end'],TICKS) for v in evidence];ys=[v['bw'] for v in evidence];xm=sum(xs)/len(xs);ym=sum(ys)/len(ys)
-    slope=sum((x-xm)*(y-ym) for x,y in zip(xs,ys))/sum((x-xm)**2 for x in xs)
-    delta=float(slope*(xs[-1]-xs[0]));rms=math.sqrt(float(sum((y-ym-slope*(x-xm))**2 for x,y in zip(xs,ys))/len(xs)))
-    if abs(delta)<=.01 and rms<=.01:target=2
-    elif delta>=5 and rms<=.01:target=1
-    elif delta<=-5 and rms<=.01:target=3
+    xs=[Fraction(v['end'],TICKS) for v in evidence];ys=[v['bw'] for v in evidence]
+    pairs=[((xs[i]+xs[i+1])/2,(ys[i]+ys[i+1])/2) for i in (0,2,4)]
+    xm=sum(xs)/6;ym=sum(ys)/6
+    slope=sum((x-xm)*(y-ym) for x,y in pairs)/sum((x-xm)**2 for x,y in pairs)
+    delta=slope*(xs[-1]-xs[0])
+    raw_variance=sum((y-ym-slope*(x-xm))**2 for x,y in zip(xs,ys))/6
+    pair_variance=sum((y-ym-slope*(x-xm))**2 for x,y in pairs)/3
+    # Compare squared RMS using exact rationals: raw residuals still constrain
+    # STEADY, while only the three paired residuals constrain RAMP/FALL.
+    if current==2 and abs(delta)<=ym*Fraction(8,100) and raw_variance<=(ym*Fraction(12,100))**2:target=2
+    elif abs(delta)<=ym*Fraction(4,100) and raw_variance<=(ym*Fraction(10,100))**2:target=2
+    elif ym>0 and abs(delta)>=ym*Fraction(10,100) and pair_variance<=(ym*Fraction(25,1000))**2:target=1 if delta>0 else 3
+   else:continue
+  else:continue
   if target==current:candidate=count=0;continue
   if target!=candidate or count==0:candidate=target;count=1;candidate_time=w['end']
   else:count+=1
-  if count>=c['K']:
+  if count>=2:
    close(candidate_time,True);current=target;start=candidate_time if target else None;confirm=w['end'] if target else None;candidate=count=0
  close(episode['tail'] if episode['tail'] is not None else episode['confirm'],episode['status']==2)
  return fragments
@@ -105,7 +113,8 @@ def verify(c,rows,frames,windows,log):
    if e['tail'] is not None:same(a,'tail_ticks',e['tail']);same(a,'duration_ticks',e['duration'])
    if e['valid']:near(a,'e2e_gbps',e['e2e'])
    checks['episodes']+=1
-   expected_phases=phase_reference(c,name,windows[name],e);actual_phases=[p for p in ph_packets if p['scope']==sid and int(p['episode'])==e['id']]
+   prior_last=expected_episodes[e['id']-2]['last'] if e['id']>1 else -1
+   expected_phases=phase_reference(c,name,windows[name],e,prior_last);actual_phases=[p for p in ph_packets if p['scope']==sid and int(p['episode'])==e['id']]
    assert len(actual_phases)==len(expected_phases),(c['scene'],name,'phase count',actual_phases,expected_phases)
    for a,p in zip(actual_phases,expected_phases):
     same(a,'scope_kind',not name.startswith('p'))
@@ -183,7 +192,8 @@ def verify_reports(c,rows,frames,windows,log,cfg):
   if not episodes:
    for family in families:add(name,{'epoch':0,'id':0},family,'scope_final',0,None,0)
   for ep in episodes:
-   phases=phase_reference(c,name,windows[name],ep)
+   prior_last=episodes[ep['id']-2]['last'] if ep['id']>1 else -1
+   phases=phase_reference(c,name,windows[name],ep,prior_last)
    for p in phases:
     p['packet']=next(x for x in phase_data if x['scope']==sid(name) and int(x['episode'])==ep['id'] and int(x['kind'])==p['kind'] and int(x['start_ticks'])==p['start'])
    steady=[p for p in phases if p['kind']==2];selected=steady[-1] if ep['status']==2 and steady else None

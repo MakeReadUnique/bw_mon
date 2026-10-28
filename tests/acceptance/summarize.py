@@ -12,13 +12,14 @@ def write_tables(c,rows,out,comparison):
   reference['episodes'][name]=[{k:float(v) if isinstance(v,Fraction) else v for k,v in e.items()} for e in es]
   reference['phases'][name]=[]
   for e in es:
-   for p in phase_reference(c,name,windows[name],e):
+   prior_last=es[e['id']-2]['last'] if e['id']>1 else -1
+   for p in phase_reference(c,name,windows[name],e,prior_last):
     b=sum(f['bytes'] for f in frames[name] if p['start']<=f['t']<p['end']);bc,ec,m=interval_quality(c,name,frames[name],p['start'],p['end']);q=dict(p,episode=e['id'],bytes=b,raw_bw=float(Fraction(b*TICKS,p['end']-p['start'])) if p['known'] and bc else None)
     selected,unknown=sample_set(windows[name],e,p['start'],p['end'],es,frames[name]);q['variation']=variation(selected);q['unknown_samples']=unknown;reference['phases'][name].append(q)
  (out/'reference.json').write_text(json.dumps(reference,indent=2)+'\n')
  text='# '+c['scene']+' / '+c['basis']+' expected and actual\n\nAutomated checks **PASS**. **Human review PENDING**; agent inspection is separate.\n\n'
  text+='All '+str(comparison['counts']['raw'])+' raw records, '+str(comparison['counts']['receipts'])+' receipts and '+str(comparison['counts']['windows'])+' public windows match the stimulus-only reference. Analysis checks: '+str(comparison['analysis_counts'])+'.\n\n'
- text+='Configuration: W='+str(c['W'])+', S='+str(c['S'])+', Q='+str(c['Q'])+' in '+c['basis']+'; N='+str(c['N'])+', span='+str(c['span'])+', K='+str(c['K'])+'. Physical time quantum1fs; end='+str(c['end_ticks'])+'fs. Exact bytes/events/identity/quality checks; window real tolerance1e-10GB/s and independently accumulated final statistics1e-8GB/s/percentage points. Formal cfg comparisons use only their own configured tolerance.\n\n'
+ text+='Configuration: W='+str(c['W'])+', S='+str(c['S'])+', Q='+str(c['Q'])+' in '+c['basis']+'; fixed N='+str(c['N'])+', span='+str(c['span'])+', K='+str(c['K'])+'. Public T='+str(c.get('start_ticks',0))+'fs; input table uses offsets from T; end='+str(c['end_ticks'])+'fs. Exact bytes/events/identity/quality checks; window real tolerance1e-10GB/s and independently accumulated final statistics1e-8GB/s/percentage points. Formal cfg comparisons use only their own configured tolerance.\n\n'
  text+='## Input and window checkpoints\n\n'
  text+='See [raw stimulus](stimulus.txt) (or trace archive), [configuration](expect.cfg), [commands/source hashes](commands.json) and [independent reference](reference.json). Every window was checked; the following are selected checkpoints.\n\n|Scope|Expected interval ns|Known bytes/events|Expected GB/s|Actual GB/s|Difference|Full / byte / event / member-reset|\n|---|---|---:|---:|---:|---:|---|\n'
  times=[102*TICKS]
@@ -31,6 +32,7 @@ def write_tables(c,rows,out,comparison):
  if c['scene'] in ['zero','no_episode']:times=[30*TICKS,40*TICKS,52*TICKS]
  if c['scene']=='varying' or c['scene']=='e5':times=[32*TICKS,50*TICKS,75*TICKS,100*TICKS,138*TICKS]
  if c['scene']=='protocols':times=[61*TICKS,65*TICKS,102*TICKS]
+ times=[at+c.get('start_ticks',0) for at in times]
  seen=set()
  import csv
  for name in ['p0','p1','p2','die0','all_dmc','mixed','p10','p11']:
@@ -54,7 +56,7 @@ def write_tables(c,rows,out,comparison):
    actual=next(x for x in phm if x['scope']==sid(name) and int(x['episode'])==p['episode'] and int(x['start_ticks'])==p['start']);v=p['variation'];expect='UNAVAILABLE' if p['raw_bw'] is None else '%.12g'%p['raw_bw'];observed=actual['bandwidth_gbps'] if p['raw_bw'] is not None else 'UNAVAILABLE'
    stats='%d / %s / %s / %s'%(v['n'],v.get('mean','NA'),v.get('sigma','NA'),v.get('cv','NA'))
    text+='|%s / %d|%s|[%g,%g) / %g%s|%s|%s|%s|\n'%(name,p['episode'],{1:'RAMP',2:'STEADY',3:'FALL'}[p['kind']],p['start']/TICKS,p['end']/TICKS,p['confirm']/TICKS,'' if p['known'] else ' END UNKNOWN',expect,observed,stats)
- text+='\nCandidate boundaries and confirmations are derived by exact Fraction OLS on independent new/full/owned windows, with the declared thresholds and consecutive K. No phase labels are driven into the monitor. Raw interval BW differs from the window mean; sigma uses window mean, not fit RMS. Full reference.json includes all scopes.\n\n'
+ text+='\nCandidate boundaries and confirmations use exact Fraction OLS on adjacent pairs of six independent new/full/owned windows at actual physical times, K=2 and min(W,5S). Steady entry/hold uses 4%/8% fitted change and 10%/12% raw residual RMS; trends use 10% change and 2.5% paired residual RMS. No phase labels are driven into the monitor. Raw interval BW differs from the window mean; sigma uses window mean, not fit RMS. Full reference.json includes all scopes.\n\n'
  text+='## Nonfatal performance settlement\n\n'+comparison['summary']+'\n\nExpected conclusions from independent metric values and cfg: '+str(comparison['report_reference']['expected'])+'. Performance FAIL/WARNING is a successful test outcome when the value/evidence requires it. Later public windows and TB_PASS prove continued simulation.\n\n'
  text+='```text\n'+'\n'.join(comparison['performance_checks'])+'\n```\n\n[Real FSDB](waves.fsdb), fixed public views (`*.sav`) and fresh screenshots (`*.png`) accompany this scene. Digital real rows may use rounded engineering display; exact integer counts/bounds and17-digit logs/reference tables resolve boundary decisions. Original simulation data/images are unmodified.\n'
  (out/'expected-actual.md').write_text(text)

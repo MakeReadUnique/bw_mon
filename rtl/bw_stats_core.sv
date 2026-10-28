@@ -1,23 +1,10 @@
 module bw_stats_core #(
   parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH = 0,
-  parameter logic [63:0] UPDATE_STRIDE = bw_mon_pkg::BW_CFG_OMITTED,
+  parameter logic [63:0] UPDATE_STRIDE = WINDOW_WIDTH,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_CFG_OMITTED,
-  parameter logic [1:0] PHASE_ENABLE = 0,
-  parameter logic [63:0] PHASE_N = 0,
-  parameter logic [63:0] PHASE_MIN_SPAN = 0,
-  parameter logic [63:0] PHASE_K = 0,
-  parameter real PHASE_STEADY_ENTER_ABS = -1.0,
-  parameter real PHASE_STEADY_ENTER_REL = -1.0,
-  parameter real PHASE_STEADY_EXIT_ABS = -1.0,
-  parameter real PHASE_STEADY_EXIT_REL = -1.0,
-  parameter real PHASE_RMS_ENTER_ABS = -1.0,
-  parameter real PHASE_RMS_ENTER_REL = -1.0,
-  parameter real PHASE_RMS_EXIT_ABS = -1.0,
-  parameter real PHASE_RMS_EXIT_REL = -1.0,
-  parameter real PHASE_TREND_ABS = -1.0,
-  parameter real PHASE_TREND_REL = -1.0
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_DEFAULT_SILENCE_THRESHOLD,
+  parameter logic [1:0] PHASE_ENABLE = EPISODE_ENABLE
 ) (
   input string scope_id,
   input logic scope_kind = bw_mon_pkg::BW_POINT,
@@ -74,6 +61,10 @@ module bw_stats_core #(
   output bit episode_e2e_valid = 0,
   output real episode_e2e_gbps = 0.0,
   output bw_mon_pkg::bw_episode_result_t episode_result,
+  output bw_mon_pkg::bw_phase_reason_t phase_reason,
+  output bw_mon_pkg::bw_u64_t phase_evidence_required = 6,
+  output bw_mon_pkg::bw_u64_t phase_candidate_required = 2,
+  output bw_mon_pkg::bw_u64_t phase_minimum_span = 0,
   output bw_mon_pkg::bw_phase_t phase_current = bw_mon_pkg::BW_PHASE_UNDETERMINED,
   output bw_mon_pkg::bw_phase_t phase_candidate = bw_mon_pkg::BW_PHASE_UNDETERMINED,
   output bit phase_active = 0,
@@ -95,10 +86,17 @@ module bw_stats_core #(
   output real phase_fit_mean = 0.0,
   output real phase_fit_delta = 0.0,
   output real phase_fit_rms = 0.0,
+  output real phase_fit_trend_rms = 0.0,
   output bw_mon_pkg::bw_phase_result_t phase_result
 );
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
+  // Fixed PAIR6_R2 policy. These are internal, not module parameters.
+  localparam int PHASE_N=6,PHASE_K=2;
+  localparam real PHASE_STEADY_ENTER_REL=0.04,PHASE_STEADY_EXIT_REL=0.08;
+  localparam real PHASE_RMS_ENTER_REL=0.10,PHASE_RMS_EXIT_REL=0.12;
+  localparam real PHASE_TREND_REL=0.10,PHASE_TREND_RMS_REL=0.025;
+  bw_u64_t phase_min_span_cfg;
   typedef struct packed {
     bw_u64_t first_ticks,first_edge,last_ticks,last_edge,count,step_ticks,step_edges;
     bw_u64_t byte_inc,event_inc;
@@ -219,6 +217,20 @@ module bw_stats_core #(
       ((WINDOW_BASIS==BW_NS && window_start_ticks<=retired_last_ticks) ||
        (WINDOW_BASIS==BW_CYCLE && window_start_cycle<=retired_last_cycle));
   endfunction
+
+  always_comb begin
+    if(!PHASE_ENABLE)phase_reason=BW_PHASE_DISABLED;
+    else if(!episode_active)phase_reason=BW_PHASE_NO_EPISODE;
+    else if(!window_full)phase_reason=BW_PHASE_WINDOW_WARMUP;
+    else if(!bytes_complete)phase_reason=BW_PHASE_BYTES_INCOMPLETE;
+    else if(!denominator_valid)phase_reason=BW_PHASE_BAD_DENOMINATOR;
+    else if(foreign_activity())phase_reason=BW_PHASE_FOREIGN_EPISODE;
+    else if(phase_evidence_count<PHASE_N)phase_reason=BW_PHASE_NEED_SAMPLES;
+    else if(!phase_evidence_sufficient)phase_reason=BW_PHASE_NEED_SPAN;
+    else if(phase_candidate_count!=0)phase_reason=BW_PHASE_CONFIRMING;
+    else if(phase_current==BW_PHASE_UNDETERMINED)phase_reason=BW_PHASE_NO_MATCH;
+    else phase_reason=BW_PHASE_CONFIRMED;
+  end
 
   function automatic bw_u64_t unknown_ticks_at(bw_u64_t tick);
     if(tick<raw_quality_ticks)begin
@@ -357,7 +369,7 @@ module bw_stats_core #(
   task automatic clear_phase_evidence();
     phase_samples.delete();phase_evidence_count=0;phase_evidence_span=0;
     phase_evidence_continuous=0;phase_evidence_sufficient=0;phase_fit_valid=0;
-    phase_fit_mean=0.0;phase_fit_delta=0.0;phase_fit_rms=0.0;
+    phase_fit_mean=0.0;phase_fit_delta=0.0;phase_fit_rms=0.0;phase_fit_trend_rms=0.0;
     phase_candidate=BW_PHASE_UNDETERMINED;phase_candidate_count=0;phase_candidate_ticks=0;
     phase_candidate_total_bytes=0;phase_candidate_total_events=0;
   endtask
@@ -503,25 +515,30 @@ module bw_stats_core #(
 
   task automatic fit_phase_samples();
     real x,y,mean_x,mean_y_delta,xx,xy,slope,residual,sum_residual;
-    real anchor_y;
+    real anchor_y,pair_x[3],pair_y[3];
     bw_u64_t origin;
     origin=phase_samples[0].ticks;anchor_y=phase_samples[0].value;
     mean_x=0.0;mean_y_delta=0.0;
-    foreach(phase_samples[i])begin
-      x=real'(phase_samples[i].ticks-origin)/real'(BW_TICKS_PER_NS);
-      mean_x+=x;mean_y_delta+=phase_samples[i].value-anchor_y;
+    // Take integer differences first to preserve sub-ns physical time, then
+    // pair adjacent observations. Raw samples remain intact for all metrics.
+    for(int i=0;i<3;i++)begin
+      pair_x[i]=(real'(phase_samples[2*i].ticks-origin)+
+        real'(phase_samples[2*i+1].ticks-origin))/(2.0*real'(BW_TICKS_PER_NS));
+      pair_y[i]=((phase_samples[2*i].value-anchor_y)+
+        (phase_samples[2*i+1].value-anchor_y))/2.0;
+      mean_x+=pair_x[i];mean_y_delta+=pair_y[i];
     end
-    mean_x/=real'(PHASE_N);mean_y_delta/=real'(PHASE_N);
+    mean_x/=3.0;mean_y_delta/=3.0;
     phase_fit_mean=anchor_y+mean_y_delta;xx=0.0;xy=0.0;
-    foreach(phase_samples[i])begin
-      x=real'(phase_samples[i].ticks-origin)/real'(BW_TICKS_PER_NS)-mean_x;
-      y=phase_samples[i].value-anchor_y-mean_y_delta;
+    for(int i=0;i<3;i++)begin
+      x=pair_x[i]-mean_x;y=pair_y[i]-mean_y_delta;
       xx+=x*x;xy+=x*y;
     end
     if(!finite_nonnegative_real(xx) || xx<=0.0 ||
-       !finite_nonnegative_real(phase_fit_mean))
+       !finite_nonnegative_real(phase_fit_mean))begin
       core_error("PHASE_FIT",scope_id,$sformatf("window_end_ticks=%0d N=%0d xx=%0.12g mean=%0.12g",
-        window_end_ticks,PHASE_N,xx,phase_fit_mean));
+        window_end_ticks,PHASE_N,xx,phase_fit_mean));return;
+    end
     slope=xy/xx;sum_residual=0.0;
     foreach(phase_samples[i])begin
       x=real'(phase_samples[i].ticks-origin)/real'(BW_TICKS_PER_NS)-mean_x;
@@ -529,11 +546,17 @@ module bw_stats_core #(
       sum_residual+=residual*residual;
     end
     phase_fit_delta=slope*real'(phase_samples[$].ticks-origin)/real'(BW_TICKS_PER_NS);
-    phase_fit_rms=$sqrt(sum_residual/real'(PHASE_N));
+    phase_fit_rms=$sqrt(sum_residual/real'(PHASE_N));sum_residual=0.0;
+    for(int i=0;i<3;i++)begin
+      residual=pair_y[i]-mean_y_delta-slope*(pair_x[i]-mean_x);
+      sum_residual+=residual*residual;
+    end
+    phase_fit_trend_rms=$sqrt(sum_residual/3.0);
     if(!finite_nonnegative_real($abs(phase_fit_delta)) ||
-       !finite_nonnegative_real(phase_fit_rms))
-      core_error("PHASE_FIT",scope_id,$sformatf("window_end_ticks=%0d delta=%0.12g rms=%0.12g",
-        window_end_ticks,phase_fit_delta,phase_fit_rms));
+       !finite_nonnegative_real(phase_fit_rms) || !finite_nonnegative_real(phase_fit_trend_rms))begin
+      core_error("PHASE_FIT",scope_id,$sformatf("window_end_ticks=%0d delta=%0.12g rms=%0.12g trend_rms=%0.12g",
+        window_end_ticks,phase_fit_delta,phase_fit_rms,phase_fit_trend_rms));return;
+    end
     phase_fit_valid=1;
   endtask
 
@@ -557,15 +580,15 @@ module bw_stats_core #(
     phase_evidence_count=phase_samples.size();
     phase_evidence_span=sample.basis_position-phase_samples[0].basis_position;
     phase_evidence_sufficient=(phase_evidence_count==PHASE_N) &&
-      phase_evidence_span>=((WINDOW_BASIS==BW_NS) ? ns_to_ticks(PHASE_MIN_SPAN,scope_id) : PHASE_MIN_SPAN);
+      phase_evidence_span>=((WINDOW_BASIS==BW_NS) ? ns_to_ticks(phase_min_span_cfg,scope_id) : phase_min_span_cfg);
     phase_fit_valid=0;
     if(!phase_evidence_sufficient)return;
     fit_phase_samples();
-    steady_enter=PHASE_STEADY_ENTER_ABS+PHASE_STEADY_ENTER_REL*phase_fit_mean;
-    steady_exit=PHASE_STEADY_EXIT_ABS+PHASE_STEADY_EXIT_REL*phase_fit_mean;
-    rms_enter=PHASE_RMS_ENTER_ABS+PHASE_RMS_ENTER_REL*phase_fit_mean;
-    rms_exit=PHASE_RMS_EXIT_ABS+PHASE_RMS_EXIT_REL*phase_fit_mean;
-    trend=PHASE_TREND_ABS+PHASE_TREND_REL*phase_fit_mean;
+    steady_enter=PHASE_STEADY_ENTER_REL*phase_fit_mean;
+    steady_exit=PHASE_STEADY_EXIT_REL*phase_fit_mean;
+    rms_enter=PHASE_RMS_ENTER_REL*phase_fit_mean;
+    rms_exit=PHASE_RMS_EXIT_REL*phase_fit_mean;
+    trend=PHASE_TREND_REL*phase_fit_mean;
     if(!finite_nonnegative_real(steady_enter) || !finite_nonnegative_real(steady_exit) ||
        !finite_nonnegative_real(rms_enter) || !finite_nonnegative_real(rms_exit) ||
        !finite_nonnegative_real(trend))core_error("PHASE_FIT",scope_id,
@@ -574,8 +597,8 @@ module bw_stats_core #(
     if(phase_current==BW_PHASE_STEADY && $abs(phase_fit_delta)<=steady_exit && phase_fit_rms<=rms_exit)
       proposed=BW_PHASE_STEADY;
     else if($abs(phase_fit_delta)<=steady_enter && phase_fit_rms<=rms_enter)proposed=BW_PHASE_STEADY;
-    else if(phase_fit_delta>=trend && phase_fit_rms<=rms_enter)proposed=BW_PHASE_RAMP;
-    else if(phase_fit_delta<=-trend && phase_fit_rms<=rms_enter)proposed=BW_PHASE_FALL;
+    else if(phase_fit_mean>0.0 && phase_fit_delta>=trend && phase_fit_trend_rms<=PHASE_TREND_RMS_REL*phase_fit_mean)proposed=BW_PHASE_RAMP;
+    else if(phase_fit_mean>0.0 && phase_fit_delta<=-trend && phase_fit_trend_rms<=PHASE_TREND_RMS_REL*phase_fit_mean)proposed=BW_PHASE_FALL;
     else proposed=BW_PHASE_UNDETERMINED;
     if(proposed==phase_current)begin
       phase_candidate=BW_PHASE_UNDETERMINED;phase_candidate_count=0;
@@ -1226,14 +1249,17 @@ module bw_stats_core #(
 
   initial begin
     wait(scope_id.len()!=0);
-    stride_cfg=resolve_update_stride(UPDATE_STRIDE,WINDOW_WIDTH);
+    stride_cfg=UPDATE_STRIDE;
     silence_cfg=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     validate_window(WINDOW_BASIS,WINDOW_WIDTH,stride_cfg,scope_id);
+    // Avoid overflow in 5*S; only multiply when its result is at most W.
+    phase_min_span_cfg=(stride_cfg>WINDOW_WIDTH/5) ? WINDOW_WIDTH : 5*stride_cfg;
+    phase_minimum_span=phase_min_span_cfg;
     validate_episode_config(EPISODE_ENABLE,silence_cfg,WINDOW_BASIS,scope_id);
-    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
-      PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
-      PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
-      PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
+    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,scope_id);
+    $display("BW_ANALYSIS_CONFIG scope_kind=%0d scope=%s basis=%0d W=%0d S=%0d Q=%0d episode_enabled=%0b phase_enabled=%0b strategy=%s N=%0d K=%0d min_span=%0d scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0",
+      scope_kind,scope_id,WINDOW_BASIS,WINDOW_WIDTH,stride_cfg,silence_cfg,
+      EPISODE_ENABLE,PHASE_ENABLE,BW_PHASE_STRATEGY,PHASE_N,PHASE_K,phase_min_span_cfg);
     initialize_reset_capture($sformatf("%m"),"stats_reset_n");
   end
 
