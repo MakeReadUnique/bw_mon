@@ -1510,6 +1510,7 @@ endmodule
 program bw_stats_core_scheduler;
   timeunit 1fs;timeprecision 1fs;
   initial begin
+    fork begin : actual_worker
     bw_stats_core.scheduler_running=1;
     forever begin
       wait(bw_stats_core.runtime_cancelled || bw_stats_core.requested_actions!=bw_stats_core.consumed_actions);
@@ -1520,5 +1521,9 @@ program bw_stats_core_scheduler;
     end
     bw_stats_core.scheduler_running=0;
     bw_stats_core.scheduler_cancelled=bw_stats_core.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id);
+    end join_none
+    // VCS implicitly ends simulation when all program containers finish.
+    // This inert host owns no monitor action; the actual worker above exits.
+    wait(1'b0);
   end
 endprogram

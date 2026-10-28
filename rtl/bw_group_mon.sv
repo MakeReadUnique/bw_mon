@@ -458,9 +458,14 @@ endmodule
 program bw_group_collector_scheduler;
   timeunit 1fs;timeprecision 1fs;
   initial begin
+    fork begin : actual_worker
     bw_group_mon.collector_running=1;
     bw_group_mon.collect_inputs();
     bw_group_mon.collector_running=0;bw_group_mon.collector_exited=1;
     bw_group_mon.collector_cancelled=bw_group_mon.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::BW_GROUP,bw_group_mon.scope_id);
+    end join_none
+    // VCS implicitly ends simulation when all program containers finish.
+    // This inert host owns no monitor action; the actual worker above exits.
+    wait(1'b0);
   end
 endprogram

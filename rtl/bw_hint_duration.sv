@@ -304,6 +304,7 @@ endmodule
 program bw_hint_duration_scheduler;
   timeunit 1fs;timeprecision 1fs;
   initial begin
+    fork begin : actual_worker
     bw_hint_duration.scheduler_running=1;
     forever begin
       wait(bw_hint_duration.runtime_cancelled || bw_hint_duration.requested_actions!=bw_hint_duration.consumed_actions);
@@ -314,5 +315,9 @@ program bw_hint_duration_scheduler;
     end
     bw_hint_duration.scheduler_running=0;
     bw_hint_duration.scheduler_cancelled=bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id);
+    end join_none
+    // VCS implicitly ends simulation when all program containers finish.
+    // This inert host owns no monitor action; the actual worker above exits.
+    wait(1'b0);
   end
 endprogram

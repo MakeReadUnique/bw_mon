@@ -231,6 +231,7 @@ endmodule
 program bw_point_record_scheduler;
   timeunit 1fs;timeprecision 1fs;
   initial begin
+    fork begin : actual_worker
     bw_point_recorder.scheduler_running=1;
     forever begin
       wait(bw_point_recorder.runtime_cancelled || bw_point_recorder.requested_actions!=bw_point_recorder.consumed_actions);
@@ -239,5 +240,9 @@ program bw_point_record_scheduler;
     end
     bw_point_recorder.scheduler_running=0;
     bw_point_recorder.scheduler_cancelled=bw_point_recorder.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_point_recorder.scope_kind),bw_point_recorder.scope_id);
+    end join_none
+    // VCS implicitly ends simulation when all program containers finish.
+    // This inert host owns no monitor action; the actual worker above exits.
+    wait(1'b0);
   end
 endprogram

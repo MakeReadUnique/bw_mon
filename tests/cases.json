@@ -5934,5 +5934,41 @@
   "expect_counts": {
    "BW_CORE_WARNING": 1
   }
+ },
+ {
+  "name": "group_timer_missing_receipt_siblings",
+  "top": "tb_group_timer_completion",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+SIBLINGS"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=TIMER_CORE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "numeric_transport_late_control",
+  "top": "tb_numeric_transport",
+  "plusargs": [
+   "+MODE=late_control"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=CONTROL_TIME scope_kind=0 scope=transport.point",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_all_disabled_continues",
+  "top": "tb_group_all_cancel_continue",
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION scope_kind=1 scope=g[^\\n]*stage=HELD",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  }
 ]

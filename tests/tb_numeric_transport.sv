@@ -28,6 +28,11 @@ module tb_numeric_transport;
       else if(mode=="ack_control")acknowledge_member_control(group_handle,0,64'hx000000000000001);
       else if(mode=="group_handle")found=peek_member_frame(64'hx000000000000000,0,received);
       else if(mode=="member_index")found=peek_member_frame(group_handle,64'hx000000000000000,received);
+      else if(mode=="late_control")begin
+        #1000000;control.control_seq=2;publish_control(source,control);
+        if(registered_sources[source].last_control_seq!=1 || registered_sources[source].origin_control_seq[point_handle]!=1)
+          $fatal(1,"late control committed origin/transport state after rejection");
+      end
       else if(mode=="progress")set_source_progress(source,64'hx000000000000000);
       else if(mode=="valid_reset")begin
         if(!peek_member_control(group_handle,0,envelope) || envelope.value.reset_n!==1'bz ||
@@ -42,7 +47,7 @@ module tb_numeric_transport;
     if(consumer_fault)begin
       if(monitoring_shared_disabled || !scope_disabled(BW_GROUP,"transport.group") || scope_disabled(BW_GROUP,"transport.peer") || scope_disabled(BW_POINT,"transport.point"))
         $fatal(1,"known consumer numeric fault must preserve source and sibling");
-    end else if(mode=="progress")begin
+    end else if(mode inside {"progress","late_control"})begin
       if(!scope_disabled(BW_POINT,"transport.point"))$fatal(1,"invalid source progress must disable its source");
     end else if(!monitoring_shared_disabled)$fatal(1,"invalid unowned transport handle must disable shared monitoring");
     if(mode!="publish_handle" && (retained_frame_count(source)!=(consumer_fault?1:0) || retained_control_count(source)!=(consumer_fault?1:0) ||
