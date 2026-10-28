@@ -50,9 +50,12 @@ module tb_metrics_first_boundary;
     end else #(measurement_start_ticks+17250002-$time);
     check_result(point.episode_result);check_result(aggregate.episode_result);
     summary=check_report_summary();
+    // Each scope also emits one default sustained-variation WARNING
+    // (reference shorter than the six-window minimum), on top of the
+    // explicit rules below.
     if(summary.pass_count!=($test$plusargs("UNKNOWN_END") ? 0 : 2) ||
        summary.fail_count!=($test$plusargs("UNKNOWN_END") ? 0 : 2) ||
-       summary.warning_count!=($test$plusargs("UNKNOWN_END") ? 4 : 0))
+       summary.warning_count!=($test$plusargs("UNKNOWN_END") ? 6 : 2))
       $fatal(1,"point and group independently FAIL steadyBW20 and PASS steady sigma0; got%0d/%0d/%0d",
         summary.pass_count,summary.fail_count,summary.warning_count);
     $display("TB_PASS metrics_first_boundary");$finish;
