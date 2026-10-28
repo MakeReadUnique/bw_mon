@@ -199,6 +199,7 @@ module bw_stats_core #(
   bit last_steady_found=0;
   bw_u64_t raw_unknown_records=0,raw_unknown_event_records=0,raw_unknown_ticks=0,raw_quality_ticks=0;
   bw_u64_t phase_start_unknown_event_records=0,candidate_unknown_event_records=0,episode_end_unknown_event_records=0;
+  bw_u64_t stage_reset_generation=0,stage_last_reset_event_ticks=0;
   bw_u64_t raw_reset_records=0,phase_start_reset_records=0,candidate_reset_records=0,episode_end_reset_records=0;
   bw_u64_t phase_start_unknown_records=0,phase_start_unknown_ticks=0;
   bw_u64_t candidate_unknown_records=0,candidate_unknown_ticks=0;
@@ -347,6 +348,8 @@ module bw_stats_core #(
       check_sample.full=window_full;check_sample.bytes_complete=bytes_complete;
       check_sample.denominator_valid=denominator_valid;check_sample.foreign_activity=foreign_activity();
       check_sample.reset_coverage=member_reset_coverage;
+      check_sample.reset_generation=stage_reset_generation;
+      check_sample.last_reset_event_ticks=stage_last_reset_event_ticks;
       check_sample.valid=window_full && bytes_complete && denominator_valid && !foreign_activity();
       report_sink.submit_window(scope_id,check_sample);
       if(runtime_failed())return;
@@ -930,6 +933,16 @@ module bw_stats_core #(
   task automatic update_quality(int key, logic reset_level, bw_u64_t at_ticks);
     quality_interval_t interval;
     active_quality_t active;
+    // A held member reset is quality coverage, not another reset event. Initial
+    // snapshots establish state without an event; later actual level transitions
+    // advance a durable private generation before any evidence is accepted.
+    if(PHASE_ENABLE && key>=0 && member_control_sequences.exists(key) && member_control_sequences[key]>1 &&
+       ((active_quality.exists(key) && active_quality[key].reset_n !== reset_level) ||
+       (!active_quality.exists(key) && reset_level !== 1'b1)))begin
+      stage_reset_generation=checked_add(stage_reset_generation,1,scope_id);
+      if(runtime_failed())return;
+      stage_last_reset_event_ticks=at_ticks;
+    end
     if (active_quality.exists(key)) begin
       active=active_quality[key];
       if (active.reset_n === reset_level) return;
@@ -1062,7 +1075,7 @@ module bw_stats_core #(
     retained_bytes=0; retained_events=0;
     unknown_bytes=0; unknown_events=0; reset_entries=0;
     total_bytes=0; total_events=0;
-    raw_reset_records=0;
+    raw_reset_records=0;stage_reset_generation=0;stage_last_reset_event_ticks=0;
     raw_unknown_records=0;raw_unknown_event_records=0;raw_unknown_ticks=0;raw_quality_ticks=at_ticks;
     window_start_ticks=0; window_end_ticks=0;
     window_start_cycle=0; window_end_cycle=0;

@@ -84,6 +84,8 @@ virtual function void submit_window(string id,bw_check_window_t sample);
       sample.full==previous.full && sample.bytes_complete==previous.bytes_complete &&
       sample.denominator_valid==previous.denominator_valid && sample.foreign_activity==previous.foreign_activity &&
       sample.reset_coverage==previous.reset_coverage &&
+      sample.reset_generation==previous.reset_generation &&
+      sample.last_reset_event_ticks==previous.last_reset_event_ticks &&
       $realtobits(sample.value)==$realtobits(previous.value) &&
       sample.ticks>previous.ticks && sample.left_ticks>=previous.left_ticks &&
       sample.u>previous.u && sample.left_u>=previous.left_u;
@@ -108,6 +110,10 @@ endfunction
 function automatic bit default_result(int index,bw_episode_result_t episode,
     bw_phase_result_t platform,bit have_platform);
   bw_check_window_t row,reference[$];
+  stage_handoff_t handoff,own_handoff;
+  stage_step_t step;
+  int next_platform;
+  bw_u64_t terminal,handoff_phase;
   default_identity_t identity;
   bw_u64_t width,min_span,start_tick,end_tick,reference_end_tick,check_count,first_u,last_u;
   bw_u64_t run_count,run_first,run_last,runs,longest_count,longest_first,longest_last,longest_span;
@@ -122,22 +128,60 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   min_span=default_scopes[index].stride>width/5 ? width : 5*default_scopes[index].stride;
   if(default_scopes[index].basis==BW_NS)begin width*=BW_TICKS_PER_NS;min_span*=BW_TICKS_PER_NS;end
   start_tick=platform.start_ticks;
-  // Until the independent handoff proof is applied, retain ownership through
-  // the terminal episode bound, including all undetermined/short-phase rows.
-  end_tick=episode.tail_known ? episode.tail_ticks : episode.last_ticks;
+  terminal=episode.tail_known ? episode.tail_ticks : episode.last_ticks;
+  end_tick=terminal;handoff_phase=0;next_platform=-1;
+  step.valid=0;
+  if(have_platform)foreach(default_scopes[index].phases[p])begin
+    if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
+       default_scopes[index].phases[p].episode_id==episode.episode_id &&
+       default_scopes[index].phases[p].phase_kind==BW_PHASE_STEADY &&
+       default_scopes[index].phases[p].start_ticks>platform.start_ticks)begin
+      if(next_platform<0)next_platform=p;
+      handoff=default_scopes[index].handoff(default_scopes[index].phases[p],terminal);
+      if(handoff.valid)begin
+        end_tick=default_scopes[index].phases[p].start_ticks;
+        handoff_phase=default_scopes[index].phases[p].phase_id;break;
+      end
+    end
+  end
+  if(next_platform>=0)begin
+    step=default_scopes[index].step(platform,default_scopes[index].phases[next_platform],terminal);
+    $display("BW_STAGE_STEP scope_kind=%0d scope=%s epoch=%0d episode=%0d old_platform=%0d new_platform=%0d valid=%0b reason=%s old_support_first=%0d old_support_last=%0d old_min=%.17g old_max=%.17g new_support_first=%0d new_support_last=%0d new_min=%.17g new_max=%.17g old_reset_first=%0d old_reset_last=%0d new_reset_first=%0d new_reset_last=%0d latest_reset_event_ticks=%0d bridge_reset_generation=%0d bridge_last_reset_event_ticks=%0d bridge_first_seq=%0d bridge_last_seq=%0d bridge_start=%0d bridge_end=%0d bridge_span=%0d bridge_limit=%0d arrived_ticks=%0d wait_end_ticks=%0d exclusion_start_ticks=%0d exclusion_end_ticks=%0d retained_start_ticks=%0d retained_end_ticks=%0d",
+      scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
+      default_scopes[index].phases[next_platform].phase_id,step.valid,step.reason,
+      platform.support_first_seq,platform.support_last_seq,platform.support_min_gbps,platform.support_max_gbps,
+      default_scopes[index].phases[next_platform].support_first_seq,default_scopes[index].phases[next_platform].support_last_seq,
+      default_scopes[index].phases[next_platform].support_min_gbps,default_scopes[index].phases[next_platform].support_max_gbps,
+      step.old_reset_first,step.old_reset_last,step.new_reset_first,step.new_reset_last,
+      step.latest_reset_event_ticks,step.bridge_reset_generation,step.bridge_last_reset_event_ticks,
+      step.bridge_first_seq,step.bridge_last_seq,step.bridge_start,step.bridge_end,step.bridge_span,
+      default_scopes[index].logical_width()+default_scopes[index].logical_stride(),step.arrived_ticks,step.end_ticks,
+      step.start_ticks,step.end_ticks,platform.start_ticks,step.valid ? step.start_ticks : end_tick);
+  end
+  own_handoff='{default:0};
+  if(have_platform)own_handoff=default_scopes[index].handoff(platform,terminal);
+  if(have_platform)$display("BW_STAGE_HANDOFF scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d final_start_ticks=%0d final_end_ticks=%0d valid=%0b first_seq=%0d last_seq=%0d count=%0d first_u=%0d last_u=%0d span=%0d required=%0d reason=%s",
+    scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
+    platform.start_ticks,platform.end_ticks<terminal ? platform.end_ticks : terminal,
+    own_handoff.valid,own_handoff.first_seq,own_handoff.last_seq,own_handoff.count,
+    own_handoff.first_u,own_handoff.last_u,own_handoff.last_u-own_handoff.first_u,
+    default_scopes[index].logical_width(),own_handoff.valid ? "CONTINUOUS_FINAL_PLATFORM" : "FINAL_PLATFORM_INSUFFICIENT");
   reference_end_tick=platform.end_ticks<end_tick ? platform.end_ticks : end_tick;
   baseline=0;reference_valid=0;maximum=0;check_count=0;first_u=0;last_u=0;
   reference_first_seq=0;reference_last_seq=0;reference_first_u=0;reference_last_u=0;reference_seqs="";
   run_count=0;run_first=0;run_last=0;runs=0;longest_count=0;longest_first=0;longest_last=0;longest_span=0;
-  previous_seq=0;exclusion_count=0;
-  failed=0;quality=episode.status!==BW_EPISODE_COMPLETE || !episode.tail_known || !episode.last_known ||
+  previous_seq=0;exclusion_count=step.valid ? 1 : 0;
+  failed=0;
+  // A qualified handoff closes this owned interval independently of later
+  // terminal uncertainty. In-interval raw gaps still set quality below.
+  quality=(handoff_phase==0 && (episode.status!==BW_EPISODE_COMPLETE ||
+    !episode.tail_known || !episode.last_known)) ||
     (have_platform && (!platform.bytes_complete || !platform.end_known));
   reason=have_platform ? "REFERENCE_INSUFFICIENT" : (episode.episode_id==0 ? "NO_EPISODE" : "NO_CONFIRMED_STEADY");
   if(have_platform)foreach(default_scopes[index].phases[p])begin
     if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
        default_scopes[index].phases[p].episode_id==episode.episode_id &&
-       default_scopes[index].phases[p].start_known && default_scopes[index].phases[p].end_known &&
-       default_scopes[index].phases[p].phase_kind inside {BW_PHASE_RAMP,BW_PHASE_FALL})begin
+       default_scopes[index].confirmed_transition(default_scopes[index].phases[p],terminal))begin
       excluded_left=default_scopes[index].phases[p].start_ticks>start_tick ?
         default_scopes[index].phases[p].start_ticks : start_tick;
       excluded_right=default_scopes[index].phases[p].end_ticks<end_tick ?
@@ -174,6 +218,11 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
       end
       if(reference_valid)break;
     end
+    if(!reference_valid && reference.size()!=0)begin
+      foreach(reference[j])reference_seqs={reference_seqs,j==0 ? "" : ",",$sformatf("%0d",reference[j].seq)};
+      reference_first_seq=reference[0].seq;reference_last_seq=reference[$].seq;
+      reference_first_u=reference[0].u;reference_last_u=reference[$].u;
+    end
     if(reference_valid && baseline==0)reason="ZERO_REFERENCE";
     if(reference_valid && baseline>0)begin
       foreach(default_scopes[index].raw[r])begin
@@ -183,12 +232,11 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
              row.ticks<start_tick || row.ticks>=end_tick)continue;
           if(previous_seq!=0 && row.seq!=previous_seq+1)begin quality=1;run_count=0;end
           previous_seq=row.seq;
-          exempt=0;
+          exempt=step.valid && row.ticks>=step.start_ticks && row.ticks<step.end_ticks;
           foreach(default_scopes[index].phases[p])begin
             if(default_scopes[index].phases[p].stats_epoch==episode.stats_epoch &&
                default_scopes[index].phases[p].episode_id==episode.episode_id &&
-               default_scopes[index].phases[p].start_known && default_scopes[index].phases[p].end_known &&
-               default_scopes[index].phases[p].phase_kind inside {BW_PHASE_RAMP,BW_PHASE_FALL} &&
+               default_scopes[index].confirmed_transition(default_scopes[index].phases[p],terminal) &&
                row.ticks>=default_scopes[index].phases[p].start_ticks &&
                row.ticks<default_scopes[index].phases[p].end_ticks)exempt=1;
           end
@@ -226,10 +274,10 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   maximum_text=reference_valid && baseline>0 ? $sformatf("%.17g",maximum) : "UNAVAILABLE";
   percent_text=reference_valid && baseline>0 ? $sformatf("%.17g",100.0*(maximum/baseline)) : "UNAVAILABLE";
   steady_text=platform.bandwidth_valid ? $sformatf("%.17g",platform.bandwidth_gbps) : "UNAVAILABLE";
-  $display("BW_DEFAULT_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d metric=sustained_variation basis=%0d W=%0d S=%0d platform_start_ticks=%0d platform_end_ticks=%0d check_start_ticks=%0d check_end_ticks=%0d reference_valid=%0b reference_count=%0d reference_seqs=%s reference_first_seq=%0d reference_last_seq=%0d reference_first_u=%0d reference_last_u=%0d reference_span=%0d B=%s steady_bandwidth_gbps=%s threshold_pct=5 threshold_gbps=%s max_deviation_gbps=%s max_deviation_pct=%s samples=%0d first_u=%0d last_u=%0d over_runs=%0d longest_count=%0d longest_first_u=%0d longest_last_u=%0d longest_span=%0d exclusion_count=%0d quality_incomplete=%0b episode_status=%0d episode_reason=%s platform_bytes_complete=%0b platform_start_known=%0b platform_end_known=%0b episode_bytes_complete=%0b episode_first_known=%0b episode_last_known=%0b episode_tail_known=%0b conclusion=%s reason=%s",
+  $display("BW_DEFAULT_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d platform=%0d metric=sustained_variation basis=%0d W=%0d S=%0d platform_start_ticks=%0d platform_end_ticks=%0d check_start_ticks=%0d check_end_ticks=%0d handoff_platform=%0d reference_valid=%0b reference_count=%0d reference_seqs=%s reference_first_seq=%0d reference_last_seq=%0d reference_first_u=%0d reference_last_u=%0d reference_span=%0d B=%s steady_bandwidth_gbps=%s threshold_pct=5 threshold_gbps=%s max_deviation_gbps=%s max_deviation_pct=%s samples=%0d first_u=%0d last_u=%0d over_runs=%0d longest_count=%0d longest_first_u=%0d longest_last_u=%0d longest_span=%0d exclusion_count=%0d quality_incomplete=%0b episode_status=%0d episode_reason=%s platform_bytes_complete=%0b platform_start_known=%0b platform_end_known=%0b episode_bytes_complete=%0b episode_first_known=%0b episode_last_known=%0b episode_tail_known=%0b conclusion=%s reason=%s",
     scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
     default_scopes[index].basis,default_scopes[index].width,default_scopes[index].stride,
-    platform.start_ticks,platform.end_ticks,start_tick,end_tick,reference_valid,reference_valid ? 6 : reference.size(),
+    platform.start_ticks,platform.end_ticks,start_tick,end_tick,handoff_phase,reference_valid,reference_valid ? 6 : reference.size(),
     reference_seqs,reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,reference_last_u-reference_first_u,
     baseline_text,steady_text,threshold_text,maximum_text,percent_text,
     check_count,first_u,last_u,runs,longest_count,longest_first,longest_last,longest_span,exclusion_count,quality,episode.status,episode_reason_name(episode.reason),platform.bytes_complete,platform.start_known,platform.end_known,episode.bytes_complete,
