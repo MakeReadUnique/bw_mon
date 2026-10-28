@@ -36,7 +36,7 @@ def prepare(root, top, sources, cflags=''):
     project.update(p for p in native_paths if project_name(p, root) != str(p))
     project_hashes = {str(p.relative_to(root)): sha(p) for p in sorted(project)}
     native_hashes = {project_name(p, root): sha(p) for p in native_paths[1:]}
-    template = ['vcs', '-full64', '-sverilog', '+vpi', '-debug_access+all', '-kdb',
+    template = ['vcs', '-full64', '-error=AOUP', '-sverilog', '+vpi', '-debug_access+all', '-kdb',
                 '-CFLAGS', '-I' + str(include) + (' ' + cflags if cflags else ''),
                 '+incdir+@SOURCE@/rtl', '-assert', 'svaext', '-top', top, '-o', '@BUILD@/simv']
     template += ['@SOURCE@/' + str(p.relative_to(root)) for p in sources]

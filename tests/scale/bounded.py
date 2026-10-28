@@ -231,7 +231,7 @@ def run_bounded(scenario, output, force=False):
     sources = sorted(set(sources))
     inventory = {str(p.relative_to(REPO)): sha(p) for p in sources}
     tools, include = tool_identity()
-    options = ['-full64', '-sverilog', '-timescale=1ns/1fs', '+vpi', '-debug_access',
+    options = ['-full64', '-error=AOUP', '-sverilog', '-timescale=1ns/1fs', '+vpi', '-debug_access',
                '-CFLAGS', '-I'+str(include), '-assert', 'svaext', '-top', 'tb_bw_scale']
     options += list(getattr(scenario, 'compile_options', []))
     identity = dict(source=inventory, inputs=inputs, tools=tools, options=options)

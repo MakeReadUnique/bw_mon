@@ -17,7 +17,7 @@ def main():
     manifest=dict(kind='small_vertical_tracer',source_snapshot=str(snapshot),source_sha256={str(p.relative_to(REPO)):sha(p) for p in dependencies},state='PREPARED')
     path=output/'manifest.json'
     vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
-    cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(snapshot/'rtl'),'-assert','svaext','-top','tb_scale_tracer','-o',str(output/'simv')]+[str(snapshot/p.relative_to(REPO)) for p in files]
+    cmd=['vcs','-full64','-error=AOUP','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(snapshot/'rtl'),'-assert','svaext','-top','tb_scale_tracer','-o',str(output/'simv')]+[str(snapshot/p.relative_to(REPO)) for p in files]
     result=execute(cmd,output,output/'compile.log',output/'compile.time-v.txt',path,manifest,'compile')
     if result['returncode'] or re.search(r'(?:Warning|Error)-\[',(output/'compile.log').read_text()):return 1
     passed=True

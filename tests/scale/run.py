@@ -183,7 +183,7 @@ def run(s,output,force=False):
         sources+=sorted(rtl.glob('*.c'))
         vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
         n=len(list(build.glob('compile-attempt-*')))+1;compile_dir=build/('compile-attempt-'+str(n));compile_dir.mkdir()
-        cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
+        cmd=['vcs','-full64','-error=AOUP','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
         cmd+=list(map(str,sources))+[str(build/p.name) for p in gen]
         print('COMPILE '+s.name+' '+str(compile_dir),flush=True)
         result=execute(cmd,build,compile_dir/'compile.log',compile_dir/'time-v.txt',manifest_path,manifest,'compile')
