@@ -5199,7 +5199,8 @@
    "group_completion_observer.c"
   ],
   "defines": [
-   "BW_MON_TEST_SCHEDULING"
+   "BW_MON_TEST_SCHEDULING",
+   "BW_MON_TEST_FAULTS"
   ]
  },
  {
@@ -5352,6 +5353,24 @@
    "+MODE=unexpected"
   ],
   "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION[^\\n]*stage=UNEXPECTED_FRAME",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
+  "name": "group_public_pressure_failed_parent",
+  "top": "tb_group_public_pressure",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "defines": [
+   "BW_MON_TEST_SCHEDULING",
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+FAIL_PARENT"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION scope_kind=1 scope=parent0[^\\n]*stage=CORE_RECEIPT",
   "expect_counts": {
    "BW_CORE_WARNING": 1
   }

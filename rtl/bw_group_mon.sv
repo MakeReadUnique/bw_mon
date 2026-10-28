@@ -86,13 +86,13 @@ module bw_group_mon #(
         if(!group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_groups[d]))begin
           completion_stage_error("CONTINUATION","unknown dependency");return 0;
         end
-        if(group_batches[bw_test_consumer_gates[scope_id].resume_after_groups[d]].acked<
+        if(!scope_failed(BW_GROUP,bw_test_consumer_gates[scope_id].resume_after_groups[d]) && group_batches[bw_test_consumer_gates[scope_id].resume_after_groups[d]].acked<
            bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_group))begin
         completion_stage_error("CONTINUATION","unknown dependency");return 0;
       end
-      if(bw_test_consumer_gates[scope_id].resume_after_group!="" && group_batches[bw_test_consumer_gates[scope_id].resume_after_group].acked<
+      if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !scope_failed(BW_GROUP,bw_test_consumer_gates[scope_id].resume_after_group) && group_batches[bw_test_consumer_gates[scope_id].resume_after_group].acked<
          bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
       bw_test_consumer_gates[scope_id].paused=0;
       void'(request_slot_settlement(scope_id));
