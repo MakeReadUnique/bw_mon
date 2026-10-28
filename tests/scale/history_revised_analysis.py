@@ -55,8 +55,8 @@ def phase_reference(oracle, scope, episodes):
     phase_identity = 0
     prior_last = -1
     first_full = (oracle.width+oracle.stride-1)//oracle.stride
-    windows = list(oracle.windows(scope)) if oracle.publication_count-first_full+1 >= 3 else []
-    # Maximum windows expose at most one full observation; N=3 cannot fit.
+    windows = list(oracle.windows(scope)) if oracle.publication_count-first_full+1 >= 6 else []
+    # Maximum windows expose at most one full observation; N=6 cannot fit.
     for episode in episodes:
         evidence = []
         current = candidate = count = 0
@@ -79,21 +79,28 @@ def phase_reference(oracle, scope, episodes):
                 current = candidate = count = 0
                 evidence = []
                 continue
-            evidence = (evidence+[window])[-3:]
-            if len(evidence) != 3:
+            evidence = (evidence+[window])[-6:]
+            if len(evidence) != 6:
                 continue
             position = 'right' if oracle.basis == 'ns' else 'right_cycle'
-            minimum = 2*oracle.stride*(1000000 if oracle.basis == 'ns' else 1)
+            minimum = min(oracle.width, 5*oracle.stride)*(1000000 if oracle.basis == 'ns' else 1)
             if evidence[-1][position]-evidence[0][position] < minimum:
                 continue
             xs = [F(w['right'], 1000000) for w in evidence]
             ys = [w['gbps'] for w in evidence]
-            xm, ym = sum(xs)/3, sum(ys)/3
-            slope = sum((x-xm)*(y-ym) for x, y in zip(xs, ys))/sum((x-xm)**2 for x in xs)
+            paired = [((xs[i]+xs[i+1])/2, (ys[i]+ys[i+1])/2) for i in (0, 2, 4)]
+            xm, ym = sum(xs)/6, sum(ys)/6
+            slope = sum((x-xm)*(y-ym) for x, y in paired)/sum((x-xm)**2 for x, y in paired)
             delta = slope*(xs[-1]-xs[0])
-            rms_squared = sum((y-ym-slope*(x-xm))**2 for x, y in zip(xs, ys))/3
-            fit = rms_squared <= F(1, 10**12)
-            target = 2 if delta == 0 and fit else 1 if delta >= 1 and fit else 3 if delta <= -1 and fit else 0
+            raw_variance = sum((y-ym-slope*(x-xm))**2 for x, y in zip(xs, ys))/6
+            pair_variance = sum((y-ym-slope*(x-xm))**2 for x, y in paired)/3
+            target = 0
+            if current == 2 and abs(delta) <= ym*F(8, 100) and raw_variance <= (ym*F(12, 100))**2:
+                target = 2
+            elif abs(delta) <= ym*F(4, 100) and raw_variance <= (ym*F(10, 100))**2:
+                target = 2
+            elif ym > 0 and abs(delta) >= ym*F(10, 100) and pair_variance <= (ym*F(25, 1000))**2:
+                target = 1 if delta > 0 else 3
             if target == current:
                 candidate = count = 0
                 continue
@@ -101,7 +108,7 @@ def phase_reference(oracle, scope, episodes):
                 candidate, count, candidate_at = target, 1, window['right']
             else:
                 count += 1
-            if count == 4:
+            if count == 2:
                 close(candidate_at, True, 0)
                 current, start, confirmation = target, candidate_at, window['right']
                 if current:

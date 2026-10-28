@@ -122,7 +122,7 @@ def generate(s,out):
       anchor=rank_lt(origin)+1;rc=anchor+rank*STRIDE;lc=(rc-anchor>=WIDTH)?rc-WIDTH:anchor;
       left=clock_tick(lc);right=clock_tick(rc);cc=rc-lc;full=cc==WIDTH;
     end
-    v=interval_counts(m,hit,own,left,right);v.seq=seq;v.epoch=after_reset;v.left=left;v.right=right;
+    v=interval_counts(m,hit,own,left,right);v.seq=seq;v.epoch=after_reset;v.left=bw_mon_pkg::measurement_start_ticks+left;v.right=bw_mon_pkg::measurement_start_ticks+right;
     v.left_cycle=lc;v.right_cycle=rc;v.coverage_ticks=right-left;v.coverage_cycles=cc;v.full=full;v.warmup=!full;
     v.denominator_valid=right>left;v.window_valid=full && v.bytes_complete && v.denominator_valid;
     v.gbps=v.denominator_valid ? real'(v.bytes)*1000000.0/real'(right-left) : 0;
@@ -135,7 +135,7 @@ def generate(s,out):
     v=interval_counts(m,hit,own,tick,tick+1);
     if(epoch && tick<RESET_END)begin total.bytes=0;total.events=0;end
     else total=interval_counts(m,hit,own,left,tick+1);
-    r.seq=edge_index;r.epoch=epoch;r.tick=tick;r.edge_index=edge_index;r.byte_inc=v.bytes;r.event_inc=v.events;
+    r.seq=edge_index;r.epoch=epoch;r.tick=bw_mon_pkg::measurement_start_ticks+tick;r.edge_index=edge_index;r.byte_inc=v.bytes;r.event_inc=v.events;
     r.bytes_complete=v.bytes_complete;r.events_complete=v.events_complete;
     r.reset_points=hit && variant==2 && RESET_START<=tick && tick<RESET_END;
     r.total_bytes=total.bytes;r.total_events=total.events;r.source_epoch=epoch;return r;
@@ -199,10 +199,7 @@ endpackage
 endmodule
 '''
     (out/'checker.sv').write_text(check)
-    analysis='''.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(@Q@),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(@SPAN@),.PHASE_K(4),
-    .PHASE_STEADY_ENTER_ABS(0),.PHASE_STEADY_ENTER_REL(0),.PHASE_STEADY_EXIT_ABS(0),.PHASE_STEADY_EXIT_REL(0),
-    .PHASE_RMS_ENTER_ABS(1e-6),.PHASE_RMS_ENTER_REL(0),.PHASE_RMS_EXIT_ABS(1e-6),.PHASE_RMS_EXIT_REL(0),
-    .PHASE_TREND_ABS(1),.PHASE_TREND_REL(0)'''.replace('@Q@','30' if s.basis=='ns' else '60').replace('@SPAN@',str(s.config.get('analysis_min_span',20 if s.basis=='ns' else 40)))
+    analysis='.EPISODE_ENABLE(1),.SILENCE_THRESHOLD('+('30' if s.basis=='ns' else '60')+')'
     win='.WINDOW_BASIS(bw_mon_pkg::bw_basis_t\'(bw_scale_input_pkg::BASIS)),.WINDOW_WIDTH(bw_scale_input_pkg::WIDTH),.UPDATE_STRIDE(bw_scale_input_pkg::STRIDE)'
     def connections(group=False):
         parts=['.is_group(1\'b'+str(int(group))+')']
@@ -261,7 +258,7 @@ module tb_bw_scale;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;import bw_scale_input_pkg::*;
   logic clk=0;bit deadline=0;string variant_name,actual_path;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(POINTS),.EXPECTED_GROUP_COUNT(GROUPS)) setup();
+  bw_mon_setup setup();
   for(genvar p=0;p<POINTS;p++)begin:points
     bw_scale_point #(.PROTOCOL(bw_protocol_t'(p%3)),.DYNAMIC(p%2==0)) slot(.clk(clk),.scope_index(p));
   end
@@ -275,12 +272,12 @@ module tb_bw_scale;
     actual_fd=$fopen(actual_path,"w");if(actual_fd==0)$fatal(1,"SCALE_ACTUAL_OPEN");
     $fdisplay(actual_fd,"@CSV_HEADER@");
 @TOPOLOGY@
-    finish_configuration();wait(monitor_ready);
-    if($time!=0 || measurement_start_ticks!=0)$fatal(1,"SCALE_READY_ORIGIN");
-    $display("SCALE_RUN_START points=%0d groups=%0d scopes=%0d edges=%0d end_ticks=%0d basis=%0d W=%0d S=%0d variant=%s waves=0",POINTS,GROUPS,SCOPES,EDGES,END_TICKS,BASIS,WIDTH,STRIDE,variant_name);
+    wait(monitor_ready);
+    if($time!=measurement_start_ticks || measurement_start_ticks==0)$fatal(1,"SCALE_READY_ORIGIN");
+    $display("SCALE_RUN_START points=%0d groups=%0d scopes=%0d edges=%0d end_ticks=%0d basis=%0d W=%0d S=%0d variant=%s waves=0",POINTS,GROUPS,SCOPES,EDGES,measurement_start_ticks+END_TICKS,BASIS,WIDTH,STRIDE,variant_name);
     #END_TICKS;deadline<=1;observation_end=1;
     wait(completed_scopes==SCOPES);
-    if($time!=END_TICKS || core_failure_pending())$fatal(1,"SCALE_FINAL_FAILURE");
+    if($time!=measurement_start_ticks+END_TICKS || core_failure_pending())$fatal(1,"SCALE_FINAL_FAILURE");
     $fclose(actual_fd);
     $display("SCALE_PASS points=%0d groups=%0d scopes=%0d checked_raw=%0d end_ticks=%0d",POINTS,GROUPS,completed_scopes,EDGES*SCOPES,$time);
     $finish;
@@ -288,14 +285,14 @@ module tb_bw_scale;
   initial begin
     wait(monitor_ready);
     for(ref_u64 k=1;k<=EDGES;k++)begin
-      #(clock_tick(k)-$time);clk=1;#1;clk=0;
+      #(measurement_start_ticks+clock_tick(k)-$time);clk=1;#1;clk=0;
     end
   end
   initial begin
     wait(monitor_ready);
     for(ref_u64 n=1;n*1000000000<END_TICKS;n++)begin
       #1000000000;
-      $display("SCALE_PROGRESS at_ticks=%0d input_edges_before=%0d",$time,rank_lt($time));
+      $display("SCALE_PROGRESS at_ticks=%0d input_edges_before=%0d",$time,rank_lt($time-measurement_start_ticks));
     end
   end
   always @(deadline or completed_scopes)if(deadline)begin
@@ -308,7 +305,6 @@ endmodule
 '''
     topo=[]
     for g,members in s.groups.items():
-        topo.append('    define_group("{}",{});'.format(s.group_id(g),len(members)))
         for kind,index in members:topo.append('    add_{}_member("{}","{}");'.format(kind,s.group_id(g),s.identity(kind,index)))
     for key,value in {'WIN':win,'HINT':'4' if s.basis=='ns' else '8','ANALYSIS':analysis,'POINT_CONNECTIONS':connections(),
                       'GROUP_CONNECTIONS':connections(True),'CSV_HEADER':','.join(CSV_FIELDS),'TOPOLOGY':'\n'.join(topo)}.items():top=top.replace('@'+key+'@',value)

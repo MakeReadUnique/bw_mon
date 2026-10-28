@@ -42,7 +42,7 @@ class RevisedTopology(Scenario):
         basis = 'cycle' if name.endswith('cycle') else 'ns'
         super().__init__('common-ns', roots=1, duration_ns=256, basis=basis,
                          width=128 if basis=='cycle' else 16, stride=1, variant='reset',
-                         analysis_min_span=2, allow_final_steady_selection=True)
+                         allow_final_steady_selection=True)
         self.name = name
         self.points, self.groups = topology('-max-' in name)
         self.topology, self.leaves = topology_summary(self.points, self.groups)
@@ -51,7 +51,8 @@ class RevisedTopology(Scenario):
         self.unknown_edge = 193
         self.config.update(revised_matrix='M1-M5/H6', differentiated_bytes='point_index+1+3*(edge_index%2)',
                            active_edges=self.active_edges, group_reset=[self.group_reset_start,self.group_reset_end],
-                           delayed_group=8, pause=[self.pause_start,self.pause_end], missing_record_timeout_ns=4)
+                           delayed_group=8, pause=[self.pause_start,self.pause_end],
+                           runtime_migration_pending='positive-time consumer gate must move to same-slot completion/isolation seam for D7-D8')
 
     def weight(self, kind, index):
         return index+1 if kind=='point' else self.weights[index]

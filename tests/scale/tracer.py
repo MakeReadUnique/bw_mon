@@ -25,7 +25,9 @@ def main():
         result=execute([str(output/'simv'),'-no_save']+args,output,output/(name+'.log'),output/(name+'.time-v.txt'),path,manifest,name)
         text=(output/(name+'.log')).read_text()
         if name=='red':good='Fatal:' in text and 'TRACER_WINDOW_MISMATCH' in text and 'SCALE_TRACER_PASS' not in text
-        else:good=result['returncode']==0 and 'Fatal:' not in text and 'SCALE_TRACER_PASS scopes=5 windows=120 records=2400 tick=240000000' in text
+        else:
+            marker=re.search(r'SCALE_TRACER_PASS scopes=5 windows=120 records=2400 tick=(\d+) start_ticks=(\d+)',text)
+            good=result['returncode']==0 and 'Fatal:' not in text and marker is not None and int(marker[2])>0 and int(marker[1])-int(marker[2])==240000000
         manifest[name]['checked_pass']=good;passed=passed and good
     manifest['state']='VERIFIED' if passed else 'FAILED';save(path,manifest)
     print(('PASS' if passed else 'FAIL')+' vertical tracer/sensitivity '+str(path))

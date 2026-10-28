@@ -2,7 +2,9 @@
 import csv
 import json
 import re
+import copy
 from pathlib import Path
+from time_origin import measurement_start
 
 
 def kv(line):
@@ -15,6 +17,13 @@ def verify(s, attempt):
     def require(condition, error, **details):
         if not condition:
             differences.append(dict(error=error, **details))
+    log = (attempt/'simulation.log').read_text() if (attempt/'simulation.log').exists() else ''
+    try:
+        origin = measurement_start(log)
+    except ValueError as error:
+        require(False, 'measurement_start', detail=str(error)); origin = 0
+    s = copy.copy(s)
+    s.oracle = s.oracle.at_measurement_start(origin)
     rows = []
     if (attempt/'actual.csv').exists():
         with (attempt/'actual.csv').open() as stream:
@@ -53,7 +62,6 @@ def verify(s, attempt):
             # Resource sampler sees both raw acceptance and publication at the
             # drain edge. The exact counter is deduplicated in the fixture.
             require(row.get('drain_checkpoints') == 4, 'repeated_drain', scope=scope, actual=row.get('drain_checkpoints'))
-    log = (attempt/'simulation.log').read_text() if (attempt/'simulation.log').exists() else ''
     lines = log.splitlines()
     require(len([x for x in lines if x.startswith('HISTORY_PASS ')]) == 1, 'completion_marker')
     require(len([x for x in lines if x.startswith('HISTORY_RUN_START ')]) == 1, 'start_marker')
@@ -79,7 +87,7 @@ def verify(s, attempt):
             require(len(by_scope[sid]) == 1, 'deep_episode_count', scope=sid)
             if by_scope[sid]:
                 actual = by_scope[sid][0]
-                expected = dict(status=4, first_ticks=250000, last_ticks=39999750000,
+                expected = dict(status=4, first_ticks=origin+250000, last_ticks=origin+39999750000,
                                 bytes=s.oracle.raw(scope, 80000)['total_bytes'], events=80000*(2 if scope == 2 else 1),
                                 tail_known=0, bytes_complete=1, events_complete=1, e2e_valid=0)
                 for key, value in expected.items():
@@ -122,7 +130,7 @@ def verify(s, attempt):
     storage_differences, storage_counts = verify_storage(s.oracle, attempt/'storage-runs.txt', expected_snapshots(s))
     differences.extend(storage_differences)
     require(storage_counts['snapshots'] >= 3, 'all_scope_storage_snapshots')
-    evidence = dict(storage_verification=storage_counts, schema='revised-history-verification-v1', profile=s.name,
+    evidence = dict(measurement_start_ticks=origin,storage_verification=storage_counts, schema='revised-history-verification-v1', profile=s.name,
                     scopes=len(rows), checked_raw=sum(r.get('records', 0) for r in observed.values()),
                     checked_windows=sum(r.get('windows', 0) for r in observed.values()),
                     original_input_events=len(s.oracle.events), episode_records=len(episodes), phase_records=len(phases),
@@ -159,8 +167,8 @@ def verify_storage(oracle, path, expected=None):
                     _, _, tick, edge, left, left_cycle = values
                     if scope not in (0, 1, 2) or not 0 <= edge <= len(oracle.events):
                         raise ValueError('snapshot identity')
-                    publication = tick//(oracle.stride*1000000) if oracle.basis == 'ns' else max(0, edge-1)//oracle.stride
-                    reference = oracle.window(scope, publication) if publication else {'left': 0, 'left_cycle': 0}
+                    publication = (tick-oracle.start)//(oracle.stride*1000000) if oracle.basis == 'ns' else max(0, edge-1)//oracle.stride
+                    reference = oracle.window(scope, publication) if publication else {'left': oracle.start, 'left_cycle': 0}
                     if (left, left_cycle) != (reference['left'], reference['left_cycle']):
                         fail('snapshot_independent_left', scope=scope, snapshot=seq)
                     left, left_cycle = reference['left'], reference['left_cycle']
