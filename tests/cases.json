@@ -377,9 +377,16 @@
   "name": "episode_final",
   "top": "tb_episode_final",
   "expect_log": [
-   "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000001 last_ticks=1000001 tail_ticks=2000001 confirm_ticks=3000001 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
-   "(?s)^(?!.*BW_EPISODE[^\\n]*scope=episode.none)"
-  ]
+   "TB_PASS episode_final",
+   "BW_POINT_TERMINAL scope=episode.final state=INTERRUPTED expected=2 captured=2 inflight=2 published=2 accepted=2 input_generation=12 closed_generation=11 time_ticks=3000001",
+   "BW_POINT_TERMINAL scope=episode.none state=INTERRUPTED.*time_ticks=3000001",
+   "(?s)^(?!.*BW_EPISODE)"
+  ],
+  "expect_counts": {
+   "BW_EPISODE ": 0,
+   "BW_SUMMARY ": 0,
+   "BW_DEFAULT_CHECK ": 0
+  }
  },
  {
   "name": "episode_final_budget",
@@ -1563,9 +1570,10 @@
    "+BW_EXPECT=../../../tests/expect/e2e_group_barrier.cfg"
   ],
   "expect_log": [
-   "(?s)BW_CHECK .*scope=p0 .*actual=UNAVAILABLE .*reason=NO_EPISODE.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=6 scopes_done=3 scopes_expected=3"
+   "(?s)BW_CHECK .*scope=p0 .*actual=UNAVAILABLE .*reason=NO_EPISODE.*BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
+   "BW_DEFAULT_CHECK ": 0,
    "BW_CHECK ": 1,
    "BW_SUMMARY ": 1
   }
