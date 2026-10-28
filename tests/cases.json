@@ -386,7 +386,13 @@
    "BW_EPISODE ": 0,
    "BW_SUMMARY ": 0,
    "BW_DEFAULT_CHECK ": 0
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "incomplete"
+  ]
  },
  {
   "name": "episode_final_budget",
@@ -4549,7 +4555,13 @@
    "BW_READY ": 0,
    "BW_SUMMARY ": 0,
    "BW_CHECK ": 0
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "aborted"
+  ]
  },
  {
   "name": "auto_start_chain",
@@ -4867,7 +4879,13 @@
   "expect_counts": {
    "BW_CORE_WARNING": 0,
    "BW_SUMMARY": 0
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "incomplete"
+  ]
  },
  {
   "name": "point_finish_normal",
@@ -6278,7 +6296,13 @@
    "BW_POINT_TERMINAL": 2,
    "BW_GROUP_TERMINAL": 1,
    "BW_SUMMARY ": 1
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
  },
  {
   "name": "end_audit_reverse",
@@ -6438,7 +6462,13 @@
    "BW_POINT_TERMINAL": 2,
    "BW_GROUP_TERMINAL": 2
   },
-  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT"
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "incomplete"
+  ]
  },
  {
   "name": "end_terminal_fail_active",
@@ -6456,7 +6486,13 @@
    "BW_SUMMARY ": 1,
    "BW_REPORT_COMPLETE": 1
   },
-  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT"
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
  },
  {
   "name": "end_terminal_no_platform",
