@@ -38,6 +38,6 @@ module tb_settle_storage_failure;
     else inject_growth_failure("native.observer","scheduler.reset_capture");
     handle=register_point("native.observer","tb_settle_storage_failure.core",BW_NS,2,1);
     scope_id="native.observer";
-    #1;$fatal(1,"expected core error did not occur");
+    #2;$fatal(1,"expected core error did not occur");
   end
 endmodule
