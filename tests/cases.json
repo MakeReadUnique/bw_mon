@@ -6490,5 +6490,39 @@
    "BW_SUMMARY ": 1,
    "BW_REPORT_COMPLETE": 1
   }
+ },
+ {
+  "name": "end_replay_duplicate",
+  "top": "tb_end_replay",
+  "plusargs": [
+   "+MODE=replay"
+  ],
+  "expect_log": [
+   "TB_PASS end_replay replay"
+  ],
+  "expect_counts": {
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_TERMINAL": 1,
+   "BW_DEFAULT_CHECK ": 1
+  }
+ },
+ {
+  "name": "end_replay_suppress_owner",
+  "top": "tb_end_replay",
+  "defines": [
+   "BW_MON_TEST_END_FAULTS"
+  ],
+  "plusargs": [
+   "+MODE=suppress_owner"
+  ],
+  "expect_log": [
+   "TB_PASS end_replay suppress_owner",
+   "BW_REPORT_INCOMPLETE reason=MISSING_ROLE_RECEIPT owner=0:re\\.p role=owner"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 0,
+   "BW_REPORT_INCOMPLETE": 1
+  }
  }
 ]
