@@ -1221,83 +1221,11 @@
   "top": "tb_phase_zero"
  },
  {
-  "name": "phase_fit_error",
-  "top": "tb_phase_fit_error",
-  "expect_warning": "(?s)^(?!.*BW_PHASE)(?!.*BW_EPISODE).*BW_CORE_WARNING code=PHASE_FIT",
-  "expect_counts": {
-   "BW_CORE_WARNING": 1
-  }
- },
- {
   "name": "phase_config_valid",
   "top": "tb_phase_config_valid",
   "sources": [
    "phase_config_fixture.sv"
   ]
- },
- {
-  "name": "phase_config_n",
-  "top": "tb_phase_config_n",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_span",
-  "top": "tb_phase_config_span",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_k",
-  "top": "tb_phase_config_k",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_negative",
-  "top": "tb_phase_config_negative",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_exit",
-  "top": "tb_phase_config_exit",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_overlap",
-  "top": "tb_phase_config_overlap",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_nan",
-  "top": "tb_phase_config_nan",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_storage",
-  "top": "tb_phase_config_storage",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STORAGE_RANGE"
  },
  {
   "name": "phase_config_episode",
@@ -1308,24 +1236,8 @@
   "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
  },
  {
-  "name": "phase_config_missing",
-  "top": "tb_phase_config_missing",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
   "name": "phase_config_unknown",
   "top": "tb_phase_config_unknown",
-  "sources": [
-   "phase_config_fixture.sv"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=PHASE_CONFIG"
- },
- {
-  "name": "phase_config_infinite",
-  "top": "tb_phase_config_infinite",
   "sources": [
    "phase_config_fixture.sv"
   ],
@@ -1587,13 +1499,6 @@
    "+MODE=late_registration"
   ],
   "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
- },
- {
-  "name": "group_actual_scope",
-  "top": "tb_group_missing_ungrouped",
-  "expect_counts": {
-   "BW_READY ": 1
-  }
  },
  {
   "name": "group_metadata_reactive",
@@ -2058,22 +1963,25 @@
  },
  {
   "name": "metrics_delayed",
-  "top": "tb_metrics_delayed",
+  "top": "tb_phase_delayed",
   "expect_log": [
-   "BW_VARIATION.*scope=phase.delayed .*interval=PHASE.*stddev_gbps=0 cv_pct=0 .*stddev_valid=1 cv_valid=1"
+   "BW_VARIATION.*scope=phase.delayed .*interval=PHASE.*samples=1 .*stddev_valid=0.*stddev_reason=TOO_FEW_SAMPLES"
   ]
  },
  {
   "name": "metrics_repeated",
-  "top": "tb_metrics_repeated"
+  "top": "tb_report_metrics_repeated"
  },
  {
   "name": "metrics_quality",
-  "top": "tb_metrics_quality"
+  "top": "tb_metrics_controls",
+  "plusargs": [
+   "+LATE_GAP"
+  ]
  },
  {
   "name": "metrics_zero",
-  "top": "tb_metrics_zero",
+  "top": "tb_phase_zero",
   "expect_log": [
    "BW_VARIATION.*scope=phase.zero0 .*interval=EPISODE.*stddev_gbps=0 cv_pct=UNAVAILABLE .*stddev_valid=1 cv_valid=0.*cv_reason=ZERO_MEAN",
    "BW_VARIATION.*scope=phase.zero0 .*interval=PHASE.*stddev_gbps=UNAVAILABLE cv_pct=UNAVAILABLE .*stddev_valid=0 cv_valid=0.*stddev_reason=TOO_FEW_SAMPLES"
@@ -2081,7 +1989,7 @@
  },
  {
   "name": "metrics_actual_clock",
-  "top": "tb_metrics_actual_clock"
+  "top": "tb_phase_actual_time"
  },
  {
   "name": "metrics_exclusions",
@@ -2181,7 +2089,7 @@
   "name": "metrics_stopped_history",
   "top": "tb_metrics_stopped_history",
   "expect_log": [
-   "BW_PHASE_METRICS.*scope=metrics.stopped0 .*start_ticks=6000000 end_ticks=8000000.*duration_valid=1.*bandwidth_gbps=20 .*duration_reason=NONE"
+   "BW_PHASE_METRICS.*scope=metrics.stopped0 .*start_ticks=6000001 end_ticks=10000001.*duration_valid=1.*bandwidth_gbps=60 .*duration_reason=NONE"
   ]
  },
  {
@@ -2192,9 +2100,9 @@
   ],
   "expect_log": [
    "BW_CHECK .*metric=steady_bw .*actual=20 .*conclusion=PASS",
-   "BW_CHECK .*metric=steady_bw .*actual=30 .*conclusion=PASS",
+   "BW_CHECK .*metric=steady_bw .*actual=36 .*conclusion=PASS",
    "BW_CHECK .*metric=episode_cv .*conclusion=FAIL",
-   "BW_SUMMARY status=FAIL pass=6 fail=2 warning=0 scopes_done=2 scopes_expected=2"
+   "BW_SUMMARY status=FAIL pass=2 fail=2 warning=4 scopes_done=2 scopes_expected=2"
   ],
   "expect_counts": {
    "BW_CHECK ": 8,
@@ -2675,7 +2583,7 @@
  },
  {
   "name": "report_metrics_zero",
-  "top": "tb_metrics_zero",
+  "top": "tb_phase_zero",
   "plusargs": [
    "+BW_EXPECT=../../../tests/expect/report_metrics_zero.cfg"
   ],
@@ -2714,16 +2622,16 @@
  },
  {
   "name": "report_metrics_quality",
-  "top": "tb_metrics_quality",
+  "top": "tb_metrics_controls",
   "plusargs": [
-   "+BW_EXPECT=../../../tests/expect/report_metrics_quality.cfg"
+   "+BW_EXPECT=../../../tests/expect/report_metrics_quality.cfg",
+   "+LATE_GAP"
   ],
   "expect_log": [
-   "scope=phase.hysteresis1 .*metric=ramp_time .*actual=1.25 .*conclusion=PASS",
-   "scope=phase.hysteresis1 .*metric=steady_bw .*reason=BYTES_INCOMPLETE",
-   "scope=phase.hysteresis1 .*metric=steady_stddev .*conclusion=PASS",
-   "scope=phase.hysteresis1 .*metric=episode_stddev .*reason=OBSERVATION_INCOMPLETE",
-   "BW_SUMMARY status=WARNING pass=7 fail=0 warning=3"
+   "scope=metrics.ancestor0 .*metric=steady_bw .*reason=BYTES_INCOMPLETE",
+   "scope=metrics.ancestor0 .*metric=steady_stddev .*conclusion=PASS",
+   "scope=metrics.ancestor0 .*metric=episode_stddev .*reason=OBSERVATION_INCOMPLETE",
+   "BW_SUMMARY status=WARNING pass=5 fail=0 warning=5"
   ],
   "expect_counts": {
    "BW_CHECK ": 10,
@@ -2738,7 +2646,7 @@
    "+BW_EXPECT=../../../tests/expect/report_metrics_interrupted.cfg"
   ],
   "expect_log": [
-   "metric=ramp_time .*actual=2 .*conclusion=PASS",
+   "metric=ramp_time .*actual=6 .*conclusion=PASS",
    "scope=metrics.interrupted0 .*metric=steady_bw .*reason=RESET_INTERRUPTED",
    "scope=metrics.interrupted1 .*metric=steady_bw .*reason=OBSERVATION_TRUNCATED",
    "BW_SUMMARY status=WARNING pass=2 fail=0 warning=4"
@@ -2751,14 +2659,14 @@
  },
  {
   "name": "report_metrics_delayed",
-  "top": "tb_metrics_delayed",
+  "top": "tb_phase_delayed",
   "plusargs": [
    "+BW_EXPECT=../../../tests/expect/report_metrics_delayed.cfg"
   ],
   "expect_log": [
    "metric=steady_bw .*actual=0 .*conclusion=PASS",
    "metric=steady_window_min .*actual=6.4.*conclusion=PASS",
-   "BW_SUMMARY status=PASS pass=4 fail=0 warning=0"
+   "BW_SUMMARY status=WARNING pass=3 fail=0 warning=1"
   ],
   "expect_counts": {
    "BW_CHECK ": 4,
@@ -2888,10 +2796,10 @@
    "+FULL_METRICS"
   ],
   "expect_log": [
-   "metric=steady_bw .*actual=30 .*conclusion=PASS",
+   "metric=steady_bw .*actual=36 .*conclusion=FAIL",
    "metric=steady_window_max .*actual=20 .*conclusion=PASS",
    "metric=episode_cv .*conclusion=FAIL",
-   "BW_SUMMARY status=FAIL pass=22 fail=2 warning=0"
+   "BW_SUMMARY status=FAIL pass=17 fail=3 warning=4"
   ],
   "expect_counts": {
    "BW_CHECK ": 24,
@@ -2942,7 +2850,7 @@
    "+BW_EXPECT=../../../tests/expect/metrics_stopped.cfg"
   ],
   "expect_log": [
-   "metric=ramp_time .*actual=2 .*conclusion=PASS",
+   "metric=ramp_time .*actual=4 .*conclusion=PASS",
    "metric=steady_bw .*reason=OBSERVATION_TRUNCATED",
    "BW_SUMMARY status=WARNING pass=2 fail=0 warning=4"
   ],
@@ -2961,30 +2869,6 @@
  {
   "name": "group_analysis_config_requires_episode",
   "top": "tb_group_analysis_config_requires_episode",
-  "sources": [
-   "group_analysis_config_fixture.sv"
-  ],
-  "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
-  "expect_counts": {
-   "BW_READY ": 0,
-   "BW_SUMMARY ": 0
-  }
- },
- {
-  "name": "group_analysis_config_unknown_n",
-  "top": "tb_group_analysis_config_unknown_n",
-  "sources": [
-   "group_analysis_config_fixture.sv"
-  ],
-  "expect_error": "BW_CORE_ERROR code=PHASE_CONFIG",
-  "expect_counts": {
-   "BW_READY ": 0,
-   "BW_SUMMARY ": 0
-  }
- },
- {
-  "name": "group_analysis_config_infinity",
-  "top": "tb_group_analysis_config_infinity",
   "sources": [
    "group_analysis_config_fixture.sv"
   ],
@@ -4428,6 +4312,107 @@
   "expect_counts": {
    "BW_SUMMARY ": 0,
    "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "phase_defaults",
+  "top": "tb_phase_defaults"
+ },
+ {
+  "name": "phase_pair6",
+  "top": "tb_phase_pair6"
+ },
+ {
+  "name": "phase_fixed_continuous",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=0",
+   "+INPUT=../../../tests/phase_default/continuous.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "continuous"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=0"
+  ]
+ },
+ {
+  "name": "phase_fixed_platforms",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=1",
+   "+INPUT=../../../tests/phase_default/platforms.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "platforms"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=1"
+  ]
+ },
+ {
+  "name": "phase_fixed_activity",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=2",
+   "+INPUT=../../../tests/phase_default/activity.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "activity"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=2"
+  ]
+ },
+ {
+  "name": "phase_fixed_recovery",
+  "top": "tb_phase_fixed",
+  "plusargs": [
+   "+FAMILY=3",
+   "+INPUT=../../../tests/phase_default/recovery.txt"
+  ],
+  "verify": [
+   "python3",
+   "tests/phase_default/check.py",
+   "{log}",
+   "recovery"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=3"
+  ]
+ },
+ {
+  "name": "cfg_explicit_max_stride",
+  "top": "tb_cfg_explicit_max",
+  "expect_error": "BW_CORE_ERROR code=WINDOW_CONFIG"
+ },
+ {
+  "name": "cfg_explicit_max_q",
+  "top": "tb_cfg_explicit_max",
+  "defines": [
+   "TEST_Q"
+  ],
+  "expect_error": "BW_CORE_ERROR code=INTEGER_OVERFLOW"
+ },
+ {
+  "name": "phase_removed_parameters",
+  "top": "tb_phase_removed_parameters",
+  "expect_compile_error": "Error-\\[AOUP\\]"
+ },
+ {
+  "name": "group_actual_scope",
+  "top": "tb_group_missing_ungrouped",
+  "expect_counts": {
+   "BW_READY ": 1
   }
  },
  {

@@ -40,13 +40,13 @@ module tb_metrics_late_recovery;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   task automatic deliver(bw_u64_t logical_tick,bw_u64_t edge_number,bit transfer);
-    frame='0;frame.timestamp_ticks=logical_tick;frame.edge_index=edge_number;frame.record_seq=edge_number;
+    frame='0;frame.timestamp_ticks=measurement_start_ticks+logical_tick;frame.edge_index=edge_number;frame.record_seq=edge_number;
     frame.reset_n=1;frame.bytes_complete=1;frame.events_complete=1;
     frame.event_inc=transfer;frame.byte_inc=transfer ? 8 : 0;
     frame_toggle<=!frame_toggle;
   endtask
   task automatic deliver_control(bw_u64_t logical_tick,bw_u64_t sequence_id,logic reset_level);
-    control='0;control.timestamp_ticks=logical_tick;control.control_seq=sequence_id;
+    control='0;control.timestamp_ticks=measurement_start_ticks+logical_tick;control.control_seq=sequence_id;
     control.point_handle=0;control.reset_n=reset_level;control_toggle<=!control_toggle;
   endtask
   initial begin
@@ -54,30 +54,30 @@ module tb_metrics_late_recovery;
     handle=register_point("metrics.late.source","tb_metrics_late_recovery",BW_NS,4,1);
     wait(monitor_ready);
     #1000000;deliver(1000000,1,1);#1000000;deliver(2000000,2,0);
-    #500000;deliver_control(2500000,1,1'bx);watermark=3500000;
+    #500000;deliver_control(2500000,1,1'bx);watermark=measurement_start_ticks+3500000;
     if(mode!=0)begin
-      #(9000002-$time);reset_n=0;
-      #(9500002-$time);reset_n=1;
+      #(measurement_start_ticks+9000000-$time);reset_n=0;
+      #(measurement_start_ticks+9500000-$time);reset_n=1;
       if(mode==3)begin
-        #(9600002-$time);reset_n=1'bx;
-        #(9700002-$time);reset_n=1;
+        #(measurement_start_ticks+9600000-$time);reset_n=1'bx;
+        #(measurement_start_ticks+9700000-$time);reset_n=1;
       end
     end
-    #(10000002-$time);
+    #(measurement_start_ticks+10000000-$time);
     // Original recovery3.5 reaches the owner together with its later raw frame.
     // Both channels are the agreed normalized record/control component seam.
-    deliver_control(mode==2 ? 9750000 : mode==4 ? 9500000 : 3500000,2,1'b1);deliver(10000000,3,1);watermark=10000000;
+    deliver_control(mode==2 ? 9750000 : mode==4 ? 9500000 : 3500000,2,1'b1);deliver(10000000,3,1);watermark=measurement_start_ticks+10000000;
     #1;
     if(final_seq!=1 || result.status!=(mode!=0 ? BW_EPISODE_RESET_INTERRUPTED : BW_EPISODE_COMPLETE) ||
-       result.confirmation_ticks!=(mode!=0 ? 9000000 : 7500000) ||
+       result.confirmation_ticks!=measurement_start_ticks+(mode!=0 ? 9000000 : 7500000) ||
        result.last_known || result.e2e_valid || result.variation.minmax_valid ||
        result.variation.minmax_reason!=(mode!=0 ? BW_METRIC_RESET : BW_METRIC_BOUNDARY_UNKNOWN) ||
        !active || accepted!=3 || epoch!=int'(mode!=0))
       $fatal(1,"late original recovery must preserve Q7.5 completion and start new episode10 without backward quality queries");
-    #(11000002-$time);deliver(11000000,4,0);watermark=BW_U64_MAX;
-    #(15000003-$time);
+    #(measurement_start_ticks+11000000-$time);deliver(11000000,4,0);watermark=BW_U64_MAX;
+    #(measurement_start_ticks+15000002-$time);
     if(final_seq!=2 || result.e2e_valid!=(!(mode inside {2,3})) || result.first_known!=(!(mode inside {2,3})) ||
-       result.first_ticks!=10000001 || result.tail_ticks!=11000001 || result.confirmation_ticks!=15000001 ||
+       result.first_ticks!=measurement_start_ticks+10000000 || result.tail_ticks!=measurement_start_ticks+11000000 || result.confirmation_ticks!=measurement_start_ticks+15000000 ||
        (!(mode inside {2,3}) && result.e2e_gbps!=8.0))
       $fatal(1,"new episode quality must retain actual epoch gaps and exclude historical uncertainty");
     $display("TB_PASS metrics_late_recovery");$finish;

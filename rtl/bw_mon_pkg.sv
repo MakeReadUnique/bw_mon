@@ -69,11 +69,6 @@ package bw_mon_pkg;
   localparam bw_u64_t BW_TICKS_PER_NS = 1000000;
   localparam bw_u64_t BW_U64_MAX = 64'hffffffffffffffff;
   localparam bw_u64_t BW_MONITOR_LIMIT_TICKS = 64'd40000000000;
-  // Omitted numeric configuration is expressed by a sentinel parameter default.
-  // The sentinel itself is outside every legal explicit range (0<S<=W,
-  // positive Q), so only a user explicitly writing this exact value could be
-  // mistaken for omission; unknown, zero and out-of-range values stay errors.
-  localparam logic [63:0] BW_CFG_OMITTED = 64'hffffffffffffffff;
   localparam bw_u64_t BW_DEFAULT_SILENCE_THRESHOLD = 64'd10;
 
   // This is a per-edge record, including idle/unknown/reset edges. Time, edge,
@@ -116,6 +111,29 @@ package bw_mon_pkg;
   typedef enum logic [1:0] {
     BW_PHASE_UNDETERMINED, BW_PHASE_RAMP, BW_PHASE_STEADY, BW_PHASE_FALL
   } bw_phase_t;
+  localparam string BW_PHASE_STRATEGY="PAIR6_R2";
+  typedef enum logic [3:0] {
+    BW_PHASE_DISABLED, BW_PHASE_NO_EPISODE, BW_PHASE_WINDOW_WARMUP,
+    BW_PHASE_BYTES_INCOMPLETE, BW_PHASE_BAD_DENOMINATOR, BW_PHASE_FOREIGN_EPISODE,
+    BW_PHASE_NEED_SAMPLES, BW_PHASE_NEED_SPAN, BW_PHASE_CONFIRMING,
+    BW_PHASE_NO_MATCH, BW_PHASE_CONFIRMED
+  } bw_phase_reason_t;
+  function automatic string phase_reason_name(bw_phase_reason_t reason);
+    case(reason)
+      BW_PHASE_DISABLED:return "DISABLED";
+      BW_PHASE_NO_EPISODE:return "NO_EPISODE";
+      BW_PHASE_WINDOW_WARMUP:return "WINDOW_WARMUP";
+      BW_PHASE_BYTES_INCOMPLETE:return "BYTES_INCOMPLETE";
+      BW_PHASE_BAD_DENOMINATOR:return "BAD_DENOMINATOR";
+      BW_PHASE_FOREIGN_EPISODE:return "FOREIGN_EPISODE";
+      BW_PHASE_NEED_SAMPLES:return "NEED_SAMPLES";
+      BW_PHASE_NEED_SPAN:return "NEED_SPAN";
+      BW_PHASE_CONFIRMING:return "CONFIRMING";
+      BW_PHASE_NO_MATCH:return "NO_MATCH";
+      default:return "CONFIRMED";
+    endcase
+  endfunction
+
   typedef enum logic [2:0] {
     BW_PHASE_CHANGE, BW_PHASE_EVIDENCE_GAP, BW_PHASE_EPISODE_END
   } bw_phase_end_t;
@@ -534,33 +552,14 @@ package bw_mon_pkg;
     return representation[62:52]!=11'h7ff && value>=0.0;
   endfunction
 
-  function automatic void validate_phase_config(logic [1:0] enable,logic [1:0] episode_enable,logic [1:0] basis,
-    logic [63:0] n,logic [63:0] span,logic [63:0] k,
-    real steady_enter_abs,real steady_enter_rel,real steady_exit_abs,real steady_exit_rel,
-    real rms_enter_abs,real rms_enter_rel,real rms_exit_abs,real rms_exit_rel,
-    real trend_abs,real trend_rel,string id);
+  function automatic void validate_phase_config(logic [1:0] enable,logic [1:0] episode_enable,
+      logic [1:0] basis,string id);
     if(!known_binary(enable))core_error("PHASE_CONFIG",id,"phase enable policy must be known 0 or 1");
     if(!enable)return;
     if($isunknown(basis) || !(basis inside {BW_NS,BW_CYCLE}))
       core_error("PHASE_CONFIG",id,"phase basis must be known BW_NS/BW_CYCLE");
     if(!known_binary(episode_enable) || !episode_enable)
       core_error("PHASE_CONFIG",id,"phase analysis requires known enabled episode analysis");
-    if($isunknown({n,span,k}) || n<3 || span==0 || k==0)
-      core_error("PHASE_CONFIG",id,"require explicit N>=3, positive minimum span and K");
-    if(n>64'd2147483647)core_error("STORAGE_RANGE",id,
-      $sformatf("N=%0d exceeds SV queue-index representation max=2147483647",n));
-    if(basis==BW_NS)void'(ns_to_ticks(span,id));
-    if(!finite_nonnegative_real(steady_enter_abs) || !finite_nonnegative_real(steady_enter_rel) ||
-       !finite_nonnegative_real(steady_exit_abs) || !finite_nonnegative_real(steady_exit_rel) ||
-       !finite_nonnegative_real(rms_enter_abs) || !finite_nonnegative_real(rms_enter_rel) ||
-       !finite_nonnegative_real(rms_exit_abs) || !finite_nonnegative_real(rms_exit_rel) ||
-       !finite_nonnegative_real(trend_abs) || !finite_nonnegative_real(trend_rel))
-      core_error("PHASE_CONFIG",id,"all phase coefficients must be explicit nonnegative finite reals");
-    if(steady_exit_abs<steady_enter_abs || steady_exit_rel<steady_enter_rel ||
-       rms_exit_abs<rms_enter_abs || rms_exit_rel<rms_enter_rel)
-      core_error("PHASE_CONFIG",id,"exit tolerances must be no stricter than entry tolerances");
-    if(trend_abs<=steady_exit_abs || trend_rel<steady_exit_rel)
-      core_error("PHASE_CONFIG",id,"trend must exceed steady exit tolerance for every nonnegative mean");
   endfunction
 
   function automatic bit monitor_time_supported(logic [63:0] at_ticks);
@@ -631,21 +630,10 @@ package bw_mon_pkg;
 `endif
   endfunction
 
-  // Only omission takes the defaults: the sentinel maps to the decided
-  // effective value while every other value passes through unchanged for the
-  // ordinary validation paths to accept or reject as an explicit setting.
-  function automatic bw_u64_t resolve_update_stride(logic [63:0] stride, logic [63:0] width);
-    if (!$isunknown(stride) && stride==BW_CFG_OMITTED) return width;
-    return stride;
-  endfunction
-
   function automatic bw_u64_t resolve_silence_threshold(logic [63:0] silence,
                                                         logic [1:0] episode_enable);
-    // An unused or not-yet-validated Q is never effective: keep it at zero so
-    // the sentinel cannot leak into runtime state.
+    // Unused Q is not validated or used at runtime.
     if ($isunknown(episode_enable) || !episode_enable) return 0;
-    if (!$isunknown(silence) && silence==BW_CFG_OMITTED)
-      return BW_DEFAULT_SILENCE_THRESHOLD;
     return silence;
   endfunction
 

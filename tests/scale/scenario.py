@@ -162,7 +162,8 @@ class Scenario:
                     protocol_by_point='index % 3: valid-only,valid-ready,credit',dynamic_by_point='even indexes dynamic; odd fixed64B',
                     bytes_per_transfer=64,credit=dict(enable='credit points',capacity=16,initial=16,initial_known=1,return_timing='NEXT_CYCLE',send=1,return_every_edge=1),
                     hints=dict(backpressure_enable='valid-ready points',shortage_enable='credit points',basis=self.basis,threshold=4 if self.basis=='ns' else 8,expected_hits=0),
-                    analysis=dict(episode_enable=1,phase_enable=1,Q=30 if self.basis=='ns' else 60,N=3,min_span=self.config.get('analysis_min_span',20 if self.basis=='ns' else 40),K=4,
-                      steady_enter_abs=0,steady_enter_rel=0,steady_exit_abs=0,steady_exit_rel=0,rms_enter_abs=1e-6,rms_enter_rel=0,rms_exit_abs=1e-6,rms_exit_rel=0,trend_abs=1,trend_rel=0),
+                    input_time_basis='offset from published measurement start',
+                    analysis=dict(episode_enable=1,phase_enable='default follows episode',Q=30 if self.basis=='ns' else 60,N=6,min_span=min(self.width,5*self.stride),K=2,
+                      fit='adjacent pairs at actual physical times',steady_enter_rel=.04,steady_exit_rel=.08,raw_rms_enter_rel=.10,raw_rms_exit_rel=.12,trend_rel=.10,paired_rms_rel=.025,absolute=0),
                     report=dict(enabled=True,metrics=12,targets='explicit per-scope original cardinality; continuous flow ends TRUNCATED, no forced PASS'),
                     numeric_tolerance=dict(absolute=1e-9,relative=1e-12),acceptance_profile=self.name.startswith('common-') and self.config['roots']==32 and self.config['topology']=='common' and self.config['duration_ns']==40000)

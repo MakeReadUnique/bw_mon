@@ -10,6 +10,14 @@ from history_revised_analysis import episode_reference, phase_reference
 
 
 class HistoryAuditContracts(unittest.TestCase):
+    def test_historical_three_sample_evidence_does_not_claim_the_new_policy(self):
+        fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_fixture.json.gz').read_bytes()))
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            for name, value in fixture['files'].items():
+                (out/name).write_text(value)
+            self.assertFalse(verify(build_scenario(fixture['profile']), out)[0])
+
     def test_empty_storage_cannot_replace_required_input_checkpoints(self):
         scenario = build_scenario('history-revised-ns-seeded')
         with tempfile.TemporaryDirectory() as tmp:
@@ -24,13 +32,18 @@ class HistoryAuditContracts(unittest.TestCase):
         self.assertEqual(len(episodes), 1)
         phases = phase_reference(scenario.oracle, 0, episodes)
         self.assertEqual([(p['kind'], p['start_ticks'], p['end_ticks'], p['confirm_ticks']) for p in phases],
-                         [(2, 12250000, 21250000, 16750000),
-                          (2, 33250000, 45250000, 37750000),
-                          (1, 45250000, 54250000, 49750000),
-                          (2, 54250000, 70750000, 58750000)])
+                         [(2, 16750000, 21250000, 18250000),
+                          (2, 37750000, 43750000, 39250000),
+                          (1, 48250000, 52750000, 49750000),
+                          (2, 57250000, 70750000, 58750000),
+                          (3, 172250000, 181250000, 175250000),
+                          (3, 312250000, 318250000, 315250000),
+                          (1, 339250000, 354250000, 342250000),
+                          (1, 527750000, 532250000, 529250000),
+                          (3, 539750000, 542750000, 541250000)])
 
     def test_recorded_audit_rejects_missing_duplicated_and_forged_evidence(self):
-        fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_fixture.json.gz').read_bytes()))
+        fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_paired6_fixture.json.gz').read_bytes()))
         scenario = build_scenario(fixture['profile'])
         mutations = ('baseline', 'missing_group_storage', 'empty_storage', 'duplicate_checkpoint',
                      'duplicate_checks', 'missing_phases', 'missing_variation', 'summary_counter', 'missing_resource_column')
@@ -74,7 +87,7 @@ class HistoryAuditContracts(unittest.TestCase):
             self.assertFalse(scenario.verify(out)[0])
 
     def test_pending_summary_follows_every_final_packet(self):
-        fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_fixture.json.gz').read_bytes()))
+        fixture = json.loads(gzip.decompress(Path(__file__).with_name('history_audit_paired6_fixture.json.gz').read_bytes()))
         original = fixture['pending_simulation_log']
         lines = original.splitlines(True)
         summary = next(line for line in lines if line.startswith('BW_SUMMARY '))

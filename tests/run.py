@@ -83,6 +83,13 @@ def main():
                                 for pattern in case.get("expect_log", []))
         passed = passed and all(len(re.findall(pattern, result.stdout)) == count
                                 for pattern, count in case.get("expect_counts", {}).items())
+        if passed and case.get("verify"):
+            verify=[str(ROOT / item) if item.startswith("tests/") else item for item in case["verify"]]
+            verify=[str(log_path) if item=="{log}" else item for item in verify]
+            checked=subprocess.run(verify,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
+            (build / (case["name"]+".verify.log")).write_text(checked.stdout)
+            passed=checked.returncode==0
+            if not passed:print(checked.stdout)
         print(f"{'PASS' if passed else 'FAIL'} {case['name']}: {log_path}", flush=True)
         if not passed:
             failures.append(case["name"])

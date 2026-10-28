@@ -15,10 +15,10 @@ TICKS = 1000000
 
 
 class EventOracle:
-    def __init__(self, events, *, end, basis, width, stride):
+    def __init__(self, events, *, end, basis, width, stride, start=0):
         self.events = events
         self.ticks = [e[0] for e in events]
-        self.end, self.basis, self.width, self.stride = end, basis, width, stride
+        self.start, self.end, self.basis, self.width, self.stride = start, end, basis, width, stride
         self.increments, self.prefix = [], []
         for scope in range(3):
             increments, prefix = [], [(0, 0, 0, 0)]
@@ -49,10 +49,10 @@ class EventOracle:
 
     def window(self, scope, sequence):
         if self.basis == 'ns':
-            right = sequence * self.stride * TICKS
-            left = max(0, right-self.width*TICKS)
+            right = self.start + sequence * self.stride * TICKS
+            left = max(self.start, right-self.width*TICKS)
             lc = rc = 0
-            full = right >= self.width*TICKS
+            full = right-self.start >= self.width*TICKS
         else:
             rc = 1 + sequence*self.stride
             lc = max(1, rc-self.width)
@@ -70,10 +70,15 @@ class EventOracle:
 
     @property
     def publication_count(self):
-        return self.end//(self.stride*TICKS) if self.basis == 'ns' else (len(self.events)-1)//self.stride
+        return (self.end-self.start)//(self.stride*TICKS) if self.basis == 'ns' else (len(self.events)-1)//self.stride
 
     def windows(self, scope):
         return (self.window(scope, seq) for seq in range(1, self.publication_count+1))
+
+    def at_measurement_start(self, start):
+        return EventOracle([(e[0]+start,)+tuple(e[1:]) for e in self.events],
+                           start=start, end=self.end+start, basis=self.basis,
+                           width=self.width, stride=self.stride)
 
 
 PROFILES = tuple('history-revised-' + basis + '-' + kind
@@ -134,10 +139,11 @@ class HistoryScenario:
                     basis=self.basis, width=self.width, stride=self.stride,
                     end_ticks=self.oracle.end, first_edge_ticks=250000,
                     actual_edges=len(self.oracle.events), windows_per_scope=self.oracle.publication_count,
-                    seed=self.seed, phase=dict(N=3, K=4, minimum_span=2*self.stride,
-                    steady_enter_abs=0, steady_enter_rel=0, steady_exit_abs=0, steady_exit_rel=0,
-                    rms_enter_abs=1e-6, rms_enter_rel=0, rms_exit_abs=1e-6, rms_exit_rel=0,
-                    trend_abs=1, trend_rel=0), silence_threshold=30 if self.basis == 'ns' else 60,
+                    seed=self.seed, input_time_basis='offset from published measurement start',
+                    phase=dict(N=6,K=2,minimum_span=min(self.width,5*self.stride),
+                    fit='adjacent pairs at actual physical times',steady_enter_rel=.04,steady_exit_rel=.08,
+                    raw_rms_enter_rel=.10,raw_rms_exit_rel=.12,trend_rel=.10,paired_rms_rel=.025,absolute=0),
+                    silence_threshold=30 if self.basis == 'ns' else 60,
                     hints='valid-only; unsupported handshake/credit hints remain disabled', waveform=False,
                     reference='expanded original input events; exact integer prefix sums and half-open bisection',
                     real_tolerance=dict(absolute=1e-9, relative=1e-12), resource_contract=self.resources,
