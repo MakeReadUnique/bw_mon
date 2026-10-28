@@ -38,7 +38,11 @@ The raw byte schedule compensates for each following physical period; both typed
 point/group results retain B100 and the alternating longest run spans 17 cycles.
 Real `checker_default_reset/gap/truncated` cases retain a reliable earlier FAIL
 when terminal quality becomes incomplete.
-Component fixtures do not establish recognition or normal-step ownership.
+Component fixtures do not establish recognition or normal-step ownership. All numeric rows
+are delivered together at 200ns, after their original endpoints; delivery time
+adds no sustained duration. `explicit_time` independently PASSes a final-record
+ramp duration while the default rule FAILs. `checker_history` drives two real
+episodes and preserves earlier point/group FAILs after later PASSes.
 
 The private `bw_check_window_t` preserves original sequence, epoch/episode,
 physical endpoints, logical endpoints, value and quality. Compression requires

@@ -17,7 +17,9 @@ module tb_checker_numeric;
     bit dense,cycle_basis;
     bw_u64_t stride,endpoint;
     real baseline;
-    wait(monitor_ready);#1;
+    wait(monitor_ready);#200000000;
+    // Deliver every logical 10..101ns publication together at 200ns. Arrival
+    // spacing supplies no sustained duration; only original endpoints do.
     if(!$value$plusargs("CASE=%s",mode))mode="low_equal";
     dense=mode inside {"dense_short","dense_fail","coverage"};
     cycle_basis=mode=="cycle";
