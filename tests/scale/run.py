@@ -6,6 +6,7 @@ from fractions import Fraction as F
 from pathlib import Path
 from scenario import Scenario,PROFILES,CSV_FIELDS
 from generate import generate
+from time_origin import measurement_start, absolute_episode
 
 REPO=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
@@ -57,6 +58,10 @@ def keyvalues(line):return dict(re.findall(r'(\w+)=([^\s]+)',line))
 
 def verify(s,attempt):
     diffs=[]
+    log=(attempt/'simulation.log').read_text() if (attempt/'simulation.log').exists() else ''
+    try:origin=measurement_start(log)
+    except ValueError as error:
+        diffs.append(dict(error='measurement_start',detail=str(error)));origin=0
     expected=list(csv.DictReader((attempt/'expected.csv').open()))
     actual=list(csv.DictReader((attempt/'actual.csv').open())) if (attempt/'actual.csv').exists() else []
     ref={(r['kind'],r['index']):r for r in expected};obs={}
@@ -68,16 +73,18 @@ def verify(s,attempt):
         if k not in ref or k not in obs:diffs.append(dict(error='extra_scope' if k not in ref else 'missing_scope',key=k));continue
         for field in CSV_FIELDS:
             a,e=obs[k].get(field),ref[k][field]
+            if field in ('window_left','window_right','raw_tick'):e=str(int(e)+origin)
             if field in ('window_gbps','window_bpc'):
                 try:good=abs(F(a)-F(e))<=F(1,10**9)+F(1,10**12)*abs(F(e))
                 except (ValueError,TypeError,ZeroDivisionError):good=False
             else:good=a==e
             if not good:diffs.append(dict(key=k,field=field,expected=e,actual=a))
-    log=(attempt/'simulation.log').read_text() if (attempt/'simulation.log').exists() else ''
     if 'SCALE_PASS ' not in log or re.search(r'Fatal:|Error-\[|SCALE_\w*MISMATCH|BW_CFG_WARNING',log):diffs.append(dict(error='simulation_completion_or_diagnostic'))
     starts=[keyvalues(l) for l in log.splitlines() if l.startswith('SCALE_RUN_START ')]
     ends=[keyvalues(l) for l in log.splitlines() if l.startswith('SCALE_PASS ')]
     if len(starts)!=1 or len(ends)!=1:diffs.append(dict(error='start_or_completion_count',starts=len(starts),ends=len(ends)))
+    for marker in starts+ends:
+        if marker.get('end_ticks')!=str(origin+s.end):diffs.append(dict(error='measurement_endpoint',expected=origin+s.end,actual=marker.get('end_ticks')))
     summaries=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_SUMMARY ')]
     checks=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_CHECK ')]
     episodes=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_EPISODE ')]
@@ -95,7 +102,7 @@ def verify(s,attempt):
         references=s.expected_episodes(kind,index)
         if not 1<=seq<=len(references):
             diffs.append(dict(error='extra_episode',scope=sid,seq=seq));continue
-        fields=references[seq-1]
+        fields=absolute_episode(references[seq-1],origin)
         for f,value in fields.items():
             if f=='e2e_gbps':
                 try:good=abs(F(e.get(f))-value)<=F(1,10**9)+F(1,10**12)*abs(value)
@@ -136,7 +143,7 @@ def verify(s,attempt):
         all_lines=log.splitlines();summary_pos=next((i for i,l in enumerate(all_lines) if l.startswith('BW_SUMMARY ')),-1)
         if any(i>summary_pos and l.startswith(('BW_EPISODE ','BW_PHASE ','BW_CHECK ')) for i,l in enumerate(all_lines)):diffs.append(dict(error='summary_precedes_final_result'))
     save(attempt/'diffs.json',diffs)
-    evidence=dict(expected_scopes=len(ref),observed_scopes=len(actual),checked_raw=sum(int(r['checked_records']) for r in actual),
+    evidence=dict(measurement_start_ticks=origin,expected_scopes=len(ref),observed_scopes=len(actual),checked_raw=sum(int(r['checked_records']) for r in actual),
                   checked_windows=sum(int(r['checked_windows']) for r in actual),expected_raw=sum(int(r['checked_records']) for r in expected),
                   expected_windows=sum(int(r['checked_windows']) for r in expected),episode_records=len(episodes),phase_records=len(phases),
                   report_conclusions=dict(metrics),summary=summaries,difference_count=len(diffs))
@@ -176,7 +183,7 @@ def run(s,output,force=False):
         sources+=sorted(rtl.glob('*.c'))
         vcs_include=Path(shutil.which('vcs')).resolve().parents[1]/'include'
         n=len(list(build.glob('compile-attempt-*')))+1;compile_dir=build/('compile-attempt-'+str(n));compile_dir.mkdir()
-        cmd=['vcs','-full64','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
+        cmd=['vcs','-full64','-error=AOUP','-sverilog','-timescale=1ns/1fs','+vpi','-debug_access','-CFLAGS','-I'+str(vcs_include),'+incdir+'+str(rtl),'-assert','svaext','-top','tb_bw_scale','-o',str(build/'simv')]
         cmd+=list(map(str,sources))+[str(build/p.name) for p in gen]
         print('COMPILE '+s.name+' '+str(compile_dir),flush=True)
         result=execute(cmd,build,compile_dir/'compile.log',compile_dir/'time-v.txt',manifest_path,manifest,'compile')

@@ -5,9 +5,30 @@ from pathlib import Path
 from fractions import Fraction
 from history_revised import EventOracle, build_scenario
 from history_revised_audit import verify_storage
+from history_revised_analysis import phase_reference
 
 
 class ExpandedHistoryContracts(unittest.TestCase):
+    def test_public_start_rebases_full_budget_without_losing_endpoint_publications(self):
+        original = EventOracle([(250000, 1, 1, 64, 1, 1, 64)],
+                               end=40000000000, basis='ns', width=1, stride=1)
+        shifted = original.at_measurement_start(123)
+        self.assertEqual(shifted.publication_count, 40000)
+        self.assertEqual(shifted.raw(0, 1)['tick'], 250123)
+        self.assertEqual((shifted.window(0, 40000)['left'], shifted.window(0, 40000)['right']),
+                         (39999000123, 40000000123))
+        self.assertEqual(shifted.window(0, 1)['gbps'], original.window(0, 1)['gbps'])
+
+    def test_fixed_phase_uses_raw_six_window_pairs_and_seventh_confirmation(self):
+        oracle = EventOracle([(250000+i*1000000, 1, 1, value, 1, 1, 64)
+                              for i, value in enumerate((92, 108, 92, 108, 92, 108, 92))],
+                             end=7000000, basis='ns', width=1, stride=1)
+        episode = dict(first_ticks=250000, last_ticks=6250000, tail_ticks=7250000,
+                       confirm_ticks=37250000, status=2, episode=1)
+        phases = phase_reference(oracle, 0, [episode])
+        self.assertEqual([(p['kind'], p['start_ticks'], p['confirm_ticks'], p['end_ticks']) for p in phases],
+                         [(2, 6000000, 7000000, 7250000)])
+
     def test_half_open_known_subtotals_and_first_full_nonmultiple_stride(self):
         # At 2ns, the right-edge transfer is still excluded. At 4ns the 0.25ns
         # transfer has expired and the unknown byte count remains unknown.

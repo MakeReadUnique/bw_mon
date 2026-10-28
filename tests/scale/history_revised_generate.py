@@ -106,6 +106,8 @@ endpackage
         checker += '    '+count+'++;\n'
         checker += '    rc=$fscanf('+kind+'_fd,"'+' '.join('%f' if f in REAL else '%d' for f in fields)+'\\n",'+','.join('e_'+f for f in fields)+');\n'
         checker += '    if(rc!=%d)$fatal(1,"HISTORY_REFERENCE_EOF scope=%%s kind=%s checked=%%0d",scope_id,%s);\n' % (len(fields), kind, count)
+        for field in ('tick',) if kind == 'raw' else ('left', 'right'):
+            checker += '    e_'+field+'+=measurement_start_ticks;\n'
         for field, observed in fields.items():
             condition = '!close_real(%s,e_%s)' % (observed, field) if field in REAL else '%s!==e_%s' % (observed, field)
             checker += '    if('+condition+')$fatal(1,"HISTORY_'+kind.upper()+'_MISMATCH scope=%s checked=%0d field='+field+' actual=%0.17g expected=%0.17g",scope_id,'+count+','+observed+',e_'+field+');\n'
@@ -131,10 +133,7 @@ endpackage
 endmodule
 '''
     (out/'checker.sv').write_text(checker)
-    analysis = '''.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(%d),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(%d),.PHASE_K(4),
-    .PHASE_STEADY_ENTER_ABS(0),.PHASE_STEADY_ENTER_REL(0),.PHASE_STEADY_EXIT_ABS(0),.PHASE_STEADY_EXIT_REL(0),
-    .PHASE_RMS_ENTER_ABS(1e-6),.PHASE_RMS_ENTER_REL(0),.PHASE_RMS_EXIT_ABS(1e-6),.PHASE_RMS_EXIT_REL(0),
-    .PHASE_TREND_ABS(1),.PHASE_TREND_REL(0)''' % (30 if s.basis == 'ns' else 60, 2*s.stride)
+    analysis = '.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(%d)' % (30 if s.basis == 'ns' else 60)
     window = ".WINDOW_BASIS(bw_basis_t'(BASIS)),.WINDOW_WIDTH(WIDTH),.UPDATE_STRIDE(STRIDE),"+analysis
     storage = '''  int snapshot_seq=0;
   bw_u64_t last_snapshot_edge=0;
@@ -195,7 +194,7 @@ endmodule
   logic [63:0] bytes0=0,bytes1=0;
   bit deadline=0;
   string directory,actual_path;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_history_point #(.INDEX(0)) p0(clk,valid0,known0,bytes0,0);
   bw_history_point #(.INDEX(1)) p1(clk,valid1,known1,bytes1,1);
   bw_history_group g0(clk,2);
@@ -205,9 +204,9 @@ endmodule
     storage_fd=$fopen({directory,"/storage-runs.txt"},"w");if(!storage_fd)$fatal(1,"HISTORY_STORAGE_OPEN");
     actual_fd=$fopen(actual_path,"w");if(!actual_fd)$fatal(1,"HISTORY_ACTUAL_OPEN");
     $fdisplay(actual_fd,"'''+','.join(SUMMARY)+'''");
-    define_group("history.group",2);add_point_member("history.group","history.p0");add_point_member("history.group","history.p1");
-    finish_configuration();wait(monitor_ready);
-    if($time!=0)$fatal(1,"HISTORY_READY_ORIGIN");
+    add_point_member("history.group","history.p0");add_point_member("history.group","history.p1");
+    wait(monitor_ready);
+    if($time!=measurement_start_ticks || measurement_start_ticks==0)$fatal(1,"HISTORY_READY_ORIGIN");
     // Known numeric API literals complement the actual >32-bit public sums.
     if(checked_add(64'hffffffffffffffff,0,"history.numeric")!=64'hffffffffffffffff ||
        checked_mul(64'hffffffffffffffff,1,"history.numeric")!=64'hffffffffffffffff ||
@@ -218,7 +217,7 @@ endmodule
     $display("HISTORY_RUN_START scopes=3 edges=%0d windows=%0d end_ticks=%0d",EDGES,WINDOWS,END_TICKS);
     #END_TICKS;observation_end=1;deadline<=1;
     wait(completed_scopes==3);
-    if($time!=END_TICKS || core_failure_pending())$fatal(1,"HISTORY_FINAL_FAILURE");
+    if($time!=measurement_start_ticks+END_TICKS || core_failure_pending())$fatal(1,"HISTORY_FINAL_FAILURE");
     if(acknowledged_frame_seq(g0.mon.group_handle,0)!=EDGES || acknowledged_frame_seq(g0.mon.group_handle,1)!=EDGES)
       $fatal(1,"HISTORY_ACK_INCOMPLETE");
     $fclose(actual_fd);$fclose(storage_fd);
@@ -232,7 +231,7 @@ endmodule
     for(bw_u64_t i=1;i<=EDGES;i++)begin
       rc=$fscanf(fd,"%d %d %d %d %d %d %d\\n",tick,v0,k0,b0,v1,k1,b1);
       if(rc!=7)$fatal(1,"HISTORY_INPUT_EOF edge=%0d",i);
-      #(tick-$time-1);valid0=(v0==2)?1'bx:v0[0];known0=k0[0];bytes0=b0;
+      #(measurement_start_ticks+tick-$time-1);valid0=(v0==2)?1'bx:v0[0];known0=k0[0];bytes0=b0;
       valid1=(v1==2)?1'bx:v1[0];known1=k1[0];bytes1=b1;
       #1;clk=1;#1;clk=0;
     end

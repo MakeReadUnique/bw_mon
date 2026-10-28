@@ -54,7 +54,7 @@ REFERENCE = r'''
       anchor=rank_lt(origin)+1;rc=anchor+rank*STRIDE;lc=(rc-anchor>=WIDTH)?rc-WIDTH:anchor;
       left=clock_tick(lc);right=clock_tick(rc);cc=rc-lc;full=cc==WIDTH;
     end
-    v=interval_counts(is_group,index,left,right);v.seq=seq;v.epoch=after_reset;v.left=left;v.right=right;
+    v=interval_counts(is_group,index,left,right);v.seq=seq;v.epoch=after_reset;v.left=bw_mon_pkg::measurement_start_ticks+left;v.right=bw_mon_pkg::measurement_start_ticks+right;
     v.left_cycle=lc;v.right_cycle=rc;v.coverage_ticks=right-left;v.coverage_cycles=cc;v.full=full;v.warmup=!full;
     v.denominator_valid=right>left;v.window_valid=full && v.bytes_complete && v.denominator_valid;
     v.gbps=v.denominator_valid ? real'(v.bytes)*1000000.0/real'(right-left) : 0;
@@ -66,7 +66,7 @@ REFERENCE = r'''
     v=interval_counts(is_group,index,tick,tick+1);
     if(epoch && tick<left)begin total.bytes=0;total.events=0;end
     else total=interval_counts(is_group,index,left,tick+1);
-    r.seq=edge_index;r.epoch=epoch;r.tick=tick;r.edge_index=edge_index;r.byte_inc=v.bytes;r.event_inc=v.events;
+    r.seq=edge_index;r.epoch=epoch;r.tick=bw_mon_pkg::measurement_start_ticks+tick;r.edge_index=edge_index;r.byte_inc=v.bytes;r.event_inc=v.events;
     r.bytes_complete=v.bytes_complete;r.events_complete=v.events_complete;
     r.reset_points=affected(is_group,index) && RESET_START<=tick && tick<RESET_END;
     r.total_bytes=total.bytes;r.total_events=total.events;
@@ -180,7 +180,6 @@ def generate(s,out):
 '''
     text=replace_once(text,'endmodule\nmodule bw_scale_group',RESOURCE.replace('@KIND@','point')+'endmodule\nmodule bw_scale_group')
     text=replace_once(text,'endmodule\nmodule tb_bw_scale',group_observer+RESOURCE.replace('@KIND@','group')+'endmodule\nmodule tb_bw_scale')
-    text=text.replace('.EXPECTED_GROUP_COUNT(GROUPS)', '.EXPECTED_GROUP_COUNT(GROUPS),.MISSING_RECORD_TIMEOUT_NS(4)')
     text=text.replace('logic clk=0;bit deadline=0;string variant_name,actual_path;', 'logic clk=0;bit deadline=0;string variant_name,actual_path;\n  bw_test_consumer_gate slow_gate;')
     text=text.replace('    $fdisplay(actual_fd,"kind,', '    resource_fd=$fopen({actual_path,".resources.csv"},"w");\n    $fdisplay(resource_fd,"kind,index,history_peak,clock_peak,episode_pending_peak,phase_pending_peak,frame_peak,control_peak,pending_frames_peak,pending_controls_peak,pending_timers_peak,history_final,clock_final,episode_pending_final,phase_pending_final,frames_final,controls_final");\n    $fdisplay(actual_fd,"kind,')
     text=text.replace('    $display("SCALE_RUN_START ', '    $display("ACCEPTANCE_READY");$fflush();\n    $display("SCALE_RUN_START ')
@@ -188,14 +187,14 @@ def generate(s,out):
     text=text.replace('    $fclose(actual_fd);', '    $fclose(actual_fd);$fclose(resource_fd);$fclose(edge_fd);')
     text=text.replace('    $fclose(actual_fd);', '    foreach(bw_test_storage_peak[resource])$display("TOPOLOGY_STORAGE resource=%s queue_high_water=%0d",resource,bw_test_storage_peak[resource]);\n    $fclose(actual_fd);')
     text=text.replace('wait(completed_scopes==SCOPES);', 'wait(completed_scopes==SCOPES && resources_done==SCOPES);')
-    text=text.replace('      #(clock_tick(k)-$time);clk=1;#1;clk=0;', '      #(clock_tick(k)-$time-1);input_edge=k;#1;clk=1;#1;clk=0;')
+    text=text.replace('      #(measurement_start_ticks+clock_tick(k)-$time);clk=1;#1;clk=0;', '      #(measurement_start_ticks+clock_tick(k)-$time-1);input_edge=k;#1;clk=1;#1;clk=0;')
     text=text.replace('input_edge=k;#1;clk=1;#1;clk=0;', 'input_edge=k;#1;clk=1;#1;clk=0;\n      if(k%64==0)begin $display("TOPOLOGY_PROGRESS edge=%0d ticks=%0d",k,$time);$fflush();end')
     pause=r'''
   initial begin : delayed_actual_consumer
     bw_control_frame_t pending;
     wait(monitor_ready);slow_gate=bw_test_gate_for("scale.g8");
     #PAUSE_START;slow_gate.paused=1;
-    #(101500000-$time);
+    #(measurement_start_ticks+101500000-$time);
     if(groups[0].slot.mon.accepted_record_seq!=203 || groups[1].slot.mon.accepted_record_seq!=203 ||
        groups[8].slot.mon.accepted_record_seq!=198 ||
        acknowledged_frame_seq(groups[1].slot.mon.group_handle,0)!=203 ||
@@ -203,15 +202,15 @@ def generate(s,out):
        retained_frame_count(groups[0].slot.mon.transport_source)!=5 ||
        retained_control_count(groups[0].slot.mon.transport_source)!=2 ||
        !peek_member_control(groups[8].slot.mon.group_handle,0,pending) ||
-       pending.value.timestamp_ticks!=RESET_START ||
+       pending.value.timestamp_ticks!=measurement_start_ticks+RESET_START ||
        groups[0].slot.mon.core.history.size()<4)
       $fatal(1,"TOPOLOGY_DELAY_RETENTION");
-    if(BASIS==0 && groups[8].slot.mon.window_end_ticks>99000000)
+    if(BASIS==0 && groups[8].slot.mon.window_end_ticks>measurement_start_ticks+99000000)
       $fatal(1,"TOPOLOGY_DELAY_TIMER_WATERMARK");
     if(BASIS==1 && groups[8].slot.mon.window_end_cycle>198)
       $fatal(1,"TOPOLOGY_DELAY_CYCLE_WATERMARK");
     $display("TOPOLOGY_BACKLOG source=scale.g0 consumers=16 fast_ack=203 slow_ack=198 retained_frames=5 retained_controls=2 history_segments=%0d",groups[0].slot.mon.core.history.size());
-    #(PAUSE_END-$time);slow_gate.paused=0;
+    #(measurement_start_ticks+PAUSE_END-$time);slow_gate.paused=0;
     #1;
     if(groups[8].slot.mon.accepted_record_seq!=204 ||
        acknowledged_frame_seq(groups[8].slot.mon.group_handle,0)!=204 ||

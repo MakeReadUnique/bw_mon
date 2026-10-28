@@ -22,7 +22,7 @@ class HistoryScenario(Scenario):
     def __init__(self,name):
         options=dict(PROFILES[name]);scale=options.pop('scale');tracer=options.pop('tracer')
         super().__init__('common-ns',topology=scale,roots=1 if tracer else 32,duration_ns=240 if tracer else 40000,
-                         analysis_min_span=2*options['stride'],**options)
+                         **options)
         self.name=name
         if self.variant=='group-clock':
             # Inputs remain three disjoint arithmetic progressions, not per-edge arrays.
