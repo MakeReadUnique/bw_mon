@@ -12,6 +12,9 @@ package bw_check_report_pkg;
   `include "bw_stage_ownership.svh"
   class bw_default_scope extends bw_stage_evidence;
     bit enabled=0,have_seq=0;
+    // Bounded terminal trust: only the audit-authorized ending settlement of
+    // a disabled owner computes counts from frozen verified evidence.
+    bit terminal_trust=0;
     bw_u64_t last_seq;
     // Core final streams are synchronous and ordered by logical epoch/episode,
     // then immutable platform ID. Durable logical watermarks survive raw release;
@@ -677,6 +680,11 @@ package bw_check_report_pkg;
       index=find_scope(kind,scope_id);
       if(index<0 || scopes[index].done) return;
       if(scope_disabled(kind,scope_id))begin
+        // The still-active episode of a disabled owner gets one terminal
+        // settlement from evidence submitted before the failure; it never
+        // manufactures a platform, a trusted suffix or a scope PASS. The
+        // per-episode default identity is the replay guard.
+        if(!settle_terminal_default(index))return;
         totals.warning_count=checked_add(totals.warning_count,1,scope_id);
         $display("BW_CHECK_WARNING scope_kind=%0d scope=%s reason=MONITOR_DISABLED",kind,scope_id);
       end else if(!scopes[index].saw_episode) begin

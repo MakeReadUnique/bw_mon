@@ -5747,11 +5747,11 @@
   ],
   "expect_counts": {
    "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1,
-   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1,
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=WARNING": 1,
    "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1
   },
   "expect_log": [
-   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=2 scopes_done=3 scopes_expected=3"
   ]
  },
  {
@@ -5764,10 +5764,11 @@
   "expect_counts": {
    "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1,
    "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1,
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=WARNING": 1,
    "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1
   },
   "expect_log": [
-   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=2 scopes_done=3 scopes_expected=3"
   ],
   "plusargs": [
    "+PHASE_FAULT"
@@ -6438,5 +6439,56 @@
    "BW_GROUP_TERMINAL": 2
   },
   "expect_warning": "BW_CORE_WARNING code=TEST_FAULT"
+ },
+ {
+  "name": "end_terminal_fail_active",
+  "top": "tb_end_terminal_check",
+  "plusargs": [
+   "+MODE=fail_active"
+  ],
+  "expect_log": [
+   "TB_PASS end_terminal fail_active",
+   "(?s)BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active .*episode=1 .*conclusion=FAIL reason=SUSTAINED_EXCEEDANCE.*BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active .*episode=2 .*conclusion=WARNING reason=NO_CONFIRMED_STEADY.*BW_SUMMARY .*fail=1.*BW_REPORT_COMPLETE audit=1 .*performance=FAIL"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active": 2,
+   "BW_CHECK_WARNING scope_kind=0 scope=t\\.active reason=MONITOR_DISABLED": 1,
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT"
+ },
+ {
+  "name": "end_terminal_no_platform",
+  "top": "tb_end_terminal_check",
+  "plusargs": [
+   "+MODE=no_platform"
+  ],
+  "expect_log": [
+   "TB_PASS end_terminal no_platform",
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active .*conclusion=WARNING reason=NO_CONFIRMED_STEADY"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active": 1,
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1
+  }
+ },
+ {
+  "name": "end_terminal_stats_only",
+  "top": "tb_end_terminal_check",
+  "plusargs": [
+   "+MODE=stats_only"
+  ],
+  "expect_log": [
+   "TB_PASS end_terminal stats_only",
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.off": 0,
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active": 1,
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1
+  }
  }
 ]
