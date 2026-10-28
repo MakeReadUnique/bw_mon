@@ -168,3 +168,10 @@ Old/new proof supports must retain compatible generations. Lossless compression
 also compares these fields, so a held coverage flag cannot absorb a real event.
 The fields use scoped checked arithmetic, are captured before summary release,
 and preserve unknown/gap and own-scope epoch rules.
+
+The joint verifier requires every expected `(case, point/group)` result set and
+its literal platform count, including no-platform case7 and excluding no-episode
+case9. `sensitivity_ownership.py --logs SAVED_LOG_DIR --output OUTPUT_DIR
+--producer-commit COMMIT` accepts the four saved families and rejects24 synthetic
+missing-family/case/kind/result or duplicate-result mutations. It records consumed
+log hashes; synthetic negatives are offline verifier checks, not product runs.

@@ -44,7 +44,17 @@ expected={1:["PASS"]*4,2:["PASS","PASS"],3:["PASS"],4:["FAIL"],
           5:["FAIL","PASS"],6:["FAIL","WARNING","PASS"],7:["WARNING"],
           8:["WARNING"],10:["PASS"]*3,11:["WARNING","WARNING","PASS"],
           12:["PASS","PASS"],13:["FAIL","WARNING","WARNING","WARNING","PASS"]}
-for (cid,kind),rows in results.items():
+# Mandatory final result coverage comes from the frozen scenario contract,
+# never from emitted checker rows. Case9 has no episode and legitimately emits
+# no per-case result; case7 has one no-platform WARNING for each typed scope.
+required_cases={'continuous':(1,2),'platforms':(3,4,5),
+                'activity':(6,7,8,10),'recovery':(11,12,13)}
+required_keys={(cid,kind) for cid in required_cases[family] for kind in ('point','group')}
+assert set(results)==required_keys,('OWNERSHIP_RESULT_KEYS',family,
+    'missing',sorted(required_keys-set(results)),'unexpected',sorted(set(results)-required_keys))
+for cid,kind in sorted(required_keys):
+    rows=results[(cid,kind)]
+    assert len(rows)==len(expected[cid]),('OWNERSHIP_RESULT_COUNT',cid,kind,len(rows),len(expected[cid]))
     assert [v["conclusion"] for v in rows]==expected[cid],(cid,kind,rows)
     reference=references[cid]
     by_u={w.u:(i+1+sequence_offset[cid],w) for i,w in enumerate(reference.windows)}
