@@ -21,7 +21,7 @@ module storage_failure_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_p
     if(resource inside {"report.cfg-line","report.token"})owner="report";
     add_point_member("fault.group","fault.point");
     inject_growth_failure(owner,resource);wait(monitor_ready);
-    if(final_mode)begin #10100000;$finish;end
+    if(final_mode)begin #10100000;$display("TB_PASS storage_failure final-requested");$finish;end
     if(resource=="hint.backpressure.timers")begin #100000;ready=0;end
     if(resource inside {"quality.window","quality.episode"})begin
       #(3100002-$time);reset_n=0;#400000;reset_n=1;

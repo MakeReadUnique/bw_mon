@@ -9,6 +9,6 @@ module tb_episode_final_budget;
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   initial begin
     wait(monitor_ready);#1000000;clk=1;#1;clk=0;
-    #40000000000;$finish;
+    #40000000000;$display("TB_PASS tb_episode_final_budget final-requested");$finish;
   end
 endmodule

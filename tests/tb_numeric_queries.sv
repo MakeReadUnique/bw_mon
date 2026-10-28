@@ -21,6 +21,7 @@ module tb_numeric_queries;
          registered_scope_id(BW_POINT,0)!="query.subject")$fatal(1,"exact immutable budget or typed registry query failed");
       $display("TB_PASS numeric_queries known");$finish;
     end else $fatal(1,"bad MODE");
-    $fatal(1,"expected core error did not occur");
+    if(!monitoring_shared_disabled)$fatal(1,"unowned invalid query must conservatively disable monitoring");
+    $display("TB_PASS numeric_queries shared_quarantined mode=%s",mode);$finish;
   end
 endmodule

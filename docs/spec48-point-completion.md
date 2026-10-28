@@ -92,3 +92,11 @@ that unified final protocol. Final resource-error ordering is included in that
 remaining audit; a point's early terminal log must not replace the final typed
 trust query. Full history/scale/resource budgets and user waveform acceptance
 remain later tickets.
+
+The native coordinator currently scans registered point observers on each cut.
+That cost is not a scale acceptance result; ticket60 must measure it against the
+unchanged budgets and may replace the scan with active-work indexing. Legacy
+group consumer numeric/ACK helpers still conservatively use the shared failure
+fallback; ticket55 must give them typed consumer ownership and cancel/release
+only the affected subscription. Numeric source publication, point/core/hint
+work and raw point reset capture already have typed ownership here.

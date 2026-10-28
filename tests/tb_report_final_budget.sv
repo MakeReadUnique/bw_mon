@@ -10,6 +10,6 @@ module tb_report_final_budget;
     wait(monitor_ready);#1000000;clk=1;#1;clk=0;
     #(measurement_start_ticks+40001000000-$time);
     if($test$plusargs("SUBMIT_LATE")) emit_episode_result(point.scope_id,point.episode_result);
-    $finish;
+    $display("TB_PASS report_final_budget final-requested");$finish;
   end
 endmodule

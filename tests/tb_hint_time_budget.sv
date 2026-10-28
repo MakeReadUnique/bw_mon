@@ -7,6 +7,10 @@ module tb_hint_time_budget;
   bw_point_mon #(.PROTOCOL(BW_VALID_READY),.WINDOW_BASIS(BW_CYCLE),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .BACKPRESSURE_ENABLE(1),.BACKPRESSURE_BASIS(BW_NS),.BACKPRESSURE_THRESHOLD(40001)) point
     (.clk(1'b0),.reset_n(1'b1),.valid(1'b1),.ready(1'b0));
-  initial begin wait(monitor_ready);#(64'd40002000000);$fatal(1,"expected core error did not occur");end
-  final if(core_failure_seen) $display("CORE_FAILURE_LATCHED");
+  initial begin
+    wait(monitor_ready);#(64'd40002000000);
+    if(!scope_disabled(BW_POINT,point.scope_id))$fatal(1,"out-of-budget hint timer must disable its owner");
+    $display("TB_PASS hint_time_budget quarantined");$finish;
+  end
+  final if(scope_disabled(BW_POINT,point.scope_id))$display("MONITOR_DISABLED");
 endmodule

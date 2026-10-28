@@ -53,7 +53,7 @@
       run=history[0];
       n=(WINDOW_BASIS==BW_NS) ? count_before(run.first_ticks,run.step_ticks,run.count,left_ticks) :
                               count_before(run.first_edge,run.step_edges,run.count,left_cycle);
-                              if(runtime_failed())return;
+      if(runtime_failed())return;
       if(runtime_failed() || n==0)return;
       next_bytes=checked_sub(retained_bytes,checked_mul(n,run.byte_inc,scope_id),scope_id);
       if(runtime_failed())return;
@@ -104,7 +104,7 @@
     bw_u64_t n;
     while(clock_runs.size()!=0 && clock_runs[0].first_edge<left_cycle)begin
       run=clock_runs[0];n=checked_sub(left_cycle,run.first_edge,scope_id);
-    if(runtime_failed())return;
+      if(runtime_failed())return;
       if(n>=run.count)discarded=clock_runs.pop_front();
       else begin
         run.first_ticks=checked_add(run.first_ticks,checked_mul(n,run.step_ticks,scope_id),scope_id);

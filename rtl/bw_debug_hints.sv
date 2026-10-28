@@ -155,13 +155,13 @@ module bw_debug_hints #(
       return;
     end
     if(in_reset) begin in_reset=0;seed_ledger();
-    if(runtime_failed())return;end
+      if(runtime_failed())return;end
     if(!new_frame) return;
     credit_permission_known=0;credit_send_permitted=1'bx;
     credit_available_before='x;credit_attempted_balance='x;
     if(sampled_view.reset_n===1'b0) return;
     if(sampled_view.reset_n!==1'b1) begin lose_trust(BW_CREDIT_RESET_UNKNOWN,at_ticks);
-    if(runtime_failed())return;return;end
+    return;end
     if($isunknown({sampled_view.flitv,sampled_view.lcrdv})) begin
       lose_trust(BW_CREDIT_CONTROL_UNKNOWN,at_ticks);
       if(runtime_failed())return;return;
@@ -181,7 +181,7 @@ module bw_debug_hints #(
       if(runtime_failed())return;return;
     end
     if(candidate<66'sd0) begin lose_trust(BW_CREDIT_UNDERFLOW,at_ticks);
-    if(runtime_failed())return;return;end
+    return;end
     if(candidate>$signed({2'b00,CREDIT_CAPACITY})) begin
       lose_trust(BW_CREDIT_OVERFLOW,at_ticks);
       if(runtime_failed())return;return;
@@ -200,7 +200,7 @@ module bw_debug_hints #(
       (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.raw_condition(backpressure_condition),.result(backpressure_result));
     function void use_external_reset_capture();duration.use_external_reset_capture();endfunction
     function void observe_reset(logic value,bw_u64_t ticks);duration.enqueue_status(value,ticks);
-    if(runtime_failed())return;endfunction
+      if(runtime_failed())return;endfunction
     wire reset_capture_ready=duration.configured;
     wire startup_prepared=duration.result.result_seq!=0 && duration.consumed_actions==duration.requested_actions;
     function bw_u64_t completion_dependency();return duration.settlement_required;endfunction
@@ -220,7 +220,7 @@ module bw_debug_hints #(
       (.scope_id(scope_id),.clk(clk),.reset_n(reset_n),.raw_condition(shortage_condition),.result(shortage_result));
     function void use_external_reset_capture();duration.use_external_reset_capture();endfunction
     function void observe_reset(logic value,bw_u64_t ticks);duration.enqueue_status(value,ticks);
-    if(runtime_failed())return;endfunction
+      if(runtime_failed())return;endfunction
     wire reset_capture_ready=duration.configured;
     wire startup_prepared=duration.result.result_seq!=0 && duration.consumed_actions==duration.requested_actions;
     function bw_u64_t completion_dependency();return duration.settlement_required;endfunction

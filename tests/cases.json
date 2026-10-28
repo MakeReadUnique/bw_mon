@@ -323,15 +323,23 @@
  {
   "name": "hint_time_budget",
   "top": "tb_hint_time_budget",
-  "expect_error": "(?s)^(?!.*BW_HINT_HIT).*BW_CORE_ERROR code=SIM_TIME_LIMIT",
   "expect_log": [
-   "CORE_FAILURE_LATCHED"
-  ]
+   "MONITOR_DISABLED"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1,
+   "BW_HINT_HIT": 0
+  }
  },
  {
   "name": "hint_final_budget",
   "top": "tb_hint_final_budget",
-  "expect_error": "(?s)^(?!.*BW_HINT_END).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1,
+   "BW_HINT_END": 0
+  }
  },
  {
   "name": "hint_same_cycle_stream",
@@ -376,7 +384,11 @@
  {
   "name": "episode_final_budget",
   "top": "tb_episode_final_budget",
-  "expect_error": "(?s)^(?!.*BW_EPISODE).*BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1,
+   "BW_EPISODE ": 0
+  }
  },
  {
   "name": "episode_config_error",
@@ -1087,12 +1099,13 @@
   "plusargs": [
    "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg"
   ],
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT",
   "expect_counts": {
    "BW_CHECK ": 0,
    "BW_SUMMARY ": 0,
-   "BW_EPISODE ": 0
-  }
+   "BW_EPISODE ": 0,
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT"
  },
  {
   "name": "report_directory",
@@ -1150,12 +1163,13 @@
    "+BW_EXPECT=../../../tests/expect/e2e_lower.cfg",
    "+SUBMIT_LATE"
   ],
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT",
   "expect_counts": {
    "BW_CHECK ": 0,
    "BW_SUMMARY ": 0,
-   "BW_EPISODE ": 0
-  }
+   "BW_EPISODE ": 0,
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT"
  },
  {
   "name": "report_unrelated_plusargs",
@@ -2340,9 +2354,10 @@
    "BW_CHECK ": 0,
    "BW_PHASE ": 0,
    "BW_EPISODE ": 0,
-   "BW_SUMMARY ": 0
+   "BW_SUMMARY ": 0,
+   "BW_CORE_WARNING": 1
   },
-  "expect_error": "BW_CORE_ERROR code=SIM_TIME_LIMIT"
+  "expect_warning": "BW_CORE_WARNING code=SIM_TIME_LIMIT"
  },
  {
   "name": "report_metrics_invalid_e2e_bw",
@@ -3030,7 +3045,10 @@
   "plusargs": [
    "+MODE=frame_bytes"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_frame_ticks_unknown",
@@ -3038,7 +3056,10 @@
   "plusargs": [
    "+MODE=frame_ticks"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_frame_sequence_unknown",
@@ -3046,7 +3067,10 @@
   "plusargs": [
    "+MODE=frame_sequence"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_control_sequence_unknown",
@@ -3054,7 +3078,10 @@
   "plusargs": [
    "+MODE=control_sequence"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_control_origin_unknown",
@@ -3062,7 +3089,10 @@
   "plusargs": [
    "+MODE=control_origin"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_dynamic_policy",
@@ -3236,7 +3266,10 @@
   "plusargs": [
    "+MODE=publish_handle"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_ack_frame",
@@ -3244,7 +3277,10 @@
   "plusargs": [
    "+MODE=ack_frame"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_ack_control",
@@ -3252,7 +3288,10 @@
   "plusargs": [
    "+MODE=ack_control"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_group_handle",
@@ -3260,7 +3299,10 @@
   "plusargs": [
    "+MODE=group_handle"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_member_index",
@@ -3268,7 +3310,10 @@
   "plusargs": [
    "+MODE=member_index"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_progress",
@@ -3276,7 +3321,10 @@
   "plusargs": [
    "+MODE=progress"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_transport_valid_reset",
@@ -3770,10 +3818,10 @@
    "+RESOURCE=phase.pending",
    "+FINAL=1"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=STORAGE_FAILURE(?=[^\\n]*resource=phase\\.pending)(?!.*\\nBW_(?:EPISODE|PHASE|VARIATION|CHECK|SUMMARY|HINT_END|HINT_HIT) )",
   "expect_counts": {
-   "BW_SUMMARY ": 0
-  }
+   "BW_CORE_WARNING": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=phase\\.pending"
  },
  {
   "name": "storage_failure_registry_source",
@@ -3869,7 +3917,10 @@
   "plusargs": [
    "+MODE=time"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_scope_kind",
@@ -3877,7 +3928,10 @@
   "plusargs": [
    "+MODE=scope_kind"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_scope_index",
@@ -3885,7 +3939,10 @@
   "plusargs": [
    "+MODE=scope_index"
   ],
-  "expect_error": "BW_CORE_ERROR code=INTEGER_UNKNOWN"
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_UNKNOWN",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_scope_invalid",
@@ -3893,7 +3950,10 @@
   "plusargs": [
    "+MODE=scope_invalid"
   ],
-  "expect_error": "BW_CORE_ERROR code=SCOPE_REFERENCE"
+  "expect_warning": "BW_CORE_WARNING code=SCOPE_REFERENCE",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  },
  {
   "name": "numeric_query_pure_time",

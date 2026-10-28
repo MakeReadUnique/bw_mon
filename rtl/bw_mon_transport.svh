@@ -208,11 +208,11 @@
     source=registered_sources[member_source(group_handle,member_index)];
     if(core_failure_seen || monitoring_shared_disabled)return;
     if($isunknown(consumed_seq))begin core_error("INTEGER_UNKNOWN",registered_groups[group_handle].id,$sformatf("frame_ack=%h member=%0d",consumed_seq,member_index));
-    if(monitoring_shared_disabled)return ;return;end
+    return;end
     if (!peek_member_frame(group_handle,member_index,frame) || frame.record_seq!=consumed_seq)
       core_error("ACK_SEQUENCE",registered_groups[group_handle].id,
         $sformatf("source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.frame_acks[group_handle]));
-    if(monitoring_shared_disabled)return ;
+    if(monitoring_shared_disabled)return;
     source.frame_acks[group_handle]=consumed_seq;minimum=BW_U64_MAX;
     foreach (source.parents[p])
       if (source.frame_acks[source.parents[p]]<minimum) minimum=source.frame_acks[source.parents[p]];
@@ -229,11 +229,11 @@
     source=registered_sources[member_source(group_handle,member_index)];
     if(core_failure_seen || monitoring_shared_disabled)return;
     if($isunknown(consumed_seq))begin core_error("INTEGER_UNKNOWN",registered_groups[group_handle].id,$sformatf("control_ack=%h member=%0d",consumed_seq,member_index));
-    if(monitoring_shared_disabled)return ;return;end
+    return;end
     if (!peek_member_control(group_handle,member_index,control) || control.transport_seq!=consumed_seq)
       core_error("ACK_SEQUENCE",registered_groups[group_handle].id,
         $sformatf("control source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.control_acks[group_handle]));
-    if(monitoring_shared_disabled)return ;
+    if(monitoring_shared_disabled)return;
     source.control_acks[group_handle]=consumed_seq;minimum=BW_U64_MAX;
     foreach (source.parents[p])
       if (source.control_acks[source.parents[p]]<minimum) minimum=source.control_acks[source.parents[p]];

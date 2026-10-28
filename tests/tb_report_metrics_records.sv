@@ -32,7 +32,8 @@ module tb_report_metrics_records;
       bandwidth_reason:BW_METRIC_OK,variation:variation,default:0};
     if($test$plusargs("RESULT_BUDGET"))begin
       #(40001000002-$time);emit_phase_result("report.metrics",fragment);
-      $fatal(1,"expected core error did not occur");
+      if(!scope_disabled(BW_POINT,"report.metrics"))$fatal(1,"late phase result must quarantine its scope");
+      $display("TB_PASS report_metrics_records late_result_quarantined");$finish;
     end
     if($test$plusargs("TRANSIENT_DEFERRED"))set_deferred_core_failure(0,1);
     if($test$plusargs("INITIAL_SNAPSHOT"))begin

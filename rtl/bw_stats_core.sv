@@ -327,7 +327,7 @@ module bw_stats_core #(
     result.cv_pct=result.cv_valid ? (result.stddev_gbps/result.mean_gbps)*100.0 : 0.0;
     if(!finite_nonnegative_real(result.stddev_gbps) || !finite_nonnegative_real(result.cv_pct))
       core_error("METRIC_ARITHMETIC",scope_id,$sformatf("count=%0d mean=%0.17g m2=%0.17g sigma=%0.17g cv=%0.17g",result.sample_count,result.mean_gbps,state.m2,result.stddev_gbps,result.cv_pct));
-      if(runtime_failed())return result;
+    if(runtime_failed())return result;
     return result;
   endfunction
 
@@ -489,7 +489,7 @@ module bw_stats_core #(
     while(pending_phases.size()!=0 && pending_phases[0].fragment.end_known &&
           pending_phases[0].fragment.end_ticks<=closed_covered_through)begin
       pending=pending_phases.pop_front();deliver_phase(pending.fragment,pending.stats);
-    if(runtime_failed())return;
+      if(runtime_failed())return;
     end
   endtask
 
@@ -511,7 +511,7 @@ module bw_stats_core #(
         (status==BW_EPISODE_COMPLETE ? silence_unknown_ticks : unknown_ticks_at(observed_end)),
       known_end ? episode_end_unknown_event_records : raw_unknown_event_records,
       known_end ? episode_end_reset_records : raw_reset_records);
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     settle_variation(end_tick,1);
     if(runtime_failed())return;
     while(pending_phases.size()!=0)begin
@@ -526,7 +526,7 @@ module bw_stats_core #(
         end
       end else fragment.end_known=0;
       fragment.episode_status=status;deliver_phase(fragment,pending.stats);
-    if(runtime_failed())return;
+      if(runtime_failed())return;
     end
     clear_phase_evidence();
     if(runtime_failed())return;phase_active=0;phase_current=BW_PHASE_UNDETERMINED;phase_eligible=0;
@@ -599,7 +599,7 @@ module bw_stats_core #(
     residue=foreign_activity();
     phase_eligible=episode_active && window_full && bytes_complete && denominator_valid && !residue;
     if(!phase_eligible)begin break_phase_evidence(window_end_ticks);
-    if(runtime_failed())return;return;end
+    return;end
     phase_evidence_continuous=1;
     if(phase_samples.size()>=PHASE_N)discarded=phase_samples.pop_front();
     sample.ticks=window_end_ticks;sample.basis_position=(WINDOW_BASIS==BW_NS) ?
@@ -625,7 +625,7 @@ module bw_stats_core #(
        !finite_nonnegative_real(trend))core_error("PHASE_FIT",scope_id,
          $sformatf("window_end_ticks=%0d mean=%0.12g steady_enter=%0.12g steady_exit=%0.12g rms_enter=%0.12g rms_exit=%0.12g trend=%0.12g",
            window_end_ticks,phase_fit_mean,steady_enter,steady_exit,rms_enter,rms_exit,trend));
-           if(runtime_failed())return;
+    if(runtime_failed())return;
     if(phase_current==BW_PHASE_STEADY && $abs(phase_fit_delta)<=steady_exit && phase_fit_rms<=rms_exit)
       proposed=BW_PHASE_STEADY;
     else if($abs(phase_fit_delta)<=steady_enter && phase_fit_rms<=rms_enter)proposed=BW_PHASE_STEADY;
@@ -640,14 +640,14 @@ module bw_stats_core #(
       phase_candidate=proposed;phase_candidate_count=1;phase_candidate_ticks=window_end_ticks;
       phase_candidate_total_bytes=total_bytes;phase_candidate_total_events=total_events;
       candidate_unknown_records=raw_unknown_records;candidate_unknown_ticks=unknown_ticks_at(window_end_ticks);
-    if(runtime_failed())return;
+      if(runtime_failed())return;
       candidate_unknown_event_records=raw_unknown_event_records;candidate_reset_records=raw_reset_records;
     end else phase_candidate_count=checked_add(phase_candidate_count,1,scope_id);
     if(runtime_failed())return;
     if(phase_candidate_count<PHASE_K)return;
     close_phase(phase_candidate_ticks,phase_candidate_total_bytes,phase_candidate_total_events,1,BW_PHASE_CHANGE,
       candidate_unknown_records,candidate_unknown_ticks,candidate_unknown_event_records,candidate_reset_records);
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     phase_current=proposed;phase_start_ticks=phase_candidate_ticks;phase_confirmation_ticks=window_end_ticks;
     phase_start_total_bytes=phase_candidate_total_bytes;phase_start_total_events=phase_candidate_total_events;
     phase_start_unknown_records=candidate_unknown_records;phase_start_unknown_ticks=candidate_unknown_ticks;
@@ -752,7 +752,7 @@ module bw_stats_core #(
     episode_result.variation=final_variation(episode_variation,episode_duration_valid,
       status==BW_EPISODE_RESET_INTERRUPTED ? BW_METRIC_RESET :
       (status==BW_EPISODE_TRUNCATED ? BW_METRIC_TRUNCATED : BW_METRIC_OK));
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     episode_result.last_steady_found=last_steady_found;
     // Representative ordering needs a final known episode end. The episode's
     // uncertain start does not invalidate a later independently complete phase.
@@ -788,7 +788,7 @@ module bw_stats_core #(
       episode_tail_known=1;
       episode_end_total_bytes=total_bytes; episode_end_total_events=total_events;
       episode_end_unknown_records=raw_unknown_records;episode_end_unknown_ticks=unknown_ticks_at(incoming.timestamp_ticks);
-    if(runtime_failed())return;
+      if(runtime_failed())return;
       episode_end_unknown_event_records=raw_unknown_event_records;episode_end_reset_records=raw_reset_records;
       update_episode_duration();
       if(runtime_failed())return;
@@ -796,7 +796,7 @@ module bw_stats_core #(
       if(runtime_failed())return;
       if (!observation_gap_active && !unknown_episode_control())
         start_silence(incoming.timestamp_ticks,incoming.edge_index);
-        if(runtime_failed())return;
+      if(runtime_failed())return;
     end
   endtask
 
@@ -809,10 +809,10 @@ module bw_stats_core #(
     if (WINDOW_BASIS==BW_NS && safe_ticks>=silence_deadline_ticks()) begin
       reached=1;
       if(runtime_failed())return; confirmation=silence_deadline_ticks();
-    if(runtime_failed())return;
+      if(runtime_failed())return;
     end else if (WINDOW_BASIS==BW_CYCLE && is_edge &&
                  at_cycle>=checked_add(silence_start_cycle,silence_cfg,scope_id)) reached=1;
-                 if(runtime_failed())return;
+    if(runtime_failed())return;
     if (reached) begin
       if (episode_active) finish_episode(BW_EPISODE_COMPLETE,confirmation);
       else begin pre_episode_gap=0; silence_active=0; end
@@ -880,7 +880,7 @@ module bw_stats_core #(
       observation_gap_active=0;
       if (WINDOW_BASIS==BW_NS && ((episode_active && episode_tail_known) ||
           (!episode_active && pre_episode_gap))) start_silence(at_ticks,last_edge_index);
-          if(runtime_failed())return;
+      if(runtime_failed())return;
     end
   endtask
 
@@ -953,7 +953,7 @@ module bw_stats_core #(
     if (!initialized) begin
       next_update_ticks = checked_add(stats_start_ticks,
                           ns_to_ticks(stride_cfg,scope_id),scope_id);
-                          if(runtime_failed())return;
+      if(runtime_failed())return;
       initialized = 1;
     end
   endtask
@@ -1009,7 +1009,7 @@ module bw_stats_core #(
     if(runtime_failed())return;
     if (EPISODE_ENABLE && episode_active && progress_watermark_ticks<at_ticks)
       interrupt_silence();
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     finish_episode(BW_EPISODE_RESET_INTERRUPTED,at_ticks);
     if(runtime_failed())return;
     retired_activity_valid=0;
@@ -1107,21 +1107,21 @@ module bw_stats_core #(
     if(runtime_failed())return;
     if (incoming.timestamp_ticks>$time)
       core_error("CONTROL_TIME",scope_id,"control timestamp is in the future");
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     if (incoming.point_handle>=expected_point_count)
       core_error("POINT_REFERENCE",scope_id,
         $sformatf("control point_handle=%0d registered_points=%0d",incoming.point_handle,expected_point_count));
-        if(runtime_failed())return;
+    if(runtime_failed())return;
     expected_seq=member_control_sequences.exists(key) ?
                  checked_add(member_control_sequences[key],1,scope_id) : 1;
-                 if(runtime_failed())return;
+    if(runtime_failed())return;
     if (incoming.control_seq!=expected_seq)
       core_error("CONTROL_SEQUENCE",scope_id,
         $sformatf("point_handle=%0d expected=%0d received=%0d",key,expected_seq,incoming.control_seq));
-        if(runtime_failed())return;
+    if(runtime_failed())return;
     if (member_control_times.exists(key) && incoming.timestamp_ticks<member_control_times[key])
       core_error("CONTROL_TIME",scope_id,$sformatf("point_handle=%0d time_ticks=%0d",key,incoming.timestamp_ticks));
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     member_control_sequences[key]=incoming.control_seq;
     member_control_times[key]=incoming.timestamp_ticks;
     if (WINDOW_BASIS==BW_NS && current_reset_n !== 1'b0) publish_due(incoming.timestamp_ticks);
@@ -1178,14 +1178,14 @@ module bw_stats_core #(
       if (incoming.record_seq != checked_add(last_record_seq,1,scope_id))
         core_error("RECORD_SEQUENCE",scope_id,
                    $sformatf("expected=%0d received=%0d",last_record_seq+1,incoming.record_seq));
-                   if(runtime_failed())return;
+      if(runtime_failed())return;
       if (last_record_seq!=0 && incoming.timestamp_ticks<=last_frame_ticks)
         core_error("RECORD_TIME",scope_id,"sampling timestamps must strictly increase");
-        if(runtime_failed())return;
+      if(runtime_failed())return;
       if (last_record_seq!=0 && incoming.edge_index!=checked_add(last_edge_index,1,scope_id))
         core_error("EDGE_SEQUENCE",scope_id,
                    $sformatf("expected=%0d received=%0d",last_edge_index+1,incoming.edge_index));
-                   if(runtime_failed())return;
+      if(runtime_failed())return;
       last_record_seq=incoming.record_seq; last_frame_ticks=incoming.timestamp_ticks;
       last_edge_index=incoming.edge_index;
       if (current_reset_n === 1'b0 || incoming.timestamp_ticks < stats_start_ticks ||
@@ -1231,7 +1231,7 @@ module bw_stats_core #(
     if(runtime_failed())return;
     if(!incoming.bytes_complete || !incoming.events_complete)
       raw_unknown_records=checked_add(raw_unknown_records,1,scope_id);
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     if(!incoming.events_complete)raw_unknown_event_records=checked_add(raw_unknown_event_records,1,scope_id);
     if(runtime_failed())return;
     if(incoming.reset_points!=0)raw_reset_records=checked_add(raw_reset_records,1,scope_id);

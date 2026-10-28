@@ -69,13 +69,13 @@ module bw_hint_duration #(
     if(!result.active || runtime_failed()) return;
     if(at_ticks<result.start_ticks)
       core_error("HINT_TIME",scope_id,$sformatf("start_ticks=%0d received_ticks=%0d",result.start_ticks,at_ticks));
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     if(runtime_failed()) return;
     result.observed_through_ticks=at_ticks;
     result.duration_ticks=at_ticks-result.start_ticks;
     if((BASIS==BW_NS && result.duration_ticks>=threshold_ticks) ||
        (BASIS==BW_CYCLE && result.duration_cycles>=THRESHOLD)) hit_once(at_ticks);
-       if(runtime_failed())return;
+    if(runtime_failed())return;
   endfunction
   function automatic void close_interval(bw_u64_t at_ticks,bw_hint_end_t reason);
     if(!result.active || runtime_failed()) return;
@@ -122,14 +122,14 @@ module bw_hint_duration #(
       if(runtime_failed())return;
       assertion_seen=1;last_assert_ticks=action.at_ticks;
       reset_held=1;result.trusted=0;touch(action.at_ticks);
-    if(runtime_failed())return;return;
+      if(runtime_failed())return;return;
     end
     reset_held=0;
     if(action.reset_value!==1'b1 || $isunknown(action.condition_value)) begin
       close_interval(action.at_ticks,BW_HINT_UNKNOWN);
       if(runtime_failed())return;
       result.trusted=0;touch(action.at_ticks);
-    if(runtime_failed())return;return;
+      if(runtime_failed())return;return;
     end
     result.trusted=1;
     if(action.condition_value) begin
@@ -144,7 +144,7 @@ module bw_hint_duration #(
     if(runtime_failed()) return;
     if(edge_seen && action.at_ticks<=last_edge_ticks)
       core_error("HINT_CLOCK",scope_id,"sampling edge timestamps must strictly increase");
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     edge_seen=1;last_edge_ticks=action.at_ticks;last_edge_index=action.index;
     if(!result.active || runtime_failed()) return;
     if(BASIS==BW_CYCLE) begin
@@ -177,7 +177,7 @@ module bw_hint_duration #(
       // Actual edge metadata exists before recorder ReNBA publication. Complete
       // the prior cycle before applying same-time release/unknown/reset changes.
       if(pending_edges.size()!=0) begin edge_action=pending_edges.pop_front();process_edge(edge_action);
-    if(runtime_failed())return;end
+        if(runtime_failed())return;end
       else if(pending_status.size()!=0) begin
         status_index=0;
         if(!(assertion_seen && last_assert_ticks==pending_status[0].at_ticks))
@@ -190,14 +190,14 @@ module bw_hint_duration #(
           if(runtime_failed())return;
         end
         status_action=pending_status.pop_front();process_status(status_action);
-    if(runtime_failed())return;
+        if(runtime_failed())return;
       end
       else begin
         timer_action=pending_timers.pop_front();
         if(timer_action.generation==timer_schedule_seq && result.active) begin
           advance_interval(timer_action.at_ticks);
           if(runtime_failed())return;touch(timer_action.at_ticks);
-    if(runtime_failed())return;
+          if(runtime_failed())return;
         end
         timer_receipts=checked_add(timer_receipts,1,scope_id);
         if(runtime_failed())return;

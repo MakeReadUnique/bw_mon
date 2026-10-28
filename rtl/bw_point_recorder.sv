@@ -37,18 +37,18 @@ module bw_point_recorder #(
   function void use_publication_receipts();publication_receipts=1;endfunction
   function void note_control_published(logic [63:0] sequence_number);
     if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"control publication receipt is unknown");
-    if(runtime_failed())return;return;end
+    return;end
     if(sequence_number!=control.control_seq || sequence_number<=published_control_seq)
       core_error("RECORDER_RECEIPT",scope_id,"control publication receipt does not match the held payload");
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     if(!runtime_failed())published_control_seq=sequence_number;
   endfunction
   function void note_record_published(logic [63:0] sequence_number);
     if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"frame publication receipt is unknown");
-    if(runtime_failed())return;return;end
+    return;end
     if(sequence_number!=record.record_seq || sequence_number<=published_record_seq)
       core_error("RECORDER_RECEIPT",scope_id,"frame publication receipt does not match the held payload");
-      if(runtime_failed())return;
+    if(runtime_failed())return;
     if(!runtime_failed())published_record_seq=sequence_number;
   endfunction
   function void apply_captured_reset(logic value,bw_u64_t ticks);observe_reset(value,ticks);
@@ -200,7 +200,7 @@ module bw_point_recorder #(
           if (sampled_view.size_bytes > 64'hffffffff)
             core_error("TRANSFER_BYTES",scope_id,
               $sformatf("sampled bytes=%0d exceeds 2^32-1",sampled_view.size_bytes));
-              if(runtime_failed())return;
+          if(runtime_failed())return;
           record.byte_inc = sampled_view.size_bytes;
         end else record.bytes_complete = 0;
       end else if (transfer !== 1'b0) begin
@@ -215,7 +215,7 @@ module bw_point_recorder #(
       if(scope_failed(BW_POINT,scope_id))return;
       settlement_required=request_slot_settlement(scope_id);
       wait(slot_settlement_generation>=settlement_required || runtime_failed());
-        if(runtime_failed())return;
+      if(runtime_failed())return;
     end
   endtask
 
