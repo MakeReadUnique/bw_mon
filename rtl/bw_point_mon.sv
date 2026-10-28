@@ -218,11 +218,24 @@ module bw_point_mon #(
     ensure_end_audit();
     if(monitor_ready && !monitor_time_supported($time))
       runtime_scope_error(BW_POINT,scope_id,"SIM_TIME_LIMIT","point finalization exceeds the immutable monitor budget");
-    if(monitor_ready && !core_failure_seen)
+    if(monitor_ready && !core_failure_seen) begin : point_terminal_evidence
+      string end_stage;
+      end_stage="NONE";
+      // Typed owner evidence for an interrupted ending; no queue drain runs.
+      if(recorder.requested_actions!=recorder.consumed_actions)end_stage="RECORDER_ACTIONS";
+      else if(recorder.published_control_seq!=recorder.control_seq)end_stage="CONTROL_PUBLICATION";
+      else if(captured_resets.size()!=0)end_stage="RESET_CAPTURE";
+      else if(core.requested_actions!=core.consumed_actions)end_stage="CORE_ACTIONS";
+      else if(hints.backpressure_hint.completion_pending() ||
+              hints.credit_shortage_hint.completion_pending())end_stage="HINT_ACTIONS";
+      else if(hints.backpressure_hint.timer_due_at_end() ||
+              hints.credit_shortage_hint.timer_due_at_end())end_stage="TIMER_DUE";
       note_point_terminal(scope_id,recorder.requested_actions==recorder.consumed_actions &&
         recorder.published_control_seq==recorder.control_seq && captured_resets.size()==0 &&
         core.requested_actions==core.consumed_actions &&
-        !hints.backpressure_hint.completion_pending() && !hints.credit_shortage_hint.completion_pending());
+        !hints.backpressure_hint.completion_pending() && !hints.credit_shortage_hint.completion_pending(),
+        end_stage);
+    end
     if(!core_failure_seen)
       note_role_receipt(scope_key(BW_POINT,scope_id),"owner",scope_disabled(BW_POINT,scope_id));
   end

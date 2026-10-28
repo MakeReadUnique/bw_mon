@@ -223,12 +223,23 @@ module bw_group_mon #(
     if(!monitor_configured && !core_failure_pending())
       core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
     ensure_end_audit();
-    if(monitor_ready && !core_failure_seen)
+    if(monitor_ready && !core_failure_seen) begin : group_terminal_evidence
+      string end_stage;
+      end_stage="NONE";
+      // Typed owner evidence for an interrupted ending; no queue drain runs.
+      if(expected_edges.size()!=0)end_stage="EDGE_COMMIT";
+      else if(captured_resets.size()!=0)end_stage="RESET_CAPTURE";
+      else if(collector_recovery_pending)end_stage="COLLECTOR_RECEIPT";
+      else if(core.requested_actions!=core.consumed_actions)end_stage="CORE_ACTIONS";
+      else if(controls_held!=controls_published)end_stage="CONTROL_PUBLICATION";
+      else if(controls_held!=controls_accepted)end_stage="CONTROL_CORE";
+      else if(controls_held!=controls_acked)end_stage="CONTROL_ACK";
       note_group_terminal(scope_id,expected_edges.size()==0 && captured_resets.size()==0 &&
         !collector_recovery_pending &&
         core.requested_actions==core.consumed_actions &&
         controls_held==controls_published && controls_held==controls_accepted &&
-        controls_held==controls_acked);
+        controls_held==controls_acked,end_stage);
+    end
     if(!core_failure_seen)
       note_role_receipt(scope_key(BW_GROUP,scope_id),"owner",scope_disabled(BW_GROUP,scope_id));
   end

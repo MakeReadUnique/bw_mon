@@ -205,6 +205,7 @@ module bw_debug_hints #(
     wire startup_prepared=duration.result.result_seq!=0 && duration.consumed_actions==duration.requested_actions;
     function bw_u64_t completion_dependency();return duration.settlement_required;endfunction
     function bit completion_pending();return duration.requested_actions!=duration.consumed_actions;endfunction
+    function bit timer_due_at_end();return duration.timer_due_at_end();endfunction
   end else begin : backpressure_hint
     assign backpressure_result=inactive_hint_result(PROTOCOL==BW_VALID_READY,BACKPRESSURE_ENABLE);
     function void use_external_reset_capture();endfunction
@@ -213,6 +214,7 @@ module bw_debug_hints #(
     wire startup_prepared=1'b1;
     function bw_u64_t completion_dependency();return 0;endfunction
     function bit completion_pending();return 0;endfunction
+    function bit timer_due_at_end();return 0;endfunction
   end
   if((PROTOCOL===BW_CREDIT) && SHORTAGE_ENABLE) begin : credit_shortage_hint
     bw_hint_duration #(.HINT_NAME("credit_shortage"),.SUPPORTED(1),.ENABLED(1),
@@ -225,6 +227,7 @@ module bw_debug_hints #(
     wire startup_prepared=duration.result.result_seq!=0 && duration.consumed_actions==duration.requested_actions;
     function bw_u64_t completion_dependency();return duration.settlement_required;endfunction
     function bit completion_pending();return duration.requested_actions!=duration.consumed_actions;endfunction
+    function bit timer_due_at_end();return duration.timer_due_at_end();endfunction
   end else begin : credit_shortage_hint
     assign shortage_result=inactive_hint_result(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE);
     function void use_external_reset_capture();endfunction
@@ -233,6 +236,7 @@ module bw_debug_hints #(
     wire startup_prepared=1'b1;
     function bw_u64_t completion_dependency();return 0;endfunction
     function bit completion_pending();return 0;endfunction
+    function bit timer_due_at_end();return 0;endfunction
   end
 
   initial begin

@@ -84,16 +84,32 @@
     if(!scope_terminals.exists(scope_key(kind,id)))return BW_SCOPE_RUNNING;
     return scope_terminals[scope_key(kind,id)];
   endfunction
-  function automatic void note_point_terminal(string id,bit actions_complete);
+  // Durable batch-ledger stage names for an interrupted ending.
+  function automatic string point_batch_stage(string id);
+    bw_point_batch batch;
+    if(!point_batches.exists(id))return "UNREGISTERED";
+    batch=point_batches[id];
+    if(batch.captured!=batch.expected)return "CAPTURE";
+    if(batch.inflight!=batch.expected)return "INFLIGHT";
+    if(batch.published!=batch.expected)return "PUBLICATION";
+    if(batch.accepted!=batch.expected)return "CORE_RECEIPT";
+    if(batch.closed_generation!=batch.input_generation)return "GENERATION";
+    return "NONE";
+  endfunction
+  function automatic void note_point_terminal(string id,bit actions_complete,string stage="");
     string state,key;
     bw_scope_terminal_t terminal;
     key=scope_key(BW_POINT,id);
     if(scope_terminals.exists(key))return;
-    if(scope_disabled(BW_POINT,id))begin terminal=BW_SCOPE_DISABLED;state="DISABLED";end
-    else if(!actions_complete || !point_batch_complete(id))begin terminal=BW_SCOPE_INTERRUPTED;state="INTERRUPTED";end
-    else if(point_batches[id].expected==0)begin terminal=BW_SCOPE_UNOBSERVED;state="UNOBSERVED";end
-    else begin terminal=BW_SCOPE_NORMAL;state="NORMAL";end
+    if(!point_batches.exists(id))point_batches[id]=new;
+    if(scope_disabled(BW_POINT,id))begin terminal=BW_SCOPE_DISABLED;state="DISABLED";stage="MONITOR_DISABLED";end
+    else if(!actions_complete || !point_batch_complete(id))begin
+      terminal=BW_SCOPE_INTERRUPTED;state="INTERRUPTED";
+      if(stage=="" || stage=="NONE")stage=point_batch_stage(id);
+    end
+    else if(point_batches[id].expected==0)begin terminal=BW_SCOPE_UNOBSERVED;state="UNOBSERVED";stage="NONE";end
+    else begin terminal=BW_SCOPE_NORMAL;state="NORMAL";stage="NONE";end
     scope_terminals[key]=terminal;
     interrupt_target_requests(BW_POINT,id,terminal==BW_SCOPE_DISABLED);
-    $display("BW_POINT_TERMINAL scope=%s state=%s expected=%0d captured=%0d inflight=%0d published=%0d accepted=%0d input_generation=%0d closed_generation=%0d time_ticks=%0d",id,state,point_batches[id].expected,point_batches[id].captured,point_batches[id].inflight,point_batches[id].published,point_batches[id].accepted,point_batches[id].input_generation,point_batches[id].closed_generation,$time);
+    $display("BW_POINT_TERMINAL scope=%s state=%s expected=%0d captured=%0d inflight=%0d published=%0d accepted=%0d input_generation=%0d closed_generation=%0d time_ticks=%0d stage=%s",id,state,point_batches[id].expected,point_batches[id].captured,point_batches[id].inflight,point_batches[id].published,point_batches[id].accepted,point_batches[id].input_generation,point_batches[id].closed_generation,$time,stage);
   endfunction

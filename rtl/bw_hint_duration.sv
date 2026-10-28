@@ -49,6 +49,14 @@ module bw_hint_duration #(
     result.result_seq=checked_add(result.result_seq,1,{scope_id," ",HINT_NAME," result"});
     if(runtime_failed())return;
   endfunction
+  // Ending-time evidence only: a timer already due (or whose wake has not
+  // produced its receipt) is an interrupted responsibility, not future work.
+  function automatic bit timer_due_at_end();
+    if(timer_requests!=timer_receipts)return 1;
+    foreach(pending_timers[i])
+      if(pending_timers[i].at_ticks<=$time)return 1;
+    return 0;
+  endfunction
   function automatic void hit_once(bw_u64_t at_ticks);
     if(result.hit || runtime_failed()) return;
     result.hit=1;
