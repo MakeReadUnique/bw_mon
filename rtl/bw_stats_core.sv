@@ -1271,6 +1271,7 @@ module bw_stats_core #(
       if(!runtime_failed())begin
         pending_frames.push_back(record);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        if(runtime_failed())disable receive_record;
         settlement_required=request_slot_settlement(scope_id);
       end
     end
@@ -1282,13 +1283,14 @@ module bw_stats_core #(
         core_error("INTEGER_UNKNOWN",scope_id,$sformatf("progress_watermark=%h",progress_watermark_ticks));
     end
   end
-  always @(member_control_toggle) begin
+  always @(member_control_toggle) begin : receive_control
     if(configuration_sealed)validate_control_numeric(member_control,scope_id);
     if (configuration_sealed && !runtime_failed() && member_control.control_seq!=0) begin
       check_storage_growth(pending_member_controls.size(),scope_id,"core.controls",member_control.timestamp_ticks,last_edge_index,last_record_seq);
       if(!runtime_failed())begin
         pending_member_controls.push_back(member_control);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        if(runtime_failed())disable receive_control;
         settlement_required=request_slot_settlement(scope_id);
       end
     end
@@ -1380,8 +1382,10 @@ module bw_stats_core #(
             if(runtime_failed())disable core_timer_worker;
             pending_timers.push_back($time);
             timer_requests=checked_add(timer_requests,1,scope_id);
+            if(runtime_failed())disable core_timer_worker;
             request_number=timer_requests;
             requested_actions=checked_add(requested_actions,1,scope_id);
+            if(runtime_failed())disable core_timer_worker;
             settlement_required=request_slot_settlement(scope_id);
             wait(timer_receipts >= request_number || runtime_failed());
             if(runtime_failed())disable core_timer_worker;

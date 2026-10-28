@@ -137,6 +137,7 @@ module bw_point_recorder #(
         pending_samples.push_back(sample);
         point_capture_receipt(scope_id,sample.record_seq);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        if(runtime_failed())disable capture_edge;
         settlement_required=request_slot_settlement(scope_id);
       end
     end

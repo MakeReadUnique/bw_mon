@@ -229,8 +229,10 @@ module bw_hint_duration #(
       begin_action(pending_edges.size(),"edges");
       if(runtime_failed())disable capture_hint_edge;
       edge_sequence=checked_add(edge_sequence,1,scope_id);
+      if(runtime_failed())disable capture_hint_edge;
       action.at_ticks=$time;action.index=edge_sequence;
       pending_edges.push_back(action);requested_actions=checked_add(requested_actions,1,scope_id);
+      if(runtime_failed())disable capture_hint_edge;
       settlement_required=request_slot_settlement(scope_id);
     end
   end
@@ -256,8 +258,11 @@ module bw_hint_duration #(
           begin_action(pending_timers.size(),"timers");
           if(runtime_failed())disable hint_timer_worker;
           action.at_ticks=due_ticks;action.generation=schedule;pending_timers.push_back(action);
-          timer_requests=checked_add(timer_requests,1,scope_id);request=timer_requests;
+          timer_requests=checked_add(timer_requests,1,scope_id);
+          if(runtime_failed())disable hint_timer_worker;
+          request=timer_requests;
           requested_actions=checked_add(requested_actions,1,scope_id);
+          if(runtime_failed())disable hint_timer_worker;
           settlement_required=request_slot_settlement(scope_id);
           wait(timer_receipts>=request || runtime_failed());
           if(runtime_failed())disable hint_timer_worker;

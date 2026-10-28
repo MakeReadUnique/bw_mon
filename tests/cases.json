@@ -4919,5 +4919,24 @@
   "plusargs": [
    "+RESOURCE=scheduler.reset_capture"
   ]
+ },
+ {
+  "name": "point_historical_shared_arithmetic",
+  "top": "tb_point_historical_fail",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+BW_EXPECT=../../../tests/expect/point_runtime_isolation.cfg",
+   "+SHARED_ARITHMETIC"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_OVERFLOW scope_kind=SHARED",
+  "expect_log": [
+   "TB_PASS point_historical_shared_arithmetic retained_fail=1 retained_counter=18446744073709551615",
+   "BW_SUMMARY status=FAIL pass=0 fail=1 warning=3 scopes_done=3 scopes_expected=3"
+  ],
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
  }
 ]

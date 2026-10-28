@@ -282,6 +282,7 @@ package bw_mon_pkg;
   string monitoring_root_cause[string];
   string monitoring_failure_code[string];
   bit monitoring_shared_disabled=0;
+  string monitoring_shared_failure_code,monitoring_shared_failure_scope,monitoring_shared_failure_detail;
   bw_u64_t monitoring_failure_count=0;
   function automatic string scope_key(bw_scope_t kind,string id);
     return $sformatf("%0d:%s",kind,id);
@@ -323,6 +324,7 @@ package bw_mon_pkg;
     if(!monitor_ready)begin core_error(code,id,detail);return;end
     if(monitoring_shared_disabled)return;
     monitoring_shared_disabled=1;monitoring_failure_count++;
+    monitoring_shared_failure_code=code;monitoring_shared_failure_scope=id;monitoring_shared_failure_detail=detail;
     $warning("BW_CORE_WARNING code=%s scope_kind=SHARED scope=%s time_ticks=%0d %s",code,id,$time,detail);
   endfunction
 
@@ -465,12 +467,12 @@ package bw_mon_pkg;
     bit [64:0] wide;
     if ($isunknown({a,b})) begin
       core_error("INTEGER_UNKNOWN",scope_context,$sformatf("addition a=%h b=%h",a,b));
-      return 0;
+      return a;
     end
     wide = {1'b0,a} + {1'b0,b};
     if (wide[64]) begin
       core_error("INTEGER_OVERFLOW", scope_context,$sformatf("addition a=%0d b=%0d", a, b));
-      return 0;
+      return a;
     end
     return wide[63:0];
   endfunction
@@ -479,12 +481,12 @@ package bw_mon_pkg;
     bit [127:0] wide;
     if ($isunknown({a,b})) begin
       core_error("INTEGER_UNKNOWN",scope_context,$sformatf("multiplication a=%h b=%h",a,b));
-      return 0;
+      return a;
     end
     wide = {64'b0,a} * {64'b0,b};
     if (wide[127:64] != 0) begin
       core_error("INTEGER_OVERFLOW", scope_context,$sformatf("multiplication a=%0d b=%0d", a, b));
-      return 0;
+      return a;
     end
     return wide[63:0];
   endfunction
@@ -492,11 +494,11 @@ package bw_mon_pkg;
   function automatic bw_u64_t checked_sub(logic [63:0] a,logic [63:0] b,string scope_context);
     if($isunknown({a,b}))begin
       core_error("INTEGER_UNKNOWN",scope_context,$sformatf("subtraction a=%h b=%h",a,b));
-      return 0;
+      return a;
     end
     if(b>a)begin
       core_error("INTEGER_UNDERFLOW",scope_context,$sformatf("subtraction a=%0d b=%0d",a,b));
-      return 0;
+      return a;
     end
     return a-b;
   endfunction
