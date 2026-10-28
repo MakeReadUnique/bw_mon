@@ -349,6 +349,7 @@ module bw_stats_core #(
       check_sample.reset_coverage=member_reset_coverage;
       check_sample.valid=window_full && bytes_complete && denominator_valid && !foreign_activity();
       report_sink.submit_window(scope_id,check_sample);
+      if(runtime_failed())return;
     end
     sample.ticks=window_end_ticks;sample.value=bandwidth_gbps;
     sample.warmup=!window_full;sample.foreign_activity=foreign_activity();

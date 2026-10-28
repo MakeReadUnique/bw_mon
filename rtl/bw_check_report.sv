@@ -561,17 +561,17 @@ package bw_check_report_pkg;
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
       if(scopes[index].have_phase_seq && result.result_seq<=scopes[index].last_phase_seq) return;
-      scopes[index].have_phase_seq=1;scopes[index].last_phase_seq=result.result_seq;
       retained=0;
       foreach(default_scopes[index].phases[p])
         if(default_scopes[index].phases[p].stats_epoch==result.stats_epoch &&
            default_scopes[index].phases[p].episode_id==result.episode_id &&
            default_scopes[index].phases[p].phase_id==result.phase_id)retained=1;
       if(!retained)begin
-        check_storage_growth(default_scopes[index].phases.size(),scope_id,"default.phases",result.end_ticks);
-        if(core_failure_seen)return;
+        default_growth(index,default_scopes[index].phases.size(),"default.phases",result.end_ticks);
+        if(scope_failed(result.scope_kind,scope_id))return;
         default_scopes[index].phases.push_back(result);
       end
+      scopes[index].have_phase_seq=1;scopes[index].last_phase_seq=result.result_seq;
       if(result.phase_kind!==BW_PHASE_RAMP && result.phase_kind!==BW_PHASE_FALL) return;
       if(scopes[index].time_epoch!=result.stats_epoch || scopes[index].time_episode!=result.episode_id) begin
         scopes[index].time_epoch=result.stats_epoch;scopes[index].time_episode=result.episode_id;

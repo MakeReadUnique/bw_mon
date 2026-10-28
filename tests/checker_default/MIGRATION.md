@@ -16,6 +16,7 @@ analysis-disabled scope in `checker_empty` retains STATISTICS_ONLY behavior.
 | `report_final_forward/reverse` | two extra WARNINGs | Two short truncated episodes have no platform; final ordering unchanged |
 | `report_metrics_repeated{,_full}` | two extra WARNINGs | Final platforms have only four fully contained reference windows |
 | `report_group_*` ns/cycle | five extra WARNINGs; reset adds sixth; repeat adds five | Ten-transfer episodes cannot provide six final-contained platform reference windows; reset/repeat creates independent episode identities |
+| `point_historical_fail/shared_arithmetic` | retain explicit FAIL/PASS; add 2/1 default WARNINGs respectively | Real one-transfer enabled episodes cannot establish a reference, including before later disable |
 | Manual explicit final-record tests | unchanged counts | Their registered points have phase analysis disabled; no implicit B is manufactured |
 
 `checker_default_constant`, `checker_default_alternating`, and
@@ -61,3 +62,11 @@ Pending raw/support evidence is retained for that hook; a current fit snapshot
 must never be promoted into a fabricated finalized platform. Historical settled
 FAIL results survive. Normal reset/gap/truncation is covered here independently.
 Formal fixed-family/scale/resource campaigns remain in their later tickets.
+
+`checker_disabled` and `checker_disabled_phase` reject new default evidence/phase
+storage under the established test-only fault mechanism using typed scope keys.
+The point first settles a reliable FAIL, then fails storage in a later episode.
+Its independent same-ID group contains the healthy point and continues to PASS.
+Scope-owned helpers stop before queue/receipt mutation on failure; previously
+settled totals remain. Pending active evidence is retained for the later partial
+terminal hook, with no fabricated platform final and no new disabled-scope PASS.

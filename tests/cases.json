@@ -699,7 +699,7 @@
   ],
   "expect_log": [
    "BW_CHECK .*scope=records.fail epoch=7 episode=9 result_seq=1 .*conclusion=FAIL",
-   "(?s)BW_CHECK .*scope=records.missing .*reason=NO_EPISODE.*BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "(?s)BW_CHECK .*scope=records.missing .*reason=NO_EPISODE.*BW_SUMMARY status=FAIL pass=1 fail=1 warning=3 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
    "BW_CHECK ": 3,
@@ -1269,7 +1269,7 @@
    "+TRANSIENT_DEFERRED"
   ],
   "expect_log": [
-   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=3 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
    "BW_CHECK ": 3,
@@ -4910,7 +4910,7 @@
   ],
   "expect_log": [
    "TB_PASS point_historical_fail retained_fail=1 later_pass=1 typed_group_healthy=1",
-   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=1 fail=1 warning=3 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
    "BW_CORE_WARNING": 1
@@ -4971,10 +4971,12 @@
   "expect_warning": "BW_CORE_WARNING code=INTEGER_OVERFLOW scope_kind=SHARED",
   "expect_log": [
    "TB_PASS point_historical_shared_arithmetic retained_fail=1 retained_counter=18446744073709551615",
-   "BW_SUMMARY status=FAIL pass=0 fail=1 warning=3 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=0 fail=1 warning=4 scopes_done=3 scopes_expected=3"
   ],
   "expect_counts": {
    "BW_CORE_WARNING": 1
   }
- }
+ },
+ {"name": "checker_disabled", "top": "tb_checker_disabled", "defines": ["BW_MON_TEST_FAULTS", "BW_MON_TEST_SCHEDULING"], "expect_counts": {"BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1, "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1, "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1}, "expect_log": ["BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"]},
+ {"name": "checker_disabled_phase", "top": "tb_checker_disabled", "defines": ["BW_MON_TEST_FAULTS", "BW_MON_TEST_SCHEDULING"], "expect_counts": {"BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1, "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1, "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1}, "expect_log": ["BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"], "plusargs": ["+PHASE_FAULT"]}
 ]
