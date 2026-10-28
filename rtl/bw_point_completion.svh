@@ -71,6 +71,7 @@
       runtime_scope_error(BW_POINT,id,"POINT_COMPLETION",$sformatf("stage=%s original_ticks=%0d edge=%0d captured=%0d inflight=%0d published=%0d accepted=%0d input_generation=%0d",stage,batch.ticks,batch.expected,batch.captured,batch.inflight,batch.published,batch.accepted,batch.input_generation));return;
     end
     batch.closed_generation=batch.input_generation;
+    settle_target_requests(BW_POINT,id,batch.expected);
   endfunction
   function automatic bit point_batch_complete(string id);
     if(!point_batches.exists(id))return 0;
@@ -93,5 +94,6 @@
     else if(point_batches[id].expected==0)begin terminal=BW_SCOPE_UNOBSERVED;state="UNOBSERVED";end
     else begin terminal=BW_SCOPE_NORMAL;state="NORMAL";end
     scope_terminals[key]=terminal;
+    interrupt_target_requests(BW_POINT,id,terminal==BW_SCOPE_DISABLED);
     $display("BW_POINT_TERMINAL scope=%s state=%s expected=%0d captured=%0d inflight=%0d published=%0d accepted=%0d input_generation=%0d closed_generation=%0d time_ticks=%0d",id,state,point_batches[id].expected,point_batches[id].captured,point_batches[id].inflight,point_batches[id].published,point_batches[id].accepted,point_batches[id].input_generation,point_batches[id].closed_generation,$time);
   endfunction

@@ -80,6 +80,36 @@
       monitor_ready,end_role_registry.num(),end_audit_pending,$time);
   endfunction
 
+  // Ticket 56 target-qualified completion query API. Registration binds the
+  // actual sampling-edge count at registration; only a durable close that
+  // covers a strictly newer actual ingress settles the request.
+  function automatic int request_scope_completion(bw_scope_t kind,string id,
+      bw_u64_t target_ticks);
+    bw_target_request request;
+    int handle;
+    request=new;
+    request.kind=kind;request.id=id;request.target_ticks=target_ticks;
+    request.state=BW_TARGET_PENDING;request.settled_ticks=0;
+    request.binding_generation=0;
+    if(kind==BW_POINT && point_batches.exists(id))
+      request.binding_generation=point_batches[id].expected;
+    else if(kind==BW_GROUP && group_batches.exists(id))
+      request.binding_generation=group_batches[id].expected;
+    handle=target_requests.size();
+    target_requests[handle]=request;
+    return handle;
+  endfunction
+
+  function automatic bw_target_state_t target_completion_state(int handle);
+    if(!target_requests.exists(handle))return BW_TARGET_INTERRUPTED;
+    return target_requests[handle].state;
+  endfunction
+
+  function automatic bw_u64_t target_completion_ticks(int handle);
+    if(!target_requests.exists(handle))return 0;
+    return target_requests[handle].settled_ticks;
+  endfunction
+
   function automatic bit end_missing_receipt(output string owner_key,output string role);
     int split;
     foreach(end_role_registry[token])

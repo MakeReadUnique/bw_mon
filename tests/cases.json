@@ -6335,5 +6335,54 @@
    "BW_REPORT_INCOMPLETE": 1,
    "BW_END_AUDIT ": 1
   }
+ },
+ {
+  "name": "target_query_stale",
+  "top": "tb_target_query",
+  "sources": [
+   "target_query_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=stale"
+  ],
+  "expect_log": [
+   "TB_PASS target_query stale"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 1
+  }
+ },
+ {
+  "name": "target_query_budget",
+  "top": "tb_target_query",
+  "sources": [
+   "target_query_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=budget"
+  ],
+  "expect_log": [
+   "TB_PASS target_query budget time=40000001 bytes=320"
+  ],
+  "expect_counts": {
+   "BW_POINT_TERMINAL": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "target_query_late1fs",
+  "top": "tb_target_query",
+  "sources": [
+   "target_query_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=late1fs"
+  ],
+  "expect_log": [
+   "TB_PASS target_query late1fs settled=40000001"
+  ],
+  "expect_counts": {
+   "BW_POINT_TERMINAL": 1
+  }
  }
 ]

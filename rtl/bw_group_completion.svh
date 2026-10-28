@@ -73,6 +73,7 @@
       runtime_scope_error(BW_GROUP,id,"GROUP_COMPLETION",$sformatf("stage=%s original_ticks=%0d edge=%0d captured=%0d held=%0d published=%0d accepted=%0d acked=%0d",stage,batch.ticks,batch.expected,batch.captured,batch.held,batch.published,batch.accepted,batch.acked));return;
     end
     batch.closed_generation=batch.input_generation;
+    settle_target_requests(BW_GROUP,id,batch.expected);
   endfunction
   // Group twin of the point terminal: idempotent, evidence-based, and typed.
   // The owner passes its durable action evidence; the frozen batch ledger
@@ -88,6 +89,7 @@
     else if(group_batches[id].expected==0)begin terminal=BW_SCOPE_UNOBSERVED;state="UNOBSERVED";end
     else begin terminal=BW_SCOPE_NORMAL;state="NORMAL";end
     scope_terminals[key]=terminal;
+    interrupt_target_requests(BW_GROUP,id,terminal==BW_SCOPE_DISABLED);
     $display("BW_GROUP_TERMINAL scope=%s state=%s expected=%0d captured=%0d held=%0d published=%0d accepted=%0d acked=%0d reset_expected=%0d reset_captured=%0d input_generation=%0d closed_generation=%0d time_ticks=%0d",
       id,state,group_batches[id].expected,group_batches[id].captured,group_batches[id].held,
       group_batches[id].published,group_batches[id].accepted,group_batches[id].acked,
