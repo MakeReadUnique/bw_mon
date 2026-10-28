@@ -5009,5 +5009,7 @@
  {"name":"checker_ownership_late_reset","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+LATE_RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","late_reset"]},
 {"name": "checker_ownership_member_reset", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_RESET"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_reset"]},
 {"name": "checker_ownership_member_unknown", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_UNKNOWN"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_unknown"]},
-{"name": "checker_ownership_member_gap", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_GAP"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_gap"]}
+{"name": "checker_ownership_member_gap", "top": "tb_checker_ownership", "defines": ["OWNERSHIP_STRIDE=10"], "plusargs": ["+MEMBER_GAP"], "verify": ["python3", "tests/checker_default/check_public_ownership.py", "{log}", "member_gap"]},
+ {"name":"checker_ownership_member_held","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+MEMBER_HELD"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","member_held"]},
+ {"name":"checker_ownership_member_bridge","top":"tb_checker_ownership","defines":["OWNERSHIP_STRIDE=10"],"plusargs":["+MEMBER_RESET","+BRIDGE_RESET"],"verify":["python3","tests/checker_default/check_public_ownership.py","{log}","member_bridge"]}
 ]

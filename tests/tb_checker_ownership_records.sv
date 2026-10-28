@@ -28,7 +28,10 @@ module tb_checker_ownership_records;
       if(mode=="reverse" && n==15)row.value=120;
       if(mode=="reverse" && n==16)row.value=110;
       if(mode=="long_bridge" && n>=14 && n<=16)row.value=100.0+20.0*(n-13);
-      if(mode=="reset_bridge" && n==16)row.reset_coverage=1;
+      if(mode=="reset_bridge" && n>=16)begin
+        row.reset_coverage=1;row.reset_generation=1;
+        row.last_reset_event_ticks=measurement_start_ticks+155000000;
+      end
       report_sink.submit_window("ownership.records",row);
     end
     phase='{scope_kind:BW_POINT,stats_epoch:0,episode_id:1,phase_id:1,result_seq:1,

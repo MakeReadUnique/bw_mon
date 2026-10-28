@@ -215,6 +215,9 @@ package bw_mon_pkg;
   typedef struct {
     bw_scope_t scope_kind;
     bw_u64_t stats_epoch,episode_id,seq,left_ticks,ticks,left_u,u;
+    // Actual member-control transitions, separate from held reset coverage.
+    // Original event time and generation make reset crossing reconstructible.
+    bw_u64_t reset_generation,last_reset_event_ticks;
     real value;
     bit valid,full,bytes_complete,denominator_valid,foreign_activity,reset_coverage;
   } bw_check_window_t;

@@ -76,7 +76,10 @@ windows may take ownership and still report WARNING.
 
 Normal steps use the original seven confirmation samples of both platforms,
 with disjoint raw min/max envelopes and a continuous monotonic bridge no longer
-than W+S. The phase evidence owner never reads B, the 5% threshold or a checker
+than W+S. Private reset-event generations and original event timestamps distinguish
+an actual member reset transition from held known reset coverage. Held reset
+before both supports does not invent a crossing; actual reset transitions in
+support/bridge evidence prevent a normal-step exemption. The phase evidence owner never reads B, the 5% threshold or a checker
 verdict. It reports the physical change separately from the arrived-new-level
 recognition suffix, the exact exemption and the retained old prefix. Existing
 independently confirmed RAMP/FALL ranges retain their own exclusions. Final

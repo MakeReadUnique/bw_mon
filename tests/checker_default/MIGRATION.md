@@ -142,8 +142,29 @@ terminal hooks remain with their own integration ticket.
 `checker_ownership_member_reset` drives a real named group with a zero-byte
 member held in known reset while the active member retains the original step
 schedule. Known byte-complete publications still qualify the final180/190ns
-handoff; they cannot prove a no-reset normal step, so old reliable FAIL remains.
+handoff; the actual reset transition within original confirmation support
+prevents a normal-step proof, so old reliable FAIL remains.
 The unknown-reset and unknown-size-gap variants break group evidence, leave
 handoff unavailable and preserve earlier FAIL. The independent primary point
 continues to PASS/WARNING. Known member reset is not a group episode reset or a
 new byte-quality invalidity; own-scope epoch changes never join.
+
+
+`checker_ownership_member_held` keeps the same zero-byte member in reset from
+before all support, without any transition or earlier anomaly. Its exact phase
+boundaries/confirmations, original7 envelopes and bridge12->13 match the no-reset
+baseline; old PASS/new WARNING remain identical. Coverage alone cannot reject a
+step. `checker_ownership_member_bridge` instead introduces an actual member
+reset event inside bridge120->130ns; it keeps handoff qualified but rejects the
+step and preserves old FAIL. The existing reset-during-support variant records
+its actual event169ns+2fs after T, while the bridge event is124ns+2fs after T.
+The initial control snapshot establishes a level without counting a reset event.
+
+Private raw evidence now carries actual member-control transition generation and
+last original event time; held duplicate levels never advance it. Original7
+support may not mix generations or windows crossing an actual event, and bridge
+publications must be consecutive in one generation with no mixed reset window.
+Old/new proof supports must retain compatible generations. Lossless compression
+also compares these fields, so a held coverage flag cannot absorb a real event.
+The fields use scoped checked arithmetic, are captured before summary release,
+and preserve unknown/gap and own-scope epoch rules.

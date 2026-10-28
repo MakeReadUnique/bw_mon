@@ -16,6 +16,7 @@ module tb_checker_ownership;
     (.clk(clk),.reset_n(dummy_reset_n),.valid(dummy_valid),.size_known(dummy_known),.size_bytes(64'd0));
   bw_group_mon #(.GROUP_ID("ownership"),.WINDOW_WIDTH(10),.UPDATE_STRIDE(STRIDE),.EPISODE_ENABLE(1)) group_mon
     (.clk(clk),.reset_n(reset_n));
+  initial if($test$plusargs("MEMBER_HELD"))dummy_reset_n=0;
   initial begin
     add_point_member("ownership","ownership");
     add_point_member("ownership","ownership.dummy");
@@ -30,7 +31,7 @@ module tb_checker_ownership;
       valid=u<=finish_u;
       if($test$plusargs("MEMBER_RESET") || $test$plusargs("MEMBER_UNKNOWN") || $test$plusargs("MEMBER_GAP"))begin
         dummy_valid=valid;
-        if(u>=171)begin
+        if(u>=($test$plusargs("BRIDGE_RESET") ? 126 : 171))begin
           if($test$plusargs("MEMBER_RESET"))dummy_reset_n=0;
           if($test$plusargs("MEMBER_UNKNOWN"))dummy_reset_n=1'bx;
           if($test$plusargs("MEMBER_GAP"))dummy_known=0;

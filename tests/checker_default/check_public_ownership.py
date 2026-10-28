@@ -12,13 +12,20 @@ for kind in ('0','1'):
     steps=[fields(l) for l in lines if l.startswith('BW_STAGE_STEP ') and fields(l)['scope_kind']==kind]
     if mode.startswith('member_'):
         assert [r['conclusion'] for r in rows]==(['PASS','WARNING'] if kind=='0' else
-          (['FAIL','WARNING'] if mode=='member_reset' else ['FAIL'])),(mode,kind,rows)
+          (['PASS','WARNING'] if mode=='member_held' else (['FAIL','WARNING'] if mode in ('member_reset','member_bridge') else ['FAIL']))),(mode,kind,rows)
         if kind=='1':
-            if mode=='member_reset':
+            if mode=='member_held':
+                assert [(int(p['start_ticks'])-T,int(p['end_ticks'])-T,int(p['confirm_ticks'])-T) for p in phases]==[(60_000_000,130_000_000,70_000_000),(180_000_000,240_000_000,190_000_000)],phases
+                assert steps[0]['valid']=='1' and int(steps[0]['bridge_first_seq'])==12 and int(steps[0]['bridge_last_seq'])==13,steps
+                assert [int(steps[0][k]) for k in ('old_reset_first','old_reset_last','new_reset_first','new_reset_last','bridge_reset_generation','latest_reset_event_ticks')]==[0]*6,steps
+                assert int(rows[0]['check_end_ticks'])==T+180_000_000,rows[0]
+            elif mode in ('member_reset','member_bridge'):
                 qualifications=[fields(l) for l in lines if l.startswith('BW_STAGE_HANDOFF ') and fields(l)['scope_kind']==kind]
                 assert qualifications[-1]['valid']=='1' and int(qualifications[-1]['span'])==10_000_000,qualifications
                 assert int(rows[0]['check_end_ticks'])==T+180_000_000,rows[0]
                 assert rows[0]['handoff_platform']!='0' and steps[0]['valid']=='0',(rows,steps)
+                assert int(steps[0]['latest_reset_event_ticks'])==T+(124_000_002 if mode=='member_bridge' else 169_000_002),steps
+                assert int(steps[0]['old_reset_last'])==0 and int(steps[0]['new_reset_last'])==1,steps
             else:
                 assert rows[0]['handoff_platform']=='0' and rows[0]['quality_incomplete']=='1',rows
         continue

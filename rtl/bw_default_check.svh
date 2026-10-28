@@ -84,6 +84,8 @@ virtual function void submit_window(string id,bw_check_window_t sample);
       sample.full==previous.full && sample.bytes_complete==previous.bytes_complete &&
       sample.denominator_valid==previous.denominator_valid && sample.foreign_activity==previous.foreign_activity &&
       sample.reset_coverage==previous.reset_coverage &&
+      sample.reset_generation==previous.reset_generation &&
+      sample.last_reset_event_ticks==previous.last_reset_event_ticks &&
       $realtobits(sample.value)==$realtobits(previous.value) &&
       sample.ticks>previous.ticks && sample.left_ticks>=previous.left_ticks &&
       sample.u>previous.u && sample.left_u>=previous.left_u;
@@ -144,12 +146,14 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   end
   if(next_platform>=0)begin
     step=default_scopes[index].step(platform,default_scopes[index].phases[next_platform],terminal);
-    $display("BW_STAGE_STEP scope_kind=%0d scope=%s epoch=%0d episode=%0d old_platform=%0d new_platform=%0d valid=%0b reason=%s old_support_first=%0d old_support_last=%0d old_min=%.17g old_max=%.17g new_support_first=%0d new_support_last=%0d new_min=%.17g new_max=%.17g bridge_first_seq=%0d bridge_last_seq=%0d bridge_start=%0d bridge_end=%0d bridge_span=%0d bridge_limit=%0d arrived_ticks=%0d wait_end_ticks=%0d exclusion_start_ticks=%0d exclusion_end_ticks=%0d retained_start_ticks=%0d retained_end_ticks=%0d",
+    $display("BW_STAGE_STEP scope_kind=%0d scope=%s epoch=%0d episode=%0d old_platform=%0d new_platform=%0d valid=%0b reason=%s old_support_first=%0d old_support_last=%0d old_min=%.17g old_max=%.17g new_support_first=%0d new_support_last=%0d new_min=%.17g new_max=%.17g old_reset_first=%0d old_reset_last=%0d new_reset_first=%0d new_reset_last=%0d latest_reset_event_ticks=%0d bridge_reset_generation=%0d bridge_last_reset_event_ticks=%0d bridge_first_seq=%0d bridge_last_seq=%0d bridge_start=%0d bridge_end=%0d bridge_span=%0d bridge_limit=%0d arrived_ticks=%0d wait_end_ticks=%0d exclusion_start_ticks=%0d exclusion_end_ticks=%0d retained_start_ticks=%0d retained_end_ticks=%0d",
       scopes[index].kind,scopes[index].id,episode.stats_epoch,episode.episode_id,platform.phase_id,
       default_scopes[index].phases[next_platform].phase_id,step.valid,step.reason,
       platform.support_first_seq,platform.support_last_seq,platform.support_min_gbps,platform.support_max_gbps,
       default_scopes[index].phases[next_platform].support_first_seq,default_scopes[index].phases[next_platform].support_last_seq,
       default_scopes[index].phases[next_platform].support_min_gbps,default_scopes[index].phases[next_platform].support_max_gbps,
+      step.old_reset_first,step.old_reset_last,step.new_reset_first,step.new_reset_last,
+      step.latest_reset_event_ticks,step.bridge_reset_generation,step.bridge_last_reset_event_ticks,
       step.bridge_first_seq,step.bridge_last_seq,step.bridge_start,step.bridge_end,step.bridge_span,
       default_scopes[index].logical_width()+default_scopes[index].logical_stride(),step.arrived_ticks,step.end_ticks,
       step.start_ticks,step.end_ticks,platform.start_ticks,step.valid ? step.start_ticks : end_tick);

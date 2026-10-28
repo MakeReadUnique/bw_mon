@@ -10,6 +10,8 @@ typedef struct {
   string reason;
   bw_u64_t start_ticks,end_ticks,bridge_first_seq,bridge_last_seq;
   bw_u64_t bridge_start,bridge_end,bridge_span,arrived_ticks;
+  bw_u64_t old_reset_first,old_reset_last,new_reset_first,new_reset_last,latest_reset_event_ticks;
+  bw_u64_t bridge_reset_generation,bridge_last_reset_event_ticks;
 } stage_step_t;
 
 class bw_stage_evidence;
@@ -47,8 +49,10 @@ class bw_stage_evidence;
       b.seq==a.seq+1 && b.u>a.u && b.ticks>a.ticks;
   endfunction
   function bit continuous(bw_check_window_t a,bw_check_window_t b);
-    // A normal-step bridge/support cannot cross known member reset coverage.
-    return publication_successor(a,b) && !a.reset_coverage && !b.reset_coverage;
+    // Coverage can remain asserted throughout clean support. Only an actual
+    // reset transition crossing these publications/windows breaks the proof.
+    return publication_successor(a,b) && a.reset_generation==b.reset_generation &&
+      a.last_reset_event_ticks<=a.left_ticks && b.last_reset_event_ticks<=b.left_ticks;
   endfunction
   function bit same_episode(bw_check_window_t row,bw_phase_result_t p);
     return row.stats_epoch==p.stats_epoch && row.episode_id==p.episode_id;
@@ -78,7 +82,7 @@ class bw_stage_evidence;
     end
     return result;
   endfunction
-  function bit support_valid(bw_phase_result_t p,bw_u64_t terminal,bit allow_member_reset=0);
+  function bit support_valid(bw_phase_result_t p,bw_u64_t terminal,bit allow_reset_events=0);
     bw_check_window_t row,previous,first;
     bw_u64_t stop,min_span;
     real low,high;
@@ -88,9 +92,10 @@ class bw_stage_evidence;
        p.support_last_seq-p.support_first_seq!=6)return 0;
     for(int i=0;i<7;i++)begin
       if(!find_seq(p.support_first_seq+i,row) || !same_episode(row,p) ||
-         !row.valid || (!allow_member_reset && row.reset_coverage) || row.ticks>=stop || row.ticks>p.confirmation_ticks)return 0;
+         !row.valid || (!allow_reset_events && row.last_reset_event_ticks>row.left_ticks) || row.ticks>=stop || row.ticks>p.confirmation_ticks)return 0;
       if(i==0)begin first=row;low=row.value;high=row.value;end
-      else if(!publication_successor(previous,row))return 0;
+      else if(!publication_successor(previous,row) ||
+        (!allow_reset_events && row.reset_generation!=first.reset_generation))return 0;
       if(row.value<low)low=row.value;
       if(row.value>high)high=row.value;
       previous=row;
@@ -112,9 +117,17 @@ class bw_stage_evidence;
     bit found;
     int direction;
     result.valid=0;result.reason="PLATFORM_OR_SUPPORT_INSUFFICIENT";
+    if(find_seq(old_platform.support_first_seq,row))result.old_reset_first=row.reset_generation;
+    if(find_seq(old_platform.support_last_seq,row))result.old_reset_last=row.reset_generation;
+    if(find_seq(new_platform.support_first_seq,row))result.new_reset_first=row.reset_generation;
+    if(find_seq(new_platform.support_last_seq,row))begin
+      result.new_reset_last=row.reset_generation;result.latest_reset_event_ticks=row.last_reset_event_ticks;
+    end
     old_handoff=handoff(old_platform,terminal);new_handoff=handoff(new_platform,terminal);
     if(!old_handoff.valid || !new_handoff.valid || !support_valid(old_platform,terminal) ||
        !support_valid(new_platform,terminal))return result;
+    result.reason="RESET_EVENT_BETWEEN_SUPPORT";
+    if(result.old_reset_first!=result.new_reset_last)return result;
     foreach(phases[p])if(phases[p].stats_epoch==old_platform.stats_epoch &&
       phases[p].episode_id==old_platform.episode_id && phases[p].start_known && phases[p].end_known &&
       phases[p].phase_kind inside {BW_PHASE_RAMP,BW_PHASE_FALL} &&
@@ -136,7 +149,7 @@ class bw_stage_evidence;
       end
     end
     result.reason="NEW_BOUNDARY_UNSUPPORTED";
-    if(!found || !row.valid || row.reset_coverage || !in_envelope(row,new_platform))return result;
+    if(!found || !row.valid || row.last_reset_event_ticks>row.left_ticks || !in_envelope(row,new_platform))return result;
     // Walk only a contiguous suffix already at the independently known new
     // level. Its duration is recognition waiting, not the physical bridge.
     while(row.seq>0 && find_seq(row.seq-1,previous) &&
@@ -153,6 +166,8 @@ class bw_stage_evidence;
         result.start_ticks=next_row.ticks;result.end_ticks=new_platform.start_ticks;
         result.bridge_first_seq=previous.seq;result.bridge_last_seq=arrived.seq;
         result.bridge_start=previous.u;result.bridge_end=arrived.u;result.bridge_span=arrived.u-previous.u;
+        result.bridge_reset_generation=arrived.reset_generation;
+        result.bridge_last_reset_event_ticks=arrived.last_reset_event_ticks;
         result.arrived_ticks=arrived.ticks;return result;
       end
       next_row=previous;
