@@ -1,7 +1,7 @@
 module group_analysis_config_fixture #(parameter int CASE=0);
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("config.leaf"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) point
     (.clk(1'b0),.reset_n(1'b1));
   bw_group_mon #(.GROUP_ID("config.group"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
@@ -14,7 +14,6 @@ module group_analysis_config_fixture #(parameter int CASE=0);
     .PHASE_TREND_ABS(CASE==3 ? (1e300*1e300) : 1.0),.PHASE_TREND_REL(0.0)) group_mon
     (.clk(1'b0),.reset_n(1'b1));
   initial begin
-    define_group("config.group",1);add_point_member("config.group","config.leaf");finish_configuration();
     #1;
     if(CASE!=0)$fatal(1,"expected core error did not occur");
     if(!monitor_ready)$fatal(1,"explicit group analysis configuration failed to become ready");

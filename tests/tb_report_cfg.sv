@@ -2,7 +2,7 @@ module tb_report_cfg;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("cfg.bad"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .FIXED_BYTES(10),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(1)) bad
     (.clk(clk),.reset_n(1'b1),.valid(valid));

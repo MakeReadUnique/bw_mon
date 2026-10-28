@@ -2,7 +2,7 @@ module tb_hint_same_cycle_live;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic lcrdv=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),.CREDIT_ENABLE(1),
     .CREDIT_CAPACITY(2),.CREDIT_INITIAL(0),.CREDIT_INITIAL_KNOWN(1),
     .CREDIT_RETURN_TIMING(BW_RETURN_SAME_CYCLE),.SHORTAGE_ENABLE(1),.SHORTAGE_BASIS(BW_NS),
@@ -19,7 +19,7 @@ module tb_hint_same_cycle_live;
       $fatal(1,"live SAME return releases shortage without a clock or ledger increment");
     #999999;lcrdv=0;#2000000;lcrdv=1'bx;#1;
     if(zero.credit_shortage_known || zero.credit_shortage!==1'bx || zero.shortage_trusted ||
-       zero.shortage_active || !zero.shortage_hit || zero.shortage_trigger_ticks!=5000000 ||
+       zero.shortage_active || !zero.shortage_hit || zero.shortage_trigger_ticks!=5000001 ||
        zero.shortage_end_reason!=BW_HINT_UNKNOWN || !zero.credit_trusted)
       $fatal(1,"C0/RX is unknown and threshold-equal uncertainty preserves only prior known duration");
     if(!positive.credit_shortage_known || positive.credit_shortage!==0 || !positive.shortage_trusted ||

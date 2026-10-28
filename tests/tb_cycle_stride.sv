@@ -2,7 +2,7 @@ module tb_cycle_stride;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0, valid=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("sliding"), .WINDOW_BASIS(BW_CYCLE),
     .WINDOW_WIDTH(5), .UPDATE_STRIDE(3), .FIXED_BYTES(64)) sliding
     (.clk(clk), .reset_n(1'b1), .valid(valid));
@@ -24,7 +24,7 @@ module tb_cycle_stride;
     pulse(1); pulse(1); pulse(0); pulse(1);
     if (sliding.result_seq!=1 || sliding.window_start_cycle!=1 ||
         sliding.window_end_cycle!=4 || sliding.coverage_cycles!=3 ||
-        sliding.window_start_ticks!=250000 || sliding.window_end_ticks!=1750000 ||
+        sliding.window_start_ticks!=250001 || sliding.window_end_ticks!=1750001 ||
         sliding.window_bytes!=128 || sliding.window_events!=2 ||
         !sliding.window_warmup || sliding.window_full ||
         $abs(sliding.bandwidth_gbps-85.333333333333333)>1e-10 ||
@@ -39,8 +39,8 @@ module tb_cycle_stride;
     pulse(1);
     if (sliding.result_seq!=2 || !sliding.window_full || sliding.window_warmup ||
         sliding.window_start_cycle!=2 || sliding.window_end_cycle!=7 ||
-        sliding.coverage_cycles!=5 || sliding.window_start_ticks!=750000 ||
-        sliding.window_end_ticks!=3250000 || sliding.window_bytes!=192 ||
+        sliding.coverage_cycles!=5 || sliding.window_start_ticks!=750001 ||
+        sliding.window_end_ticks!=3250001 || sliding.window_bytes!=192 ||
         sliding.window_events!=3 || $abs(sliding.bandwidth_gbps-76.8)>1e-10 ||
         $abs(sliding.bytes_per_cycle-38.4)>1e-10)
       $fatal(1,"W5/S3 first full result must be the scheduled [2,7) window");
@@ -50,8 +50,8 @@ module tb_cycle_stride;
       $fatal(1,"S=W second block must include edge 4 and exclude edge 7");
     pulse(0); pulse(0); pulse(0);
     if (sliding.result_seq!=3 || sliding.window_start_cycle!=5 ||
-        sliding.window_end_cycle!=10 || sliding.window_start_ticks!=2250000 ||
-        sliding.window_end_ticks!=4750000 || sliding.window_bytes!=128 ||
+        sliding.window_end_cycle!=10 || sliding.window_start_ticks!=2250001 ||
+        sliding.window_end_ticks!=4750001 || sliding.window_bytes!=128 ||
         $abs(sliding.bandwidth_gbps-51.2)>1e-10 ||
         $abs(sliding.bytes_per_cycle-25.6)>1e-10)
       $fatal(1,"later exact sliding boundary or denominator incorrect");

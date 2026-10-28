@@ -5,7 +5,7 @@ module tb_numeric_queries;
   int handle,count;
   initial begin
     if(!$value$plusargs("MODE=%s",mode))mode="time";
-    handle=register_point("query.subject","component",BW_NS,1,1);configure_monitor(1);wait(monitor_ready);
+    handle=register_point("query.subject","component",BW_NS,1,1);configure_monitor();wait(monitor_ready);
     if(mode=="time")check_monitor_time(64'hx000000000000001,"time.subject");
     else if(mode=="scope_kind")count=registered_scope_count(2'b0x);
     else if(mode=="scope_index")id=registered_scope_id(BW_POINT,64'hx000000000000000);

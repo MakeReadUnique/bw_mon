@@ -10,7 +10,7 @@ module tb_cfg_defaults;
   bw_record_t core_frame='0;
   bit core_toggle=0;
   bw_u64_t core_results,core_window_end,core_total;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(7),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("cfg.stride.point"),.WINDOW_WIDTH(10),.FIXED_BYTES(8)) stride_point
     (.clk(clk),.reset_n(1'b1),.valid(v_stride));
   bw_point_mon #(.POINT_ID("cfg.stride.cycle"),.WINDOW_BASIS(BW_CYCLE),
@@ -37,12 +37,10 @@ module tb_cfg_defaults;
     (.scope_id("cfg.stride.core"),.record(core_frame),.record_toggle(core_toggle),
      .result_seq(core_results),.window_end_ticks(core_window_end),.total_bytes(core_total));
   task automatic edge_at(bw_u64_t ticks);
-    #(ticks-$time);clk=1;#1;clk=0;
+    #(ticks+1-$time);clk=1;#1;clk=0;
   endtask
   initial begin
-    define_group("cfg.stride.group",1);
     add_point_member("cfg.stride.group","cfg.stride.point");
-    finish_configuration();
     wait(monitor_ready);
     fork
       begin

@@ -3,7 +3,7 @@ module tb_metrics_controls;
   import bw_mon_pkg::*;
   logic clk=0,valid=1;
   logic [1:0] reset_n=2'b11;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_phase_result_t phase_result;
     bw_episode_result_t episode_result;
@@ -48,7 +48,7 @@ module tb_metrics_controls;
     wait(monitor_ready);
     for(int t=0;t<=12;t++)begin
       #(250000+ns_to_ticks(t)-$time);valid=t<12;clk=1;#1;clk=0;
-      if(t==7 && (scopes[0].phase_result.start_ticks!=3000000 || scopes[0].phase_result.end_ticks!=7000000 ||
+      if(t==7 && (scopes[0].phase_result.start_ticks!=3000001 || scopes[0].phase_result.end_ticks!=7000001 ||
          !scopes[0].phase_result.duration_valid || scopes[0].phase_result.duration_ticks!=4000000 ||
          scopes[0].phase_result.bytes_complete || scopes[0].phase_result.events_complete ||
          scopes[0].phase_result.bandwidth_valid || !scopes[0].phase_result.variation.stddev_valid ||
@@ -56,9 +56,9 @@ module tb_metrics_controls;
          scopes[0].phase_result.end_unknown_ticks-scopes[0].phase_result.start_unknown_ticks!=100000))
         $fatal(1,"no-edge unknown member interval independently invalidates raw bytes while earlier selected windows/duration stay complete");
     end
-    #(17000001-$time);
+    #(17000003-$time);
     if(!scopes[0].phase_result.bytes_complete || !scopes[0].phase_result.bandwidth_valid ||
-       scopes[0].phase_result.start_ticks!=10000000 || scopes[0].phase_result.end_ticks!=12250000 ||
+       scopes[0].phase_result.start_ticks!=10000001 || scopes[0].phase_result.end_ticks!=12250001 ||
        scopes[0].episode_result.e2e_valid || scopes[0].episode_result.variation.stddev_valid ||
        scopes[0].episode_result.variation.unknown_samples!=1 ||
        !scopes[1].episode_result.e2e_valid || !scopes[1].episode_result.variation.stddev_valid ||

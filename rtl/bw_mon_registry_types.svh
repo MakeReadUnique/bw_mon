@@ -31,8 +31,8 @@
 
   class bw_group_state;
     string id, owner_path;
-    bit declared=0, owner_registered=0;
-    int expected_members, source_handle;
+    bit owner_registered=0;
+    int source_handle;
     int members[$];
     bw_member_rule_t rules[$];
     bit [16383:0] recursive_points='0;
@@ -47,6 +47,5 @@
   bw_group_state registered_groups[$];
   int point_by_id[string], group_by_id[string];
   bit configuration_finished=0;
-  int unsigned expected_group_count=0, declared_group_count=0;
   bw_u64_t configuration_seq=0;
   bw_u64_t missing_record_timeout_ticks=BW_TICKS_PER_NS;

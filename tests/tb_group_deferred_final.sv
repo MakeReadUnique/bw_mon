@@ -6,7 +6,7 @@ module tb_group_deferred_final;
   int point_handle,source;
   bw_record_t frame;
   bw_control_t control;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("sentinel"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(8),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(10)) sentinel
     (.clk(clk),.reset_n(1'b1),.valid(sentinel_valid));
@@ -20,9 +20,9 @@ module tb_group_deferred_final;
   always @(deliver_second)if(deliver_second)publish_frame(source,frame);
   initial begin
     void'($value$plusargs("LATE=%d",late));
-    define_group("deferred.g",1);add_point_member("deferred.g","fault");
+    add_point_member("deferred.g","fault");
     point_handle=register_point("fault","controlled.fault",BW_NS,1,1);
-    source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
+    source=point_source_handle(point_handle);wait(monitor_ready);
     control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;
     publish_control(source,control);
     frame='0;frame.timestamp_ticks=250000;frame.record_seq=1;frame.edge_index=1;

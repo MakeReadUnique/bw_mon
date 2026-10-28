@@ -2,7 +2,7 @@ module tb_variation_pending_retention;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,valid=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("pending.subject"),.FIXED_BYTES(8),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(30000),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(60000),
     .PHASE_STEADY_ENTER_ABS(0),.PHASE_STEADY_ENTER_REL(0),.PHASE_STEADY_EXIT_ABS(0),.PHASE_STEADY_EXIT_REL(0),
@@ -17,8 +17,8 @@ module tb_variation_pending_retention;
     #(64'd30003250001-$time);
     if(point_mon.raw_record.record_seq!=7 || point_mon.accepted_record_seq!=7 || point_mon.result_seq!=30003 ||
        point_mon.episode_result_seq!=1 || point_mon.episode_result.status!=BW_EPISODE_COMPLETE ||
-       point_mon.episode_result.first_ticks!=250000 || point_mon.episode_result.last_ticks!=2750000 ||
-       point_mon.episode_result.tail_ticks!=3250000 || point_mon.episode_result.confirmation_ticks!=64'd30003250000 ||
+       point_mon.episode_result.first_ticks!=250001 || point_mon.episode_result.last_ticks!=2750001 ||
+       point_mon.episode_result.tail_ticks!=3250001 || point_mon.episode_result.confirmation_ticks!=64'd30003250000 ||
        point_mon.episode_result.byte_count!=48 || point_mon.episode_result.event_count!=6 ||
        point_mon.episode_result.duration_ticks!=3000000 || !point_mon.episode_result.e2e_valid ||
        $abs(point_mon.episode_result.e2e_gbps-16.0)>1e-10)

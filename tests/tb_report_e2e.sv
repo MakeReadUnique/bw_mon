@@ -3,7 +3,7 @@ module tb_report_e2e;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
   logic [63:0] bytes=152;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("tb.raw[0].bw"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(1),
     .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2)) point
     (.clk(clk),.reset_n(1'b1),.valid(valid),.size_bytes(bytes),.size_known(1'b1));
@@ -22,7 +22,7 @@ module tb_report_e2e;
       bytes=total/100+(t<=total%100 ? 1 : 0);clk=1;
       #1;clk=0;
     end
-    #(103000001-$time);
+    #(103000003-$time);
     summary=check_report_summary();
     if(point.episode_result.byte_count!=total || point.episode_result.duration_ticks!=100000000 ||
        !point.episode_result.e2e_valid || $abs(point.episode_result.e2e_gbps-real'(total)/100.0)>1e-10 ||

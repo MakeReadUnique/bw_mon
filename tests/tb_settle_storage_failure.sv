@@ -3,7 +3,7 @@ module tb_settle_storage_failure;
   import bw_mon_pkg::*;
   string scope_id="";
   int mode=0,handle;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) core
     (.scope_id(scope_id),.record('0),.record_toggle(1'b0),
      .accepted_record_seq(),.result_seq(),.episode_result_seq(),

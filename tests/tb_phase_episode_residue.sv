@@ -4,7 +4,7 @@ module tb_phase_episode_residue;
   logic clk=0;
   logic [1:0] valid=0;
   logic [63:0] bytes[2];
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("phase.residue%0d",g)),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),
       .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(g==0 ? 1 : 3),
@@ -34,12 +34,12 @@ module tb_phase_episode_residue;
           scopes[1].point.phase_evidence_count!=1))
         $fatal(1,"new evidence begins only after the old unknown position leaves the window");
       if(t==15 && (!scopes[0].point.window_full || !scopes[0].point.bytes_complete ||
-          scopes[0].point.window_start_ticks!=5000000 || scopes[0].point.window_bytes!=64 ||
+          scopes[0].point.window_start_ticks!=5000001 || scopes[0].point.window_bytes!=64 ||
           scopes[0].point.window_events!=9 || scopes[0].point.phase_eligible ||
           scopes[0].point.phase_evidence_count!=0))
         $fatal(1,"the zero-byte old event at the exact left endpoint still disqualifies this full known window");
       if(t==16 && (!scopes[0].point.phase_eligible || scopes[0].point.phase_evidence_count!=1 ||
-          scopes[0].point.window_start_ticks!=6000000 || scopes[0].point.window_bytes!=72))
+          scopes[0].point.window_start_ticks!=6000001 || scopes[0].point.window_bytes!=72))
         $fatal(1,"excluding the last old zero-byte event starts a genuinely new evidence chain");
       if(t==18 && (scopes[0].point.phase_evidence_count!=3 ||
           !scopes[0].point.phase_evidence_sufficient || !scopes[0].point.phase_fit_valid))

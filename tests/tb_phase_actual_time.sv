@@ -3,7 +3,7 @@ module tb_phase_actual_time;
   import bw_mon_pkg::*;
   logic [1:0] clk=0,valid=0;
   logic [63:0] bytes[2];
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(6)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<6;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("phase.actual_time%0d",g)),.WINDOW_BASIS(BW_CYCLE),
       
@@ -18,7 +18,7 @@ module tb_phase_actual_time;
        .size_bytes(bytes[g<3 ? 0 : 1]),.size_known(1'b1));
   end
   task automatic sample_at(int group_index,bw_u64_t tick,bit transfer,bw_u64_t count);
-    #(tick-$time);valid[group_index]=transfer;bytes[group_index]=count;clk[group_index]=1;
+    #(tick+1-$time);valid[group_index]=transfer;bytes[group_index]=count;clk[group_index]=1;
     #1;clk[group_index]=0;
   endtask
   initial begin
@@ -33,7 +33,7 @@ module tb_phase_actual_time;
         sample_at(1,11000000,1,16);sample_at(1,12000000,1,8);
       end
     join
-    if(scopes[0].point.phase_current!=BW_PHASE_RAMP || scopes[0].point.phase_start_ticks!=14000000 ||
+    if(scopes[0].point.phase_current!=BW_PHASE_RAMP || scopes[0].point.phase_start_ticks!=14000001 ||
        $abs(scopes[0].point.phase_fit_mean-12.666666666666666)>1e-10 ||
        $abs(scopes[0].point.phase_fit_delta-6.0)>1e-10 ||
        $abs(scopes[0].point.phase_fit_rms)>1e-10 || scopes[0].point.phase_evidence_span!=2)
@@ -44,24 +44,24 @@ module tb_phase_actual_time;
     if(scopes[2].point.phase_current!=BW_PHASE_STEADY ||
        $abs(scopes[2].point.phase_fit_delta-6.0)>1e-10)
       $fatal(1,"absolute plus relative-times-mean thresholds can classify a nonzero trend as steady");
-    if(scopes[3].point.phase_current!=BW_PHASE_RAMP || scopes[3].point.phase_start_ticks!=12000000 ||
+    if(scopes[3].point.phase_current!=BW_PHASE_RAMP || scopes[3].point.phase_start_ticks!=12000001 ||
        $abs(scopes[3].point.phase_fit_mean-12.666666666666666)>1e-10 ||
        $abs(scopes[3].point.phase_fit_delta-6.0)>1e-10 || $abs(scopes[3].point.phase_fit_rms)>1e-10 ||
        scopes[4].point.phase_fit_valid || scopes[5].point.phase_current!=BW_PHASE_STEADY)
       $fatal(1,"10.5/11/12ns publication times must retain sub-ns precision through a 2GHz frequency change");
-    #(99000000-$time);
+    #(99000002-$time);
     if(scopes[0].point.result_seq!=3 || scopes[0].point.phase_window_seq!=3 ||
        scopes[0].point.phase_evidence_count!=3 || scopes[0].point.phase_id!=1 ||
-       scopes[0].point.phase_result_seq!=0 || scopes[0].point.phase_confirmation_ticks!=14000000 ||
+       scopes[0].point.phase_result_seq!=0 || scopes[0].point.phase_confirmation_ticks!=14000001 ||
        scopes[3].point.phase_window_seq!=3 || scopes[3].point.phase_evidence_count!=3)
       $fatal(1,"held cycle snapshots cannot create new evidence, confirmation or final records");
     fork sample_at(0,100000000,0,0);sample_at(1,100000000,0,0);join
     if(scopes[0].point.phase_result_seq!=1 || scopes[0].point.phase_result.phase_kind!=BW_PHASE_RAMP ||
-       scopes[0].point.phase_result.start_ticks!=14000000 || scopes[0].point.phase_result.end_ticks!=100000000 ||
+       scopes[0].point.phase_result.start_ticks!=14000001 || scopes[0].point.phase_result.end_ticks!=100000001 ||
        !scopes[0].point.phase_result.end_known || scopes[0].point.phase_result.start_total_bytes!=54 ||
        scopes[0].point.phase_result.end_total_bytes!=62 || scopes[1].point.phase_fit_valid ||
-       scopes[3].point.phase_result_seq!=1 || scopes[3].point.phase_result.start_ticks!=12000000 ||
-       scopes[3].point.phase_result.end_ticks!=100000000 || !scopes[3].point.phase_result.end_known ||
+       scopes[3].point.phase_result_seq!=1 || scopes[3].point.phase_result.start_ticks!=12000001 ||
+       scopes[3].point.phase_result.end_ticks!=100000001 || !scopes[3].point.phase_result.end_known ||
        scopes[3].point.phase_result.start_total_bytes!=27 || scopes[3].point.phase_result.end_total_bytes!=35)
       $fatal(1,"the resumed actual edge finalizes earlier phase bounds without weighting old held windows");
     $display("TB_PASS phase_actual_time");$finish;

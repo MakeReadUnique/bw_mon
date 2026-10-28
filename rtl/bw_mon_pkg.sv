@@ -247,6 +247,11 @@ package bw_mon_pkg;
     $fatal(1,"BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",code,scope_id,$time,detail);
   endfunction
   bit monitor_ready = 0;
+  bit configuration_sealed = 0;
+  // Only real module instances declare preparation; directly registered
+  // component scopes provide no handshake and must not stall the coordinator.
+  int preparing_scopes = 0;
+  int prepared_scopes = 0;
   int unsigned expected_point_count;
   bw_u64_t measurement_start_ticks = 0;
   bw_u64_t monitor_start_ticks = 0;

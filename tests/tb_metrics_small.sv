@@ -3,7 +3,7 @@ module tb_metrics_small;
   import bw_mon_pkg::*;
   logic clk=0;
   int edge_number=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(4)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<4;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("metrics.small%0d",g)),.WINDOW_WIDTH(g==3 ? 4 : 1),.UPDATE_STRIDE(1),
       .FIXED_BYTES(8),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2)) point

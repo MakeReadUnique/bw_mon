@@ -4,7 +4,7 @@ module tb_phase_candidate_change;
   logic clk=0,valid=0;
   logic [63:0] bytes=0;
   int values[10]='{0,0,0,2,4,0,0,0,0,0};
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("phase.candidate_change"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),
     .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(3),
@@ -19,7 +19,7 @@ module tb_phase_candidate_change;
     for(int n=0;n<10;n++)begin
       #(250000+ns_to_ticks(n)-$time);valid=1;bytes=values[n];clk=1;#1;clk=0;
     end
-    #(10250000-$time);valid=0;clk=1;#1;clk=0;
+    #(10250002-$time);valid=0;clk=1;#1;clk=0;
   end
   initial begin
     wait(monitor_ready);#5000001;
@@ -34,12 +34,12 @@ module tb_phase_candidate_change;
        point.phase_candidate_ticks!=8000000 || point.phase_candidate_total_bytes!=6 || point.phase_id!=0)
       $fatal(1,"a new stable candidate cannot inherit the unconfirmed fall's evidence count");
     #2000000;
-    if(point.phase_current!=BW_PHASE_STEADY || point.phase_start_ticks!=8000000 ||
-       point.phase_confirmation_ticks!=10000000 || point.phase_id!=1)
+    if(point.phase_current!=BW_PHASE_STEADY || point.phase_start_ticks!=8000001 ||
+       point.phase_confirmation_ticks!=10000001 || point.phase_id!=1)
       $fatal(1,"only three consecutive stable candidates confirm the eventual phase");
-    #(16000001-$time);
+    #(16000003-$time);
     if(point.phase_result_seq!=1 || point.phase_result.phase_kind!=BW_PHASE_STEADY ||
-       point.phase_result.start_ticks!=8000000 || point.phase_result.end_ticks!=10250000 ||
+       point.phase_result.start_ticks!=8000001 || point.phase_result.end_ticks!=10250001 ||
        point.phase_result.start_total_bytes!=6 || point.phase_result.end_total_bytes!=6)
       $fatal(1,"unconfirmed ramp/fall candidates never become final phase intervals");
     $display("TB_PASS phase_candidate_change");$finish;

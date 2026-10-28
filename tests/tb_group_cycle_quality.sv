@@ -3,7 +3,7 @@ module tb_group_cycle_quality;
   import bw_mon_pkg::*;
   logic clk=0,ready=1;
   logic [63:0] size_bytes=8;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("hs"),.PROTOCOL(BW_VALID_READY),.DYNAMIC_BYTES(1),
     .WINDOW_BASIS(BW_CYCLE),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) hs
     (.clk(clk),.reset_n(1'b1),.valid(1'b1),.ready(ready),.size_bytes(size_bytes),.size_known(1'b1));
@@ -17,8 +17,8 @@ module tb_group_cycle_quality;
     #1;clk=1;#1;clk=0;
   endtask
   initial begin
-    define_group("cycle.quality",2);add_point_member("cycle.quality","hs");add_point_member("cycle.quality","flit");
-    finish_configuration();wait(monitor_ready);
+    add_point_member("cycle.quality","hs");add_point_member("cycle.quality","flit");
+    wait(monitor_ready);
     sample(250000,1,8);sample(750000,1,0);
     if(group_mon.window_bytes!=24 || group_mon.coverage_cycles!=1 || !group_mon.window_warmup ||
        group_mon.raw_record.byte_inc!=16 || group_mon.raw_record.event_inc!=2 ||
@@ -41,12 +41,12 @@ module tb_group_cycle_quality;
        !group_mon.events_complete || group_mon.result_seq!=6 || group_mon.total_bytes!=136 ||
        group_mon.total_events!=12 || $abs(group_mon.bytes_per_cycle-20.0)>1e-10)
       $fatal(1,"group quality must recover when old unknown positions expire exactly");
-    #(10000000-$time);
-    if(group_mon.result_seq!=6 || group_mon.window_end_ticks!=3250000 || group_mon.window_bytes!=40)
+    #(10000002-$time);
+    if(group_mon.result_seq!=6 || group_mon.window_end_ticks!=3250001 || group_mon.window_bytes!=40)
       $fatal(1,"cycle group must hold original snapshot and sequence throughout clock stop");
     sample(10250000,1,8);
-    if(group_mon.result_seq!=7 || group_mon.window_start_ticks!=2750000 ||
-       group_mon.window_end_ticks!=10250000 || group_mon.window_bytes!=48 ||
+    if(group_mon.result_seq!=7 || group_mon.window_start_ticks!=2750001 ||
+       group_mon.window_end_ticks!=10250001 || group_mon.window_bytes!=48 ||
        group_mon.window_events!=4 || $abs(group_mon.bandwidth_gbps-6.4)>1e-10 ||
        $abs(group_mon.bytes_per_cycle-24.0)>1e-10 || group_mon.total_bytes!=160 ||
        group_mon.total_events!=14 || !group_mon.window_valid || group_mon.accepted_record_seq!=8)

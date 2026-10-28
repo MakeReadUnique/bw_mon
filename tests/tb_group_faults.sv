@@ -6,16 +6,16 @@ module tb_group_faults;
   string mode;
   bw_record_t frame,replayed;
   bw_control_t control;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("good"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(8)) good
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_group_mon #(.GROUP_ID("fault.group"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) group_mon
     (.clk(clk),.reset_n(1'b1));
   initial begin
     if(!$value$plusargs("MODE=%s",mode))$fatal(1,"MODE required");
-    define_group("fault.group",2);add_point_member("fault.group","fault");add_point_member("fault.group","good");
+    add_point_member("fault.group","fault");add_point_member("fault.group","good");
     point_handle=register_point("fault","controlled.fault",BW_NS,1,1);
-    source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
+    source=point_source_handle(point_handle);wait(monitor_ready);
     control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;
     publish_control(source,control);
     frame='0;frame.timestamp_ticks=250000;frame.record_seq=1;frame.edge_index=1;
@@ -35,6 +35,6 @@ module tb_group_faults;
         publish_frame(source,frame);publish_frame(source,replayed);
       end
     end
-    #(2000000-$time);$fatal(1,"expected core error did not occur");
+    #(2000002-$time);$fatal(1,"expected core error did not occur");
   end
 endmodule

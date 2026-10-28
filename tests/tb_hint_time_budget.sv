@@ -1,7 +1,7 @@
 module tb_hint_time_budget;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   // With cycle windows and no clock, only the independent ns hint timer can
   // reach an action beyond the immutable 40us monitor-system budget.
   bw_point_mon #(.PROTOCOL(BW_VALID_READY),.WINDOW_BASIS(BW_CYCLE),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),

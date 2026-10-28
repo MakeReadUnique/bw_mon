@@ -2,7 +2,7 @@ module tb_metrics_first_boundary;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("metrics.first_boundary"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .FIXED_BYTES(10),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),
     .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
@@ -34,7 +34,7 @@ module tb_metrics_first_boundary;
         $fatal(1,"later unknown activity leaves the last transfer uncertain despite an earlier actual tail");
       return;
     end
-    if(result.last_steady.start_ticks!=4000000 || result.last_steady.end_ticks!=11250000 ||
+    if(result.last_steady.start_ticks!=4000001 || result.last_steady.end_ticks!=11250001 ||
        result.last_steady.byte_count!=70 || result.last_steady.duration_ticks!=7250000 ||
        !result.last_steady.bytes_complete || !result.last_steady.duration_valid ||
        !result.last_steady.bandwidth_valid ||
@@ -46,19 +46,18 @@ module tb_metrics_first_boundary;
   endtask
   initial begin
     bw_report_summary_t summary;
-    define_group("metrics.first_boundary_group",1);
     add_point_member("metrics.first_boundary_group","metrics.first_boundary");
-    finish_configuration();wait(monitor_ready);
+    wait(monitor_ready);
     #250000;valid=($test$plusargs("KNOWN_START") || $test$plusargs("UNKNOWN_END")) ? 1'b0 : 1'bx;clk=1;#1;clk=0;
     for(int n=1;n<=10;n++)begin
       #(250000+ns_to_ticks(n)-$time);valid=1;clk=1;#1;clk=0;
     end
-    #(11250000-$time);valid=0;clk=1;#1;clk=0;
+    #(11250002-$time);valid=0;clk=1;#1;clk=0;
     if($test$plusargs("UNKNOWN_END"))begin
-      #(12250000-$time);valid=1'bx;clk=1;#1;clk=0;
-      #(13250000-$time);valid=0;clk=1;#1;clk=0;
-      #(19250001-$time);
-    end else #(17250001-$time);
+      #(12250002-$time);valid=1'bx;clk=1;#1;clk=0;
+      #(13250002-$time);valid=0;clk=1;#1;clk=0;
+      #(19250003-$time);
+    end else #(17250003-$time);
     check_result(point.episode_result);check_result(aggregate.episode_result);
     summary=check_report_summary();
     if(summary.pass_count!=($test$plusargs("UNKNOWN_END") ? 0 : 2) ||

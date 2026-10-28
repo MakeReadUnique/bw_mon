@@ -2,7 +2,7 @@ module tb_credit_boundaries;
   timeunit 1ns;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,hf=1,hr=1,zf=0,zr=0,ur=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(64),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .CREDIT_ENABLE(1),.CREDIT_CAPACITY(64'hffffffffffffffff),.CREDIT_INITIAL(64'hffffffffffffffff),
     .CREDIT_INITIAL_KNOWN(1),.CREDIT_RETURN_TIMING(BW_RETURN_SAME_CYCLE)) huge

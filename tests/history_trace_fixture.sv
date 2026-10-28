@@ -16,7 +16,7 @@ module history_trace_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg
   bw_u64_t cycle_right_ticks[8]='{1250000,2250000,3250000,5250000,7250000,10250000,11250000,12250000};
   bit cycle_complete[8]='{1,1,1,0,0,1,1,1};
   bit cycle_reset[8]='{0,0,0,0,0,0,1,1};
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("history.variable"),.DYNAMIC_BYTES(1),.WINDOW_BASIS(BASIS),
     .WINDOW_WIDTH(3),.UPDATE_STRIDE(2),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),
     .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(2),
@@ -67,14 +67,14 @@ module history_trace_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg
   endtask
   history_trace_checker checker();
   initial begin
-    define_group("history.group",2);add_point_member("history.group","history.variable");add_point_member("history.group","history.fixed");
-    finish_configuration();wait(monitor_ready);
+    add_point_member("history.group","history.variable");add_point_member("history.group","history.fixed");
+    wait(monitor_ready);
     sample(250000,1,4);sample(750000,1,4);sample(1250000,1,4);sample(1750000,1,4);sample(2250000,1,4);
     sample(2750000,1,0);sample(3250000,1,'x);sample(3750000,1'bx,4);sample(5250000,0,'x);
     sample(6250000,1,8);sample(7250000,1,8);sample(8250000,1,8);sample(10250000,1,8);sample(10750000,1,8);
-    #(11100000-$time);reset_n=0;sample(11250000,1,8);
-    #(11500000-$time);reset_n=1;sample(11750000,1,8);sample(12250000,1,0);
-    #(16000001-$time);
+    #(11100002-$time);reset_n=0;sample(11250000,1,8);
+    #(11500002-$time);reset_n=1;sample(11750000,1,8);sample(12250000,1,0);
+    #(16000003-$time);
     if(checked_windows!=8 || group_mon.raw_record.record_seq!=17 || group_mon.accepted_record_seq!=17 ||
        group_mon.total_bytes!=204 || group_mon.total_events!=31 || group_mon.stats_epoch!=0 ||
        variable_point.total_bytes!=8 || variable_point.total_events!=2 || variable_point.stats_epoch!=1 ||

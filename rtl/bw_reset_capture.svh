@@ -21,11 +21,14 @@
 
   function void bw_native_reset_seen(input bit prepare,input logic previous,input logic current);
     captured_reset_t action;
-    if(external_reset_capture || !monitor_ready || core_failure_seen)return;
+    // The capture gate is the seal, not the ready publication: internal
+    // preparation (including the initial reset snapshot) completes inside the
+    // sealed slot before ready is published once.
+    if(external_reset_capture || !configuration_sealed || core_failure_seen)return;
     if(!prepare)begin
       check_monitor_time($time,scope_id);
       if(core_failure_seen)return;
-      if(!reset_capture_initialized)append_captured_reset(previous,measurement_start_ticks);
+      if(!reset_capture_initialized)append_captured_reset(previous,$time);
       append_captured_reset(current,$time);
       if(!core_failure_seen)void'(request_slot_settlement(scope_id));
     end else begin

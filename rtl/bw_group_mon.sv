@@ -80,9 +80,18 @@ module bw_group_mon #(
                                       WINDOW_WIDTH,effective_stride);
     transport_source=group_source_handle(group_handle);
     raw_record='0;raw_control='0;core_control='0;
-    wait(monitor_ready);
+    declare_scope_preparation();
+    fork begin
+      #(2);
+      if (!monitor_configured)
+        core_error("SETUP_MISSING",scope_id,
+          "a connected aggregation group requires exactly one bw_mon_setup");
+    end join_none
+    wait(configuration_sealed);
     wait(core.scope_id==scope_id);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    note_scope_prepared();
+    wait(monitor_ready);
   end
 
   task automatic refresh_progress();

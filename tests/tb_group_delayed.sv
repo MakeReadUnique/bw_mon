@@ -6,7 +6,7 @@ module tb_group_delayed;
   int point_handle,transport_source;
   bw_record_t slow_frame;
   bw_control_t initial_control;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("fast"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(8)) fast
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_group_mon #(.GROUP_ID("delayed"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) group_mon
@@ -14,10 +14,10 @@ module tb_group_delayed;
   always @(deliver) if (deliver) deliver_second<=1;
   always @(deliver_second) if (deliver_second) publish_frame(transport_source,slow_frame);
   initial begin
-    define_group("delayed",2);add_point_member("delayed","slow");add_point_member("delayed","fast");
+    add_point_member("delayed","slow");add_point_member("delayed","fast");
     point_handle=register_point("slow","controlled.source",BW_NS,1,1);
     transport_source=point_source_handle(point_handle);
-    finish_configuration();wait(monitor_ready);
+    wait(monitor_ready);
     initial_control='0;initial_control.point_handle=point_handle;initial_control.control_seq=1;
     initial_control.reset_n=1;initial_control.timestamp_ticks=measurement_start_ticks;
     publish_control(transport_source,initial_control);
@@ -30,14 +30,14 @@ module tb_group_delayed;
       $fatal(1,"pending earlier group input must block publication rather than manufacture a complete partial total");
     #249999;deliver<=1;
     #1;
-    if (group_mon.raw_record.timestamp_ticks!=250000 || group_mon.raw_record.edge_index!=1 ||
+    if (group_mon.raw_record.timestamp_ticks!=250001 || group_mon.raw_record.edge_index!=1 ||
         group_mon.raw_record.byte_inc!=40 || group_mon.accepted_record_seq!=1 ||
-        group_mon.result_seq!=1 || group_mon.window_end_ticks!=1000000 ||
+        group_mon.result_seq!=1 || group_mon.window_end_ticks!=1000001 ||
         group_mon.window_bytes!=40 || !group_mon.window_valid ||
         $abs(group_mon.bandwidth_gbps-40.0)>1e-10)
       $fatal(1,"deadline-slot NBA arrival must produce the original logical window after complete input");
     #750000;
-    if (group_mon.result_seq!=2 || group_mon.window_end_ticks!=2000000 ||
+    if (group_mon.result_seq!=2 || group_mon.window_end_ticks!=2000001 ||
         group_mon.window_bytes!=0 || !group_mon.window_valid)
       $fatal(1,"a legal stopped clock creates no missing frames and ns history expires normally");
     $display("TB_PASS group_delayed");$finish;

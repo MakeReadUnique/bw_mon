@@ -7,7 +7,7 @@ module tb_episode_late_metadata;
   bw_u64_t accepted,window_seq,final_seq,tail_ticks;
   bit active,tail_known;
   bw_episode_result_t result;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   // The agreed normalized record/time seam lets the fixture explicitly choose
   // whether T's actual frame arrives before or after T's timer publication.
   bw_stats_core #(.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(1)) core
@@ -58,12 +58,12 @@ module tb_episode_late_metadata;
     frame_toggle<=!frame_toggle;
     #1000000;if(mode==0)deliver_idle_tail();
     #1;
-    if (!tail_known || tail_ticks!=2000000 || final_seq!=0 || accepted!=2)
+    if (!tail_known || tail_ticks!=2000001 || final_seq!=0 || accepted!=2)
       $fatal(1,"the later same-T frame must still establish the real tail after timer publication");
     #1000000;
     if (active || final_seq!=1 || !result.e2e_valid || result.byte_count!=0 ||
         result.event_count!=1 || result.duration_ticks!=1000000 || result.e2e_gbps!=0.0 ||
-        result.confirmation_ticks!=3000000 || window_seq!=3)
+        result.confirmation_ticks!=3000001 || window_seq!=3)
       $fatal(1,"zero-byte activity completes once after tail metadata, without an extra window");
     if(mode==1 && !timer_preceded_metadata)$fatal(1,"timer-first scenario was not exercised");
     if(timer_preceded_metadata)$display("EPISODE_TIMER_FIRST_METADATA");

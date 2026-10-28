@@ -3,7 +3,7 @@ module tb_hint_cycle;
   import bw_mon_pkg::*;
   logic clk=0,reset_n=1,ready=0;
   bw_u64_t held_seq;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_VALID_READY),.FIXED_BYTES(8),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),
     .BACKPRESSURE_ENABLE(1),.BACKPRESSURE_BASIS(BW_CYCLE),.BACKPRESSURE_THRESHOLD(2)) point
     (.clk(clk),.reset_n(reset_n),.valid(1'b1),.ready(ready));
@@ -12,7 +12,7 @@ module tb_hint_cycle;
   bw_point_mon #(.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),.BACKPRESSURE_ENABLE(1)) unsupported
     (.clk(clk),.reset_n(reset_n),.valid(1'b0));
   task automatic edge_at(bw_u64_t at_ticks,bit release_now=0);
-    #(at_ticks-$time);clk=1;if(release_now) ready<=1;#1;clk=0;
+    #(at_ticks+1-$time);clk=1;if(release_now) ready<=1;#1;clk=0;
   endtask
   initial begin
     wait(monitor_ready);
@@ -27,19 +27,19 @@ module tb_hint_cycle;
       $fatal(1,"cycle duration and sequence must hold while clock is stopped despite ns window publications");
     edge_at(10000000,1);
     if(!point.backpressure_hit || point.backpressure_active || point.backpressure_duration_cycles!=2 ||
-       point.backpressure_trigger_ticks!=10000000 || point.backpressure_end_reason!=BW_HINT_RELEASED ||
+       point.backpressure_trigger_ticks!=10000001 || point.backpressure_end_reason!=BW_HINT_RELEASED ||
        point.backpressure_start_cycle!=1 || point.backpressure_end_cycle!=3)
       $fatal(1,"same-edge release must first count completed prior cycle even before recorder ReNBA notification");
-    #(10500000-$time);ready=0;
+    #(10500002-$time);ready=0;
     edge_at(11000000);
     if(point.backpressure_duration_cycles!=0 || point.backpressure_start_cycle!=4)
       $fatal(1,"mid-cycle start must wait for next edge anchor");
     edge_at(12000000);
-    #(12500000-$time);ready=1'bx;#1;
+    #(12500002-$time);ready=1'bx;#1;
     if(point.backpressure_active || point.backpressure_duration_cycles!=1 || point.backpressure_hit ||
        point.backpressure_end_reason!=BW_HINT_UNKNOWN) $fatal(1,"unknown must break cycle evidence");
-    #(13000000-$time);ready=0;clk=1;#1;clk=0;
-    #(14000000-$time);clk=1;reset_n<=0;#1;clk=0;
+    #(13000002-$time);ready=0;clk=1;#1;clk=0;
+    #(14000002-$time);clk=1;reset_n<=0;#1;clk=0;
     if(point.backpressure_active || point.backpressure_duration_cycles!=1 || point.backpressure_hit ||
        point.backpressure_hit_count!=1 || point.backpressure_end_reason!=BW_HINT_RESET)
       $fatal(1,"cycle intervals cannot join across unknown/reset");

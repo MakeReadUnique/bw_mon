@@ -8,7 +8,7 @@ module tb_numeric_record_unknown;
   initial begin
     if(!$value$plusargs("MODE=%s",mode))mode="frame_bytes";
     point_handle=register_point("record.subject","component.record",BW_NS,1,1);
-    source=point_source_handle(point_handle);configure_monitor(1);wait(monitor_ready);
+    source=point_source_handle(point_handle);configure_monitor();wait(monitor_ready);
     #250000;
     frame='0;frame.timestamp_ticks=$time;frame.edge_index=1;frame.record_seq=1;
     frame.byte_inc=1;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;

@@ -8,7 +8,7 @@ module tb_episode_pending;
   bit active;
   int mode=0,handle;
   bw_episode_result_t result;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_WIDTH(4),.UPDATE_STRIDE(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2)) core
     (.scope_id("episode.pending"),.scope_kind(BW_GROUP),.record(frame),.record_toggle(frame_toggle),
      .stats_reset_n(reset_n),.progress_watermark_ticks(watermark),.accepted_record_seq(accepted),
@@ -56,7 +56,7 @@ module tb_episode_pending;
       if (final_seq!=1 || result.status!=BW_EPISODE_RESET_INTERRUPTED || result.bytes_complete ||
           result.events_complete || result.last_known || result.e2e_valid || epoch!=1)
         $fatal(1,"reset with a prior pending source frame must report known partial evidence");
-      #(4000000-$time);deliver(3000000,3,1);#1;watermark=BW_U64_MAX;
+      #(4000002-$time);deliver(3000000,3,1);#1;watermark=BW_U64_MAX;
       if (accepted!=3 || active || final_seq!=1)
         $fatal(1,"reset still accepts late raw input without restarting its statistics");
     end else begin
@@ -67,9 +67,9 @@ module tb_episode_pending;
       if (!active || final_seq!=0 || accepted!=3)
         $fatal(1,"a legal delayed transfer at T=3 must extend the old episode");
       #249999;deliver(4000000,4,0);#1;watermark=BW_U64_MAX;
-      #(6000001-$time);
-      if (active || final_seq!=1 || result.first_ticks!=1000000 || result.last_ticks!=3000000 ||
-          result.tail_ticks!=4000000 || result.confirmation_ticks!=6000000 ||
+      #(6000003-$time);
+      if (active || final_seq!=1 || result.first_ticks!=1000001 || result.last_ticks!=3000001 ||
+          result.tail_ticks!=4000001 || result.confirmation_ticks!=6000001 ||
           result.byte_count!=16 || result.event_count!=2 || result.duration_ticks!=3000000 ||
           !result.e2e_valid || $abs(result.e2e_gbps-5.333333333333333)>1e-10)
         $fatal(1,"raw progress preserves exact logical episode boundaries despite physical delivery delay");

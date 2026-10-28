@@ -1,7 +1,7 @@
 module tb_report_records;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("records.fail"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) failed
     (.clk(1'b0),.reset_n(1'b1));
   bw_point_mon #(.POINT_ID("records.zero"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) zero

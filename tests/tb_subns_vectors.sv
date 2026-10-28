@@ -3,15 +3,15 @@ module tb_subns_vectors;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
   logic [63:0] size_bytes=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.DYNAMIC_BYTES(1),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1)) point
     (.clk(clk),.reset_n(1'b1),.valid(valid),.size_bytes(size_bytes),.size_known(1'b1));
   task automatic send_at(bw_u64_t at_ticks, bw_u64_t bytes_now);
-    #(at_ticks-$time);size_bytes=bytes_now;valid=1;clk=1;
+    #(at_ticks+1-$time);size_bytes=bytes_now;valid=1;clk=1;
     #1;clk=0;valid=0;
   endtask
   task automatic check(bw_u64_t at_ticks, bw_u64_t expected_bytes,real expected_gbps);
-    #(at_ticks-$time);#1;
+    #(at_ticks+1-$time);#1;
     if(point.window_end_ticks!=at_ticks || point.window_start_ticks!=at_ticks-10000000 ||
        point.window_bytes!=expected_bytes || !point.window_valid ||
        $abs(point.bandwidth_gbps-expected_gbps)>1e-10)

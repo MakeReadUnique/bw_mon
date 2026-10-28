@@ -4,7 +4,7 @@ module tb_reset_deassert_sample;
   logic clk=0, reset_n=0;
   logic dut_sampled_reset_n=0;
   int dut_transfers=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("deassert.ns"), .WINDOW_WIDTH(2), .UPDATE_STRIDE(1),
     .FIXED_BYTES(8)) point (.clk(clk), .reset_n(reset_n), .valid(1'b1));
   bw_point_mon #(.POINT_ID("deassert.cycle"), .WINDOW_BASIS(BW_CYCLE),

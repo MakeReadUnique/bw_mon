@@ -3,7 +3,7 @@ module tb_hint_cycle_truncation;
   import bw_mon_pkg::*;
   logic clk=0;
   bw_u64_t held_seq;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_VALID_READY),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),
     .BACKPRESSURE_ENABLE(1),.BACKPRESSURE_BASIS(BW_CYCLE),.BACKPRESSURE_THRESHOLD(3)) point
     (.clk(clk),.reset_n(1'b1),.valid(1'b1),.ready(1'b0));

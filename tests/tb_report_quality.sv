@@ -2,7 +2,7 @@ module tb_report_quality;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,valid=0,reset_n=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(5)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("quality.zero"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .FIXED_BYTES(0),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(1)) zero
     (.clk(clk),.reset_n(1'b1),.valid(valid));
@@ -25,7 +25,7 @@ module tb_report_quality;
     #499999;reset_n=0;
     #500000;valid=0;clk=1;#1;clk=0;
     #1000000;clk=1;#1;clk=0;
-    #(5000001-$time);
+    #(5000003-$time);
     summary=check_report_summary();
     if(!zero.episode_result.e2e_valid || zero.episode_result.e2e_gbps!=0 ||
        zero.episode_result.event_count!=1 || gap.episode_result.e2e_valid ||

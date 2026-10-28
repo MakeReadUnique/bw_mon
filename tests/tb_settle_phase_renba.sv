@@ -3,7 +3,7 @@ module tb_settle_phase_renba;
   import bw_mon_pkg::*;
   logic clk=0,reset_n=1;
   int mode=0,late_confirmations=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("settle.phase"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(8),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),.PHASE_ENABLE(1),.PHASE_N(3),
     .PHASE_MIN_SPAN(2),.PHASE_K(1),
@@ -19,13 +19,13 @@ module tb_settle_phase_renba;
   initial begin
     void'($value$plusargs("MODE=%d",mode));wait(monitor_ready);
     for(int n=0;n<6;n++)begin #(250000+n*500000-$time);clk=1;#1;clk=0;end
-    #(3000000-$time);if(mode==0)reset_n<=0;
+    #(3000002-$time);if(mode==0)reset_n<=0;
     #1;
     if(point.stats_epoch!=1 || point.result_seq!=2 || point.phase_id!=0 ||
        point.phase_result_seq!=0 || late_confirmations!=0 ||
        point.episode_result_seq!=1 || point.episode_result.status!=BW_EPISODE_RESET_INTERRUPTED ||
        point.episode_result.stats_epoch!=0 || point.episode_result.episode_id!=1 ||
-       point.episode_result.first_ticks!=250000 || point.episode_result.last_ticks!=2750000 ||
+       point.episode_result.first_ticks!=250001 || point.episode_result.last_ticks!=2750001 ||
        point.episode_result.byte_count!=48 || point.episode_result.event_count!=6 ||
        point.episode_result.tail_known || point.episode_result.duration_valid ||
        point.episode_result.e2e_valid || point.episode_result.last_steady_found)

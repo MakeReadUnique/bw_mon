@@ -2,14 +2,14 @@ module tb_credit_ledger;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,reset_n=1,flitv=0,lcrdv=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(32),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .CREDIT_ENABLE(1),.CREDIT_CAPACITY(2),.CREDIT_INITIAL(2),.CREDIT_INITIAL_KNOWN(1)) enabled
     (.clk(clk),.reset_n(reset_n),.flitv(flitv),.lcrdv(lcrdv));
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(32),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) disabled
     (.clk(clk),.reset_n(reset_n),.flitv(flitv),.lcrdv(lcrdv));
   task automatic sample_at(longint unsigned at_ticks,logic send_now,logic return_now);
-    #(at_ticks-$time);flitv=send_now;lcrdv=return_now;clk=1;#1fs;clk=0;
+    #(at_ticks+1-$time);flitv=send_now;lcrdv=return_now;clk=1;#1fs;clk=0;
     if(enabled.raw_record.timestamp_ticks!=at_ticks || disabled.raw_record.timestamp_ticks!=at_ticks)
       $fatal(1,"credit stimulus/table time must match the actual integer-fs source timestamp");
   endtask

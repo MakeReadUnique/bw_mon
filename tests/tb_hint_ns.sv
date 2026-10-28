@@ -2,7 +2,7 @@ module tb_hint_ns;
   timeunit 1ns;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic reset_n=1,ready=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_VALID_READY),.FIXED_BYTES(8),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),
     .BACKPRESSURE_ENABLE(1),.BACKPRESSURE_BASIS(BW_NS),.BACKPRESSURE_THRESHOLD(2)) point
     (.clk(1'b0),.reset_n(reset_n),.valid(1'b1),.ready(ready));
@@ -12,7 +12,7 @@ module tb_hint_ns;
     if(!point.backpressure_active || point.backpressure_hit || point.backpressure_start_ticks!=0)
       $fatal(1,"stopped-clock ns interval must start from live known condition");
     #2fs;
-    if(!point.backpressure_hit || point.backpressure_trigger_ticks!=2000000 ||
+    if(!point.backpressure_hit || point.backpressure_trigger_ticks!=2000001 ||
        point.backpressure_hit_count!=1 || point.backpressure_duration_ticks!=2000000)
       $fatal(1,"ns threshold must trigger once with no sampling clocks");
     #999999fs;ready=1;#1fs;
@@ -30,7 +30,7 @@ module tb_hint_ns;
     #499999fs;reset_n=1;
     #2000001fs;
     if(!point.backpressure_hit || point.backpressure_hit_count!=2 ||
-       point.backpressure_trigger_ticks!=8500000 || point.total_events!=0)
+       point.backpressure_trigger_ticks!=8500001 || point.total_events!=0)
       $fatal(1,"reset release starts independent interval, diagnostics do not invent transfers");
     #499999fs;
     $display("TB_PASS hint_ns");$finish;

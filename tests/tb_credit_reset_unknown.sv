@@ -2,7 +2,7 @@ module tb_credit_reset_unknown;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,reset_n=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(8),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .CREDIT_ENABLE(1),.CREDIT_CAPACITY(2),.CREDIT_INITIAL(1),.CREDIT_INITIAL_KNOWN(1)) point
     (.clk(clk),.reset_n(reset_n),.flitv(1'b1),.lcrdv(1'b0));

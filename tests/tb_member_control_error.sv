@@ -5,7 +5,7 @@ module tb_member_control_error;
   bit control_toggle=0;
   int handle;
   bit invalid_point=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_WIDTH(2), .UPDATE_STRIDE(1)) core
     (.scope_id("control.scope"), .record('0), .record_toggle(1'b0),
      .member_control(control), .member_control_toggle(control_toggle),.stats_reset_n(1'b1),

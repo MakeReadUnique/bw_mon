@@ -2,7 +2,7 @@ module tb_report_identity;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3)) setup();
+  bw_mon_setup setup();
   for(genvar i=0;i<1;i++) begin:gen_points
     bw_point_mon #(.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(10),
       .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(1)) bw

@@ -1,7 +1,7 @@
 module phase_config_fixture #(parameter int CASE=0);
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("phase.config"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(10),
     .EPISODE_ENABLE(CASE!=9),.SILENCE_THRESHOLD(2),.PHASE_ENABLE(1),
     .PHASE_N(CASE==1 ? 64'd2 : CASE==8 ? 64'd2147483648 : CASE==11 ? 64'bx : 64'd3),

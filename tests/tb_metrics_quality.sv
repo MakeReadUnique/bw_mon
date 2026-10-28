@@ -4,7 +4,7 @@ module tb_metrics_quality;
   logic clk=0,valid=0;
   logic [63:0] size[2];
   int bytes_by_sample[12]='{10,10,10,10,11,12,14,16,18,20,22,24};
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("phase.hysteresis%0d",g)),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
       .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),
@@ -23,7 +23,7 @@ module tb_metrics_quality;
       size[0]=bytes_by_sample[n];size[1]=(n==7) ? 64'bx : bytes_by_sample[n];
       clk=1;#1;clk=0;
     end
-    #(12250000-$time);valid=0;clk=1;#1;clk=0;
+    #(12250002-$time);valid=0;clk=1;#1;clk=0;
   end
   initial begin
     wait(monitor_ready);
@@ -31,8 +31,8 @@ module tb_metrics_quality;
     if(scopes[0].point.phase_candidate!=BW_PHASE_STEADY || scopes[0].point.phase_candidate_count!=1)
       $fatal(1,"stable candidate requires the first three eligible published results");
     #1000000;
-    if(scopes[0].point.phase_current!=BW_PHASE_STEADY || scopes[0].point.phase_start_ticks!=3000000 ||
-       scopes[0].point.phase_confirmation_ticks!=4000000)
+    if(scopes[0].point.phase_current!=BW_PHASE_STEADY || scopes[0].point.phase_start_ticks!=3000001 ||
+       scopes[0].point.phase_confirmation_ticks!=4000001)
       $fatal(1,"K2 confirms stable with its earlier candidate boundary");
     #1000000;
     if(scopes[0].point.phase_current!=BW_PHASE_STEADY || scopes[0].point.phase_fit_delta!=1.0 ||
@@ -46,9 +46,9 @@ module tb_metrics_quality;
        scopes[1].point.phase_candidate_count!=1)
       $fatal(1,"trend creates a fresh candidate without prematurely replacing the current phase");
     #1000000;
-    if(scopes[0].point.phase_current!=BW_PHASE_RAMP || scopes[0].point.phase_start_ticks!=7000000 ||
-       scopes[0].point.phase_confirmation_ticks!=8000000 || scopes[0].point.phase_result_seq!=1 ||
-       scopes[0].point.phase_result.start_ticks!=3000000 || scopes[0].point.phase_result.end_ticks!=7000000 ||
+    if(scopes[0].point.phase_current!=BW_PHASE_RAMP || scopes[0].point.phase_start_ticks!=7000001 ||
+       scopes[0].point.phase_confirmation_ticks!=8000001 || scopes[0].point.phase_result_seq!=1 ||
+       scopes[0].point.phase_result.start_ticks!=3000001 || scopes[0].point.phase_result.end_ticks!=7000001 ||
        scopes[0].point.phase_result.start_total_bytes!=30 || scopes[0].point.phase_result.end_total_bytes!=77)
       $fatal(1,"new ramp confirmation backtracks the old steady's final raw-count boundary");
     if(scopes[1].point.phase_current!=BW_PHASE_UNDETERMINED || scopes[1].point.phase_active ||
@@ -73,12 +73,12 @@ module tb_metrics_quality;
        scopes[1].point.phase_candidate_ticks!=11000000)
       $fatal(1,"recovered N-point evidence must restart candidate confirmation");
     #1000000;
-    if(scopes[1].point.phase_current!=BW_PHASE_RAMP || scopes[1].point.phase_start_ticks!=11000000 ||
-       scopes[1].point.phase_confirmation_ticks!=12000000)
+    if(scopes[1].point.phase_current!=BW_PHASE_RAMP || scopes[1].point.phase_start_ticks!=11000001 ||
+       scopes[1].point.phase_confirmation_ticks!=12000001)
       $fatal(1,"a fresh K-chain confirms only after recovery");
-    #(18000001-$time);
+    #(18000003-$time);
     if(scopes[0].point.phase_result_seq!=2 || scopes[1].point.phase_result_seq!=2 ||
-       scopes[0].point.phase_result.end_ticks!=12250000 || scopes[1].point.phase_result.end_ticks!=12250000 ||
+       scopes[0].point.phase_result.end_ticks!=12250001 || scopes[1].point.phase_result.end_ticks!=12250001 ||
        !scopes[0].point.episode_result.e2e_valid || scopes[1].point.episode_result.e2e_valid)
       $fatal(1,"final phase clipping and whole-episode byte quality remain independent");
     if(scopes[1].point.episode_result.variation.stddev_valid ||

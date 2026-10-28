@@ -74,7 +74,7 @@
   endfunction
 
   function automatic int registered_scope_count(logic [1:0] kind);
-    if (!monitor_ready) core_error("NOT_READY","registry","scope query before ready");
+    if (!configuration_sealed) core_error("NOT_READY","registry","scope query before configuration is sealed");
     if($isunknown(kind))begin core_error("INTEGER_UNKNOWN","registry",$sformatf("scope_kind=%b",kind));return 0;end
     if(!(kind inside {BW_POINT,BW_GROUP}))begin core_error("SCOPE_REFERENCE","registry",$sformatf("scope_kind=%0d",kind));return 0;end
     return kind==BW_POINT ? registered_points.size() : registered_groups.size();
@@ -90,8 +90,14 @@
     return kind==BW_POINT ? registered_points[int'(index)].id : registered_groups[int'(index)].id;
   endfunction
 
+  // Actual time is the seal: registration and member rules are legal only in
+  // the t=0 collection slot. A positive-time call is late even if it precedes
+  // the coordinator's own seal action in that slot.
   function automatic void require_configuration_open(string id);
-    if (monitor_ready || configuration_finished)
+    if ($time>0)
+      core_error("LATE_CONFIG",id,
+        "registration and membership are only legal at actual time zero");
+    if (configuration_sealed || monitor_ready)
       core_error("CONFIG_FROZEN",id,"membership/configuration is sealed");
   endfunction
 
@@ -222,9 +228,6 @@
       end
       if (group.members.size()==0)
         core_error("EMPTY_GROUP",group.id,"group has no direct members");
-      if (group.members.size()!=group.expected_members)
-        core_error("MEMBER_COUNT",group.id,
-          $sformatf("expected=%0d actual=%0d after deduplication",group.expected_members,group.members.size()));
       edge_count=checked_add(edge_count,bw_u64_t'(group.members.size()),group.id);
       if (edge_count>65536) core_error("TOPOLOGY_LIMIT",group.id,
         $sformatf("more than 65536 direct-member edges: direct_edges=%0d maximum=65536",edge_count));
@@ -255,43 +258,53 @@
     end
   endfunction
 
-  function automatic void try_ready();
-    if (!monitor_configured || monitor_ready) return;
-    if (registered_points.size()>expected_point_count)
-      core_error("POINT_COUNT","setup",
-        $sformatf("expected=%0d actual=%0d",expected_point_count,registered_points.size()));
-    if (!configuration_finished) return;
-    if (declared_group_count!=expected_group_count)
-      core_error("GROUP_COUNT","setup",
-        $sformatf("expected=%0d declared=%0d",expected_group_count,declared_group_count));
-    foreach (registered_groups[g]) begin
-      if (!registered_groups[g].declared)
-        core_error("GROUP_DEFINITION",registered_groups[g].id,"owner has no group definition");
-      if (!registered_groups[g].owner_registered) return;
-    end
-    if (registered_points.size()!=expected_point_count) return;
+  // Seal resolves the collected graph. It runs in the first positive time
+  // slot: forward references are resolved, duplicates removed, counts derived
+  // and routing frozen before any participant may observe readiness.
+  function automatic void seal_configuration();
+    if (!monitor_configured || monitor_ready || configuration_sealed) return;
+    configuration_sealed=1;configuration_finished=1;
+    if (registered_points.size()+registered_groups.size()==0)
+      core_error("EMPTY_SCOPE","setup",
+        "a setup with no registered point or group cannot start");
+    foreach (registered_groups[g])
+      if (!registered_groups[g].owner_registered)
+        core_error("GROUP_OWNER",registered_groups[g].id,
+          "member rules exist but no bw_group_mon instance declared this group");
+    expected_point_count=registered_points.size();
     freeze_routing();
-    measurement_start_ticks=$time;monitor_ready=1;
-    if(report_sink!=null) report_sink.on_ready();
-    $display("BW_READY time_ticks=%0d points=%0d groups=%0d",measurement_start_ticks,
-             registered_points.size(),declared_group_count);
+    configuration_seq=checked_add(configuration_seq,1,"configuration");
   endfunction
 
-  function automatic void configure_monitor(logic [63:0] expected,
-      logic [63:0] groups=0,logic [63:0] missing_timeout_ns=1);
+  function automatic void declare_scope_preparation();
+    preparing_scopes=checked_add(preparing_scopes,1,"setup");
+  endfunction
+
+  function automatic void note_scope_prepared();
+    prepared_scopes=checked_add(prepared_scopes,1,"setup");
+  endfunction
+
+  // Ready is published once, after every scope and report participant is
+  // prepared. T is the actual seal slot; the supported budget ends at T+40us.
+  function automatic void start_monitor();
+    if (monitor_ready || !configuration_sealed) return;
+    measurement_start_ticks=$time;monitor_start_ticks=$time;
+    // Report registration is a participant of preparation, not a ready
+    // consumer: it completes before the single ready publication.
+    if(report_sink!=null) report_sink.on_ready();
+    monitor_ready=1;
+    $display("BW_READY time_ticks=%0d points=%0d groups=%0d budget_ticks=%0d timescale=1fs",
+             measurement_start_ticks,registered_points.size(),registered_groups.size(),
+             BW_MONITOR_LIMIT_TICKS);
+  endfunction
+
+  function automatic void configure_monitor();
     if (monitor_configured || monitor_ready)
-      core_error("CONFIG_FROZEN","setup","configuration may be completed only once");
-    if ($isunknown(expected) || expected==0 || expected>16384)
-      core_error("POINT_COUNT","setup","expected_point_count must be 1..16384");
-    if ($isunknown(groups) || groups>4096) core_error("GROUP_COUNT","setup","group count must be known and at most 4096");
-    if ($isunknown(missing_timeout_ns) || missing_timeout_ns==0)
-      core_error("FRAME_TIMEOUT_CONFIG","setup","missing-record timeout must be positive");
-    expected_point_count=expected;expected_group_count=groups;
-    missing_record_timeout_ticks=ns_to_ticks(missing_timeout_ns,"missing-record timeout");
+      core_error("CONFIG_FROZEN","setup","only one bw_mon_setup may be installed");
+    if ($time>0)
+      core_error("LATE_CONFIG","setup","the coordinator must be installed at actual time zero");
     monitor_start_ticks=$time;monitor_configured=1;
-    if (groups==0) configuration_finished=1;
     configuration_seq=checked_add(configuration_seq,1,"configuration");
-    try_ready();
   endfunction
 
   function automatic int register_point(string id,string monitor_path,logic [1:0] basis,
@@ -299,7 +312,7 @@
     bw_point_registration_t entry;
     bw_source_state source;
     int handle,transport;
-    if (monitor_ready) core_error("REGISTRATION_FROZEN",id,"registration after ready");
+    require_configuration_open(id);
     if (id.len()==0) core_error("POINT_ID",monitor_path,"empty Point ID");
     if (point_by_id.exists(id))
       core_error("DUPLICATE_POINT",id,
@@ -315,7 +328,7 @@
     check_storage_growth(registered_points.size(),id,"registry.points",$time);
     if(core_failure_seen)return 0;
     registered_points.push_back(entry);point_by_id[id]=handle;
-    registration_seq=checked_add(registration_seq,1,"registration");try_ready();
+    registration_seq=checked_add(registration_seq,1,"registration");
     return handle;
   endfunction
 
@@ -324,29 +337,18 @@
     int handle;
     bw_group_state group;
     bw_source_state source;
-    if (monitor_ready) core_error("REGISTRATION_FROZEN",id,"group owner after ready");
+    require_configuration_open(id);
     if (id.len()==0) core_error("GROUP_ID",monitor_path,"empty Group ID");
     validate_window(basis,width,stride,id);
-    handle=group_handle_for_id(id,!configuration_finished);group=registered_groups[handle];
+    // A real bw_group_mon instance is itself the group declaration.
+    handle=group_handle_for_id(id,1);group=registered_groups[handle];
     if (group.owner_registered)
       core_error("DUPLICATE_OWNER",id,$sformatf("first=%s second=%s",group.owner_path,monitor_path));
     group.owner_registered=1;group.owner_path=monitor_path;source=registered_sources[group.source_handle];
     source.monitor_path=monitor_path;
     source.basis=bw_basis_t'(basis);source.width=width;source.stride=stride;
-    registration_seq=checked_add(registration_seq,1,"registration");try_ready();
+    registration_seq=checked_add(registration_seq,1,"registration");
     return handle;
-  endfunction
-
-  function automatic void define_group(string id,logic [63:0] expected_members);
-    int handle;
-    require_configuration_open(id);
-    if ($isunknown(expected_members) || expected_members==0 || expected_members>16384)
-      core_error("MEMBER_COUNT",id,"expected direct-member count must be 1..16384");
-    handle=group_handle_for_id(id,1);
-    if (registered_groups[handle].declared)
-      core_error("GROUP_DEFINITION",id,"duplicate group definition");
-    registered_groups[handle].declared=1;registered_groups[handle].expected_members=expected_members;
-    declared_group_count++;configuration_seq=checked_add(configuration_seq,1,"configuration");
   endfunction
 
   function automatic void add_member(string group_id,logic [1:0] member_kind,string member_id,
@@ -354,7 +356,8 @@
     int handle;
     bw_member_rule_t rule;
     require_configuration_open(group_id);
-    handle=group_handle_for_id(group_id);
+    // Member rules may arrive before the owning instance registers.
+    handle=group_handle_for_id(group_id,1);
     if (member_id.len()==0 || $isunknown(member_kind) || !(member_kind inside {BW_POINT,BW_GROUP}) ||
         $isunknown(match_kind) || !(match_kind inside {BW_EXACT,BW_PREFIX}) ||
         (member_kind==BW_GROUP && match_kind!=BW_EXACT))
@@ -374,15 +377,11 @@
     add_member(group_id,BW_GROUP,child_group_id,BW_EXACT);
   endfunction
 
-  function automatic void finish_configuration();
-    require_configuration_open("setup");configuration_finished=1;
-    configuration_seq=checked_add(configuration_seq,1,"configuration");try_ready();
-  endfunction
-
   function automatic string startup_status();
     string detail;
-    detail=$sformatf("expected_points=%0d registered_points=%0d expected_groups=%0d declared_groups=%0d configuration_finished=%0d",
-      expected_point_count,registered_points.size(),expected_group_count,declared_group_count,configuration_finished);
+    detail=$sformatf("setup_installed=%0b sealed=%0b ready=%0b registered_points=%0d registered_groups=%0d prepared_scopes=%0d",
+      monitor_configured,configuration_sealed,monitor_ready,registered_points.size(),
+      registered_groups.size(),prepared_scopes);
     foreach (registered_groups[g])
       if (!registered_groups[g].owner_registered) detail={detail," missing_owner=",registered_groups[g].id};
     return detail;

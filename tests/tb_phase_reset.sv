@@ -2,7 +2,7 @@ module tb_phase_reset;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,reset_n=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("phase.reset"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(10),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(5),.PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(1),
     .PHASE_STEADY_ENTER_ABS(0.0),.PHASE_STEADY_ENTER_REL(0.0),
@@ -23,13 +23,13 @@ module tb_phase_reset;
        point.phase_result.end_known)
       $fatal(1,"own reset clears current phase/evidence and retains the old final fragment without stale scalar identity");
     #999999;reset_n=1;
-    #(7500001-$time);
+    #(7500003-$time);
     if(!point.window_full || !point.phase_eligible || point.phase_evidence_count!=1 ||
        point.phase_current!=BW_PHASE_UNDETERMINED || point.phase_result.stats_epoch!=0)
       $fatal(1,"history and retired activity clear with reset while the old immutable result keeps its epoch");
-    #(9500001-$time);
-    if(point.phase_current!=BW_PHASE_STEADY || point.phase_start_ticks!=9500000 ||
-       point.phase_confirmation_ticks!=9500000 || point.phase_id!=2 || point.episode_id!=2)
+    #(9500003-$time);
+    if(point.phase_current!=BW_PHASE_STEADY || point.phase_start_ticks!=9500001 ||
+       point.phase_confirmation_ticks!=9500001 || point.phase_id!=2 || point.episode_id!=2)
       $fatal(1,"the new statistics epoch must accumulate fresh evidence before confirming its own phase");
     $display("TB_PASS phase_reset");$finish;
   end

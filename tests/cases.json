@@ -40,20 +40,12 @@
   "expect_error": "BW_CORE_ERROR code=DUPLICATE_POINT"
  },
  {
-  "name": "startup_missing",
-  "top": "tb_startup_errors",
-  "plusargs": [
-   "+CASE=missing"
-  ],
-  "expect_error": "BW_CORE_ERROR code=STARTUP_TIMEOUT"
- },
- {
   "name": "startup_late",
   "top": "tb_startup_errors",
   "plusargs": [
    "+CASE=late"
   ],
-  "expect_error": "BW_CORE_ERROR code=REGISTRATION_FROZEN"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
  },
  {
   "name": "startup_reconfigure",
@@ -62,10 +54,6 @@
    "+CASE=reconfigure"
   ],
   "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
- },
- {
-  "name": "startup_deadline",
-  "top": "tb_startup_deadline"
  },
  {
   "name": "byte_config_error",
@@ -1496,22 +1484,6 @@
   "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
  },
  {
-  "name": "group_config_duplicate_definition",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=duplicate_definition"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_DEFINITION"
- },
- {
-  "name": "group_config_extra_group",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=extra_group"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_COUNT"
- },
- {
   "name": "group_config_window",
   "top": "tb_group_config_errors",
   "plusargs": [
@@ -1568,30 +1540,6 @@
   "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EMPTY_GROUP"
  },
  {
-  "name": "group_config_member_count",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=member_count"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
- },
- {
-  "name": "group_config_missing_owner",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=missing_owner"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT"
- },
- {
-  "name": "group_config_missing_finish",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=missing_finish"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT"
- },
- {
   "name": "group_config_member_after_seal",
   "top": "tb_group_config_errors",
   "plusargs": [
@@ -1624,44 +1572,9 @@
   "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
  },
  {
-  "name": "group_startup_deadline",
-  "top": "tb_group_startup_deadline"
- },
- {
   "name": "group_missing_ungrouped",
   "top": "tb_group_missing_ungrouped",
   "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT.*expected_points=3 registered_points=2"
- },
- {
-  "name": "group_unknown_count",
-  "top": "tb_group_unknown_count",
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_COUNT"
- },
- {
-  "name": "group_unknown_timeout",
-  "top": "tb_group_unknown_timeout",
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=FRAME_TIMEOUT_CONFIG"
- },
- {
-  "name": "group_wide_count",
-  "top": "tb_group_wide_count",
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_COUNT"
- },
- {
-  "name": "group_config_unknown_member_count",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=unknown_member_count"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
- },
- {
-  "name": "group_config_wide_member_count",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=wide_member_count"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
  },
  {
   "name": "group_metadata_reactive",
@@ -4350,5 +4263,65 @@
    "cfg_error_fixture.sv"
   ],
   "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EPISODE_CONFIG"
+ },
+ {
+  "name": "auto_start",
+  "top": "tb_auto_start"
+ },
+ {
+  "name": "auto_start_coarse",
+  "top": "tb_auto_start_coarse"
+ },
+ {
+  "name": "auto_start_bind",
+  "top": "tb_auto_start_bind"
+ },
+ {
+  "name": "auto_error_empty_setup",
+  "top": "tb_auto_error_empty_setup",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EMPTY_SCOPE"
+ },
+ {
+  "name": "auto_error_missing_setup",
+  "top": "tb_auto_error_missing_setup",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=SETUP_MISSING"
+ },
+ {
+  "name": "auto_error_duplicate_setup",
+  "top": "tb_auto_error_duplicate_setup",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CONFIG_FROZEN"
+ },
+ {
+  "name": "auto_error_ghost_owner",
+  "top": "tb_auto_error_ghost_owner",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OWNER"
+ },
+ {
+  "name": "auto_error_late_member",
+  "top": "tb_auto_error_late_member",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
+ },
+ {
+  "name": "auto_error_late_register",
+  "top": "tb_auto_error_late_register",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
  }
 ]

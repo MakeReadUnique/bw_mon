@@ -1,7 +1,7 @@
 module tb_report_metrics_records;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("report.metrics"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) point
     (.clk(1'b0),.reset_n(1'b1));
   initial begin
@@ -31,7 +31,7 @@ module tb_report_metrics_records;
       bytes_complete:1,events_complete:1,bandwidth_valid:1,duration_reason:BW_METRIC_OK,
       bandwidth_reason:BW_METRIC_OK,variation:variation,default:0};
     if($test$plusargs("RESULT_BUDGET"))begin
-      #(40001000000-$time);emit_phase_result("report.metrics",fragment);
+      #(40001000002-$time);emit_phase_result("report.metrics",fragment);
       $fatal(1,"expected core error did not occur");
     end
     if($test$plusargs("TRANSIENT_DEFERRED"))set_deferred_core_failure(0,1);

@@ -10,7 +10,7 @@ module tb_metrics_late_recovery;
   bit active;
   int mode=0,handle;
   bw_episode_result_t result;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_WIDTH(4),.UPDATE_STRIDE(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(4)) core
     (.scope_id("metrics.late_recovery"),.scope_kind(BW_GROUP),.record(frame),.record_toggle(frame_toggle),
      .stats_reset_n(reset_n),.progress_watermark_ticks(watermark),.accepted_record_seq(accepted),
@@ -56,14 +56,14 @@ module tb_metrics_late_recovery;
     #1000000;deliver(1000000,1,1);#1000000;deliver(2000000,2,0);
     #500000;deliver_control(2500000,1,1'bx);watermark=3500000;
     if(mode!=0)begin
-      #(9000000-$time);reset_n=0;
-      #(9500000-$time);reset_n=1;
+      #(9000002-$time);reset_n=0;
+      #(9500002-$time);reset_n=1;
       if(mode==3)begin
-        #(9600000-$time);reset_n=1'bx;
-        #(9700000-$time);reset_n=1;
+        #(9600002-$time);reset_n=1'bx;
+        #(9700002-$time);reset_n=1;
       end
     end
-    #(10000000-$time);
+    #(10000002-$time);
     // Original recovery3.5 reaches the owner together with its later raw frame.
     // Both channels are the agreed normalized record/control component seam.
     deliver_control(mode==2 ? 9750000 : mode==4 ? 9500000 : 3500000,2,1'b1);deliver(10000000,3,1);watermark=10000000;
@@ -74,10 +74,10 @@ module tb_metrics_late_recovery;
        result.variation.minmax_reason!=(mode!=0 ? BW_METRIC_RESET : BW_METRIC_BOUNDARY_UNKNOWN) ||
        !active || accepted!=3 || epoch!=int'(mode!=0))
       $fatal(1,"late original recovery must preserve Q7.5 completion and start new episode10 without backward quality queries");
-    #(11000000-$time);deliver(11000000,4,0);watermark=BW_U64_MAX;
-    #(15000001-$time);
+    #(11000002-$time);deliver(11000000,4,0);watermark=BW_U64_MAX;
+    #(15000003-$time);
     if(final_seq!=2 || result.e2e_valid!=(!(mode inside {2,3})) || result.first_known!=(!(mode inside {2,3})) ||
-       result.first_ticks!=10000000 || result.tail_ticks!=11000000 || result.confirmation_ticks!=15000000 ||
+       result.first_ticks!=10000001 || result.tail_ticks!=11000001 || result.confirmation_ticks!=15000001 ||
        (!(mode inside {2,3}) && result.e2e_gbps!=8.0))
       $fatal(1,"new episode quality must retain actual epoch gaps and exclude historical uncertainty");
     $display("TB_PASS metrics_late_recovery");$finish;

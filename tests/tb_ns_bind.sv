@@ -7,7 +7,7 @@ module tb_ns_bind;
   timeunit 1ns; timeprecision 1fs;
   logic clk = 0, valid0 = 0, valid1 = 0;
   bw_test_bus p0(clk, valid0), p1(clk, valid1);
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   task automatic transfer(input time delay_ticks);
     #(delay_ticks * 1fs); valid0 = 1;
     #1fs; clk = 1;
@@ -39,10 +39,10 @@ module tb_ns_bind;
         transfer(7499998); // 10 ns: excluded from [0,10)
       end
       begin
-        #10ns; check(128,12.8,10000000);
-        #999999fs; check(192,19.2,11000000); // includes left endpoint 1 ns
-        #999999fs; check(128,12.8,12000000); // expires 1 ns
-        #10999999fs; check(0,0.0,23000000); // timer advances without clock
+        #10ns; check(128,12.8,10000001);
+        #999999fs; check(192,19.2,11000001); // includes left endpoint 1 ns
+        #999999fs; check(128,12.8,12000001); // expires 1 ns
+        #10999999fs; check(0,0.0,23000001); // timer advances without clock
       end
     join
     if (p0.bw.total_bytes !== 192 || p0.bw.total_events !== 3)

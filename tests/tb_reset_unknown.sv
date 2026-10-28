@@ -2,7 +2,7 @@ module tb_reset_unknown;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0, reset_n=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("reset.unknown"), .WINDOW_WIDTH(2), .UPDATE_STRIDE(1),
     .FIXED_BYTES(8)) point (.clk(clk), .reset_n(reset_n), .valid(1'b1));
   initial begin

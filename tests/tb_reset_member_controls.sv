@@ -6,7 +6,7 @@ module tb_reset_member_controls;
   bw_u64_t accepted_frame, accepted_controls;
   bit group_complete, group_reset_coverage, group_full;
   real group_gbps;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("member.point"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
     .FIXED_BYTES(8)) point (.clk(clk), .reset_n(point_reset_n), .valid(1'b1));
   // This exercises the already agreed normalized core/control boundary.

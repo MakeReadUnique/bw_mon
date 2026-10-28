@@ -2,7 +2,7 @@ module tb_reset_cycle_unknown;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0, reset_n=1, valid=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("cycle.reset.gap"), .WINDOW_BASIS(BW_CYCLE),
     .WINDOW_WIDTH(2), .UPDATE_STRIDE(1), .FIXED_BYTES(8)) point
     (.clk(clk), .reset_n(reset_n), .valid(valid));
@@ -14,11 +14,11 @@ module tb_reset_cycle_unknown;
   initial begin
     wait(monitor_ready);
     sample(250000,1); sample(750000,1); sample(1250000,1);
-    #(2000000-$time); reset_n=1'bz;
+    #(2000002-$time); reset_n=1'bz;
     #1000000; reset_n=1;
     #500001;
-    if (point.result_seq!=2 || point.window_start_ticks!=250000 ||
-        point.window_end_ticks!=1250000 || point.window_bytes!=16 || !point.bytes_complete ||
+    if (point.result_seq!=2 || point.window_start_ticks!=250001 ||
+        point.window_end_ticks!=1250001 || point.window_bytes!=16 || !point.bytes_complete ||
         !point.events_complete || !point.window_valid || point.raw_record.record_seq!=3)
       $fatal(1,"cycle stop must hold the published snapshot while reset quality changes separately");
     sample(3750000,1);

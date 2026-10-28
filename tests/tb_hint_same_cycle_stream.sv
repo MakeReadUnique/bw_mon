@@ -2,7 +2,7 @@ module tb_hint_same_cycle_stream;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(8),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .CREDIT_ENABLE(1),.CREDIT_CAPACITY(1),.CREDIT_INITIAL(0),.CREDIT_INITIAL_KNOWN(1),
     .CREDIT_RETURN_TIMING(BW_RETURN_SAME_CYCLE),.SHORTAGE_ENABLE(1),.SHORTAGE_BASIS(BW_NS),

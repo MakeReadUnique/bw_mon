@@ -1,7 +1,7 @@
 module tb_startup_errors;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.STARTUP_TIMEOUT_NS(5)) setup();
+  bw_mon_setup setup();
   string which;
   int unused_handle;
   initial begin
@@ -16,13 +16,12 @@ module tb_startup_errors;
       default: begin
         unused_handle=register_point("p0","tb.p0",BW_NS,10,1);
         if(which=="duplicate") unused_handle=register_point("p0","tb.p1",BW_NS,10,1);
-        else if(which=="missing") #6000000;
         else begin
           unused_handle=register_point("p1","tb.p1",BW_NS,10,1);
           wait(monitor_ready);
           #1000000;
           if(which=="late") unused_handle=register_point("p2","tb.p2",BW_NS,10,1);
-          else if(which=="reconfigure") configure_monitor(2);
+          else if(which=="reconfigure") configure_monitor();
         end
       end
     endcase

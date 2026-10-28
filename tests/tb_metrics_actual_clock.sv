@@ -3,7 +3,7 @@ module tb_metrics_actual_clock;
   import bw_mon_pkg::*;
   logic [1:0] clk=0,valid=0;
   logic [63:0] bytes[2];
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("metrics.clock%0d",g)),.WINDOW_BASIS(BW_CYCLE),
       .WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
@@ -17,7 +17,7 @@ module tb_metrics_actual_clock;
       (.clk(clk[g]),.reset_n(1'b1),.valid(valid[g]),.size_bytes(bytes[g]),.size_known(1'b1));
   end
   task automatic edge_at(int g,bw_u64_t tick,bit transfer,bw_u64_t count);
-    #(tick-$time);valid[g]=transfer;bytes[g]=count;clk[g]=1;#1;clk[g]=0;
+    #(tick+1-$time);valid[g]=transfer;bytes[g]=count;clk[g]=1;#1;clk[g]=0;
   endtask
   initial begin
     wait(monitor_ready);

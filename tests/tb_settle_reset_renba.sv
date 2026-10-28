@@ -4,7 +4,7 @@ module tb_settle_reset_renba;
   logic clk=0,reset_n=1;
   int mode=0,old_publications=0;
   bit observed_failure=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("audit.renba"),.WINDOW_WIDTH(2),
     .UPDATE_STRIDE(1),.FIXED_BYTES(8)) point
     (.clk(clk),.reset_n(reset_n),.valid(1'b1));
@@ -17,7 +17,7 @@ module tb_settle_reset_renba;
     wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
     #499999;clk=1;#1;clk=0;
-    #(2000000-$time);
+    #(2000002-$time);
     if(mode==0)reset_n<=0;
     #1;
     $display("PROBE_VALUES mode=%s read_ticks=%0d expected_seq=1 actual_seq=%0d expected_epoch=1 actual_epoch=%0d expected_reset=0 actual_reset=%b expected_publications=0 actual_publications=%0d expected_bytes=0 actual_bytes=%0d expected_denominator=0 actual_denominator=%b",
@@ -27,7 +27,7 @@ module tb_settle_reset_renba;
       reset_n!==1'b0 || point.total_bytes!=0 || point.denominator_valid);
     if(observed_failure)$display("PROBE_FAIL mode=%s",mode==0?"moduleNBA":"programReNBA");
     else $display("PROBE_PASS mode=%s",mode==0?"moduleNBA":"programReNBA");
-    #(8000000-$time);
+    #(8000002-$time);
     if(observed_failure)$fatal(1,"PREFLIGHT_RENBA_RESET_PUBLICATION");
     $display("TB_PASS settle_reset_renba mode=%0d",mode);$finish;
   end

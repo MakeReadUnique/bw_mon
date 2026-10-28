@@ -4,7 +4,7 @@ module tb_metrics_repeated;
   logic clk=0,valid=0;
   logic [63:0] bytes[2];
   int sequence_bytes[24]='{10,10,10,20,30,40,40,40,30,20,10,10,10,20,20,20,20,20,20,20,20,20,20,20};
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("phase.repeated%0d",g)),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
       .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(4),
@@ -24,12 +24,12 @@ module tb_metrics_repeated;
       clk=1;#1;clk=0;
       if(t==8 && (scopes[0].point.phase_result_seq!=2 ||
           scopes[0].point.phase_result.phase_kind!=BW_PHASE_RAMP ||
-          scopes[0].point.phase_result.start_ticks!=6000000 || scopes[0].point.phase_result.end_ticks!=8000000 ||
+          scopes[0].point.phase_result.start_ticks!=6000001 || scopes[0].point.phase_result.end_ticks!=8000001 ||
           scopes[0].point.phase_result.start_total_bytes!=80 || scopes[0].point.phase_result.end_total_bytes!=160))
         $fatal(1,"the first ramp has independent[6,8) boundaries and original byte snapshots");
       if(t==13 && (scopes[0].point.phase_result_seq!=4 ||
           scopes[0].point.phase_result.phase_kind!=BW_PHASE_FALL ||
-          scopes[0].point.phase_result.start_ticks!=11000000 || scopes[0].point.phase_result.end_ticks!=13000000 ||
+          scopes[0].point.phase_result.start_ticks!=11000001 || scopes[0].point.phase_result.end_ticks!=13000001 ||
           scopes[0].point.phase_result.start_total_bytes!=250 || scopes[0].point.phase_result.end_total_bytes!=270))
         $fatal(1,"the first fall is independent of the preceding ramp and repeated plateaus");
       if(t==25 && (scopes[0].point.episode_result_seq!=0 ||
@@ -37,7 +37,7 @@ module tb_metrics_repeated;
         $fatal(1,"last-steady selection must wait until the episode is final");
     end
     if(scopes[0].point.phase_result_seq!=6 || scopes[1].point.phase_result_seq!=6 ||
-       scopes[0].point.phase_result.start_ticks!=17000000 || scopes[0].point.phase_result.end_ticks!=25000000 ||
+       scopes[0].point.phase_result.start_ticks!=17000001 || scopes[0].point.phase_result.end_ticks!=25000001 ||
        scopes[0].point.phase_result.byte_count!=160 || scopes[0].point.phase_result.bandwidth_gbps!=20.0 ||
        scopes[1].point.phase_result.byte_count!=240 || scopes[1].point.phase_result.bandwidth_gbps!=30.0 ||
        !scopes[0].point.episode_result.last_steady_selection_valid ||

@@ -5,14 +5,14 @@ module tb_transport_retention;
   bw_record_t frame,received;
   bw_control_t control;
   bw_control_frame_t received_control;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1),.EXPECTED_GROUP_COUNT(2)) setup();
+  bw_mon_setup setup();
   initial begin
-    define_group("first",1);add_point_member("first","p");
-    define_group("second",1);add_point_member("second","p");
+    add_point_member("first","p");
+    add_point_member("second","p");
     first=register_group_owner("first","component.first",BW_NS,1,1);
     second=register_group_owner("second","component.second",BW_NS,1,1);
     point_handle=register_point("p","component.point",BW_NS,1,1);
-    source=point_source_handle(point_handle);finish_configuration();wait(monitor_ready);
+    source=point_source_handle(point_handle);wait(monitor_ready);
     control='0;control.point_handle=point_handle;control.control_seq=1;control.reset_n=1;
     publish_control(source,control);
     if(!peek_member_control(first,0,received_control))$fatal(1,"initial control missing");
@@ -42,7 +42,7 @@ module tb_transport_retention;
       $fatal(1,"querying does not advance the authoritative consumer position");
     acknowledge_member_frame(first,0,2);
     if(retained_frame_count(source)!=2 || !peek_member_frame(second,0,received) ||
-       received.record_seq!=1 || received.timestamp_ticks!=250000 || received.byte_inc!=8)
+       received.record_seq!=1 || received.timestamp_ticks!=250001 || received.byte_inc!=8)
       $fatal(1,"slow consumer must still read the original first record");
     acknowledge_member_frame(second,0,1);
     if(retained_frame_count(source)!=1 || !peek_member_frame(second,0,received) ||
@@ -54,7 +54,7 @@ module tb_transport_retention;
       $fatal(1,"slow consumer lost initial reset state");
     acknowledge_member_control(second,0,received_control.transport_seq);
     if(!peek_member_control(second,0,received_control) || received_control.value.control_seq!=2 ||
-       received_control.value.timestamp_ticks!=500000 || received_control.value.reset_n!==1'b0)
+       received_control.value.timestamp_ticks!=500001 || received_control.value.reset_n!==1'b0)
       $fatal(1,"slow consumer lost original reset control timestamp/state");
     acknowledge_member_control(second,0,received_control.transport_seq);
     if(retained_control_count(source)!=0)$fatal(1,"all acknowledged controls must be reclaimed");

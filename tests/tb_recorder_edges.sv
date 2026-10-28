@@ -6,7 +6,7 @@ module tb_recorder_edges;
   bw_sample_t sample;
   bit toggled;
   int source_handle;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_recorder #(.FIXED_BYTES(16),.PROTOCOL(BW_VALID_READY)) recorder
     (.scope_id("recorder.component"),.clk(clk),.reset_n(reset_n),.valid(valid),.ready(ready),.size_bytes(64'bx),.size_known(1'b0),
      .record(record),.sampled_view(sample),.record_toggle(toggled),.control(),.control_toggle());
@@ -27,7 +27,7 @@ module tb_recorder_edges;
       $fatal(1,"fixed mode ignores dynamic field knownness on a definite handshake");
     clk=0;ready=0;
     #999999fs;clk=1;#1fs;
-    if(record.record_seq!=4 || record.timestamp_ticks!=4000000 || record.event_inc!=0 ||
+    if(record.record_seq!=4 || record.timestamp_ticks!=4000001 || record.event_inc!=0 ||
        !record.bytes_complete || !record.events_complete)
       $fatal(1,"idle is a complete new source record, not absence of publication");
     $display("TB_PASS recorder_edges");$finish;

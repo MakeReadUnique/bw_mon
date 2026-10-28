@@ -166,12 +166,23 @@ module bw_point_mon #(
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,effective_stride);
     transport_source=point_source_handle(source_handle);
-    // Ready is monotonic. Subscribe to per-instance identity only after the
-    // global barrier, avoiding a global cross-module string callback fanout.
-    wait(monitor_ready);
+    declare_scope_preparation();
+    // A connected scope makes a missing coordinator detectable without
+    // inventing traffic or advancing time.
+    fork begin
+      #(2);
+      if (!monitor_configured)
+        core_error("SETUP_MISSING",scope_id,
+          "a connected observation point requires exactly one bw_mon_setup");
+    end join_none
+    // Internal preparation completes inside the sealed slot, before the one
+    // ready publication; ready only then unlocks normal monitoring.
+    wait(configuration_sealed);
     wait(recorder.scope_id==scope_id && core.scope_id==scope_id && hints.configured &&
       hints.backpressure_hint.reset_capture_ready && hints.credit_shortage_hint.reset_capture_ready);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    note_scope_prepared();
+    wait(monitor_ready);
   end
   always @(record_toggle)
     if (monitor_ready && raw_record.record_seq!=0)begin

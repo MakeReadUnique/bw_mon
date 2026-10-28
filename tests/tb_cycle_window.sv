@@ -2,7 +2,7 @@ module tb_cycle_window;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk = 0, valid = 0, reset_n = 1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("cycle.point"), .WINDOW_BASIS(BW_CYCLE),
     .WINDOW_WIDTH(2), .UPDATE_STRIDE(1), .FIXED_BYTES(64)) cycle_mon
     (.clk(clk), .reset_n(reset_n), .valid(valid));
@@ -61,9 +61,9 @@ module tb_cycle_window;
     check_window(2,1,3,250000,1250000,128,2,128.0,64.0,1);
     sample(2250000,1);
     check_window(3,2,4,750000,2250000,64,1,42.666666666666667,32.0,1);
-    #(12000001-$time);
+    #(12000003-$time);
     check_window(3,2,4,750000,2250000,64,1,42.666666666666667,32.0,1);
-    if (ns_mon.result_seq != 12 || ns_mon.window_end_ticks != 12000000 ||
+    if (ns_mon.result_seq != 12 || ns_mon.window_end_ticks!=12000001 ||
         ns_mon.window_bytes != 0 || ns_mon.bandwidth_gbps != 0.0 || !ns_mon.window_valid)
       $fatal(1,"ns windows must continue and expire while cycle snapshot holds");
     sample(12250000,1);

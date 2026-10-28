@@ -5,7 +5,7 @@ module tb_metrics_interrupted;
   logic [63:0] bytes;
   int values[9]='{10,10,10,20,30,40,40,40,30};
   bw_phase_result_t saved_ramp[2];
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   for(genvar g=0;g<2;g++)begin:scopes
     bw_point_mon #(.POINT_ID($sformatf("metrics.interrupted%0d",g)),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
       .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(4),
@@ -30,7 +30,7 @@ module tb_metrics_interrupted;
           $fatal(1,"settled ramp[6,8) has duration2/raw40 and population sigma5 despite fitRMS0");
       end
     end
-    #(9500000-$time);reset_n=0;#1;
+    #(9500002-$time);reset_n=0;#1;
     if(scopes[0].point.episode_result.status!=BW_EPISODE_RESET_INTERRUPTED ||
        scopes[0].point.episode_result.variation.stddev_valid ||
        scopes[0].point.episode_result.variation.stddev_reason!=BW_METRIC_RESET ||
@@ -41,7 +41,7 @@ module tb_metrics_interrupted;
        !saved_ramp[0].duration_valid || !saved_ramp[0].variation.stddev_valid ||
        !saved_ramp[1].bandwidth_valid)
       $fatal(1,"reset cannot erase an earlier complete ramp or turn an unresolved last steady into a representative");
-    #(10000000-$time);
+    #(10000002-$time);
     $display("TB_PASS metrics_interrupted");$finish;
   end
 endmodule
