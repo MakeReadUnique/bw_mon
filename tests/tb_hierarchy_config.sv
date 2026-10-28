@@ -1,6 +1,7 @@
 module tb_hierarchy_config;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
+  bw_mon_setup setup();
   string mode,id;
   int unused_handle,point_count,group_count,target,levels,parents;
   task automatic owner(string name);

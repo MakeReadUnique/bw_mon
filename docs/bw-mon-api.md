@@ -22,7 +22,7 @@ femtosecond ticks, read directly with `$time` in that scope. A nanosecond is
 1,000,000 ticks. Do not override production time units or precision.
 The private native adapter preserves ordered reset input and writable same-time
 closure; [scheduling and build details](bw-mon-scheduling.md) include its tested
-tool contract and public regressions. The point/group/setup interfaces are unchanged.
+tool contract and public regressions.
 
 ```systemverilog
 // Once for every target module instance of this type:
@@ -30,8 +30,8 @@ bind data_port bw_point_mon #(
   .WINDOW_WIDTH(10), .UPDATE_STRIDE(1), .FIXED_BYTES(64)
 ) bw (.clk(clk), .reset_n(reset_n), .valid(valid));
 
-// Once in the testbench; include every point, including ungrouped points:
-bw_mon_setup #(.EXPECTED_POINT_COUNT(12)) bw_setup();
+// Once in the testbench; discovers every point, including ungrouped points:
+bw_mon_setup bw_setup();
 
 initial begin
   wait (bw_mon_pkg::monitor_ready);
@@ -46,20 +46,34 @@ retains the actual instance path. An explicit empty string is an error. Reset
 never re-registers an identity. The reserved default parameter value is
 `"__BW_AUTO__"`.
 
-Registration and configuration each explicitly notify startup state. Startup
-does not infer completion from process ordering, a zero-delay barrier or a queue
-being temporarily empty. The last required registration freezes the configuration
-and records `bw_mon_pkg::measurement_start_ticks`. Before that, no sampling edge
-contributes. A setup watchdog terminates an incomplete startup in simulation time;
-an active-region registration at the exact deadline participates before that
-decision. An edge at the common start itself is excluded.
+Registration and membership calls are legal only at actual time zero, including
+finite initial, `#0`, NBA and subsequent same-time scheduling chains. The library
+checks actual time in its own time scope, even when the caller uses a coarse
+timescale. The setup seals configuration at the first representable positive
+time step, resolves forward references, deduplicates members and prepares every
+scope, initial reset snapshot and report registration in that same time slot.
+It then publishes the persistent `bw_mon_pkg::monitor_ready` exactly once.
+Initial reset and stopped clocks do not delay startup.
+
+The published `bw_mon_pkg::measurement_start_ticks` is the common measurement
+start T; use it rather than assuming a fixed 1 fs start. No sampling edge at or
+before T contributes. Without a local reset, ns publications begin at T+S;
+the startup snapshot has result sequence zero. All scopes share the inclusive
+T+40 microsecond budget, which a local reset cannot renew. Reports retain
+absolute timestamps. The `BW_READY` record gives actual point/group counts,
+T, time scale, budget duration and absolute deadline.
+
+One setup and at least one reachable point are required when monitoring is
+connected. Empty scopes, missing/duplicate setup, invalid identities or topology,
+positive-time registration/member calls, and ending before ready are terminating
+startup errors; they suppress normal completion summaries. No manual count,
+finish call or startup timeout remains.
 
 ## Initial configuration
 
 | Object | Parameter | Type / unit | Requirement and illegal behavior |
 | --- | --- | --- | --- |
-| setup | `EXPECTED_POINT_COUNT` | four-state unsigned logic [63:0] count | Required, 1..16,384; zero or excess is fatal |
-| setup | `STARTUP_TIMEOUT_NS` | four-state unsigned logic [63:0] integer ns | Default 100, positive; missing points at deadline are fatal |
+| setup | none | one `bw_mon_setup` instance | Actual point/group counts are discovered; no counts or timeouts are configured |
 | point/group/core | `WINDOW_BASIS` | raw logic [1:0], validated before enum conversion | `BW_NS` (default) or `BW_CYCLE`; fixed before startup |
 | point/group/core | `WINDOW_WIDTH` | raw unsigned logic [63:0] integer ns or cycles | Required, 1..40,000 ns or 1..80,000 cycles according to basis |
 | point/group/core | `UPDATE_STRIDE` | raw unsigned logic [63:0] integer ns or cycles | Omitted: effective W; explicit must be known `0<S<=W`; uses the same basis as W |
@@ -346,9 +360,9 @@ later frame at the same T still supplies metadata and receives acceptance; time
 alone never suppresses a frame. These coordinators are instantiated internally;
 integrators do not drive them.
 
-The global `monitor_start_ticks` is fixed by the one configuration call and is
-independent of every local statistics origin. The supported duration is 40,000 ns
-from that system start. A subsequent action beyond it terminates with
+The global `monitor_start_ticks` equals the published common measurement start T
+and is independent of every local statistics origin. The supported duration is
+40,000 ns from T, including the endpoint. A subsequent action beyond it terminates with
 `SIM_TIME_LIMIT`, including after a local reset near the limit. Internal queues
 grow/reclaim automatically; queue-index representation exhaustion reports
 `STORAGE_RANGE` with scope and entry count. No user history-depth setting is added.
@@ -568,19 +582,17 @@ integer-fs testbench time and checks actual raw timestamps against its event tab
 ## Aggregation and startup
 
 Instantiate one `bw_group_mon` per Group ID and use the shared configuration
-entry points. Points register only their own identity/configuration; they need no
-Group ID or data wiring to a group. A grouped setup explicitly declares its total
-group count and calls `finish_configuration()` after all definitions/rules:
+entry points. Each real group instance declares its Group ID. Points register only
+their own identity/configuration; they need no Group ID or data wiring to a group.
+The setup discovers counts and seals all t=0 member rules automatically:
 
 ```systemverilog
-bw_mon_setup #(.EXPECTED_POINT_COUNT(3), .EXPECTED_GROUP_COUNT(1)) setup();
+bw_mon_setup setup();
 bw_group_mon #(.GROUP_ID("noc1"), .WINDOW_WIDTH(2), .UPDATE_STRIDE(1)) noc1
   (.clk(clk), .reset_n(group_statistics_reset_n));
 initial begin
-  define_group("noc1", 2); // expected direct members after deduplication
   add_point_member("noc1", "tb.noc1", BW_PREFIX);
   add_point_member("noc1", "tb.noc1.p0"); // duplicate hit counts once
-  finish_configuration();
   wait(monitor_ready);
   // Drive traffic on a sampling edge strictly after measurement_start_ticks.
 end
@@ -591,7 +603,8 @@ configuration; the third may remain ungrouped. Point IDs and Group IDs have
 separate namespaces. `BW_EXACT` is the default match kind. `BW_PREFIX` matches a
 complete dot-delimited hierarchy prefix, including that prefix itself; `noc1`
 cannot match `noc10`. A prefix ending with a dot already supplies the delimiter.
-No matches, an empty group, or a deduplicated member-count mismatch is fatal.
+No matches or an empty group is fatal. The direct-member count is derived after
+deduplication; a subgroup counts as one direct member.
 Groups can also contain explicitly named subgroups, alone or mixed with points.
 Use `add_group_member(parent, child)` for an exact Group ID; a Point ID with the
 same text remains a different source. The generic entry
@@ -602,30 +615,25 @@ recursive paths through different direct members are errors.
 
 | Entry/configuration | Type / default | Contract |
 | --- | --- | --- |
-| setup `EXPECTED_POINT_COUNT` | four-state unsigned 64-bit input, required | Known 1..16,384, all unique points including ungrouped points |
-| setup `EXPECTED_GROUP_COUNT` | four-state unsigned 64-bit input, default 0 | Known 0..4,096; zero retains automatic point-only configuration completion |
-| setup `MISSING_RECORD_TIMEOUT_NS` | four-state unsigned 64-bit integer ns, default 1 | Known positive duration; exact tick conversion checked before use |
-| setup `STARTUP_TIMEOUT_NS` | four-state unsigned 64-bit integer ns, default 100 | Known positive; original setup deadline is unchanged by local resets |
+| `bw_mon_setup` | one parameterless instance | Discovers all points and groups, including ungrouped points and intermediate groups |
 | group `GROUP_ID` | string, required | Nonempty unique group owner; equal Point ID text is legal |
-| group clock/window parameters | same basis/W/S/context as points | Every direct member must share clock context, basis, width and stride |
-| `define_group(id, expected_members)` | four-state unsigned 64-bit count | Known 1..16,384 direct members after deduplication |
-| `add_point_member(group,id,match)` | exact Point ID or segment prefix | May be called only before configuration is sealed |
-| `add_group_member(group,child)` | exact Group ID | Subgroup may be declared later before configuration is sealed |
+| group clock/window parameters | same basis/W/S as points | Every direct member must share basis, width and stride; a common actual sampling clock is a usage prerequisite |
+| `add_point_member(group,id,match)` | exact Point ID or segment prefix | Legal only at actual t=0; target may register later in that time slot |
+| `add_group_member(group,child)` | exact Group ID | Legal only at actual t=0; subgroup may register later in that time slot |
 | `add_member(group,kind,id,match)` | explicit `BW_POINT` / `BW_GROUP`; match defaults `BW_EXACT` | Unknown/invalid kind, or group prefix, is fatal |
-| `finish_configuration()` | explicit one-time action | Seals definitions/rules; still waits for required point registrations and group owners |
 
-Counts are validated before narrowing to internal bounded indices. Partial X/Z and
-values such as 2^32+1 cannot silently become a valid count of one. Registration,
-configuration, reference, owner, context, edge/fanout and member-count checks finish
+Actual counts retain the 16,384-point and 4,096-group limits. Registration,
+configuration, reference, owner, window, edge/fanout and capacity checks finish
 before ready. A tri-color traversal rejects cycles, computes recursive point sets
 and checks at most eight nested group levels. Each direct member must contribute
 a disjoint recursive point set; point/subgroup, sibling and diamond overlaps fail
 with the conflicting Point ID and both typed paths. No path is automatically
 removed. Reuse between independent scopes is allowed. Up to 65,536 deduplicated
 direct edges and sixteen direct parents per point or group source are checked; their actual maximum-scale execution is a later acceptance
-step. Missing owner/point/configuration completion reaches a bounded startup error,
-with IDs/counts in the log. Same-deadline NBA registration chains participate
-before that decision.
+step. A member rule without a real owning group, an invalid reference or an empty
+group fails during sealing, with the object and actual startup state in the log.
+All finite t=0 scheduling chains participate; any positive-time configuration
+call is late even if it executes before the setup's seal action in that slot.
 
 Compile the package first, add `+incdir+rtl`, and enable VCS deferred-assertion
 support with `-assert svaext`. The registry/transport headers are part of
@@ -1114,19 +1122,17 @@ tickets.
 ## Typed hierarchy and independent statistics
 
 The T4 topology uses twelve registered points, including ungrouped p10/p11, and
-four group owners. Its definitions are explicit:
+four real group instances, with Group IDs `die0_dmc`, `die1_dmc`, `all_dmc`
+and `mixed`. Their t=0 member rules include:
 
 ```systemverilog
-define_group("die0_dmc", 4); // add points p0...p3
-define_group("die1_dmc", 4); // add points p4...p7
-define_group("all_dmc", 2);
+// Add points p0...p3 to die0_dmc and p4...p7 to die1_dmc.
 add_group_member("all_dmc", "die0_dmc");
 add_group_member("all_dmc", "die1_dmc");
-define_group("mixed", 3);
 add_group_member("mixed", "die0_dmc");
 add_point_member("mixed", "p8");
 add_point_member("mixed", "p9");
-// finish_configuration() follows all point-membership rules.
+// The one setup seals all rules automatically after the t=0 slot.
 ```
 
 `all_dmc` has two direct members and eight recursive points; `mixed` has three

@@ -184,11 +184,13 @@ module bw_debug_hints #(
     function void use_external_reset_capture();duration.use_external_reset_capture();endfunction
     function void observe_reset(logic value,bw_u64_t ticks);duration.enqueue_status(value,ticks);endfunction
     wire reset_capture_ready=duration.configured;
+    wire startup_prepared=duration.result.result_seq!=0 && duration.consumed_actions==duration.requested_actions;
   end else begin : backpressure_hint
     assign backpressure_result=inactive_hint_result(PROTOCOL==BW_VALID_READY,BACKPRESSURE_ENABLE);
     function void use_external_reset_capture();endfunction
     function void observe_reset(logic value,bw_u64_t ticks);endfunction
     wire reset_capture_ready=1'b1;
+    wire startup_prepared=1'b1;
   end
   if((PROTOCOL===BW_CREDIT) && SHORTAGE_ENABLE) begin : credit_shortage_hint
     bw_hint_duration #(.HINT_NAME("credit_shortage"),.SUPPORTED(1),.ENABLED(1),
@@ -197,11 +199,13 @@ module bw_debug_hints #(
     function void use_external_reset_capture();duration.use_external_reset_capture();endfunction
     function void observe_reset(logic value,bw_u64_t ticks);duration.enqueue_status(value,ticks);endfunction
     wire reset_capture_ready=duration.configured;
+    wire startup_prepared=duration.result.result_seq!=0 && duration.consumed_actions==duration.requested_actions;
   end else begin : credit_shortage_hint
     assign shortage_result=inactive_hint_result(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE);
     function void use_external_reset_capture();endfunction
     function void observe_reset(logic value,bw_u64_t ticks);endfunction
     wire reset_capture_ready=1'b1;
+    wire startup_prepared=1'b1;
   end
 
   initial begin
@@ -213,10 +217,10 @@ module bw_debug_hints #(
       seed_ledger();
     end
     initialize_reset_capture($sformatf("%m"),"reset_n");
-    configured=1;observe_reset(reset_n,$time);
+    configured=1;
   end
   initial begin
-    wait(configured && monitor_ready);
+    wait(configured && configuration_sealed);
     if(!external_reset_capture)begin
       wait(reset_capture_handle!=null && backpressure_hint.reset_capture_ready && credit_shortage_hint.reset_capture_ready);
       reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);

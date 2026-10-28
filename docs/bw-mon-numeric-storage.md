@@ -1,7 +1,7 @@
 # Numeric and storage contracts
 
 All physical timestamps use integer 1 fs ticks. The monitoring system has one
-40,000 ns budget from its original setup start; point or group statistics reset
+40,000 ns budget from its published common measurement start T; point or group statistics reset
 never restarts it. Window, episode, phase, source and transport identities are
 separate. Lifetime sequences and acceptance receipts do not rewind on reset.
 
@@ -38,7 +38,7 @@ is accepted independently of its numeric metadata.
 `checked_add` widens to65 bits and `checked_mul` to128 bits after rejecting unknown
 operands. `checked_sub` rejects a negative difference before subtraction. Time
 predicates are pure; an unknown time returns false, while the checked entry reports
-an INTEGER_UNKNOWN core error. The actual40us boundary is inclusive; the next tick
+an INTEGER_UNKNOWN core error. The actual T+40us boundary is inclusive; the next tick
 is unsupported. Decimal GB/s conversion and fitting occur only after integer time
 and count operations. Credit permission/attempted balance uses65/66-bit arithmetic;
 credit protocol anomalies lose trust and still retain known bytes.

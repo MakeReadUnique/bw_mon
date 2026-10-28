@@ -166,11 +166,11 @@ module bw_point_mon #(
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
                                  WINDOW_WIDTH,effective_stride);
     transport_source=point_source_handle(source_handle);
-    declare_scope_preparation();
-    // A connected scope makes a missing coordinator detectable without
-    // inventing traffic or advancing time.
+    declare_scope_preparation(transport_source);
+    // Once the t=0 collection slot ends, a missing coordinator cannot arrive
+    // legally. This check does not depend on clocks, traffic or reset release.
     fork begin
-      #(2);
+      #(1);
       if (!monitor_configured)
         core_error("SETUP_MISSING",scope_id,
           "a connected observation point requires exactly one bw_mon_setup");
@@ -181,8 +181,15 @@ module bw_point_mon #(
     wait(recorder.scope_id==scope_id && core.scope_id==scope_id && hints.configured &&
       hints.backpressure_hint.reset_capture_ready && hints.credit_shortage_hint.reset_capture_ready);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    wait(core.reset_applied && recorder.reset_observed &&
+      recorder.published_control_seq==recorder.control_seq &&
+      hints.backpressure_hint.startup_prepared && hints.credit_shortage_hint.startup_prepared);
     note_scope_prepared();
     wait(monitor_ready);
+  end
+  final begin
+    if(!monitor_configured && !core_failure_pending())
+      core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
   end
   always @(record_toggle)
     if (monitor_ready && raw_record.record_seq!=0)begin
@@ -190,7 +197,7 @@ module bw_point_mon #(
       if(!core_failure_seen)recorder.note_record_published(raw_record.record_seq);
     end
   always @(control_toggle)
-    if (monitor_ready && raw_control.control_seq!=0)begin
+    if (configuration_sealed && raw_control.control_seq!=0)begin
       publish_control(transport_source,raw_control);
       if(!core_failure_seen)recorder.note_control_published(raw_control.control_seq);
     end

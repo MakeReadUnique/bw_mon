@@ -128,7 +128,7 @@ module bw_hint_duration #(
   endfunction
   function automatic void enqueue_status(logic reset_value,bw_u64_t at_ticks);
     status_action_t action;
-    if(!configured || !monitor_ready || !SUPPORTED || !ENABLED || core_failure_seen) return;
+    if(!configured || !configuration_sealed || !SUPPORTED || !ENABLED || core_failure_seen) return;
     begin_action(pending_status.size(),"status");
     if(core_failure_seen)return;
     action.at_ticks=at_ticks;action.condition_value=raw_condition;action.reset_value=reset_value;
@@ -176,9 +176,9 @@ module bw_hint_duration #(
     initialize_reset_capture($sformatf("%m"),"reset_n");
     configured=1;enqueue_status(reset_n,$time);
   end
-  always @(raw_condition or monitor_ready) enqueue_status(reset_n,$time);
+  always @(raw_condition) enqueue_status(reset_n,$time);
   initial begin
-    wait(configured && monitor_ready);
+    wait(configured && configuration_sealed);
     if(!external_reset_capture)begin
       wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
     end

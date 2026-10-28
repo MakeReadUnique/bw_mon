@@ -248,6 +248,7 @@ package bw_mon_pkg;
   endfunction
   bit monitor_ready = 0;
   bit configuration_sealed = 0;
+  string startup_stage="COLLECTING";
   // Only real module instances declare preparation; directly registered
   // component scopes provide no handshake and must not stall the coordinator.
   int preparing_scopes = 0;
@@ -261,6 +262,8 @@ package bw_mon_pkg;
     // VCS can return from $fatal while executing final blocks. Retain a shared
     // terminal-failure fact before reporting, so no finalizer emits new results.
     core_failure_seen=1;
+    if(!monitor_ready)
+      $display("BW_STARTUP_FAILURE stage=%s scope=%s %s",startup_stage,scope_id,startup_status());
     $fatal(1, "BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",
            code, scope_id, $time, detail);
   endfunction

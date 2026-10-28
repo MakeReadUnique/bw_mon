@@ -61,7 +61,7 @@ module tb_hierarchy_retention;
     add_group_member("mixed","die0_dmc");add_point_member("mixed","p8");add_point_member("mixed","p9");
     wait(monitor_ready);
     for(int p=0;p<12;p++)begin
-      control='0;control.point_handle=point_handles[p];control.control_seq=1;control.reset_n=1;
+      control='0;control.point_handle=point_handles[p];control.control_seq=1;control.reset_n=1;control.timestamp_ticks=measurement_start_ticks;
       publish_control(sources[p],control);
     end
     #103900000;
@@ -70,16 +70,16 @@ module tb_hierarchy_retention;
       control='0;control.point_handle=point_handles[0];control.control_seq=2;control.source_epoch=1;
       control.timestamp_ticks=$time;control.reset_n=0;publish_control(sources[0],control);
     end
-    #(104000002-$time);clk=1;slow=(order=="all_first") ? 9 : 7;
+    #(measurement_start_ticks+104000000-$time);clk=1;slow=(order=="all_first") ? 9 : 7;
     frame='0;frame.record_seq=1;frame.edge_index=1;frame.timestamp_ticks=$time;
     frame.byte_inc=64;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
     for(int p=0;p<12;p++)if(p!=slow)publish_point(p,1);
     #1;clk=0;check_partial(1,slow);
     if(retained_frame_count(sources[10])!=0 || retained_frame_count(sources[11])!=0)
       $fatal(1,"ungrouped sources must not retain ancestor transport copies");
-    #(104400002-$time);publish_frame(sources[slow],frame);
+    #(measurement_start_ticks+104400000-$time);publish_frame(sources[slow],frame);
     #1;
-    if(all_dmc.raw_record.timestamp_ticks!=104000001 || mixed.raw_record.timestamp_ticks!=104000001 ||
+    if(all_dmc.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 || mixed.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 ||
        all_dmc.raw_record.edge_index!=1 || mixed.raw_record.edge_index!=1 ||
        all_dmc.raw_record.byte_inc!=first_all_bytes || mixed.raw_record.byte_inc!=first_mixed_bytes ||
        all_dmc.raw_record.event_inc!=first_all_events || mixed.raw_record.event_inc!=first_mixed_events ||
@@ -91,25 +91,25 @@ module tb_hierarchy_retention;
        die0.stats_epoch!=bw_u64_t'(mode=="child_reset") || all_dmc.stats_epoch!=0 || mixed.stats_epoch!=0 ||
        retained_frame_count(die0.transport_source)!=0)
       $fatal(1,"late direct consumer must receive the same original group frame without an extra statistics cycle");
-    #(104450002-$time);child_reset_n=1;
+    #(measurement_start_ticks+104450000-$time);child_reset_n=1;
     if(point_reset_case)begin
       control.control_seq=3;control.timestamp_ticks=$time;control.reset_n=1;
       publish_control(sources[0],control);
     end
     // Reverse the parent order on the next actual edge; no consumer cursor resets.
-    #(104500002-$time);clk=1;slow=(slow==9) ? 7 : 9;
+    #(measurement_start_ticks+104500000-$time);clk=1;slow=(slow==9) ? 7 : 9;
     frame.record_seq=2;frame.edge_index=2;frame.timestamp_ticks=$time;
     for(int p=0;p<12;p++)if(p!=slow)publish_point(p,0);
     #1;clk=0;check_partial(2,slow);
-    #(104900002-$time);publish_frame(sources[slow],frame);
+    #(measurement_start_ticks+104900000-$time);publish_frame(sources[slow],frame);
     #1;
     if(all_dmc.accepted_record_seq!=2 || mixed.accepted_record_seq!=2 ||
        all_dmc.total_bytes!=first_all_bytes+512 || all_dmc.total_events!=first_all_events+8 ||
        mixed.total_bytes!=first_mixed_bytes+384 || mixed.total_events!=first_mixed_events+6 ||
        retained_frame_count(die0.transport_source)!=0 || retained_frame_count(die1.transport_source)!=0)
       $fatal(1,"opposite lawful consumer orders must preserve sums and release only fully acknowledged source data");
-    #(105000003-$time);
-    if(all_dmc.window_start_ticks!=104000001 || all_dmc.window_end_ticks!=105000001 ||
+    #(measurement_start_ticks+105000001-$time);
+    if(all_dmc.window_start_ticks!=measurement_start_ticks+104000000 || all_dmc.window_end_ticks!=measurement_start_ticks+105000000 ||
        all_dmc.window_bytes!=first_all_bytes+512 || all_dmc.window_events!=first_all_events+8 ||
        all_dmc.window_valid==size_case || all_dmc.bytes_complete==size_case || !all_dmc.events_complete ||
        all_dmc.member_reset_coverage!=point_reset_case ||

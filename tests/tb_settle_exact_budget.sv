@@ -20,18 +20,18 @@ module tb_settle_exact_budget;
     add_group_member("settle.end.parent","settle.end.child");
     add_point_member("settle.end.parent","settle.end.p1");wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
-    #(LIMIT-$time);end_requested<=1;
+    #(measurement_start_ticks+LIMIT-$time);end_requested<=1;
   end
   function automatic bit ready_to_finish();
-    return $time==LIMIT && p0.result_seq==40000 && p1.result_seq==40000 &&
+    return $time==measurement_start_ticks+LIMIT && p0.result_seq==40000 && p1.result_seq==40000 &&
       child.result_seq==40000 && parent.result_seq==40000 &&
       p0.accepted_record_seq==2 && p1.accepted_record_seq==2 &&
       child.accepted_record_seq==2 && parent.accepted_record_seq==2;
   endfunction
   function automatic void final_verdict();
     if(!ready_to_finish() || core_failure_pending() ||
-       p0.window_start_ticks!=1 || p0.window_end_ticks!=LIMIT ||
-       child.window_end_ticks!=LIMIT || parent.window_end_ticks!=LIMIT ||
+       p0.window_start_ticks!=measurement_start_ticks || p0.window_end_ticks!=measurement_start_ticks+LIMIT ||
+       child.window_end_ticks!=measurement_start_ticks+LIMIT || parent.window_end_ticks!=measurement_start_ticks+LIMIT ||
        p0.window_bytes!=8 || p1.window_bytes!=16 || child.window_bytes!=8 || parent.window_bytes!=24 ||
        p0.total_bytes!=16 || p1.total_bytes!=32 || child.total_bytes!=16 || parent.total_bytes!=48 ||
        !p0.window_full || !p1.window_full || !child.window_full || !parent.window_full ||

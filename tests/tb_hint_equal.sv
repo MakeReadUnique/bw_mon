@@ -18,7 +18,7 @@ module tb_hint_equal;
     if(!released.backpressure_hit || !unknown.backpressure_hit || !reset_point.backpressure_hit ||
        released.backpressure_active || unknown.backpressure_active || reset_point.backpressure_active ||
        released.backpressure_trigger_ticks!=2000001 || unknown.backpressure_trigger_ticks!=2000001 ||
-       reset_point.backpressure_trigger_ticks!=2000000 || released.backpressure_duration_ticks!=2000000 ||
+       reset_point.backpressure_trigger_ticks!=measurement_start_ticks+2000000 || released.backpressure_duration_ticks!=2000000 ||
        unknown.backpressure_duration_ticks!=2000000 || reset_point.backpressure_duration_ticks!=2000000)
       $fatal(1,"threshold-equal release/unknown/reset must settle previous known [0,2) duration and retain hit");
     if(released.backpressure_end_reason!=BW_HINT_RELEASED || unknown.backpressure_end_reason!=BW_HINT_UNKNOWN ||
