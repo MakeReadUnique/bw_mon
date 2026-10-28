@@ -42,3 +42,14 @@ python3 tests/phase_default/run.py --evidence /tmp/phase-fixed-evidence --lock /
 ```
 
 该入口复用 `tests/run.py`，用同一个小程序的固定选择宏分别编译四次并执行四固定输入；四次构建、等待、核验和清理共用一次900秒预算；归档原始日志、独立核验 JSON、完整命令和分项耗时后清理派生构建目录。初始化耗时采用宿主进程启动至观察到既有 `BW_READY` 行的时间，明确包含装载及管道观察延迟，不能当作单独的 RTL 初始化 CPU 计时。阶段计时与总预算不会把这项观测子区间重复相加。
+
+独立复核已收紧到整数飞秒：`window_reference.py` 只读取原始九列 `.txt`、固定 W/S/Q 与公开共同起点 T，推导每个 case 的起点、时钟沿、复位 epoch、完整窗口左右端点、字节质量、过程归属和证据资格。阶段边界／确认映射到这些独立计划发布端点；最终尾部或复位裁剪使用原始活动推导的过程边界。参考中的整单位 `u` 只用于定位独立计划，产品时间戳从不先取整再比较。原始阶段字节与窗口分布也使用这份独立几何。
+
+`test_window_reference.py` 保留六个手算例；以下离线检查先复制已有日志，原件保持不变，再要求94个负例全部被拒绝（阶段开始／确认／结束和窗口左右端点的1fs偏移，以及full／complete／eligible与相互配套的错误几何）：
+
+```bash
+python3 -m unittest discover -s tests/phase_default -p test_window_reference.py
+python3 tests/phase_default/sensitivity.py --logs /path/to/saved-cold-logs --output /tmp/phase-oracle-sensitivity
+```
+
+早先93.466秒记录保留其旧核验器身份；它不自动升级为本次精度修复后的正式专项。修复后的冷构建、四固定输入与独立核验另存一个完整的900秒预算记录。
