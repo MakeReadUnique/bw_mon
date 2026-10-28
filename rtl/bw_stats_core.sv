@@ -1128,8 +1128,8 @@ module bw_stats_core #(
     end
   end
   always @(member_control_toggle) begin
-    if(monitor_ready)validate_control_numeric(member_control,scope_id);
-    if (monitor_ready && !core_failure_seen && member_control.control_seq!=0) begin
+    if(configuration_sealed)validate_control_numeric(member_control,scope_id);
+    if (configuration_sealed && !core_failure_seen && member_control.control_seq!=0) begin
       check_storage_growth(pending_member_controls.size(),scope_id,"core.controls",member_control.timestamp_ticks,last_edge_index,last_record_seq);
       if(!core_failure_seen)begin
         pending_member_controls.push_back(member_control);
@@ -1181,10 +1181,14 @@ module bw_stats_core #(
 
   initial begin : core_timer_worker
     bw_u64_t observed_schedule, due_tick, request_number;
-    wait(monitor_ready);
+    // Standalone cores can receive initial member controls during preparation.
+    // Establish their own reset/origin before those controls schedule windows;
+    // only the normal timer worker waits for public readiness.
+    wait(configuration_sealed);
     if(!external_reset_capture)begin
       wait(reset_capture_handle!=null);reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
     end
+    wait(monitor_ready);
     wait(reset_applied);
     if (WINDOW_BASIS == BW_NS) begin
       forever begin

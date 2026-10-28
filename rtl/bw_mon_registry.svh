@@ -263,6 +263,10 @@
   // and routing frozen before any participant may observe readiness.
   function automatic void seal_configuration();
     if (!monitor_configured || monitor_ready || configuration_sealed) return;
+    // Initial reset/control preparation uses the same origin as later work.
+    // Set T before waking participants, while public readiness remains false.
+    measurement_start_ticks=$time;monitor_start_ticks=$time;
+    startup_stage="VALIDATING";
     configuration_sealed=1;configuration_finished=1;
     if (registered_points.size()+registered_groups.size()==0)
       core_error("EMPTY_SCOPE","setup",
@@ -273,14 +277,18 @@
           "member rules exist but no bw_group_mon instance declared this group");
     expected_point_count=registered_points.size();
     freeze_routing();
+    startup_stage="PREPARING";
     configuration_seq=checked_add(configuration_seq,1,"configuration");
   endfunction
 
-  function automatic void declare_scope_preparation();
+  function automatic void declare_scope_preparation(int source_handle);
+    registered_sources[source_handle].requires_preparation=1;
     preparing_scopes=checked_add(preparing_scopes,1,"setup");
   endfunction
 
-  function automatic void note_scope_prepared();
+  function automatic void note_scope_prepared(int source_handle);
+    registered_sources[source_handle].preparation_complete=1;
+    notify_parents(source_handle);
     prepared_scopes=checked_add(prepared_scopes,1,"setup");
   endfunction
 
@@ -288,14 +296,17 @@
   // prepared. T is the actual seal slot; the supported budget ends at T+40us.
   function automatic void start_monitor();
     if (monitor_ready || !configuration_sealed) return;
-    measurement_start_ticks=$time;monitor_start_ticks=$time;
+    if ($time!=measurement_start_ticks || prepared_scopes!=preparing_scopes)
+      core_error("STARTUP_STATE","setup","all preparation must complete in the seal time slot");
     // Report registration is a participant of preparation, not a ready
     // consumer: it completes before the single ready publication.
+    startup_stage="REPORTING";
     if(report_sink!=null) report_sink.on_ready();
+    startup_stage="READY";
     monitor_ready=1;
-    $display("BW_READY time_ticks=%0d points=%0d groups=%0d budget_ticks=%0d timescale=1fs",
+    $display("BW_READY time_ticks=%0d points=%0d groups=%0d budget_ticks=%0d timescale=1fs deadline_ticks=%0d",
              measurement_start_ticks,registered_points.size(),registered_groups.size(),
-             BW_MONITOR_LIMIT_TICKS);
+             BW_MONITOR_LIMIT_TICKS,checked_add(measurement_start_ticks,BW_MONITOR_LIMIT_TICKS,"setup"));
   endfunction
 
   function automatic void configure_monitor();
@@ -379,9 +390,9 @@
 
   function automatic string startup_status();
     string detail;
-    detail=$sformatf("setup_installed=%0b sealed=%0b ready=%0b registered_points=%0d registered_groups=%0d prepared_scopes=%0d",
+    detail=$sformatf("setup_installed=%0b sealed=%0b ready=%0b registered_points=%0d registered_groups=%0d prepared_scopes=%0d preparing_scopes=%0d",
       monitor_configured,configuration_sealed,monitor_ready,registered_points.size(),
-      registered_groups.size(),prepared_scopes);
+      registered_groups.size(),prepared_scopes,preparing_scopes);
     foreach (registered_groups[g])
       if (!registered_groups[g].owner_registered) detail={detail," missing_owner=",registered_groups[g].id};
     return detail;

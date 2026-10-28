@@ -80,18 +80,36 @@ module bw_group_mon #(
                                       WINDOW_WIDTH,effective_stride);
     transport_source=group_source_handle(group_handle);
     raw_record='0;raw_control='0;core_control='0;
-    declare_scope_preparation();
+    declare_scope_preparation(transport_source);
     fork begin
-      #(2);
+      #(1);
       if (!monitor_configured)
         core_error("SETUP_MISSING",scope_id,
           "a connected aggregation group requires exactly one bw_mon_setup");
     end join_none
     wait(configuration_sealed);
+    direct_member_count=group_member_count(group_handle);
+    recursive_point_count=group_recursive_point_count(group_handle);
     wait(core.scope_id==scope_id);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
-    note_scope_prepared();
+    wait(core.reset_applied);
+    begin : prepare_inputs
+      bw_notification notice;
+      bw_u64_t seen;
+      notice=group_notification(group_handle);
+      forever begin
+        seen=notice.seq;
+        if(group_preparation_ready(group_handle))break;
+        wait(notice.seq!=seen);
+      end
+    end
+    wait(core.consumed_actions==core.requested_actions && captured_resets.size()==0);
+    note_scope_prepared(transport_source);
     wait(monitor_ready);
+  end
+  final begin
+    if(!monitor_configured && !core_failure_pending())
+      core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
   end
 
   task automatic refresh_progress();
@@ -163,13 +181,11 @@ module bw_group_mon #(
     bw_record_t frame;
     int selected_control,source;
     bit all_frames;
-    wait(monitor_ready);
+    wait(configuration_sealed);
 `ifdef BW_MON_TEST_SCHEDULING
     test_gate=bw_test_gate_for(scope_id);
 `endif
     notice=group_notification(group_handle);
-    direct_member_count=group_member_count(group_handle);
-    recursive_point_count=group_recursive_point_count(group_handle);
     forever begin
 `ifdef BW_MON_TEST_SCHEDULING
       wait(!test_gate.paused);

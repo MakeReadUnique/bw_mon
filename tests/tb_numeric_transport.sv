@@ -1,6 +1,7 @@
 module tb_numeric_transport;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
+  bw_mon_setup setup();
   string mode;
   int point_handle,source,group_handle;
   bw_record_t frame,received;
@@ -12,7 +13,7 @@ module tb_numeric_transport;
     add_point_member("transport.group","transport.point");
     group_handle=register_group_owner("transport.group","component.group",BW_NS,1,1);
     point_handle=register_point("transport.point","component.point",BW_NS,1,1);
-    source=point_source_handle(point_handle);configure_monitor();wait(monitor_ready);
+    source=point_source_handle(point_handle);wait(monitor_ready);
     #250000;
     frame='0;frame.timestamp_ticks=$time;frame.edge_index=1;frame.record_seq=1;
     frame.byte_inc=8;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;

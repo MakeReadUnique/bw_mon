@@ -8,6 +8,7 @@ module tb_hierarchy_edge_limit;
     if(!$value$plusargs("EXTRA=%d",extra))extra=0;
     for(int p=0;p<4096;p++)unused_handle=register_point($sformatf("p%0d",p),$sformatf("p%0d",p),BW_NS,1,1);
     for(int g=0;g<4096;g++)begin
+      id=$sformatf("g%0d",g);
       unused_handle=register_group_owner(id,id,BW_NS,1,1);
       for(int m=0;m<16;m++)add_point_member(id,$sformatf("p%0d",(g+m)%4096));
       if(g==0 && extra)add_point_member(id,"p16");

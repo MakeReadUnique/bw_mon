@@ -4,7 +4,7 @@
 
 第一次接入请看[中文用户手册](docs/bw-mon-user-guide-zh.md)：从可运行例子开始，说明如何例化、接线、配置窗口、使用 bind、汇总多个接口，以及查看结果和设置性能目标。示例代码和目标文件位于 [examples](examples/)。
 
-仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility/README.md)及[修订规模/历史验收](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)已实际通过；PR 审查和 issue 关闭与这些测量结果分别记录。
+仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、自动注册和统一启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility/README.md)及[修订规模/历史验收](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)保留其原始源码身份；接入简化的新版证据按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/48)重新取得。PR 审查和 issue 关闭与测量结果分别记录。
 
 当前 PR 只保留源码、测试、[最终结果摘要](evidence/README.md)和关键截图。FSDB、完整数据包及中间记录按需从固定历史提交恢复到本地忽略目录，见[复现说明](docs/bw-mon-evidence.md)。`make verify-evidence` 可离线复验已保存的结果。
 

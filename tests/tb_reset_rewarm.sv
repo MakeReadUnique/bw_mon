@@ -2,6 +2,7 @@ module tb_reset_rewarm;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0, reset_n=1, valid=1;
+  bw_u64_t common_start;
   bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("reset.ns"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
     .FIXED_BYTES(8)) ns_point (.clk(clk), .reset_n(reset_n), .valid(valid));
@@ -10,15 +11,15 @@ module tb_reset_rewarm;
     (.clk(clk), .reset_n(reset_n), .valid(valid));
 
   task automatic sample(bw_u64_t at_ticks, bit transfer);
-    #(at_ticks-$time-1); valid=transfer;
+    #(measurement_start_ticks+at_ticks-$time-1); valid=transfer;
     #1; clk=1;
     #1; clk=0;
   endtask
 
   initial begin
-    wait(monitor_ready);
+    wait(monitor_ready);common_start=measurement_start_ticks;
     sample(250000,1); sample(750000,1); sample(1250000,1);
-    #(2500002-$time); reset_n=0;
+    #(measurement_start_ticks+2500000-$time); reset_n=0;
     #1;
     if (ns_point.stats_epoch!=1 || cycle_point.stats_epoch!=1 ||
         ns_point.total_bytes!=0 || cycle_point.total_bytes!=0 ||
@@ -28,7 +29,7 @@ module tb_reset_rewarm;
       $fatal(1,"no-edge reset must clear only local statistics and advance the epoch");
     if (ns_point.raw_record.record_seq!=3 || cycle_point.raw_record.edge_index!=3)
       $fatal(1,"no-edge reset must not fabricate source frames or cycles");
-    #(4500002-$time); reset_n=1;
+    #(measurement_start_ticks+4500000-$time); reset_n=1;
     #1;
     if (ns_point.stats_epoch!=1 || cycle_point.stats_epoch!=1 ||
         ns_point.result_seq!=2 || cycle_point.result_seq!=2 ||
@@ -39,7 +40,7 @@ module tb_reset_rewarm;
         ns_point.raw_record.record_seq!=4 || ns_point.raw_record.edge_index!=4 ||
         ns_point.raw_record.source_epoch!=1 || cycle_point.raw_record.source_epoch!=1)
       $fatal(1,"first post-reset frame must retain transport order and start fresh cycle coverage");
-    #(5000003-$time);
+    #(measurement_start_ticks+5000001-$time);
     if (ns_point.result_seq!=2)
       $fatal(1,"ns reset release must restart the schedule at release+S, not the global phase");
     sample(5250000,0);
@@ -54,8 +55,8 @@ module tb_reset_rewarm;
         cycle_point.window_bytes!=8 || $abs(cycle_point.bandwidth_gbps-8.0)>1e-10 ||
         $abs(cycle_point.bytes_per_cycle-4.0)>1e-10)
       $fatal(1,"post-reset full cycle window has incorrect boundaries/counting");
-    if (ns_point.result_seq!=3 || ns_point.window_start_ticks!=4500001 ||
-        ns_point.window_end_ticks!=5500000 || ns_point.coverage_ticks!=1000000 ||
+    if (ns_point.result_seq!=3 || ns_point.window_start_ticks!=measurement_start_ticks+4500000 ||
+        ns_point.window_end_ticks!=measurement_start_ticks+5500000 || ns_point.coverage_ticks!=1000000 ||
         ns_point.window_bytes!=8 || !ns_point.bytes_complete || !ns_point.denominator_valid ||
         ns_point.window_full || !ns_point.window_warmup ||
         $abs(ns_point.bandwidth_gbps-8.0)>1e-10)
@@ -63,7 +64,7 @@ module tb_reset_rewarm;
     if (ns_point.total_bytes!=16 || cycle_point.total_bytes!=16 ||
         ns_point.raw_record.record_seq!=6 || ns_point.raw_record.edge_index!=6 ||
         ns_point.scope_id!="reset.ns" || cycle_point.scope_id!="reset.cycle" ||
-        measurement_start_ticks!=0)
+        measurement_start_ticks!=common_start)
       $fatal(1,"local reset must not alter registration/global time or rewind source order");
     $display("TB_PASS reset_rewarm"); $finish;
   end

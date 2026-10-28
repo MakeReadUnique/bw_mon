@@ -354,7 +354,7 @@
   "name": "episode_final",
   "top": "tb_episode_final",
   "expect_log": [
-   "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000000 last_ticks=1000000 tail_ticks=2000000 confirm_ticks=3000000 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
+   "BW_EPISODE scope_kind=0 scope=episode.final epoch=0 episode=1 result_seq=1 status=4 first_ticks=1000001 last_ticks=1000001 tail_ticks=2000001 confirm_ticks=3000001 bytes=8 events=1 duration_ticks=1000000 .*e2e_valid=0 .*reason=OBSERVATION_TRUNCATED",
    "(?s)^(?!.*BW_EPISODE[^\\n]*scope=episode.none)"
   ]
  },
@@ -1405,7 +1405,7 @@
   "plusargs": [
    "+MODE=missing_first"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250000.*expected_edge=1.*expected_ticks=250000.*deadline_ticks=1250000.*missing_point=fault"
+  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001.*expected_edge=1.*expected_ticks=250001.*deadline_ticks=1250001.*missing_point=fault"
  },
  {
   "name": "group_fault_missing_second",
@@ -1413,7 +1413,7 @@
   "plusargs": [
    "+MODE=missing_second"
   ],
-  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1750000.*expected_edge=2.*expected_ticks=750000.*deadline_ticks=1750000.*missing_point=fault"
+  "expect_error": "(?s)BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1750001.*expected_edge=2.*expected_ticks=750001.*deadline_ticks=1750001.*missing_point=fault"
  },
  {
   "name": "group_fault_duplicate",
@@ -1474,14 +1474,6 @@
    "+MODE=empty_id"
   ],
   "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_ID"
- },
- {
-  "name": "group_config_zero_members",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=zero_members"
-  ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=MEMBER_COUNT"
  },
  {
   "name": "group_config_window",
@@ -1545,7 +1537,7 @@
   "plusargs": [
    "+MODE=member_after_seal"
   ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CONFIG_FROZEN"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
  },
  {
   "name": "group_config_hot_member",
@@ -1553,7 +1545,7 @@
   "plusargs": [
    "+MODE=hot_member"
   ],
-  "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
  },
  {
   "name": "group_config_late_registration",
@@ -1561,20 +1553,14 @@
   "plusargs": [
    "+MODE=late_registration"
   ],
-  "expect_error": "BW_CORE_ERROR code=REGISTRATION_FROZEN"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
  },
  {
-  "name": "group_config_repeat_finish",
-  "top": "tb_group_config_errors",
-  "plusargs": [
-   "+MODE=repeat_finish"
-  ],
-  "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
- },
- {
-  "name": "group_missing_ungrouped",
+  "name": "group_actual_scope",
   "top": "tb_group_missing_ungrouped",
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=STARTUP_TIMEOUT.*expected_points=3 registered_points=2"
+  "expect_counts": {
+   "BW_READY ": 1
+  }
  },
  {
   "name": "group_metadata_reactive",
@@ -1605,7 +1591,7 @@
   "plusargs": [
    "+LATE=0"
   ],
-  "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250000",
+  "expect_error": "(?s)^(?!.*BW_EPISODE[^\\n]*scope=sentinel)(?!.*BW_HINT_END scope=stalled).*BW_CORE_ERROR code=FRAME_TIMEOUT.*time_ticks=1250001",
   "expect_log": [
    "DEFERRED_FINAL_GUARD pending=1 seen=0"
   ]
@@ -1762,7 +1748,7 @@
   "plusargs": [
    "+MODE=hot_group"
   ],
-  "expect_error": "BW_CORE_ERROR code=CONFIG_FROZEN"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
  },
  {
   "name": "hierarchy_depth8",
@@ -1979,7 +1965,7 @@
   "plusargs": [
    "+MISSING=1"
   ],
-  "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250000[^\\n]*expected_ticks=250000 deadline_ticks=1250000"
+  "expect_error": "BW_CORE_ERROR code=FRAME_TIMEOUT[^\\n]*time_ticks=1250001[^\\n]*expected_ticks=250001 deadline_ticks=1250001"
  },
  {
   "name": "hierarchy_invalid_kind",
@@ -4134,7 +4120,7 @@
    "(?m)^BW_SUMMARY ": 1
   },
   "expect_log": [
-   "TB_PASS settle_exact_budget ticks=40000000000 windows=160000 receipts=8",
+   "TB_PASS settle_exact_budget ticks=40000000001 windows=160000 receipts=8",
    "BW_SUMMARY .*scopes_done=4 scopes_expected=4"
   ]
  },
@@ -4282,7 +4268,11 @@
   "sources": [
    "auto_error_fixture.sv"
   ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EMPTY_SCOPE"
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EMPTY_SCOPE",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
  },
  {
   "name": "auto_error_missing_setup",
@@ -4290,7 +4280,11 @@
   "sources": [
    "auto_error_fixture.sv"
   ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=SETUP_MISSING"
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=SETUP_MISSING",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
  },
  {
   "name": "auto_error_duplicate_setup",
@@ -4298,7 +4292,11 @@
   "sources": [
    "auto_error_fixture.sv"
   ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CONFIG_FROZEN"
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=CONFIG_FROZEN",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
  },
  {
   "name": "auto_error_ghost_owner",
@@ -4306,7 +4304,11 @@
   "sources": [
    "auto_error_fixture.sv"
   ],
-  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OWNER"
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_OWNER",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
  },
  {
   "name": "auto_error_late_member",
@@ -4314,7 +4316,11 @@
   "sources": [
    "auto_error_fixture.sv"
   ],
-  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
  },
  {
   "name": "auto_error_late_register",
@@ -4322,6 +4328,190 @@
   "sources": [
    "auto_error_fixture.sv"
   ],
-  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG"
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_prepared",
+  "top": "tb_auto_prepared",
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "auto_end_before_ready",
+  "top": "tb_auto_end_before_ready",
+  "expect_error": "BW_CORE_ERROR code=STARTUP_INCOMPLETE",
+  "expect_counts": {
+   "BW_READY ": 0,
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_start_chain",
+  "top": "tb_auto_start_chain",
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "auto_start_bind_more",
+  "top": "tb_auto_start_bind_more",
+  "sources": [
+   "tb_auto_start_bind.sv"
+  ],
+  "expect_log": [
+   "instances=5"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "auto_late_coarse",
+  "top": "tb_auto_late_coarse",
+  "expect_error": "BW_CORE_ERROR code=LATE_CONFIG.*time_ticks=1",
+  "expect_log": [
+   "coarse_caller_time=0",
+   "BW_STARTUP_FAILURE stage=COLLECTING"
+  ],
+  "expect_counts": {
+   "BW_READY ": 0,
+   "BW_SUMMARY ": 0
+  }
+ },
+ {
+  "name": "auto_error_duplicate_point",
+  "top": "tb_auto_error_duplicate_point",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=DUPLICATE_POINT",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_error_duplicate_group",
+  "top": "tb_auto_error_duplicate_group",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=DUPLICATE_OWNER",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_error_empty_group",
+  "top": "tb_auto_error_empty_group",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=EMPTY_GROUP",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_error_missing_group_setup",
+  "top": "tb_auto_error_missing_group_setup",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=SETUP_MISSING",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_error_group_cycle",
+  "top": "tb_auto_error_group_cycle",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_CYCLE",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_error_missing_reference",
+  "top": "tb_auto_error_missing_reference",
+  "sources": [
+   "auto_error_fixture.sv"
+  ],
+  "expect_error": "(?s)^(?!.*BW_READY).*BW_CORE_ERROR code=GROUP_REFERENCE",
+  "expect_counts": {
+   "BW_SUMMARY ": 0,
+   "BW_CHECK ": 0
+  }
+ },
+ {
+  "name": "auto_removed_point_count",
+  "top": "tb_auto_removed_point_count",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*EXPECTED_POINT_COUNT"
+ },
+ {
+  "name": "auto_removed_group_count",
+  "top": "tb_auto_removed_group_count",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*EXPECTED_GROUP_COUNT"
+ },
+ {
+  "name": "auto_removed_startup_timeout",
+  "top": "tb_auto_removed_startup_timeout",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*STARTUP_TIMEOUT_NS"
+ },
+ {
+  "name": "auto_removed_record_timeout",
+  "top": "tb_auto_removed_record_timeout",
+  "expect_compile_error": "(?s)Error-\\[AOUP\\].*MISSING_RECORD_TIMEOUT_NS"
+ },
+ {
+  "name": "auto_removed_define_group",
+  "top": "tb_auto_removed_define_group",
+  "expect_compile_error": "(?s)Error-\\[MFNF\\].*Could not find member 'define_group' in package 'bw_mon_pkg'"
+ },
+ {
+  "name": "auto_removed_finish_configuration",
+  "top": "tb_auto_removed_finish_configuration",
+  "expect_compile_error": "(?s)Error-\\[MFNF\\].*Could not find member 'finish_configuration' in package 'bw_mon_pkg'"
+ },
+ {
+  "name": "auto_no_observations",
+  "top": "tb_auto_no_observations",
+  "expect_log": [
+   "BW_SUMMARY status=STATISTICS_ONLY .*scopes_done=1 scopes_expected=1"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1,
+   "BW_EPISODE ": 0,
+   "BW_PHASE ": 0
+  }
+ },
+ {
+  "name": "auto_reset_slot",
+  "top": "tb_auto_reset_slot",
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "auto_core_origin",
+  "top": "tb_auto_core_origin"
  }
 ]

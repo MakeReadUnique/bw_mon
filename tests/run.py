@@ -42,7 +42,7 @@ def main():
         stamp = build / "source.sha256"
         if top not in compiled or compiled[top][0] != digest:
             if args.no_cache or not (build / "simv").exists() or not stamp.exists() or stamp.read_text() != digest:
-                cmd = ["vcs", "-full64", "-sverilog", "-timescale=1ns/1fs", "-debug_access+all",
+                cmd = ["vcs", "-full64", "-sverilog", "-error=AOUP", "-timescale=1ns/1fs", "-debug_access+all",
                        "+incdir+" + str(ROOT / "rtl"), "+vpi", "-CFLAGS", "-I" + str(vcs_include) +
                        (" -DBW_MON_TEST_FAULTS" if "BW_MON_TEST_FAULTS" in defines else ""), "-assert", "svaext",
                        "-top", top, "-o", str(build / "simv")] + ["+define+" + name for name in defines] + [str(path) for path in files]
@@ -53,6 +53,12 @@ def main():
                     stamp.write_text(digest)
             else:
                 compiled[top] = (digest, True)
+        if case.get("expect_compile_error"):
+            output=(build / "compile.log").read_text()
+            passed=not compiled[top][1] and re.search(case["expect_compile_error"],output) is not None
+            print(f"{'PASS' if passed else 'FAIL'} {case['name']}: native compile rejection; {build / 'compile.log'}",flush=True)
+            if not passed:failures.append(case["name"])
+            continue
         if not compiled[top][1]:
             print(f"FAIL {case['name']}: compilation; {build / 'compile.log'}")
             failures.append(case["name"])

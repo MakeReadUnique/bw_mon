@@ -45,25 +45,25 @@ module tb_reset_member_controls;
     #1249999; point_reset_n=0;
     #500001;
     if (group_epoch!=0 || group_total!=8 || group_bytes!=8 ||
-        !group_complete || !group_reset_coverage || group_start!=0 || group_end!=2000000)
+        !group_complete || !group_reset_coverage || group_start!=measurement_start_ticks+0 || group_end!=measurement_start_ticks+2000000)
       $fatal(1,"member no-edge reset must retain ancestor history and mark known reset coverage");
     #249999; scope_reset_n=0;
     #250000; scope_reset_n=1;
     #1000000; point_reset_n=1;
     #1;
     if (group_epoch!=1 || group_bytes!=0 || !group_complete || !group_reset_coverage ||
-        group_start!=2500000 || group_end!=3500000 || point.stats_epoch!=1 ||
+        group_start!=measurement_start_ticks+2500000 || group_end!=measurement_start_ticks+3500000 || point.stats_epoch!=1 ||
         point.raw_control.control_seq!=3 || accepted_controls!=3 || accepted_frame!=1)
       $fatal(1,"own reset must preserve current member reset state and independent transport positions");
     #249999; clk=1; #1; clk=0;
     #750000;
     if (group_epoch!=1 || group_total!=8 || group_bytes!=8 || !group_complete ||
-        !group_reset_coverage || group_start!=2500000 || group_end!=4500000 ||
+        !group_reset_coverage || group_start!=measurement_start_ticks+2500000 || group_end!=measurement_start_ticks+4500000 ||
         $abs(group_gbps-4.0)>1e-10 || point.total_bytes!=8 ||
         point.raw_record.record_seq!=2 || point.raw_record.source_epoch!=1 || accepted_frame!=2)
       $fatal(1,"member release must contribute immediately without resetting the ancestor schedule");
     #3000000;
-    if (!group_full || group_start!=3500000 || group_end!=7500000 ||
+    if (!group_full || group_start!=measurement_start_ticks+3500000 || group_end!=measurement_start_ticks+7500000 ||
         group_reset_coverage || !group_complete)
       $fatal(1,"closed member reset interval must expire at the exact left boundary");
     #499999; point_reset_n=1'bx;

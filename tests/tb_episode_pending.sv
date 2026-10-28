@@ -38,7 +38,7 @@ module tb_episode_pending;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   task automatic deliver(bw_u64_t logical_tick,bw_u64_t edge_number,bit transfer);
-    frame='0;frame.timestamp_ticks=logical_tick;frame.edge_index=edge_number;frame.record_seq=edge_number;
+    frame='0;frame.timestamp_ticks=measurement_start_ticks+logical_tick;frame.edge_index=edge_number;frame.record_seq=edge_number;
     frame.reset_n=1;frame.bytes_complete=1;frame.events_complete=1;
     frame.event_inc=transfer;frame.byte_inc=transfer ? 8 : 0;
     frame_toggle<=!frame_toggle;
@@ -48,7 +48,7 @@ module tb_episode_pending;
     handle=register_point("episode.pending.source","tb_episode_pending",BW_NS,4,1);
     wait(monitor_ready);
     #1000000;deliver(1000000,1,1);#1000000;deliver(2000000,2,0);
-    #1000000;watermark=3000000;
+    #1000000;watermark=measurement_start_ticks+3000000;
     if (mode!=0) begin
       #500000;
       if (mode==2) begin $display("TB_PASS episode_pending_final");$finish;end
@@ -56,20 +56,20 @@ module tb_episode_pending;
       if (final_seq!=1 || result.status!=BW_EPISODE_RESET_INTERRUPTED || result.bytes_complete ||
           result.events_complete || result.last_known || result.e2e_valid || epoch!=1)
         $fatal(1,"reset with a prior pending source frame must report known partial evidence");
-      #(4000002-$time);deliver(3000000,3,1);#1;watermark=BW_U64_MAX;
+      #(measurement_start_ticks+4000000-$time);deliver(3000000,3,1);#1;watermark=BW_U64_MAX;
       if (accepted!=3 || active || final_seq!=1)
         $fatal(1,"reset still accepts late raw input without restarting its statistics");
     end else begin
       #1000000;
-      if (!active || final_seq!=0 || window_end>3000000)
+      if (!active || final_seq!=0 || window_end>measurement_start_ticks+3000000)
         $fatal(1,"pending T=3 input blocks the apparently due T=4 quiet completion and window");
-      deliver(3000000,3,1);#1;watermark=4000000;
+      deliver(3000000,3,1);#1;watermark=measurement_start_ticks+4000000;
       if (!active || final_seq!=0 || accepted!=3)
         $fatal(1,"a legal delayed transfer at T=3 must extend the old episode");
       #249999;deliver(4000000,4,0);#1;watermark=BW_U64_MAX;
-      #(6000003-$time);
-      if (active || final_seq!=1 || result.first_ticks!=1000001 || result.last_ticks!=3000001 ||
-          result.tail_ticks!=4000001 || result.confirmation_ticks!=6000001 ||
+      #(measurement_start_ticks+6000001-$time);
+      if (active || final_seq!=1 || result.first_ticks!=measurement_start_ticks+1000000 || result.last_ticks!=measurement_start_ticks+3000000 ||
+          result.tail_ticks!=measurement_start_ticks+4000000 || result.confirmation_ticks!=measurement_start_ticks+6000000 ||
           result.byte_count!=16 || result.event_count!=2 || result.duration_ticks!=3000000 ||
           !result.e2e_valid || $abs(result.e2e_gbps-5.333333333333333)>1e-10)
         $fatal(1,"raw progress preserves exact logical episode boundaries despite physical delivery delay");

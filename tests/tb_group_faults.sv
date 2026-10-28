@@ -16,25 +16,25 @@ module tb_group_faults;
     add_point_member("fault.group","fault");add_point_member("fault.group","good");
     point_handle=register_point("fault","controlled.fault",BW_NS,1,1);
     source=point_source_handle(point_handle);wait(monitor_ready);
-    control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;
+    control='0;control.control_seq=1;control.point_handle=point_handle;control.reset_n=1;control.timestamp_ticks=measurement_start_ticks;
     publish_control(source,control);
-    frame='0;frame.timestamp_ticks=250000;frame.record_seq=1;frame.edge_index=1;
+    frame='0;frame.timestamp_ticks=measurement_start_ticks+250000;frame.record_seq=1;frame.edge_index=1;
     frame.byte_inc=32;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
     #250000;clk=1;#1;clk=0;
     if(mode!="missing_first")begin
       if(mode=="record_gap")frame.record_seq=2;
       if(mode=="wrong_edge")frame.edge_index=2;
-      if(mode=="wrong_time")frame.timestamp_ticks=250001;
+      if(mode=="wrong_time")frame.timestamp_ticks=measurement_start_ticks+250001;
       publish_frame(source,frame);
       if(mode=="duplicate")publish_frame(source,frame);
     end
     if(mode=="missing_second" || mode=="reverse")begin
       #499999;clk=1;#1;clk=0;
       if(mode=="reverse")begin
-        replayed=frame;frame.record_seq=2;frame.edge_index=2;frame.timestamp_ticks=750000;
+        replayed=frame;frame.record_seq=2;frame.edge_index=2;frame.timestamp_ticks=measurement_start_ticks+750000;
         publish_frame(source,frame);publish_frame(source,replayed);
       end
     end
-    #(2000002-$time);$fatal(1,"expected core error did not occur");
+    #(measurement_start_ticks+2000000-$time);$fatal(1,"expected core error did not occur");
   end
 endmodule

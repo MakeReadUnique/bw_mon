@@ -9,7 +9,7 @@ module tb_hint_ns;
   initial begin
     wait(monitor_ready);
     #1999999fs;
-    if(!point.backpressure_active || point.backpressure_hit || point.backpressure_start_ticks!=0)
+    if(!point.backpressure_active || point.backpressure_hit || point.backpressure_start_ticks!=measurement_start_ticks)
       $fatal(1,"stopped-clock ns interval must start from live known condition");
     #2fs;
     if(!point.backpressure_hit || point.backpressure_trigger_ticks!=2000001 ||

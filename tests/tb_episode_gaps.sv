@@ -13,7 +13,7 @@ module tb_episode_gaps;
   initial begin
     wait(monitor_ready);
     for (int t=1;t<=17;t++) begin
-      #(ns_to_ticks(t)-$time);
+      #(measurement_start_ticks+ns_to_ticks(t)-$time);
       valid='0;
       for (int i=0;i<5;i++) sizes[i]=8;
       valid[0]=(t==2 || t==6 || t==12); if (t==4) valid[0]=1'bx;
@@ -26,20 +26,20 @@ module tb_episode_gaps;
       if (t==8) begin
         if (scopes[1].point.episode_result_seq!=1 || scopes[1].point.episode_result.first_known ||
             scopes[1].point.episode_result.bytes_complete || scopes[1].point.episode_result.e2e_valid ||
-            scopes[1].point.episode_result.confirmation_ticks!=8000001 ||
+            scopes[1].point.episode_result.confirmation_ticks!=measurement_start_ticks+8000000 ||
             !scopes[2].point.episode_active)
           $fatal(1,"a pre-first gap poisons that episode while a later gap restarts quiet evidence");
       end
       if (t==9) begin
         if (scopes[2].point.episode_result_seq!=1 || scopes[2].point.episode_result.last_known ||
-            scopes[2].point.episode_result.confirmation_ticks!=9000001 ||
+            scopes[2].point.episode_result.confirmation_ticks!=measurement_start_ticks+9000000 ||
             scopes[2].point.episode_result.e2e_valid)
           $fatal(1,"unknown after the last definite event retains an ambiguous end and waits from recovery");
         if (scopes[3].point.episode_result_seq!=1 || !scopes[3].point.episode_result.first_known ||
             !scopes[3].point.episode_result.last_known || !scopes[3].point.episode_result.events_complete ||
             scopes[3].point.episode_result.event_count!=2 || scopes[3].point.episode_result.byte_count!=8 ||
             scopes[3].point.episode_result.bytes_complete || scopes[3].point.episode_result.e2e_valid ||
-            scopes[3].point.episode_result.tail_ticks!=5000001)
+            scopes[3].point.episode_result.tail_ticks!=measurement_start_ticks+5000000)
           $fatal(1,"unknown size preserves two definite events and known boundaries but never complete bytes");
         if (!scopes[4].point.episode_first_known || !scopes[4].point.episode_bytes_complete)
           $fatal(1,"a complete quiet separator before new traffic clears earlier pre-episode ambiguity");
@@ -48,8 +48,8 @@ module tb_episode_gaps;
         if (scopes[0].point.episode_result_seq!=1 || !scopes[0].point.episode_result.first_known ||
             !scopes[0].point.episode_result.last_known || scopes[0].point.episode_result.bytes_complete ||
             scopes[0].point.episode_result.events_complete || scopes[0].point.episode_result.byte_count!=16 ||
-            scopes[0].point.episode_result.event_count!=2 || scopes[0].point.episode_result.tail_ticks!=7000001 ||
-            scopes[0].point.episode_result.confirmation_ticks!=11000001 || !scopes[0].point.bytes_complete)
+            scopes[0].point.episode_result.event_count!=2 || scopes[0].point.episode_result.tail_ticks!=measurement_start_ticks+7000000 ||
+            scopes[0].point.episode_result.confirmation_ticks!=measurement_start_ticks+11000000 || !scopes[0].point.bytes_complete)
           $fatal(1,"an internal gap keeps both outer boundaries known; window recovery cannot repair episode totals");
       end
       if (t==13 && (!scopes[4].point.episode_result.e2e_valid ||

@@ -11,8 +11,8 @@ module bw_mon_quickstart;
   // 1 GHz 时钟，每个周期为 1 ns。
   always #0.5ns clk = ~clk;
 
-  // 整个 testbench 只放一个 setup，填写实际观测点总数。
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) u_bw_setup();
+  // 整个 testbench 只放一个 setup，自动发现实际点和组。
+  bw_mon_setup u_bw_setup();
 
   bw_point_mon #(
     .POINT_ID("master0"),

@@ -41,6 +41,46 @@ module auto_error_fixture #(parameter int CASE=0);
       void'(register_point("err.late","auto_error_fixture.late",BW_NS,4,4));
     end
   end
+  if (CASE==7) begin : duplicate_point
+    bw_mon_setup setup();
+    bw_point_mon #(.POINT_ID("err.duplicate"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) first
+      (.clk(clk),.reset_n(1'b1));
+    bw_point_mon #(.POINT_ID("err.duplicate"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) second
+      (.clk(clk),.reset_n(1'b1));
+  end
+  if (CASE==8) begin : duplicate_group
+    bw_mon_setup setup();
+    bw_group_mon #(.GROUP_ID("err.duplicate"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) first
+      (.clk(clk),.reset_n(1'b1));
+    bw_group_mon #(.GROUP_ID("err.duplicate"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) second
+      (.clk(clk),.reset_n(1'b1));
+  end
+  if (CASE==9) begin : empty_group
+    bw_mon_setup setup();
+    bw_group_mon #(.GROUP_ID("err.empty"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) group_mon
+      (.clk(clk),.reset_n(1'b1));
+  end
+  if (CASE==10) begin : missing_group_setup
+    bw_group_mon #(.GROUP_ID("err.uncoordinated"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) group_mon
+      (.clk(clk),.reset_n(1'b1));
+  end
+  if (CASE==11) begin : group_cycle
+    bw_mon_setup setup();
+    bw_group_mon #(.GROUP_ID("err.a"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) first
+      (.clk(clk),.reset_n(1'b1));
+    bw_group_mon #(.GROUP_ID("err.b"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) second
+      (.clk(clk),.reset_n(1'b1));
+    initial begin
+      add_group_member("err.a","err.b");
+      add_group_member("err.b","err.a");
+    end
+  end
+  if (CASE==12) begin : missing_reference
+    bw_mon_setup setup();
+    bw_group_mon #(.GROUP_ID("err.reference"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(4),.PHASE_ENABLE(0)) group_mon
+      (.clk(clk),.reset_n(1'b1));
+    initial add_point_member("err.reference","absent.point");
+  end
   initial begin
     #100000;$fatal(1,"expected core error did not occur");
   end

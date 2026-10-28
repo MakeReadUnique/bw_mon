@@ -13,6 +13,7 @@ module tb_hierarchy_t4_overlap;
     for(int p=4;p<8;p++)add_point_member("die1_dmc",$sformatf("p%0d",p));
     add_group_member("all_dmc","die0_dmc");add_group_member("all_dmc","die1_dmc");
     add_group_member("mixed","die0_dmc");add_point_member("mixed","p8");add_point_member("mixed","p9");
-    #1;$fatal(1,"expected core error did not occur");
+    add_group_member("combined","all_dmc");add_group_member("combined","mixed");
+    #2;$fatal(1,"expected core error did not occur");
   end
 endmodule

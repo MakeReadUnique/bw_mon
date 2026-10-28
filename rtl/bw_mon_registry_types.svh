@@ -18,6 +18,7 @@
     string id, monitor_path;
     bw_basis_t basis;
     bw_u64_t width, stride;
+    bit requires_preparation=0,preparation_complete=0;
     int point_handle=-1, group_handle=-1;
     int parents[$];
     bw_record_t frames[$];
