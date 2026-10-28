@@ -32,7 +32,7 @@ module tb_report_quality;
        !gap.window_valid || gap.episode_result.bytes_complete ||
        interrupted.episode_result.status!=BW_EPISODE_RESET_INTERRUPTED ||
        !truncated.episode_active || idle.episode_result_seq!=0 ||
-       summary.pass_count!=1 || summary.fail_count!=0 || summary.warning_count!=2 || summary.finalized)
+       summary.pass_count!=1 || summary.fail_count!=0 || summary.warning_count!=5 || summary.finalized)
       $fatal(1,"zero/gap/reset/active/no-episode evidence must remain independent before finalization");
     $display("TB_PASS report_quality statistics_recovered_without_repairing_old_gap=1");$finish;
   end

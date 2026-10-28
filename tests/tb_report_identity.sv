@@ -22,7 +22,7 @@ module tb_report_identity;
     #1000000;summary=check_report_summary();
     if(gen_points[0].bw.scope_id!="tb_report_identity.gen_points[0].bw" ||
        escaped_id.scope_id!="scope.\"quote\\#path" ||
-       summary.pass_count!=3 || summary.fail_count!=0 || summary.warning_count!=0)
+       summary.pass_count!=3 || summary.fail_count!=0 || summary.warning_count!=3)
       $fatal(1,"full default/quoted identities must match exactly, preserving brackets/hash/space");
     $display("TB_PASS report_identity");$finish;
   end

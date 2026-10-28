@@ -147,10 +147,10 @@ cd ../..
 ```text
 QUICKSTART window_bytes=640 bandwidth_gbps=64.000 window_valid=1
 QUICKSTART total_bytes=1280 total_events=20 e2e_gbps=64.000 e2e_valid=1
-BW_SUMMARY status=STATISTICS_ONLY pass=0 fail=0 warning=0 scopes_done=1 scopes_expected=1
+BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=1
 ```
 
-`STATISTICS_ONLY` 表示正常统计，但没有设置性能目标。第 10 节会说明如何得到 PASS 或 FAIL。
+本例开启过程分析后默认开启阶段分析和持续波动检查。原有 20 拍输入可完成带宽统计，但稳定平台内不足六条完整参考窗口，因此默认规则给出一次 WARNING；没有预期文件也会检查。阶段分析关闭且无显式性能规则时才为 `STATISTICS_ONLY`。第 10 节说明如何独立添加性能目标。
 
 集成到自己的编译脚本时，保留以下要求：
 
@@ -476,7 +476,9 @@ add_group_member("all_mem", "die1_mem");
 
 ## 10 配置带宽达标检查
 
-性能目标放在独立文本文件中，通过仿真参数 `+BW_EXPECT=文件路径` 读取。硬件接口、窗口等模块参数仍然写在例化里。
+启用阶段分析即自动启用每个平台的持续波动检查，无需预期文件或新参数。参考 B 来自最早六条完整位于最终平台内的连续有效窗口，跨度至少为 `min(W,5*S)`；B 建立后冻结并回查参考期。`abs(y-B)>0.05*B` 才超限，等号合格；至少两条连续新有效超限样本且逻辑跨度达到 W 才 FAIL。高低交替不中断超限；缺口、复位和已确认豁免会中断。B 为零、参考或覆盖不足则 WARNING，已有可靠 FAIL 保留。它与稳定段原始字节/时间带宽、CV 是不同指标。
+
+额外的显式性能目标放在独立文本文件中，通过仿真参数 `+BW_EXPECT=文件路径` 读取，不调整默认规则的 5% 门槛。硬件接口、窗口等模块参数仍然写在例化里。
 
 仓库已经提供 [examples/bw_mon_quickstart.cfg](../examples/bw_mon_quickstart.cfg)：
 
@@ -494,10 +496,10 @@ cd .build/quickstart
 cd ../..
 ```
 
-本例已开启过程分析并留出结束时间，应得到一条 e2e 带宽 PASS，最终汇总为：
+本例已开启过程分析并留出结束时间，应得到一条 e2e 带宽 PASS；原有短输入的默认参考不足 WARNING 独立保留，最终汇总为：
 
 ```text
-BW_SUMMARY status=PASS pass=1 fail=0 warning=0 scopes_done=1 scopes_expected=1
+BW_SUMMARY status=WARNING pass=1 fail=0 warning=1 scopes_done=1 scopes_expected=1
 ```
 
 ### 换成自己的目标
@@ -527,7 +529,7 @@ steady_cv_max_pct = 10
 
 CV 是标准差除以平均值，再乘 100%，数值越大表示窗口带宽波动越大。至少需要两个合格样本且平均值大于 0，才能给出有效 CV。
 
-目标下限 60、相对容差 5%，实际允许下限就是 `60 × 0.95 = 57 GB/s`。这里的 `5` 表示 5%；阶段参数 `PHASE_*_REL` 则要写 `0.05` 才表示 5%。
+目标下限 60、相对容差 5%，实际允许下限就是 `60 × 0.95 = 57 GB/s`。这里的 `5` 表示显式规则自己的 5% 容差，不影响默认持续波动规则；阶段算法参数由固定内部策略管理。
 
 配置文件中，点使用 `[point 完整ID]`，组使用 `[group 完整ID]`。名字区分大小写，不支持通配符，组目标也不会自动分配到各成员。值只写数字，不要附加 `GB/s` 等单位。文件在 ready 时读取一次，运行中修改不会重新加载。
 
@@ -581,7 +583,7 @@ CV 是标准差除以平均值，再乘 100%，数值越大表示窗口带宽波
 | 复位后带宽暂时不可用 | 自身复位会清空本地统计，释放后要重新预热；组的统计复位不清空成员或其他组的统计 |
 | 有滑窗带宽但没有完整 e2e | 是否开启过程分析；是否出现过传输；末拍后是否有真实采样沿，是否等够静默阈值 |
 | 没有稳定段结果 | 是否填写全部阶段参数；是否有足够连续满窗结果，跨度和门槛是否合适 |
-| 输出 `STATISTICS_ONLY` | 没有配置参与比较的性能目标；可按第 10 节传入 `+BW_EXPECT` |
+| 输出 `STATISTICS_ONLY` | 阶段分析未开启且没有显式性能目标；可按需开启分析或按第 10 节添加独立目标 |
 | 性能 FAIL 后仿真仍运行 | 这是正常行为；自动化脚本需要检查 `BW_CHECK` 和最终 `BW_SUMMARY` |
 | 报 `SIM_TIME_LIMIT` | 是否超过公布的 T+40 μs 总监测截止时间；复位不能延长它 |
 | 编译缺少 DPI/VPI 符号或头文件 | 是否加入 `bw_slot_settlement.c`、`+vpi`、调试选项和正确的 VCS SDK include 路径 |

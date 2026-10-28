@@ -26,8 +26,8 @@ module tb_report_e2e;
     summary=check_report_summary();
     if(point.episode_result.byte_count!=total || point.episode_result.duration_ticks!=100000000 ||
        !point.episode_result.e2e_valid || $abs(point.episode_result.e2e_gbps-real'(total)/100.0)>1e-10 ||
-       summary.pass_count!=(expected=="PASS") || summary.fail_count!=(expected=="FAIL") ||
-       summary.warning_count!=warnings)
+       summary.pass_count!=int'(expected=="PASS")+int'(total>0) || summary.fail_count!=(expected=="FAIL") ||
+       summary.warning_count!=warnings+int'(total==0))
       $fatal(1,"raw 100ns byte-table result/check mismatch total=%0d expected=%s actual=%.17g pass=%0d fail=%0d warning=%0d",
         total,expected,point.episode_result.e2e_gbps,summary.pass_count,summary.fail_count,summary.warning_count);
     $display("TB_PASS report_e2e total=%0d expected=%s continued_after_comparison=1",total,expected);$finish;
