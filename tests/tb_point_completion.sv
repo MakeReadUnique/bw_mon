@@ -4,6 +4,7 @@ module tb_point_completion;
   logic clk=0,reset_p=1;
   string stage;
   bit damaged;
+  bw_record_t late_record;
   import "DPI-C" context function int bw_test_observe_point_completion();
   function void bw_test_point_completion_observed();
     if($time!=1000001 || scope_disabled(BW_POINT,"damaged")!=damaged ||
@@ -33,7 +34,16 @@ module tb_point_completion;
     if(q.total_bytes!=16)$fatal(1,"healthy point failed real edge");
     if(!damaged && p.total_bytes!=8)$fatal(1,"complete durable receipts must survive a lost notice");
     clk=0;reset_p=0;
-    #1000000;reset_p=1;clk=1;
+    #999999;
+    if(stage=="capture")begin
+      // Deliberately supply the old edge exactly1ns after its original time.
+      // Same-time quarantine is already established; late input cannot revive it.
+      late_record='0;late_record.timestamp_ticks=1000001;late_record.edge_index=1;late_record.record_seq=1;
+      late_record.byte_inc=8;late_record.event_inc=1;late_record.bytes_complete=1;late_record.events_complete=1;late_record.reset_n=1;
+      publish_frame(p.transport_source,late_record);
+      if(!scope_disabled(BW_POINT,"damaged") || p.accepted_record_seq!=0)$fatal(1,"late old record revived disabled point");
+    end
+    #1;reset_p=1;clk=1;
     #1;
     if(q.total_bytes!=32)$fatal(1,"healthy point did not continue");
     if(damaged && !scope_disabled(BW_POINT,"damaged"))$fatal(1,"reset revived disabled point");
@@ -42,7 +52,8 @@ module tb_point_completion;
     if(scope_disabled(BW_POINT,"healthy"))$fatal(1,"stopped clock was treated as missing input");
     clk=0;#3212345;clk=1;#1;
     if(q.total_bytes!=48 || scope_disabled(BW_POINT,"healthy"))$fatal(1,"resumed changed-period clock must accept only its real edge");
-    if(!damaged && p.total_bytes!=24)$fatal(1,"reliable point lost the resumed edge");
+    // Reset cleared P's first8-byte prefix. Its two postreset beats total16.
+    if(!damaged && p.total_bytes!=16)$fatal(1,"reliable point lost a postreset or resumed edge");
     $display("TB_PASS point_completion stage=%s healthy_bytes=48",stage);$finish;
   end
 endmodule
