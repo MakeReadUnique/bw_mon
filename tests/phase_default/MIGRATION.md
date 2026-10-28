@@ -2,7 +2,7 @@
 
 来源：Spec 48 D3/D11/D16、T1–T4；原组件来源 `9618e0e`，采纳策略来源 `3fb3fdb93249db0ca0211d9d6e0110d72d51521b`。这里保留的是输入、独立公式和已确认行为；旧 PASS 不作为新产品证明。
 
-`python3 tests/run.py phase_defaults phase_pair6 phase_fixed_continuous phase_fixed_platforms phase_fixed_activity phase_fixed_recovery` 通过真正的点、具名四成员组、成员调用和 setup 运行。四个 `.txt` 文件保留 R2 十三个场景的原始逐沿输入；`fixed.json` 固定其独立审核过的阶段时间线和 27 个目标。点和组分别核对这些目标，合计 54 项。`check.py` 从原始输入计算半开窗口字节、完整性、计划发布集合、阶段原始字节/事件及窗口分布，并核对最终边界与两种物理延迟。公开 enum 名称在仿真时映射，不依赖其数值编码。组的四个真实成员包含零字节活动。
+`python3 tests/run.py phase_defaults phase_pair6 phase_fixed_continuous phase_fixed_platforms phase_fixed_activity phase_fixed_recovery` 通过真正的点、具名四成员组、成员调用和 setup 运行。每次展开严格只有5个已注册点（独立点与4个成员点）和1个真实组；独立核验强制检查 `BW_READY` 的实际数量。四个 `.txt` 文件保留 R2 十三个场景的原始逐沿输入；`fixed.json` 固定其独立审核过的阶段时间线和 27 个目标。点和组分别核对这些目标，合计 54 项。`check.py` 从原始输入计算半开窗口字节、完整性、计划发布集合、阶段原始字节/事件及窗口分布，并核对最终边界与两种物理延迟。公开 enum 名称在仿真时映射，不依赖其数值编码。组的四个真实成员包含零字节活动。
 
 专项只证明阶段和既有统计语义，不声称新的 5% checker 已实现或已联合验收。其严格冷构建耗时、工具/来源和输出归档由运行记录提供；规模迁移见 [公开入口与规模参考迁移](../acceptance/spec48-migration.md)，后续完整 M/H 及完成协议仍由对应票据验收。
 
@@ -41,4 +41,4 @@
 python3 tests/phase_default/run.py --evidence /tmp/phase-fixed-evidence --lock /tmp/bw-mon-spec48/acceptance.lock
 ```
 
-该入口复用 `tests/run.py`，只编译一次并执行四固定输入；归档原始日志、独立核验 JSON、完整命令和分项耗时后清理派生构建目录。初始化耗时采用宿主进程启动至观察到既有 `BW_READY` 行的时间，明确包含装载及管道观察延迟，不能当作单独的 RTL 初始化 CPU 计时。阶段计时与总预算不会把这项观测子区间重复相加。
+该入口复用 `tests/run.py`，用同一个小程序的固定选择宏分别编译四次并执行四固定输入；四次构建、等待、核验和清理共用一次900秒预算；归档原始日志、独立核验 JSON、完整命令和分项耗时后清理派生构建目录。初始化耗时采用宿主进程启动至观察到既有 `BW_READY` 行的时间，明确包含装载及管道观察延迟，不能当作单独的 RTL 初始化 CPU 计时。阶段计时与总预算不会把这项观测子区间重复相加。

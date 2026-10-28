@@ -12,6 +12,7 @@ import importlib.util
 import json
 import os
 import resource
+import signal
 from pathlib import Path
 import shutil
 import subprocess
@@ -75,6 +76,10 @@ def main():
         entry['child_user_seconds']=usage_after.ru_utime-usage_before.ru_utime
         entry['child_system_seconds']=usage_after.ru_stime-usage_before.ru_stime
         entry['child_peak_rss_kib_so_far']=usage_after.ru_maxrss
+        if stage=='compile' and kwargs.get('stdout') is not None:
+            kwargs['stdout'].flush()
+            index=sum(c['stage']=='compile' for c in report['commands'])
+            shutil.copy2(kwargs['stdout'].name,str(args.evidence/('compile-family-{}.log'.format(index))))
         entry['returncode']=completed.returncode;entry['seconds']=time.monotonic()-began
         report['commands'].append(entry)
         return completed
@@ -82,11 +87,14 @@ def main():
     try:
         args.lock.parent.mkdir(parents=True,exist_ok=True)
         lock=args.lock.open('a+')
-        while True:
-            try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);locked=True;break
-            except BlockingIOError:
-                if time.monotonic()>=deadline:raise TimeoutError('fixed-phase budget exhausted while waiting for serial lock')
-                time.sleep(.05)
+        def lock_timeout(signum,frame):
+            raise TimeoutError('fixed-phase budget exhausted while waiting for serial lock')
+        old_alarm=signal.signal(signal.SIGALRM,lock_timeout)
+        signal.setitimer(signal.ITIMER_REAL,max(.001,deadline-time.monotonic()))
+        try:
+            fcntl.flock(lock,fcntl.LOCK_EX);locked=True
+        finally:
+            signal.setitimer(signal.ITIMER_REAL,0);signal.signal(signal.SIGALRM,old_alarm)
         report['lock_wait_seconds']=time.monotonic()-start
         prepare=time.monotonic()
         if build.exists():shutil.rmtree(str(build))
@@ -99,7 +107,7 @@ def main():
         finally:sys.argv=previous_argv;subprocess.run=original_run
         counts={stage:sum(c['stage']==stage for c in report['commands']) for stage in ('compile','simulation','verify')}
         report['stage_command_counts']=counts
-        report['completed']=result==0 and counts=={'compile':1,'simulation':4,'verify':4}
+        report['completed']=result==0 and counts=={'compile':4,'simulation':4,'verify':4}
     except KeyboardInterrupt:
         report['error']='Interrupted by caller';report['interrupted']=True
     except Exception as error:

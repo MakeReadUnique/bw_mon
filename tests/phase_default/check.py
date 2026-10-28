@@ -23,8 +23,10 @@ def check(log_path, family_id):
     origins, windows, phases, enum = {}, {}, {}, {}
     metrics, variations = {}, {}
     current = None
+    registrations=[]
     for line in Path(log_path).read_text().splitlines():
         v = fields(line)
+        if line.startswith('BW_READY '):registrations.append((int(v['points']),int(v['groups'])))
         if line.startswith('FIXED_ENUM '): enum = {value:key for key,value in v.items()}
         elif line.startswith('FIXED_CASE '):
             current=int(v['case']);origins[current]=int(v['origin'])
@@ -42,6 +44,7 @@ def check(log_path, family_id):
             if scope.startswith(('point','group')):
                 kind='point' if scope.startswith('point') else 'group'
                 phases.setdefault((current,kind),[]).append(v)
+    assert registrations==[(5,1)], ('T4 requires exactly five registered points and one group',registrations)
     assert set(origins)==set(cases), ('missing input cases',set(cases)-set(origins))
     count=0;targets=[]
     for cid,c in cases.items():
@@ -120,7 +123,7 @@ def check(log_path, family_id):
                     'boundary_ticks':int(p['start_ticks']),'confirmation_ticks':confirm,'updates':updates,
                     'seven_stride_ticks':7*family['s']*TICKS,'first_to_confirmation_ticks':confirm-first_tick,
                     'input_to_confirmation_ticks':confirm-(origin+target['inputU']*TICKS+1)})
-    result={'family':family_id,'windows_checked':count,'targets_checked':len(targets),'targets':targets,
+    result={'family':family_id,'registered_points':5,'registered_groups':1,'windows_checked':count,'targets_checked':len(targets),'targets':targets,
             'wrong_confirmations':0,'extra_switches':0,'checker_claim':False}
     Path(log_path).with_suffix('.verification.json').write_text(json.dumps(result,indent=2)+'\n')
     print(f"PHASE_FIXED_PASS family={family_id} windows={count} targets={len(targets)} wrong=0 extra=0")

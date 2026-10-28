@@ -29,8 +29,12 @@
     end
 
 `define FIXED_DENSE .UPDATE_STRIDE(1),
-// Spec 48 T4: four frozen input files, one compiled public-product program.
+// Spec 48 T4: one public-product program, one five-point/one-group elaboration per fixed input.
+`ifndef PHASE_FIXED_FAMILY
+`define PHASE_FIXED_FAMILY 0
+`endif
 module tb_phase_fixed;
+  localparam int CONFIG=`PHASE_FIXED_FAMILY;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0, reset_n=1, valid=0, known=1;
@@ -40,7 +44,7 @@ module tb_phase_fixed;
   bit recording=0;
   bw_u64_t origin;
   bw_mon_setup setup();
-  for(genvar f=0;f<4;f++)begin:families
+  for(genvar f=0;f<4;f++)if(f==CONFIG)begin:families
     localparam logic [1:0] BASIS=(f==1 || f==2) ? BW_CYCLE : BW_NS;
     if(f<2)begin:default_stride
       `FIXED_SCOPE()
@@ -52,6 +56,7 @@ module tb_phase_fixed;
     int fd,rc,next_case,ev,kn,rst;
     string input_path;
     if(!$value$plusargs("INPUT=%s",input_path) || !$value$plusargs("FAMILY=%d",family))$fatal(1,"input/family required");
+    if(family!=CONFIG)$fatal(1,"input family must match the selected elaboration");
     fd=$fopen(input_path,"r");if(!fd)$fatal(1,"input missing");
     wait(monitor_ready);origin=measurement_start_ticks;
     $display("FIXED_ENUM STEADY=%0d RAMP=%0d FALL=%0d",BW_PHASE_STEADY,BW_PHASE_RAMP,BW_PHASE_FALL);

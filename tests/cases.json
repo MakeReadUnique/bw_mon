@@ -4241,6 +4241,9 @@
    "tests/phase_default/check.py",
    "{log}",
    "continuous"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=0"
   ]
  },
  {
@@ -4255,6 +4258,9 @@
    "tests/phase_default/check.py",
    "{log}",
    "platforms"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=1"
   ]
  },
  {
@@ -4269,6 +4275,9 @@
    "tests/phase_default/check.py",
    "{log}",
    "activity"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=2"
   ]
  },
  {
@@ -4283,6 +4292,9 @@
    "tests/phase_default/check.py",
    "{log}",
    "recovery"
+  ],
+  "defines": [
+   "PHASE_FIXED_FAMILY=3"
   ]
  },
  {
