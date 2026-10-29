@@ -73,7 +73,10 @@ class HistoryAuditContracts(unittest.TestCase):
                     index = rows[0].index('phase_samples_peak')
                     (out/'actual.csv').write_text('\n'.join(','.join(row[:index]+row[index+1:]) for row in rows)+'\n')
                 elif mutation == 'summary_counter':
-                    log.write_text(log.read_text().replace('BW_SUMMARY status=WARNING pass=2', 'BW_SUMMARY status=WARNING pass=99'))
+                    lines = log.read_text().splitlines(True)
+                    index = next(i for i, x in enumerate(lines) if x.startswith('BW_SUMMARY '))
+                    lines[index] = lines[index].replace('pass=', 'pass=99', 1)
+                    log.write_text(''.join(lines))
                 self.assertEqual(verify(scenario, out)[0], mutation == 'baseline')
 
     def test_pending_summary_without_final_packets_is_incomplete(self):

@@ -246,8 +246,8 @@ def audit_packets(scenario, lines):
         fail('independent_summary_count')
     else:
         combined = conclusions + default_conclusions
-        expected = dict(status='WARNING' if combined['WARNING'] else 'PASS',
-                        scopes_done=3, scopes_expected=3, **{'pass': combined['PASS'], 'warning': combined['WARNING'], 'fail': 0})
+        expected = dict(status='FAIL' if combined['FAIL'] else 'WARNING' if combined['WARNING'] else 'PASS',
+                        scopes_done=3, scopes_expected=3, **{'pass': combined['PASS'], 'warning': combined['WARNING'], 'fail': combined['FAIL']})
         compare(summaries[0], expected, 'report_summary')
         summary_index = next(i for i, x in enumerate(lines) if x.startswith('BW_SUMMARY '))
         if any(i > summary_index and x.startswith(('BW_EPISODE ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_CHECK ', 'BW_DEFAULT_CHECK '))

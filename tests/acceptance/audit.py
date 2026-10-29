@@ -16,7 +16,7 @@ def replay_recorded_reference(sources,manifest,work):
    if name.startswith('tests/acceptance/') and name.endswith('.py'):
     target=source/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
   metadata=source/'manifest.json';metadata.write_text(json.dumps(manifest))
-  script='''import json,sys
+  script='''import inspect,json,sys
 from pathlib import Path
 sys.path.insert(0,sys.argv[1])
 import model
@@ -29,8 +29,13 @@ if m.get('input_time_basis')=='offset from published measurement start':
  expected,rows=model.at_measurement_start(expected,rows,c['start_ticks'])
 assert c==expected, 'recorded input configuration differs from consumed reference'
 frames=model.frame_table(rows);windows=model.window_table(c,rows,frames);log=(work/'run.log').read_text()
-print(json.dumps(dict(basic=check_trace(c,work,rows),analysis=verify(c,rows,frames,windows,log),
- report=verify_reports(c,rows,frames,windows,log,(work/'expect.cfg').read_text()))))
+result=verify(c,rows,frames,windows,log)
+cfg=(work/'expect.cfg').read_text()
+if len(inspect.signature(verify_reports).parameters)>6:
+ report=verify_reports(c,rows,frames,windows,log,cfg,result.get('default_checks'))
+else:
+ report=verify_reports(c,rows,frames,windows,log,cfg)
+print(json.dumps(dict(basic=check_trace(c,work,rows),analysis=result,report=report)))
 '''
   checked=subprocess.run([sys.executable,'-B','-c',script,str(source/'tests/acceptance'),str(metadata),str(work)],
                          stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
@@ -71,7 +76,11 @@ def main():
    if not meta.exists():continue
    x=json.loads(meta.read_text());assert x['fresh'] and x['pixels']==[1500,850] and x['png_sha256']==sha(picture.read_bytes()) and x['fsdb_sha256']==sha((folder/'waves.fsdb').read_bytes());images+=1
   for key,value in basic['counts'].items():total[key]=total.get(key,0)+value
-  for key,value in result.items():metrics[key]=metrics.get(key,0)+value
+  for key,value in result.items():
+   if isinstance(value,dict):
+    nested=metrics.setdefault(key,{})
+    for sub,amount in value.items():nested[sub]=nested.get(sub,0)+amount
+   else:metrics[key]=metrics.get(key,0)+value
   scenes+=1;print('PASS archive',folder.name,flush=True)
  assert scenes==require_scene_inventory(configurations)
  human=json.loads((OUT/'review.json').read_text())['human']['status']

@@ -87,7 +87,7 @@ def runtime_evidence(root, out):
 
 def project_sources(out, folder, manifest):
     native = manifest['runtime_evidence']
-    if native.get('schema_version', 1) == 2:
+    if native.get('schema_version', 1) in (2, 3):
         path = folder / native['source_archive']
         assert path.name == native['source_archive'], 'source archive must be beside its scene'
         assert sha(path) == native['source_archive_sha256'], ('source archive changed', folder.name)

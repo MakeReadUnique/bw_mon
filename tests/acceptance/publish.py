@@ -54,7 +54,11 @@ def main():
    assert m['human_review']=='PENDING'
    captured.append(image.name);pictures.append(str(image.relative_to(OUT)))
   for key,value in comparison['counts'].items():totals[key]=totals.get(key,0)+value
-  for key,value in comparison['analysis_counts'].items():analysis[key]=analysis.get(key,0)+value
+  for key,value in comparison['analysis_counts'].items():
+   if isinstance(value,dict):
+    nested=analysis.setdefault(key,{})
+    for sub,amount in value.items():nested[sub]=nested.get(sub,0)+amount
+   else:analysis[key]=analysis.get(key,0)+value
   scenes.append({'scene':directory.name,'runtime_source_head':consumed['head'],'configuration':manifest['configuration'],'counts':comparison['counts'],'analysis_counts':comparison['analysis_counts'],'performance':comparison['report_reference'],'images':captured,'fsdb_sha256':sha(directory/'waves.fsdb'),'human_review_at_generation':comparison['human_review']})
   if args.pack:
    files=list(directory.glob('p*.csv'))+[directory/(n+'.csv') for n in ['die0','die1','all_dmc','mixed']]
