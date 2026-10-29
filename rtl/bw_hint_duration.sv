@@ -257,7 +257,7 @@ module bw_hint_duration #(
       wait((configured && monitor_ready) || runtime_cancelled);
       timer_worker_running=1;
       forever begin
-        wait((result.active && !result.hit) || runtime_failed() || runtime_cancelled);
+        wait((result.active && !result.hit) || runtime_cancelled);
         if(runtime_failed())begin
           timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
           disable hint_timer_worker;
@@ -266,7 +266,7 @@ module bw_hint_duration #(
         if($time<due_ticks) begin
           fork : wait_for_hint
             begin #(due_ticks-$time);end
-            begin wait(timer_schedule_seq!=schedule || runtime_failed() || runtime_cancelled);end
+            begin wait(timer_schedule_seq!=schedule || runtime_cancelled);end
           join_any
           disable wait_for_hint;
         end
@@ -293,7 +293,7 @@ module bw_hint_duration #(
           disable hint_timer_worker;
         end
           settlement_required=request_slot_settlement(scope_id);
-          wait(timer_receipts>=request || runtime_failed() || runtime_cancelled);
+          wait(timer_receipts>=request || runtime_cancelled);
           if(runtime_failed())begin
           timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
           disable hint_timer_worker;
