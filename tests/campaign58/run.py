@@ -275,8 +275,7 @@ def main():
             report['control_table_verified'] = control_ok
             report['control_rows'] = [
                 {'episode': row['episode'], 'phase': row['phase'],
-                 'outcome': ('verified in campaign' if control_ok else
-                             'NOT VERIFIED'),
+                 'outcome': (row['outcome'] if control_ok else '未验证'),
                  'cases': row['cases']} for row in aspects.CONTROL_TABLE]
             report['table_differences'] = [
                 difference for table in tables

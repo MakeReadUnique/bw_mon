@@ -29,15 +29,15 @@ FIXED_CASES = [family['case'] for family in FIXED_ALLOCATION]
 
 # Ticket criterion 2: the complete episode/phase control table of decision 38.
 CONTROL_TABLE = [
-    {'episode': 0, 'phase': None, 'outcome': 'verified in campaign',
+    {'episode': 0, 'phase': None, 'outcome': '战役内验证',
      'cases': ['phase_defaults'], 'note': 'no episode or phase analysis'},
-    {'episode': 1, 'phase': None, 'outcome': 'verified in campaign',
+    {'episode': 1, 'phase': None, 'outcome': '战役内验证',
      'cases': ['phase_defaults'], 'note': 'default joint episode+phase'},
-    {'episode': 1, 'phase': 0, 'outcome': 'verified in campaign',
+    {'episode': 1, 'phase': 0, 'outcome': '战役内验证',
      'cases': ['phase_defaults'], 'note': 'episode only, phases disabled'},
-    {'episode': 1, 'phase': 1, 'outcome': 'verified in campaign',
+    {'episode': 1, 'phase': 1, 'outcome': '战役内验证',
      'cases': ['phase_defaults'], 'note': 'explicit joint enable'},
-    {'episode': 0, 'phase': 1, 'outcome': 'configuration error',
+    {'episode': 0, 'phase': 1, 'outcome': '配置错误（拒绝）',
      'cases': ['phase_config_episode'], 'note': 'illegal combination rejected'},
 ]
 

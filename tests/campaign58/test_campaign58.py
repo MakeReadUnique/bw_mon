@@ -56,9 +56,9 @@ class AspectMapping(unittest.TestCase):
         self.assertEqual(len(rows), 5)
         self.assertEqual([(r['episode'], r['phase']) for r in rows],
                          [(0, None), (1, None), (1, 0), (1, 1), (0, 1)])
-        self.assertEqual(rows[-1]['outcome'], 'configuration error')
+        self.assertEqual(rows[-1]['outcome'], '配置错误（拒绝）')
         for row in rows[:-1]:
-            self.assertEqual(row['outcome'], 'verified in campaign')
+            self.assertEqual(row['outcome'], '战役内验证')
 
     def test_every_campaign_case_exists_in_cases_json(self):
         import aspects

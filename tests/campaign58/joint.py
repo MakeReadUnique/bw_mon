@@ -269,4 +269,13 @@ def render_markdown(tables, aspect_entries, control_rows, timing):
                    for difference in table['differences']]
     lines.append('差异: %s'
                  % ('；'.join(differences) if differences else '无（全部独立预期核对通过）'))
+    lines.append('')
+    lines.append('## 适用边界（不声称）')
+    lines.append('')
+    lines.append('- 本专项仅覆盖四份固定输入的既定分配与映射用例；未展开参数笛卡尔积、'
+                 '未新增随机扫测，未加入规模、最大窗口或变频。')
+    lines.append('- 5% 等号、零/近零、密集跨度等精确数学边界由获批数值缝用例承载，'
+                 '为数学补充证据，不冒充公开链路联合识别证明。')
+    lines.append('- 原型期记录与人工指定平台归属用例不作为本表联合证据；43 场验收链、'
+                 '规模/深历史战役与真实 Verdi 人工验收属后续工单。')
     return '\n'.join(lines) + '\n'
