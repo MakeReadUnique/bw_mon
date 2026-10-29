@@ -191,7 +191,15 @@ BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=
 
 用持久状态 `wait (bw_mon_pkg::monitor_ready);` 等待，再安排严格晚于 `measurement_start_ticks` 的首个采样沿。这个公布值就是共同计量起点 T，不要写死为 1 fs。T 同刻沿不计入，未复位时 ns 窗口从 T+S 起发布；初始快照不算窗口发布。所有范围共用到 T+40 μs（含端点）的预算，局部复位不延长它，报告时间戳仍为绝对时间。`BW_READY` 给出实际范围、T、时间刻度、预算和截止时间。
 
-升级旧接入时删除 setup 的人工数量和 timeout 参数，以及单独声明组、手工结束配置的调用；每个组保留真实 `bw_group_mon` 实例和 t=0 成员调用，然后重新编译。空范围、缺少或重复 setup、非法拓扑和 ready 前结束会终止启动，不产生正常完成汇总。
+升级旧接入时按以下步骤操作：
+
+1. 删除 `bw_mon_setup` 上的人工数量与 timeout 参数覆盖，改为无参数例化 `bw_mon_setup u_bw_setup();`。
+2. 删除 `define_group`／`finish_configuration` 调用；每个组保留真实 `bw_group_mon` 实例，实例本身就是组声明。
+3. 成员规则改放在实际 t=0：`add_point_member`／`add_group_member`，直接成员数自动得出。
+4. 删除已退出的阶段算法参数（N、K、最小跨度和十个 ABS/REL 门槛），默认策略自动生效。
+5. 重新编译。建议保留 `-error=AOUP`，让残留的旧参数覆盖在编译阶段原生报错，而不是被静默忽略。
+
+空范围、缺少或重复 setup、非法拓扑和 ready 前结束会终止启动，不产生正常完成汇总。
 
 ### 按时间还是按周期统计
 
@@ -226,7 +234,7 @@ BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=
 
 不用的传输端口可以省略。尤其注意：**valid/ready 接口必须选择 `BW_VALID_READY`**，只接上 `ready` 不会自动改变默认传输规则。
 
-以下片段用于替换或扩展自己 testbench 中的例化；每增加一个监测器，都要同步修改 setup 的点数。
+以下片段用于替换或扩展自己 testbench 中的例化；增减监测器或 bind 命中的实例数都不需要改任何配置，setup 自动发现实际范围。
 
 ### 只有 valid 的接口
 
@@ -576,11 +584,15 @@ CV 是标准差除以平均值，再乘 100%，数值越大表示窗口带宽波
 | 现象 | 优先检查 |
 | --- | --- |
 | 启动报错或未出现 `monitor_ready` | 是否恰好一个 setup、有实际观测点、每个组有真实实例且非空；成员引用和拓扑是否合法；查看错误中的阶段、对象和实际数量 |
+| 报 `SETUP_MISSING` | 点或组实例是否缺少与之相连的唯一 `bw_mon_setup`；检查编译列表里是否漏掉 `bw_mon_setup.sv` |
+| 报 `EMPTY_SCOPE` | 是否只放了 setup 而没有任何实际点/组；bind 是否真的命中了实例 |
+| 报 `GROUP_OWNER` | 成员规则引用的组是否有真实 `bw_group_mon` 实例；规则先到、实例后到是允许的，但封口时实例必须存在 |
 | 报 `LATE_CONFIG` | 是否在实际正时间调用注册或添加成员；即使粗 TB timescale 显示为 0 也必须放回 t=0 |
+| 输出 `BW_REPORT_INCOMPLETE` | 对照 reason：`CORE_FAILURE`／`NO_END_AUDIT`／`NOT_READY`／`MISSING_ROLE_RECEIPT`／`MISSING_SCOPE_TERMINAL`；被强杀或停滞的进程不输出任何标记，只用外部证据表达 |
 | 报 `DUPLICATE_POINT` | 是否给多个点写了相同的 Point ID；类型 bind 时可保留自动 ID |
 | 报 `WINDOW_CONFIG` | 是否漏填宽度或步长，或步长大于宽度；检查所选基准的上限 |
 | 报 `GROUP_CONTEXT` | 组和成员的窗口基准、宽度、有效步长是否一致；共同采样时钟仍需正确连接 |
-| 组等待记录超时 | 检查组和成员的实际时钟连接，以及是否有成员缺少对应采样沿的记录 |
+| 组终态为 `INTERRUPTED` 并附 `stage=` | 仿真结束时该组仍有未结算责任；检查激励是否在最后一个输入同刻立即 `$finish`，让末槽先闭合（例如终点断言后再推进 1 fs），并查看 stage 指出的责任阶段 |
 | 有传输次数，但字节数一直为 0 | 是否忘记填 `FIXED_BYTES`；动态模式下是否提供正确的 `size_bytes` 和 `size_known` |
 | `ready=0` 仍在计数 | 是否忘记设置 `PROTOCOL(BW_VALID_READY)` |
 | `bytes_complete=0` 或 `events_complete=0` | 检查复位、传输控制、动态大小中是否有 X/Z；能确定不传输的拍不会因未使用的大小未知而变坏 |

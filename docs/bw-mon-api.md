@@ -1276,6 +1276,40 @@ clock/publication runs, independent source ACK retention, contextual test-only
 allocation rejection and reproducible resource evidence. Public names and numeric
 widths remain stable; malformed policies cannot become known-zero accounting.
 
+## Ending audit and the one report-complete marker
+
+Simulation ending depends on no final-block order. The first owner to reach
+its final runs one idempotent global audit (`BW_END_AUDIT`), freezing the
+durable responsibility ledger; every point and group then leaves a typed
+terminal line `BW_POINT_TERMINAL` / `BW_GROUP_TERMINAL`
+(`state=NORMAL|UNOBSERVED|DISABLED|INTERRUPTED`, with the responsible
+`stage=` on interruption). After all SV finals, one native end-of-simulation
+callback verifies every registered owner/core/hint role receipt and every
+scope terminal, then emits exactly one `BW_REPORT_COMPLETE` line carrying
+`roles=k/k terminals=m/m summary=0|1 integrity=COMPLETE|INCOMPLETE
+performance=PASS|FAIL|WARNING|STATISTICS_ONLY|NONE`. Monitoring integrity is
+named independently of the process exit and the performance summary; a
+quarantined or interrupted scope makes the marker `integrity=INCOMPLETE`.
+
+When any receipt or terminal is missing, the marker is replaced by exactly one
+`BW_REPORT_INCOMPLETE reason=...` line and no completion marker is backfilled.
+The reason family is closed:
+
+| reason | meaning |
+| --- | --- |
+| `CORE_FAILURE` | a fatal core error already stopped monitoring |
+| `NO_END_AUDIT` | no owner final ever ran the global audit |
+| `NOT_READY` | monitoring never published ready (carries `stage=`) |
+| `MISSING_ROLE_RECEIPT` | a registered owner/core/hint role left no terminal receipt (carries `owner=`/`role=`) |
+| `MISSING_SCOPE_TERMINAL` | a registered scope left no terminal line (carries `scope=`) |
+
+An externally killed or stalled process produces neither marker nor summary;
+that absence is the external evidence of an unclean ending and is never
+replaced by invented in-library missing-frame diagnostics. Drivers that finish
+in the same time slot as their last posted input honestly settle as
+`INTERRUPTED stage=GENERATION`; advancing one representable slot after the
+endpoint lets the final generation close normally.
+
 ## Reproducible end-to-end scenes
 
 The [acceptance handoff](bw-mon-acceptance.md) is the current integration/config,
