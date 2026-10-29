@@ -33,3 +33,8 @@ test-evidence-tools:
 	python3 tools/evidence.py restore legacy-tests
 	python3 tests/acceptance/test_publish.py
 	python3 -m unittest discover -s tests/scale -p 'test_*.py'
+	python3 -m unittest discover -s tests/campaign58 -p 'test_*.py'
+
+.PHONY: campaign58
+campaign58:
+	python3 tests/campaign58/run.py --evidence .build/campaign58-evidence --lock /tmp/bw-mon-spec48/acceptance.lock
