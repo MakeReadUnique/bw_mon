@@ -55,7 +55,7 @@ def one(scene,basis,cflags="",output_root=None):
  sources=sorted((ROOT/'rtl').glob('*.sv'),key=lambda p:(p.name!='bw_mon_pkg.sv',p.name))+sorted((ROOT/'rtl').glob('*.c'))+[ROOT/'tests/acceptance/scene.sv']
  build,snapshot,cmd,fingerprint,native_flags=prepare(ROOT,top,sources,cflags)
  digest=canonical_sha(fingerprint);stamp=build/'source.sha256'
- if not stamp.exists() or stamp.read_text()!=digest or not (build/'simv').exists() or not (build/'csrc/bw_slot_settlement.d').exists():
+ if not stamp.exists() or stamp.read_text()!=digest or not (build/'simv').exists() or not (build/'csrc/bw_slot_settlement.d').exists() or not (build/'csrc/bw_end_coordinator.d').exists():
   command(cmd,build,build/'compile.log');assert not re.search(r'(?:Warning|Error)-\[',(build/'compile.log').read_text());stamp.write_text(digest)
  native=receipt(ROOT,out,build,snapshot,cmd,fingerprint,native_flags)
  (out/'compile.log').write_text((build/'compile.log').read_text())
@@ -67,8 +67,8 @@ def one(scene,basis,cflags="",output_root=None):
  assert 'BW_CFG WARNING' not in log and 'BW_CFG_WARNING' not in log
  reference_frames=frame_table(rows);reference_windows=window_table(c,rows,reference_frames)
  result['analysis_counts']=verify_analysis(c,rows,reference_frames,reference_windows,log)
- result['report_reference']=verify_reports(c,rows,reference_frames,reference_windows,log,(out/'expect.cfg').read_text())
- checks=re.findall(r'^BW_CHECK .*$',log,re.M);summary=re.findall(r'^BW_SUMMARY .*$',log,re.M)
+ result['report_reference']=verify_reports(c,rows,reference_frames,reference_windows,log,(out/'expect.cfg').read_text(),result['analysis_counts'].get('default_checks'))
+ checks=re.findall(r'^BW_(?:CHECK|DEFAULT_CHECK) .*$',log,re.M);summary=re.findall(r'^BW_SUMMARY .*$',log,re.M)
  assert len(summary)==1 and 'scopes_done=16 scopes_expected=16' in summary[0]
  for outcome,key in [('PASS','pass'),('FAIL','fail'),('WARNING','warning')]:
   n=sum('conclusion='+outcome+' ' in x for x in checks)

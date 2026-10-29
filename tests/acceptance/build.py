@@ -26,16 +26,23 @@ def prepare(root, top, sources, cflags=''):
     include = Path(shutil.which('vcs')).resolve().parents[1] / 'include'
     native_flags = ['-fPIC', '-O', '-I' + str(include)] + shlex.split(cflags)
     native_sources = [p for p in sources if p.suffix == '.c']
-    assert len(native_sources) == 1, 'acceptance native dependency contract requires one native source'
-    discovery = ['gcc', '-M'] + native_flags + [str(native_sources[0])]
-    native_paths = [Path(p).resolve() for p in make_dependencies(output(discovery, root))]
+    # The ending protocol added a second native source (bw_end_coordinator.c);
+    # the dependency contract now covers every compiled native unit instead of
+    # assuming a single one.
+    assert {p.name for p in native_sources} == {p.name for p in (root / 'rtl').glob('*.c')}, \
+        'acceptance native dependency contract requires every rtl native source'
+    native_paths = []
+    for source in native_sources:
+        discovery = ['gcc', '-M'] + native_flags + [str(source)]
+        native_paths += [Path(p).resolve() for p in make_dependencies(output(discovery, root))]
     project = set(sources)
     project.update(p for p in (root / 'rtl').rglob('*') if p.suffix in ['.svh', '.vh', '.h'])
     project.update(root / 'tests/acceptance' / name for name in
                    ['run.py', 'model.py', 'analysis.py', 'summarize.py', 'build.py', 'evidence.py'])
     project.update(p for p in native_paths if project_name(p, root) != str(p))
     project_hashes = {str(p.relative_to(root)): sha(p) for p in sorted(project)}
-    native_hashes = {project_name(p, root): sha(p) for p in native_paths[1:]}
+    native_hashes = {project_name(p, root): sha(p) for p in native_paths
+                     if p.resolve() not in {s.resolve() for s in native_sources}}
     template = ['vcs', '-full64', '-error=AOUP', '-sverilog', '+vpi', '-debug_access+all', '-kdb',
                 '-CFLAGS', '-I' + str(include) + (' ' + cflags if cflags else ''),
                 '+incdir+@SOURCE@/rtl', '-assert', 'svaext', '-top', top, '-o', '@BUILD@/simv']
@@ -70,28 +77,36 @@ def prepare(root, top, sources, cflags=''):
 
 
 def receipt(root, out, build, snapshot, command, fingerprint, native_flags):
-    # This .d comes from VCS's actual native compilation, not from a fabricated list.
-    actual = build / 'csrc/bw_slot_settlement.d'
-    shutil.copyfile(str(actual), str(out / 'native-dependencies.d'))
-    source = snapshot / 'rtl/bw_slot_settlement.c'
-    dependency_command = ['gcc', '-M'] + native_flags + [str(source)]
-    full = output(dependency_command, build)
-    (out / 'native-transitive-dependencies.d').write_text(full)
-    native = make_dependencies(actual.read_text())
-    transitive = make_dependencies(full)
-    assert native[0] == transitive[0] == str(source), 'native receipt names a different source snapshot'
+    # These .d files come from VCS's actual native compilation, not from a
+    # fabricated list. Every compiled native unit leaves its own receipt.
+    units = [('bw_slot_settlement', 'native-dependencies.d', 'native-transitive-dependencies.d'),
+             ('bw_end_coordinator', 'native-coordinator-dependencies.d', 'native-coordinator-transitive-dependencies.d')]
     normalized = {}
-    for name in transitive[1:]:
-        path = Path(name)
-        normalized[project_name(path, snapshot)] = sha(path)
+    unit_results = {}
+    for unit, receipt_name, transitive_name in units:
+        actual = build / ('csrc/' + unit + '.d')
+        shutil.copyfile(str(actual), str(out / receipt_name))
+        source = snapshot / ('rtl/' + unit + '.c')
+        dependency_command = ['gcc', '-M'] + native_flags + [str(source)]
+        full = output(dependency_command, build)
+        (out / transitive_name).write_text(full)
+        native = make_dependencies(actual.read_text())
+        transitive = make_dependencies(full)
+        assert native[0] == transitive[0] == str(source), 'native receipt names a different source snapshot'
+        for name in transitive[1:]:
+            path = Path(name)
+            normalized[project_name(path, snapshot)] = sha(path)
+        unit_results[unit] = (dependency_command, native, transitive, receipt_name, transitive_name)
     assert normalized == fingerprint['native_header_sha256'], 'native headers changed during compilation'
     archive = out / 'source.tar.gz'
     with tarfile.open(str(archive), 'w:gz') as bundle:
         for name, expected in sorted(fingerprint['project_sha256'].items()):
             assert sha(snapshot / name) == expected, ('compiled source snapshot changed', name)
             bundle.add(str(snapshot / name), arcname=name, recursive=False)
+    slot = unit_results['bw_slot_settlement']
+    coordinator = unit_results['bw_end_coordinator']
     return {
-        'schema_version': 2,
+        'schema_version': 3,
         'runtime_head': output(['git', 'rev-parse', 'HEAD'], root).strip(),
         'checkout_tree': output(['git', 'rev-parse', 'HEAD^{tree}'], root).strip(),
         'checkout_project_changes': output(['git', 'status', '--porcelain', '--', 'rtl', 'tests/acceptance'], root).splitlines(),
@@ -99,9 +114,14 @@ def receipt(root, out, build, snapshot, command, fingerprint, native_flags):
         'source_archive': archive.name, 'source_archive_sha256': sha(archive),
         'compile_fingerprint': fingerprint, 'compile_fingerprint_sha256': canonical_sha(fingerprint),
         'build_directory': str(build),
-        'native_dependency_makefile_sha256': sha(out / 'native-dependencies.d'),
-        'native_dependencies_sha256': {name: sha(name) for name in native[1:]},
-        'native_transitive_dependency_command': dependency_command,
-        'native_transitive_makefile_sha256': sha(out / 'native-transitive-dependencies.d'),
-        'native_transitive_dependencies_sha256': {name: sha(name) for name in transitive[1:]},
+        'native_dependency_makefile_sha256': sha(out / slot[3]),
+        'native_dependencies_sha256': {name: sha(name) for name in slot[1][1:]},
+        'native_transitive_dependency_command': slot[0],
+        'native_transitive_makefile_sha256': sha(out / slot[4]),
+        'native_transitive_dependencies_sha256': {name: sha(name) for name in slot[2][1:]},
+        'coordinator_dependency_makefile_sha256': sha(out / coordinator[3]),
+        'coordinator_dependencies_sha256': {name: sha(name) for name in coordinator[1][1:]},
+        'coordinator_transitive_dependency_command': coordinator[0],
+        'coordinator_transitive_makefile_sha256': sha(out / coordinator[4]),
+        'coordinator_transitive_dependencies_sha256': {name: sha(name) for name in coordinator[2][1:]},
     }

@@ -249,7 +249,10 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
           last_u=row.u;check_count=default_add(index,check_count,1);
           deviation=$abs(row.value-baseline);
           if(deviation>maximum)maximum=deviation;
-          over=deviation>0.05*baseline;
+          // Equality qualifies at the five-percent boundary. Byte/time ratios
+          // are rational, but their floating images carry last-ulp noise, so a
+          // sample exactly at the boundary must not become an excursion.
+          over=deviation>(0.05+1e-12)*baseline;
           if(!over)begin run_count=0;continue;end
           if(run_count==0)begin run_first=row.u;runs=default_add(index,runs,1);end
           run_last=row.u;run_count=default_add(index,run_count,1);

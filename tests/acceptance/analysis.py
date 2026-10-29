@@ -1,5 +1,6 @@
 """Raw-derived episode and exact-window statistical references (no monitor imports)."""
 import math,re
+from collections import Counter
 from fractions import Fraction
 from model import TICKS,LEAVES,own_reset,expected_scope_id
 
@@ -63,6 +64,92 @@ def variation(samples):
  mean=sum(values,Fraction(0))/n;variance=sum((x-mean)**2 for x in values)/n;sigma=math.sqrt(float(variance))
  return {'n':n,'mean':float(mean),'min':float(min(values)),'max':float(max(values)),'sigma':sigma,'cv':100*sigma/float(mean) if mean>0 else None}
 
+def default_check_reference(c,name,windows,episode,phases):
+ """Independent sustained-variation rows for one scope episode.
+
+ Re-derives the public default checker from the exact rational publication
+ table and this reference's own confirmed phase fragments: the earliest six
+ consecutive final-contained qualified windows establish B (requiring the
+ min(W,5S) span); every qualified in-platform sample outside confirmed
+ transition exclusions must then stay within five percent, and two
+ consecutive excursions spanning at least W fail. A platform's check
+ interval ends at the first later steady platform that independently proves
+ a same-level continuation (its own qualified handoff), otherwise at the
+ episode terminal. No monitor output is consumed.
+ """
+ width=c['W']*TICKS if c['basis']=='ns' else c['W']
+ min_span=(c['S']>c['W']/5 and c['W'] or 5*c['S'])*(TICKS if c['basis']=='ns' else 1)
+ def u_of(w):return w['end'] if c['basis']=='ns' else w['end_cycle']
+ def v_of(w):return w['bw']
+ terminal=episode['tail'] if episode['tail'] is not None else episode['last']
+ episode_windows=[w for w in windows if w['epoch']==episode['epoch']]
+ def handoff_valid(p):
+  stop=min(p['end'],terminal);run=[];best=0
+  for w in episode_windows:
+   if not p['start']<=w['end']<stop:continue
+   if not w['valid']:run=[];continue
+   if run and w['seq']!=run[-1]['seq']+1:run=[]
+   run.append(w)
+   if len(run)>=2 and u_of(run[-1])-u_of(run[0])>=width:return True
+  return False
+ steady_indices=[i for i,p in enumerate(phases) if p['kind']==2]
+ rows=[]
+ for position,i in enumerate(steady_indices):
+  platform=phases[i];start=platform['start']
+  end=terminal
+  for j in steady_indices[position+1:]:
+   if handoff_valid(phases[j]):end=phases[j]['start'];break
+  reference_end=min(platform['end'],end)
+  qualified=[w for w in episode_windows if w['valid'] and start<=w['end']<reference_end and w['start']>=start]
+  baseline=None;reference=[]
+  for w in qualified:
+   if reference and w['seq']!=reference[-1]['seq']+1:reference=[]
+   reference.append(w);reference=reference[-6:]
+   if len(reference)==6 and u_of(reference[5])-u_of(reference[0])>=min_span:
+    baseline=sum(v_of(x) for x in reference)/6;break
+  reason='REFERENCE_INSUFFICIENT' if baseline is None else ('ZERO_REFERENCE' if baseline==0 else None)
+  samples=0;first_u=None;last_u=None;runs=0;run_count=0;run_first=None;run_last=None
+  longest=dict(count=0,first=0,last=0,span=0);maximum=Fraction(0);failed=0
+  # An unfinished episode or an unknown platform end keeps the observation
+  # incomplete; frozen evidence still settles, but never as a clean pass.
+  quality=episode['status']!=2 or episode['tail'] is None or not platform['known']
+  if baseline is not None and baseline>0:
+   exempt_intervals=[(p['start'],p['end']) for p in phases if p['kind'] in (1,3) and p['known'] and start<=p['start']<end]
+   for w in episode_windows:
+    if not start<=w['end']<end:continue
+    if not w['valid']:quality=1;run_count=0;continue
+    if any(a<=w['end']<b for a,b in exempt_intervals):run_count=0;continue
+    if samples==0:first_u=u_of(w)
+    last_u=u_of(w);samples+=1
+    deviation=abs(v_of(w)-baseline)
+    if deviation>maximum:maximum=deviation
+    if deviation>Fraction(5,100)*baseline:
+     if run_count==0:run_first=u_of(w);runs+=1
+     run_last=u_of(w);run_count+=1
+     if run_last-run_first>longest['span'] or (run_last-run_first==longest['span'] and run_count>longest['count']):
+      longest=dict(count=run_count,first=run_first,last=run_last,span=run_last-run_first)
+     if run_count>=2 and run_last-run_first>=width:failed=1
+    else:run_count=0
+   if failed:reason='SUSTAINED_EXCEEDANCE'
+   elif quality:reason='OBSERVATION_INCOMPLETE'
+   elif samples<2 or (last_u is None or first_u is None) or last_u-first_u<width:reason='CHECK_COVERAGE_INSUFFICIENT'
+   else:reason='NONE'
+  rows.append(dict(platform=int(platform.get('packet',{}).get('phase',i+1)),platform_start=start,platform_end=platform['end'],check_start=start,check_end=end,
+   reference_valid=baseline is not None,reference_count=6 if baseline is not None else len(reference),
+   reference_first_seq=reference[0]['seq'] if reference else 0,reference_last_seq=reference[-1]['seq'] if reference else 0,
+   reference_first_u=u_of(reference[0]) if reference else 0,reference_last_u=u_of(reference[-1]) if reference else 0,
+   B=baseline,samples=samples,first_u=first_u or 0,last_u=last_u or 0,over_runs=runs,
+   longest_count=longest['count'],longest_first=longest['first'],longest_last=longest['last'],
+   longest_span=longest['span'],max_deviation=maximum,
+   conclusion='FAIL' if failed else ('WARNING' if reason!='NONE' else 'PASS'),reason=reason))
+ if not steady_indices:
+  rows.append(dict(platform=0,platform_start=0,platform_end=0,check_start=0,check_end=terminal,
+   reference_valid=False,reference_count=0,reference_first_seq=0,reference_last_seq=0,
+   reference_first_u=0,reference_last_u=0,B=None,samples=0,first_u=0,last_u=0,over_runs=0,
+   longest_count=0,longest_first=0,longest_last=0,longest_span=0,max_deviation=None,
+   conclusion='WARNING',reason='NO_CONFIRMED_STEADY'))
+ return rows
+
 def phase_reference(c,name,windows,episode,prior_last=-1):
  evidence=[];current=0;candidate=0;count=0;candidate_time=0;start=confirm=None;fragments=[]
  def close(at,known):
@@ -101,7 +188,7 @@ def phase_reference(c,name,windows,episode,prior_last=-1):
  return fragments
 
 def verify(c,rows,frames,windows,log):
- episodes=episode_reference(c,rows,frames);ep_packets=packets(log,'BW_EPISODE');ph_packets=packets(log,'BW_PHASE');ph_metrics=packets(log,'BW_PHASE_METRICS');variations=packets(log,'BW_VARIATION');last_steady=packets(log,'BW_LAST_STEADY');checks={'episodes':0,'phases':0,'variations':0}
+ episodes=episode_reference(c,rows,frames);ep_packets=packets(log,'BW_EPISODE');ph_packets=packets(log,'BW_PHASE');ph_metrics=packets(log,'BW_PHASE_METRICS');variations=packets(log,'BW_VARIATION');last_steady=packets(log,'BW_LAST_STEADY');default_packets=packets(log,'BW_DEFAULT_CHECK');checks={'episodes':0,'phases':0,'variations':0}
  def scope_id(name):return expected_scope_id(c,name)
  def same(actual,key,expected):assert int(actual[key])==int(expected),(c['scene'],actual,key,expected)
  def near(actual,key,expected):assert abs(float(actual[key])-float(expected))<1e-8,(c['scene'],actual,key,expected)
@@ -152,14 +239,40 @@ def verify(c,rows,frames,windows,log):
      p=selected[-1]
      for key,value in [('start_ticks',p['start']),('end_ticks',p['end']),('phase',int(p['packet']['phase'])),('phase_result_seq',int(p['packet']['result_seq']))]:same(representative,key,value)
    else:same(representative,'selection_valid',0)
+   # Independent sustained-variation expectation for the public default check.
+   expected_default=default_check_reference(c,name,windows[name],e,expected_phases)
+   actual_default=[d for d in default_packets if d['scope']==sid and int(d['episode'])==e['id']]
+   assert len(actual_default)==len(expected_default),(c['scene'],name,'default check row count',actual_default,expected_default)
+   for d,x in zip(actual_default,expected_default):
+    same(d,'scope_kind',not name.startswith('p'))
+    for key,value in [('epoch',e['epoch']),('platform',x['platform']),('platform_start_ticks',x['platform_start']),
+                      ('check_start_ticks',x['check_start']),('check_end_ticks',x['check_end']),
+                      ('reference_valid',int(x['reference_valid'])),('reference_count',x['reference_count']),
+                      ('reference_first_seq',x['reference_first_seq']),('reference_last_seq',x['reference_last_seq']),
+                      ('reference_first_u',x['reference_first_u']),('reference_last_u',x['reference_last_u']),
+                      ('samples',x['samples']),('first_u',x['first_u']),('last_u',x['last_u']),
+                      ('over_runs',x['over_runs']),('longest_count',x['longest_count']),
+                      ('longest_first_u',x['longest_first']),('longest_last_u',x['longest_last']),
+                      ('longest_span',x['longest_span'])]:same(d,key,value)
+    assert d['conclusion']==x['conclusion'] and d['reason']==x['reason'],(c['scene'],name,'default verdict',d,x)
+    if x['B'] is not None:near(d,'B',float(x['B']))
+    else:assert d['B']=='UNAVAILABLE',(c['scene'],name,'B unavailable')
+    if x['max_deviation'] is not None and x['B'] and x['B']>0:near(d,'max_deviation_gbps',float(x['max_deviation']))
+    checks.setdefault('default_checks',Counter())[x['conclusion']]+=1
+ for name,scope_episodes in episodes.items():
+  if not scope_episodes:
+   actual_default=[d for d in default_packets if d['scope']==scope_id(name)]
+   assert len(actual_default)==1 and actual_default[0]['conclusion']=='WARNING' and actual_default[0]['reason']=='NO_EPISODE',(c['scene'],name,'no-episode default row',actual_default)
+   checks.setdefault('default_checks',Counter())['WARNING']+=1
  assert checks['episodes']==len(ep_packets) and checks['phases']==len(ph_packets) and checks['variations']==len(variations)
+ assert checks.get('default_checks',Counter()) and sum(checks['default_checks'].values())==len(default_packets),(c['scene'],'default check coverage',len(default_packets),checks.get('default_checks'))
  assert len(last_steady)==len(ep_packets)
  for name in frames:
   seq=[int(x['result_seq']) for x in ph_packets if x['scope']==scope_id(name)]
   assert seq==list(range(1,len(seq)+1)),('phase result identity',name,seq)
  return checks
 
-def verify_reports(c,rows,frames,windows,log,cfg):
+def verify_reports(c,rows,frames,windows,log,cfg,default_counts=None):
  """Compare configured conclusions with independently derived measurements."""
  rules={};owner=None
  for line in cfg.splitlines():
@@ -230,9 +343,13 @@ def verify_reports(c,rows,frames,windows,log,cfg):
  assert len(identities)==len(set(identities)),('duplicate metric settlement',identities)
  summaries=packets(log,'BW_SUMMARY');assert len(summaries)==1
  summary=summaries[0]
+ # The public summary also carries the default sustained-variation rows; the
+ # explicit expectations above stay separate and both are reconciled.
+ if default_counts is not None:
+  for label in ('PASS','FAIL','WARNING'):counts[label]+=int(default_counts.get(label,0))
  for key,label in [('pass','PASS'),('fail','FAIL'),('warning','WARNING')]:assert int(summary[key])==counts[label]
  status='FAIL' if counts['FAIL'] else 'WARNING' if counts['WARNING'] else 'PASS' if counts['PASS'] else 'STATISTICS_ONLY'
  assert summary['status']==status and int(summary['scopes_done'])==int(summary['scopes_expected'])==16
  lines=log.splitlines();last_summary=max(i for i,x in enumerate(lines) if x.startswith('BW_SUMMARY '))
- assert all(i<last_summary for i,x in enumerate(lines) if x.startswith(('BW_PHASE ','BW_EPISODE ','BW_CHECK ')))
+ assert all(i<last_summary for i,x in enumerate(lines) if x.startswith(('BW_PHASE ','BW_EPISODE ','BW_CHECK ','BW_DEFAULT_CHECK ')))
  return {'expected':counts,'summary_status':status}
