@@ -37,18 +37,22 @@ python3 /tmp/bw-revised-proof/verify.py verify /tmp/bw-revised-proof
 The suite holds its lock through generation, compilation, simulation and all
 required recorded-data audits. Lock waiting is recorded separately. Other
 qualification commands must use that same lock. Individual diagnosis uses
-`topology_revised.py topology-quick-ns|topology-quick-cycle|topology-max-ns|topology-max-cycle
---output-root PATH`; wrap individual invocations in `flock` when sharing a host.
-No command above resumes or schedules an old campaign.
+`topology_revised.py` with one of `topology-quick-ns`, `topology-quick-cycle`,
+`topology-quick-cancel-ns`, `topology-max-ns`, `topology-max-cycle`,
+`topology-max-cancel-ns --output-root PATH`; wrap individual invocations in
+`flock` when sharing a host. No command above resumes or schedules an old
+campaign.
 
-Daily regression uses two real 128-point/32-group topology cases, two seeded
-history cases and the pending-suffix case. The complete suite adds both maximum
-topologies, all seven history cases, fifteen directed H5/H7 component cases,
-frozen-source COMMON replay and independent replay of every new case. Shared
-M4/H6 scenarios occur once per suite. The exact gates are 120 seconds hot /
-300 seconds cold daily, 600 seconds per maximum case, 300 seconds per history
-case and 1,800 seconds for a complete serial suite. Timeouts, missing receipts,
-differences and over-budget runs remain incomplete.
+Daily regression uses three real 128-point/32-group topology cases (both
+bases plus the cancellation shape), two seeded history cases and the
+pending-suffix case. The complete suite adds both maximum topologies, the
+maximum cancellation topology, all seven history cases, fifteen directed
+H5/H7 component cases, frozen-source COMMON replay and independent replay of
+every new case. Shared M4/H6 scenarios occur once per suite. The exact gates
+are 120 seconds hot / 300 seconds cold daily, 600 seconds per maximum case,
+300 seconds per history case and 1,800 seconds for a complete serial suite.
+Timeouts, missing receipts, differences and over-budget runs remain
+incomplete.
 
 `bounded.py` counts generation, compilation, initialization, simulation,
 verification, process cleanup and orchestration in the end-to-end result. Ready
@@ -59,6 +63,38 @@ input/source/tool/header/options fingerprints and the simulator launcher plus
 its native shared payloads. Component builds are forced in both full-suite
 modes because their older runner has a weaker cache key.
 
+## Same-slot M4/H6 interaction (spec 48 recalibration)
+
+The pre-spec48 fixture paused a consumer across [99,102)ns of positive time and
+expected five retained frames plus two controls at 101.5ns. Under the spec 48
+D7 same-slot settlement that fixture is not re-timed but replaced: the
+end-of-slot audit holds a slot open until every durable responsibility settles,
+so a consumer cannot legally lag across slots (a bare pause is diagnosed as a
+missing consumer: one runtime `GROUP_COMPLETION stage=HELD` warning isolates
+it, cancels its subscriptions and releases its unread data; a gated cross-slot
+hold would deadlock the slot). The replacement keeps the same frozen input
+schedule and exercises the same properties inside single original slots:
+
+- Control hold: the p0 reset release control (101.1ns) forwards in its own
+  stamp slot; the held consumer keeps exactly that control unread in the slot
+  while its fifteen peers consume it, then consumes and releases it inside the
+  same tick (`TOPOLOGY_BACKLOG_CONTROL`/`TOPOLOGY_CONTROL_RELEASE`).
+- Frame hold: in the 101.25ns gate-edge slot the fast peers publish, accept
+  and ack that slot's frame while the held consumer keeps exactly one unread
+  frame; the durable resume continuation finishes the backlog inside the same
+  tick with zero unread frames/controls left (`TOPOLOGY_BACKLOG`/
+  `TOPOLOGY_INTERACTION_PASS original_time=1`).
+- Cancellation leg (`topology-max-cancel-ns`): after the frame-hold
+  observation the held consumer fails with a runtime consumer warning; its
+  responsibility is cancelled, the unread frame releases immediately, the
+  healthy chain completes the full frozen sequence to 20479 NORMAL terminals
+  plus one DISABLED terminal, and the unique report-complete marker carries
+  integrity=INCOMPLETE.
+
+The two quick profiles, two maximum profiles and the cancellation profile
+compose the M1–M5/H6 matrix; `topology-quick-cancel-ns` keeps the
+cancellation shape inside the daily tier as well.
+
 ## Fixed input and actual public paths
 
 Both maximum cases instantiate every declared scope through `bw_point_mon`,
@@ -66,8 +102,10 @@ Both maximum cases instantiate every declared scope through `bw_point_mon`,
 0.25 ns, last 255.75 ns, end exactly 256 ns. Traffic is active for edges1–384;
 128 further idle edges provide real tail, silence confirmation, recovery and
 settlement. There is no extra edge, internal history preload or early finish.
-NS uses W16/S1 ns; cycle uses W128/S1 cycles. Both enable Q30ns/60cycles,
-N3/K4/minimum-span2, ABS steady0, RMS1e-6, trend1, all REL0. All12 report rules
+NS uses W16/S1 ns; cycle uses W128/S1 cycles. Both enable Q30ns/60cycles with
+the fixed internal default phase policy (PAIR6: N6/K2, minimum span min(W,5S),
+adjacent-pair fitting, absolute coefficients 0) and its default sustained
+5% variation check. All12 report rules
 are configured per scope. Waves are off. Supported handshake/credit hints use
 4ns/8cycles; credit capacity/known initial balance16 and NEXT_CYCLE returns
 remain enabled for credit points.

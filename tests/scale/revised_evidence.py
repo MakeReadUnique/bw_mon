@@ -16,9 +16,10 @@ import sys
 import tempfile
 import time
 
-QUICK = ['topology-quick-ns','topology-quick-cycle','history-revised-ns-seeded',
-         'history-revised-cycle-seeded','history-revised-pending']
-FULL = ['topology-quick-ns','topology-quick-cycle','topology-max-ns','topology-max-cycle',
+QUICK = ['topology-quick-ns','topology-quick-cycle','topology-quick-cancel-ns',
+         'history-revised-ns-seeded','history-revised-cycle-seeded','history-revised-pending']
+FULL = ['topology-quick-ns','topology-quick-cycle','topology-quick-cancel-ns',
+        'topology-max-ns','topology-max-cycle','topology-max-cancel-ns',
         'history-revised-ns-seeded','history-revised-cycle-seeded','history-revised-ns-expiry',
         'history-revised-cycle-expiry','history-revised-ns-deep','history-revised-cycle-deep','history-revised-pending']
 COMPONENT_CASES = ['numeric_arithmetic_known','numeric_add_unknown','numeric_mul_unknown','numeric_add_overflow',

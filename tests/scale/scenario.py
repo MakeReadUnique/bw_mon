@@ -137,6 +137,15 @@ class Scenario:
         return dict(seq=edge_index,epoch=epoch,tick=t,edge_index=edge_index,byte_inc=current['bytes'],event_inc=current['events'],
                     bytes_complete=current['bytes_complete'],events_complete=current['events_complete'],reset_points=int(affected and self.variant=='reset' and self.reset_start<=t<self.reset_end),
                     total_bytes=total['bytes'],total_events=total['events'],source_epoch=int(own and self.variant=='reset' and t>=self.reset_start))
+    def expected_default_rows(self,kind,index):
+        """Default sustained-variation result rows per scope.
+
+        Baseline: one final row per episode. Scenarios whose frozen input
+        interrupts a platform inside an episode (a member-reset window for a
+        non-owner scope) override this with the split-platform count.
+        """
+        return max(len(self.expected_episodes(kind,index)),1)
+
     def expected_episodes(self,kind,index):
         intervals=[(0,self.reset_start,0,3),(self.reset_end,self.end,1,4)] if self.reset_owner(kind,index) else [(0,self.end,0,4)]
         result=[]

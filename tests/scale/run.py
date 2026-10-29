@@ -121,7 +121,8 @@ def verify(s,attempt):
         n=len(s.expected_episodes(kind,index))
         if len(observed_episodes.get(sid,[]))!=n:diffs.append(dict(error='episode_count',scope=sid,expected=n,actual=len(observed_episodes.get(sid,[]))))
         default_rows=[d for d in default_checks if d.get('scope')==sid]
-        if len(default_rows)!=max(n,1):diffs.append(dict(error='default_row_count',scope=sid,expected=max(n,1),actual=len(default_rows)))
+        want_rows=s.expected_default_rows(kind,index) if hasattr(s,'expected_default_rows') else max(n,1)
+        if len(default_rows)!=want_rows:diffs.append(dict(error='default_row_count',scope=sid,expected=want_rows,actual=len(default_rows)))
     required_metrics={'e2e_bw','steady_bw','ramp_time','fall_time','steady_window_min','steady_window_max','steady_stddev','steady_cv','episode_window_min','episode_window_max','episode_stddev','episode_cv'}
     conclusions={}
     for c in checks:

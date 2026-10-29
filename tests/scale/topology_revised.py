@@ -6,7 +6,8 @@ import argparse
 import json
 from scenario import Scenario, Clock, NS, topology_summary, maximum_topology
 
-PROFILES = ('topology-quick-ns', 'topology-quick-cycle', 'topology-max-ns', 'topology-max-cycle')
+PROFILES = ('topology-quick-ns', 'topology-quick-cycle', 'topology-max-ns', 'topology-max-cycle',
+            'topology-quick-cancel-ns', 'topology-max-cancel-ns')
 
 
 def topology(maximum):
@@ -32,8 +33,6 @@ class RevisedTopology(Scenario):
     active_edges = 384
     group_reset_start = 128100000
     group_reset_end = 129100000
-    pause_start = 99000000
-    pause_end = 102000000
     budget_seconds = 600
 
     def __init__(self, name):
@@ -49,13 +48,88 @@ class RevisedTopology(Scenario):
         self.weights = {g: sum(p+1 for p in leaves) for g, leaves in self.leaves.items()}
         self.unknown_tick = 96250000
         self.unknown_edge = 193
+        # M4/H6 same-time consumer-progress interaction, recalibrated for the
+        # D7 same-slot settlement: a consumer gate armed inside one sampling
+        # slot legally holds that consumer while its fifteen peers consume,
+        # and the durable resume continuation finishes the backlog inside the
+        # same original slot. A cross-slot pause is impossible by contract
+        # (the end-of-slot audit holds the slot open), which is exactly why
+        # the pre-spec48 positive-time pause fixture ([99,102)ns, five frames)
+        # had to be replaced rather than re-timed.
+        self.interaction_source = 0
+        self.slow_consumer = 8
+        self.gate_edge = 203
+        self.cancel_interaction = name.endswith('-cancel-ns')
+        self.fast_consumers = sorted(g for g, members in self.groups.items()
+                                     if ('group', self.interaction_source) in members
+                                     and g != self.slow_consumer)
+        self.slow_consumer_ack = self.gate_edge - 1
+        self.fast_consumer_ack = self.gate_edge
+        self.release_tick = self.clock.at(self.gate_edge)
+        # The slow consumer has settled every earlier slot, so exactly the
+        # gate slot's own frame is unread there. A member reset control is
+        # forwarded in its own stamp slot (point sources never constrain the
+        # watermark), so the release control at reset_end is held unread in
+        # that slot while no frame exists; the assert control at reset_start
+        # settled earlier without any gate.
+        self.held_frame_count = 1
+        self.control_hold_tick = self.reset_end
+        self.held_control_count = 1
+        watermark_cap = min(self.release_tick, self.control_hold_tick)
+        self.slow_timer_bound_ns = watermark_cap // NS
+        self.cancelled_scopes = [self.slow_consumer] if self.cancel_interaction else []
+        self.expected_csv_scopes = self.points + len(self.groups) - len(self.cancelled_scopes)
+        self.expected_terminal_scopes = self.points + len(self.groups)
         self.config.update(revised_matrix='M1-M5/H6', differentiated_bytes='point_index+1+3*(edge_index%2)',
                            active_edges=self.active_edges, group_reset=[self.group_reset_start,self.group_reset_end],
-                           delayed_group=8, pause=[self.pause_start,self.pause_end],
-                           runtime_migration_pending='positive-time consumer gate must move to same-slot completion/isolation seam for D7-D8')
+                           interaction=dict(source='scale.g0', slow_consumer='scale.g8',
+                                            fast_consumers=len(self.fast_consumers),
+                                            control_hold_tick=self.control_hold_tick,
+                                            gate_edge=self.gate_edge,
+                                            held_frames=self.held_frame_count,
+                                            held_controls=self.held_control_count,
+                                            release='each hold released inside its own original slot',
+                                            cancellation=('runtime consumer failure after the frame-hold observation; '
+                                                          'responsibility cancelled, unread data released, healthy chain continues')
+                                            if self.cancel_interaction else None))
 
     def weight(self, kind, index):
         return index+1 if kind=='point' else self.weights[index]
+
+    def _forward_edge(self, tick):
+        """First sampling edge whose slot can forward a control stamped at tick."""
+        return self.clock.lt(tick) + 1
+
+    def expected_default_rows(self, kind, index):
+        # One row per episode settlement, plus the split the p0 evidence gap
+        # forces on every covering scope's first platform (unknown byte at
+        # edge 193 and the member reset window both land inside it). Whether
+        # the interrupted tail settles as its own row follows the basis'
+        # reference width: with W16ns the post-gap platform rebuilds a frozen
+        # reference inside the same episode (extra row for every covering
+        # scope whose own reset boundary does not already close there), while
+        # with W128 cycles the tail cannot build six complete reference
+        # windows before the episode ends, so only scopes without their own
+        # reset boundary gain the row. Derived from the frozen input graph,
+        # reset intervals and the configured width.
+        rows = max(len(self.expected_episodes(kind, index)), 1)
+        _, hit, _ = self.meta(kind, index)
+        own = self.own_reset(kind, index)
+        if hit and ((self.basis == 'ns' and own != (self.reset_start, self.reset_end))
+                    or (self.basis != 'ns' and own is None)):
+            rows += 1
+        return rows
+
+    def interrupted_platform_scopes(self):
+        """Scopes carrying a WARNING/OBSERVATION_INCOMPLETE default row.
+
+        The interrupted-tail reason only appears in the ns basis; the cycle
+        basis settles the same tail as REFERENCE_INSUFFICIENT instead.
+        """
+        if self.basis != 'ns':
+            return set()
+        return {self.identity(kind, index) for kind, index in self.scopes()
+                if self.meta(kind, index)[1]}
 
     def own_reset(self, kind, index):
         if index != 0:
@@ -149,7 +223,15 @@ class RevisedTopology(Scenario):
         value.update(schema='revised-topology-v1',acceptance_profile='-max-' in self.name,acceptance_ticket=30,
                      properties=['M1','M2','M3','M4','M5','H6'],point_weight='index+1',
                      active_edges=self.active_edges,unknown_tick=self.unknown_tick,
-                     transport_pause={'group':8,'start':self.pause_start,'end':self.pause_end},
+                     same_time_interaction=dict(source='scale.g0',consumers=16,slow='scale.g8',
+                                                control_hold_tick=self.control_hold_tick,
+                                                gate_edge=self.gate_edge,
+                                                slow_ack_at_hold=self.slow_consumer_ack,
+                                                retained_frames=self.held_frame_count,
+                                                retained_controls=self.held_control_count,
+                                                release_tick=self.release_tick,
+                                                release='each hold released inside its own original slot',
+                                                cancellation=self.cancel_interaction),
                      source_parent_limit=16,history='alternating bytes, actual bounded short-window growth/expiry')
         value['dynamic_by_point']='all points dynamic; three protocols by index modulo3'
         value['bytes_per_transfer']='index+1+3*(edge_index%2); unknown p0 at edge193'
@@ -167,6 +249,61 @@ class RevisedTopology(Scenario):
 
 def build_scenario(name):
     return RevisedTopology(name)
+
+
+def _marker_values(line):
+    import re
+    return dict(re.findall(r'(\w+)=([^\s]+)', line))
+
+
+def interaction_diffs(log, s):
+    """Log-only check of the M4/H6 interaction markers against the frozen schedule."""
+    diffs = []
+
+    def markers(prefix):
+        return [_marker_values(l) for l in log.splitlines() if l.startswith(prefix)]
+    control_hold = markers('TOPOLOGY_BACKLOG_CONTROL ')
+    expected_control = dict(source=s.group_id(s.interaction_source), consumers='16',
+                            retained_controls='1', retained_frames='0')
+    if len(control_hold) != 1:
+        diffs.append(dict(error='control_backlog_marker_count', actual=len(control_hold)))
+    elif any(control_hold[0].get(k) != v for k, v in expected_control.items()):
+        diffs.append(dict(error='control_backlog_marker_values', expected=expected_control,
+                          actual=control_hold[0]))
+    control_release = markers('TOPOLOGY_CONTROL_RELEASE ')
+    if (len(control_release) != 1 or control_release[0].get('original_time') != '1'
+            or control_release[0].get('released_controls') != '1'):
+        diffs.append(dict(error='control_release_marker', actual=control_release))
+    backlog = markers('TOPOLOGY_BACKLOG ')
+    expected = dict(source=s.group_id(s.interaction_source), consumers='16',
+                    fast_ack=str(s.fast_consumer_ack), slow_ack=str(s.slow_consumer_ack),
+                    retained_frames='1', retained_controls='0')
+    if len(backlog) != 1:
+        diffs.append(dict(error='backlog_marker_count', actual=len(backlog)))
+    elif any(backlog[0].get(k) != v for k, v in expected.items()):
+        diffs.append(dict(error='backlog_marker_values', expected=expected, actual=backlog[0]))
+    if s.cancel_interaction:
+        release = markers('TOPOLOGY_CANCEL_RELEASE ')
+        health = markers('TOPOLOGY_CANCEL_HEALTHY ')
+        done = markers('TOPOLOGY_CANCEL_PASS ')
+        if (len(release) != 1 or release[0].get('root') != s.group_id(s.slow_consumer)
+                or release[0].get('frames') != '0' or release[0].get('controls') != '0'
+                or release[0].get('slow_ack') != str(s.slow_consumer_ack)):
+            diffs.append(dict(error='cancel_release_marker', actual=release))
+        if len(health) != 1 or int(health[0].get('accepted', 0)) <= s.gate_edge:
+            diffs.append(dict(error='cancel_healthy_marker', actual=health))
+        if (len(done) != 1 or done[0].get('cancelled_consumers') != '1'
+                or done[0].get('released') != '1'):
+            diffs.append(dict(error='cancel_pass_marker', actual=done))
+        resumed = markers('TOPOLOGY_INTERACTION_PASS ')
+        if resumed:
+            diffs.append(dict(error='cancel_profile_has_resume_marker', actual=len(resumed)))
+    else:
+        done = markers('TOPOLOGY_INTERACTION_PASS ')
+        if (len(done) != 1 or done[0].get('original_time') != '1'
+                or done[0].get('all_consumers_released') != '1'):
+            diffs.append(dict(error='interaction_pass_marker', actual=done))
+    return diffs
 
 
 def main():
