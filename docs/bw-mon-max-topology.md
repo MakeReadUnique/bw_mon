@@ -59,6 +59,38 @@ input/source/tool/header/options fingerprints and the simulator launcher plus
 its native shared payloads. Component builds are forced in both full-suite
 modes because their older runner has a weaker cache key.
 
+## Same-slot M4/H6 interaction (spec 48 recalibration)
+
+The pre-spec48 fixture paused a consumer across [99,102)ns of positive time and
+expected five retained frames plus two controls at 101.5ns. Under the spec 48
+D7 same-slot settlement that fixture is not re-timed but replaced: the
+end-of-slot audit holds a slot open until every durable responsibility settles,
+so a consumer cannot legally lag across slots (a bare pause is diagnosed as a
+missing consumer: one runtime `GROUP_COMPLETION stage=HELD` warning isolates
+it, cancels its subscriptions and releases its unread data; a gated cross-slot
+hold would deadlock the slot). The replacement keeps the same frozen input
+schedule and exercises the same properties inside single original slots:
+
+- Control hold: the p0 reset release control (101.1ns) forwards in its own
+  stamp slot; the held consumer keeps exactly that control unread in the slot
+  while its fifteen peers consume it, then consumes and releases it inside the
+  same tick (`TOPOLOGY_BACKLOG_CONTROL`/`TOPOLOGY_CONTROL_RELEASE`).
+- Frame hold: in the 101.25ns gate-edge slot the fast peers publish, accept
+  and ack that slot's frame while the held consumer keeps exactly one unread
+  frame; the durable resume continuation finishes the backlog inside the same
+  tick with zero unread frames/controls left (`TOPOLOGY_BACKLOG`/
+  `TOPOLOGY_INTERACTION_PASS original_time=1`).
+- Cancellation leg (`topology-max-cancel-ns`): after the frame-hold
+  observation the held consumer fails with a runtime consumer warning; its
+  responsibility is cancelled, the unread frame releases immediately, the
+  healthy chain completes the full frozen sequence to 20479 NORMAL terminals
+  plus one DISABLED terminal, and the unique report-complete marker carries
+  integrity=INCOMPLETE.
+
+The two quick profiles, two maximum profiles and the cancellation profile
+compose the M1–M5/H6 matrix; `topology-quick-cancel-ns` keeps the
+cancellation shape inside the daily tier as well.
+
 ## Fixed input and actual public paths
 
 Both maximum cases instantiate every declared scope through `bw_point_mon`,
