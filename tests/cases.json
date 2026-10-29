@@ -386,7 +386,13 @@
    "BW_EPISODE ": 0,
    "BW_SUMMARY ": 0,
    "BW_DEFAULT_CHECK ": 0
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "incomplete"
+  ]
  },
  {
   "name": "episode_final_budget",
@@ -4549,7 +4555,13 @@
    "BW_READY ": 0,
    "BW_SUMMARY ": 0,
    "BW_CHECK ": 0
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "aborted"
+  ]
  },
  {
   "name": "auto_start_chain",
@@ -4867,7 +4879,13 @@
   "expect_counts": {
    "BW_CORE_WARNING": 0,
    "BW_SUMMARY": 0
-  }
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "incomplete"
+  ]
  },
  {
   "name": "point_finish_normal",
@@ -5747,11 +5765,11 @@
   ],
   "expect_counts": {
    "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1,
-   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1,
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=WARNING": 1,
    "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1
   },
   "expect_log": [
-   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=2 scopes_done=3 scopes_expected=3"
   ]
  },
  {
@@ -5764,10 +5782,11 @@
   "expect_counts": {
    "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=1 .*conclusion=FAIL": 1,
    "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=PASS": 1,
+   "BW_DEFAULT_CHECK .*scope=checker.disabled .*episode=2 .*conclusion=WARNING": 1,
    "BW_CORE_WARNING code=STORAGE_FAILURE scope_kind=0 scope=checker.disabled": 1
   },
   "expect_log": [
-   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=1 scopes_done=3 scopes_expected=3"
+   "BW_SUMMARY status=FAIL pass=4 fail=1 warning=2 scopes_done=3 scopes_expected=3"
   ],
   "plusargs": [
    "+PHASE_FAULT"
@@ -6262,5 +6281,284 @@
    "{log}",
    "member_bridge"
   ]
+ },
+ {
+  "name": "end_audit_normal",
+  "top": "tb_end_audit",
+  "expect_log": [
+   "TB_PASS end_audit",
+   "(?s)BW_END_AUDIT.*BW_POINT_TERMINAL scope=end\\.a",
+   "BW_REPORT_COMPLETE audit=1 roles="
+  ],
+  "expect_counts": {
+   "BW_END_AUDIT ": 1,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_GROUP_TERMINAL": 1,
+   "BW_SUMMARY ": 1
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
+ },
+ {
+  "name": "end_audit_reverse",
+  "top": "tb_end_audit",
+  "defines": [
+   "REVERSE_DECL"
+  ],
+  "expect_log": [
+   "TB_PASS end_audit",
+   "(?s)BW_END_AUDIT.*BW_POINT_TERMINAL scope=end\\.a",
+   "BW_REPORT_COMPLETE audit=1 roles="
+  ],
+  "expect_counts": {
+   "BW_END_AUDIT ": 1,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_GROUP_TERMINAL": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "end_audit_suppress_hint",
+  "top": "tb_end_audit",
+  "defines": [
+   "BW_MON_TEST_END_FAULTS"
+  ],
+  "plusargs": [
+   "+MODE=suppress_hint"
+  ],
+  "expect_log": [
+   "TB_PASS end_audit",
+   "BW_REPORT_INCOMPLETE reason=MISSING_ROLE_RECEIPT owner=0:end\\.a role=hint"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 0,
+   "BW_REPORT_INCOMPLETE": 1,
+   "BW_END_AUDIT ": 1
+  }
+ },
+ {
+  "name": "end_audit_suppress_core",
+  "top": "tb_end_audit",
+  "defines": [
+   "BW_MON_TEST_END_FAULTS"
+  ],
+  "plusargs": [
+   "+MODE=suppress_core"
+  ],
+  "expect_log": [
+   "TB_PASS end_audit",
+   "BW_REPORT_INCOMPLETE reason=MISSING_ROLE_RECEIPT owner=0:end\\.a role=core"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 0,
+   "BW_REPORT_INCOMPLETE": 1,
+   "BW_END_AUDIT ": 1
+  }
+ },
+ {
+  "name": "target_query_stale",
+  "top": "tb_target_query",
+  "sources": [
+   "target_query_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=stale"
+  ],
+  "expect_log": [
+   "TB_PASS target_query stale"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 1
+  }
+ },
+ {
+  "name": "target_query_budget",
+  "top": "tb_target_query",
+  "sources": [
+   "target_query_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=budget"
+  ],
+  "expect_log": [
+   "TB_PASS target_query budget time=40000001 bytes=320"
+  ],
+  "expect_counts": {
+   "BW_POINT_TERMINAL": 1,
+   "BW_SUMMARY ": 1
+  }
+ },
+ {
+  "name": "target_query_late1fs",
+  "top": "tb_target_query",
+  "sources": [
+   "target_query_observer.c"
+  ],
+  "plusargs": [
+   "+MODE=late1fs"
+  ],
+  "expect_log": [
+   "TB_PASS target_query late1fs settled=40000001"
+  ],
+  "expect_counts": {
+   "BW_POINT_TERMINAL": 1
+  }
+ },
+ {
+  "name": "end_pending_edge",
+  "top": "tb_end_pending",
+  "plusargs": [
+   "+MODE=edge"
+  ],
+  "expect_log": [
+   "TB_PASS end_pending edge",
+   "BW_GROUP_TERMINAL scope=pending\\.group state=INTERRUPTED.*stage=CAPTURE",
+   "BW_POINT_TERMINAL scope=pending\\.point state=INTERRUPTED.*stage=CAPTURE"
+  ],
+  "expect_counts": {
+   "BW_GROUP_TERMINAL": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_SUMMARY ": 0,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_COMPLETION": 0
+  }
+ },
+ {
+  "name": "end_pending_hint_timer",
+  "top": "tb_end_pending",
+  "plusargs": [
+   "+MODE=hint_timer"
+  ],
+  "expect_log": [
+   "TB_PASS end_pending hint_timer",
+   "BW_HINT_END scope=pending\\.hint kind=backpressure .*hit=1 start_ticks=1 trigger_ticks=200000001 end_ticks=201000002",
+   "BW_POINT_TERMINAL scope=pending\\.hint state=NORMAL"
+  ],
+  "expect_counts": {
+   "BW_HINT_END scope=pending\\.hint": 1,
+   "BW_REPORT_COMPLETE": 1
+  }
+ },
+ {
+  "name": "end_disabled_roles",
+  "top": "tb_end_disabled",
+  "expect_log": [
+   "TB_PASS end_disabled healthy_bytes=64",
+   "BW_POINT_TERMINAL scope=dis\\.p1 state=DISABLED",
+   "BW_GROUP_TERMINAL scope=dis\\.g1 state=DISABLED",
+   "BW_POINT_TERMINAL scope=dis\\.p2 state=NORMAL",
+   "BW_GROUP_TERMINAL scope=dis\\.g2 state=NORMAL",
+   "BW_REPORT_COMPLETE .*integrity=INCOMPLETE"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 1,
+   "BW_SUMMARY ": 1,
+   "BW_POINT_TERMINAL": 2,
+   "BW_GROUP_TERMINAL": 2
+  },
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "incomplete"
+  ]
+ },
+ {
+  "name": "end_terminal_fail_active",
+  "top": "tb_end_terminal_check",
+  "plusargs": [
+   "+MODE=fail_active"
+  ],
+  "expect_log": [
+   "TB_PASS end_terminal fail_active",
+   "(?s)BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active .*episode=1 .*conclusion=FAIL reason=SUSTAINED_EXCEEDANCE.*BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active .*episode=2 .*conclusion=WARNING reason=NO_CONFIRMED_STEADY.*BW_SUMMARY .*fail=1.*BW_REPORT_COMPLETE audit=1 .*performance=FAIL"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active": 2,
+   "BW_CHECK_WARNING scope_kind=0 scope=t\\.active reason=MONITOR_DISABLED": 1,
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1
+  },
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
+ },
+ {
+  "name": "end_terminal_no_platform",
+  "top": "tb_end_terminal_check",
+  "plusargs": [
+   "+MODE=no_platform"
+  ],
+  "expect_log": [
+   "TB_PASS end_terminal no_platform",
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active .*conclusion=WARNING reason=NO_CONFIRMED_STEADY"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active": 1,
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1
+  }
+ },
+ {
+  "name": "end_terminal_stats_only",
+  "top": "tb_end_terminal_check",
+  "plusargs": [
+   "+MODE=stats_only"
+  ],
+  "expect_log": [
+   "TB_PASS end_terminal stats_only",
+   "BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=2 scopes_expected=2"
+  ],
+  "expect_counts": {
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.off": 0,
+   "BW_DEFAULT_CHECK scope_kind=0 scope=t\\.active": 1,
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1
+  }
+ },
+ {
+  "name": "end_replay_duplicate",
+  "top": "tb_end_replay",
+  "plusargs": [
+   "+MODE=replay"
+  ],
+  "expect_log": [
+   "TB_PASS end_replay replay"
+  ],
+  "expect_counts": {
+   "BW_SUMMARY ": 1,
+   "BW_REPORT_COMPLETE": 1,
+   "BW_POINT_TERMINAL": 1,
+   "BW_DEFAULT_CHECK ": 1
+  }
+ },
+ {
+  "name": "end_replay_suppress_owner",
+  "top": "tb_end_replay",
+  "defines": [
+   "BW_MON_TEST_END_FAULTS"
+  ],
+  "plusargs": [
+   "+MODE=suppress_owner"
+  ],
+  "expect_log": [
+   "TB_PASS end_replay suppress_owner",
+   "BW_REPORT_INCOMPLETE reason=MISSING_ROLE_RECEIPT owner=0:re\\.p role=owner"
+  ],
+  "expect_counts": {
+   "BW_REPORT_COMPLETE": 0,
+   "BW_REPORT_INCOMPLETE": 1
+  }
  }
 ]

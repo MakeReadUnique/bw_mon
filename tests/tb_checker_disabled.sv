@@ -32,8 +32,11 @@ module tb_checker_disabled;
         $fatal(1,"checker storage failure must preserve typed ownership and unrelated same-ID group");
     end
     result=check_report_summary();
+    // Before the ending, the historical FAIL is already settled; the
+    // terminal warning for the still-active disabled episode appears only in
+    // the ending settlement (locked by the summary expectation).
     if(result.status!=BW_REPORT_FAIL || result.fail_count!=1 || result.pass_count!=4 || result.warning_count!=0)
-      $fatal(1,"healthy scopes must continue default checks and historical FAIL must survive disable");
+      $fatal(1,"healthy scopes must continue checks and historical FAIL must survive disable");
     $display("TB_PASS checker_disabled");$finish;
   end
 endmodule

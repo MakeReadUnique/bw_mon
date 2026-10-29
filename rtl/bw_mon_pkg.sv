@@ -724,6 +724,8 @@ package bw_mon_pkg;
   `include "bw_slot_settlement.svh"
   `include "bw_mon_registry.svh"
   `include "bw_mon_transport.svh"
+  `include "bw_target_completion.svh"
   `include "bw_point_completion.svh"
   `include "bw_group_completion.svh"
+  `include "bw_end_protocol.svh"
 endpackage

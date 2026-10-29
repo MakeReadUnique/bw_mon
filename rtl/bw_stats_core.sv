@@ -1499,10 +1499,12 @@ module bw_stats_core #(
       EPISODE_ENABLE,PHASE_ENABLE,BW_PHASE_STRATEGY,PHASE_N,PHASE_K,phase_min_span_cfg);
     record_check_analysis(bw_scope_t'(scope_kind),scope_id,PHASE_ENABLE,
       bw_basis_t'(WINDOW_BASIS),WINDOW_WIDTH,stride_cfg);
+    register_end_role(scope_key(bw_scope_t'(scope_kind),scope_id),"core");
     initialize_reset_capture($sformatf("%m"),"stats_reset_n");
   end
 
   final begin
+    ensure_end_audit();
     if (EPISODE_ENABLE && monitor_ready && !core_failure_pending() && !runtime_failed() &&
         (scope_kind!=BW_POINT || !point_batches.exists(scope_id) || point_batch_complete(scope_id)) && requested_actions==consumed_actions) begin
       if (monitor_time_supported($time)) begin
@@ -1517,6 +1519,9 @@ module bw_stats_core #(
       if(monitor_time_supported($time)) report_scope_done(bw_scope_t'(scope_kind),scope_id,stats_epoch);
       else check_monitor_time($time,scope_id);
     end
+    if(!core_failure_seen)
+      note_role_receipt(scope_key(bw_scope_t'(scope_kind),scope_id),"core",
+        scope_disabled(bw_scope_t'(scope_kind),scope_id));
   end
 endmodule
 

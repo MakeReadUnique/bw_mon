@@ -2,7 +2,7 @@
 // other typed scopes. Truly shared report totals retain the package helpers.
 function automatic bw_u64_t default_add(int index,bw_u64_t value,bw_u64_t increment);
   logic [64:0] wide;
-  if(scope_failed(scopes[index].kind,scopes[index].id))return value;
+  if(scope_failed(scopes[index].kind,scopes[index].id) && !default_scopes[index].terminal_trust)return value;
   if($isunknown({value,increment}))begin
     runtime_scope_error(scopes[index].kind,scopes[index].id,"INTEGER_UNKNOWN","owner=default-check addition operand unknown");
     return value;
@@ -119,9 +119,10 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   bw_u64_t run_count,run_first,run_last,runs,longest_count,longest_first,longest_last,longest_span;
   bw_u64_t reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,previous_seq,exclusion_count,excluded_left,excluded_right;
   real baseline,deviation,maximum;
-  bit reference_valid,quality,failed,exempt,over;
+  bit reference_valid,quality,failed,exempt,over,trusted;
   string reason,conclusion,reference_seqs,baseline_text,threshold_text,maximum_text,percent_text,steady_text;
-  if(scope_disabled(scopes[index].kind,scopes[index].id))return 0;
+  trusted=default_scopes[index].terminal_trust;
+  if(!trusted && scope_disabled(scopes[index].kind,scopes[index].id))return 0;
   identity='{epoch:episode.stats_epoch,episode:episode.episode_id,platform:have_platform ? platform.phase_id : 0};
   if(default_scopes[index].have_default_identity && identity<=default_scopes[index].default_identity)return 1;
   width=default_scopes[index].width;
@@ -257,6 +258,7 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
             longest_count=run_count;longest_first=run_first;longest_last=run_last;longest_span=run_last-run_first;
           end
           if(run_count>=2 && run_last-run_first>=width)failed=1;
+          if(!trusted && scope_failed(scopes[index].kind,scopes[index].id))return 0;
         end
       end
       if(failed)reason="SUSTAINED_EXCEEDANCE";
@@ -268,7 +270,7 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   if(failed)begin conclusion="FAIL";totals.fail_count=checked_add(totals.fail_count,1,scopes[index].id);end
   else if(reason!="NONE")begin conclusion="WARNING";totals.warning_count=checked_add(totals.warning_count,1,scopes[index].id);end
   else begin conclusion="PASS";totals.pass_count=checked_add(totals.pass_count,1,scopes[index].id);end
-  if(scope_failed(scopes[index].kind,scopes[index].id))return 0;
+  if(!trusted && scope_failed(scopes[index].kind,scopes[index].id))return 0;
   baseline_text=reference_valid ? $sformatf("%.17g",baseline) : "UNAVAILABLE";
   threshold_text=reference_valid && baseline>0 ? $sformatf("%.17g",0.05*baseline) : "UNAVAILABLE";
   maximum_text=reference_valid && baseline>0 ? $sformatf("%.17g",maximum) : "UNAVAILABLE";
@@ -302,4 +304,50 @@ function automatic bit settle_default_episode(int index,bw_episode_result_t epis
   end
   if(!found && !default_result(index,episode,empty_platform,0))return 0;
   return 1;
+endfunction
+
+// Audit-authorized terminal settlement for an owner disabled while its
+// episode was still active. Only evidence already submitted before the
+// failure is used: frozen raw rows and already confirmed phases. The
+// episode boundary is marked truncated and unknown, so quality is
+// incomplete; a reliable sustained-exceedance prefix keeps FAIL, a missing
+// confirmed platform yields one episode warning. No new trusted suffix and
+// no scope PASS can be produced on a disabled scope.
+function automatic bit settle_terminal_default(int index);
+  bw_episode_result_t episode;
+  bw_phase_result_t platform;
+  bw_check_window_t last_row;
+  bit have_platform,have_row;
+  int last_run;
+  if(!default_scopes[index].enabled)return 1;
+  have_platform=0;have_row=0;
+  last_run=default_scopes[index].raw.size()-1;
+  if(last_run>=0)begin
+    last_row=default_scopes[index].raw[last_run].last;
+    have_row=1;
+  end
+  foreach(default_scopes[index].phases[p])
+    if(default_scopes[index].phases[p].phase_kind==BW_PHASE_STEADY)begin
+      platform=default_scopes[index].phases[p];
+      have_platform=1;
+    end
+  if(!have_row && !have_platform)return 1;
+  episode.scope_kind=scopes[index].kind;
+  if(have_platform)begin
+    episode.stats_epoch=platform.stats_epoch;episode.episode_id=platform.episode_id;
+    episode.last_ticks=platform.end_ticks;
+  end else begin
+    episode.stats_epoch=last_row.stats_epoch;episode.episode_id=last_row.episode_id;
+    episode.last_ticks=last_row.ticks;
+  end
+  if(have_row && last_row.ticks>episode.last_ticks)episode.last_ticks=last_row.ticks;
+  episode.tail_ticks=episode.last_ticks;
+  episode.status=BW_EPISODE_TRUNCATED;
+  // Clipped observational cutoff, not a natural episode tail.
+  episode.first_known=0;episode.last_known=0;episode.tail_known=0;
+  episode.bytes_complete=0;episode.events_complete=0;
+  default_scopes[index].terminal_trust=1;
+  have_platform=default_result(index,episode,platform,have_platform);
+  default_scopes[index].terminal_trust=0;
+  return have_platform;
 endfunction

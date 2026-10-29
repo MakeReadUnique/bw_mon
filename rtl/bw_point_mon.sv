@@ -178,6 +178,14 @@ module bw_point_mon #(
                                  WINDOW_WIDTH,effective_stride);
     transport_source=point_source_handle(source_handle);
     register_point_completion(scope_id);
+    register_end_role(scope_key(BW_POINT,scope_id),"owner");
+    register_end_role(scope_key(BW_POINT,scope_id),"core");
+    // Only really generated duration hints own an end responsibility; an
+    // unsupported or disabled branch explicitly declares none.
+    if((PROTOCOL===BW_VALID_READY) && BACKPRESSURE_ENABLE)
+      register_end_role(scope_key(BW_POINT,scope_id),"hint");
+    if((PROTOCOL===BW_CREDIT) && SHORTAGE_ENABLE)
+      register_end_role(scope_key(BW_POINT,scope_id),"hint");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent raw-clock observer");
     declare_scope_preparation(transport_source);
@@ -205,13 +213,31 @@ module bw_point_mon #(
   final begin
     if(!monitor_configured && !core_failure_pending())
       core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
+    // The global audit freezes the persistent responsibility ledger before
+    // any settlement, independently of which owner finalizes first.
+    ensure_end_audit();
     if(monitor_ready && !monitor_time_supported($time))
       runtime_scope_error(BW_POINT,scope_id,"SIM_TIME_LIMIT","point finalization exceeds the immutable monitor budget");
-    if(monitor_ready && !core_failure_seen)
+    if(monitor_ready && !core_failure_seen) begin : point_terminal_evidence
+      string end_stage;
+      end_stage="NONE";
+      // Typed owner evidence for an interrupted ending; no queue drain runs.
+      if(recorder.requested_actions!=recorder.consumed_actions)end_stage="RECORDER_ACTIONS";
+      else if(recorder.published_control_seq!=recorder.control_seq)end_stage="CONTROL_PUBLICATION";
+      else if(captured_resets.size()!=0)end_stage="RESET_CAPTURE";
+      else if(core.requested_actions!=core.consumed_actions)end_stage="CORE_ACTIONS";
+      else if(hints.backpressure_hint.completion_pending() ||
+              hints.credit_shortage_hint.completion_pending())end_stage="HINT_ACTIONS";
+      else if(hints.backpressure_hint.timer_due_at_end() ||
+              hints.credit_shortage_hint.timer_due_at_end())end_stage="TIMER_DUE";
       note_point_terminal(scope_id,recorder.requested_actions==recorder.consumed_actions &&
         recorder.published_control_seq==recorder.control_seq && captured_resets.size()==0 &&
         core.requested_actions==core.consumed_actions &&
-        !hints.backpressure_hint.completion_pending() && !hints.credit_shortage_hint.completion_pending());
+        !hints.backpressure_hint.completion_pending() && !hints.credit_shortage_hint.completion_pending(),
+        end_stage);
+    end
+    if(!core_failure_seen)
+      note_role_receipt(scope_key(BW_POINT,scope_id),"owner",scope_disabled(BW_POINT,scope_id));
   end
   always @(record_toggle) begin : publish_record
     if (monitor_ready && raw_record.record_seq!=0 && !scope_failed(BW_POINT,scope_id))begin
