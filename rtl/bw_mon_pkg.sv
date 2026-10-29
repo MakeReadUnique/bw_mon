@@ -316,7 +316,11 @@ package bw_mon_pkg;
     return $sformatf("%0d:%s",kind,id);
   endfunction
   function automatic bit scope_disabled(bw_scope_t kind,string id);
-    return monitoring_shared_disabled || monitoring_disabled.exists(scope_key(kind,id));
+    // Healthy runs never enter the keyed map: every disabled entry is written
+    // together with a failure-count increment, so a zero count proves no
+    // per-scope failures exist and the formatted-key lookup can be skipped.
+    return monitoring_shared_disabled ||
+           (monitoring_failure_count!=0 && monitoring_disabled.exists(scope_key(kind,id)));
   endfunction
   function automatic bit scope_failed(bw_scope_t kind,string id);
     return core_failure_seen || scope_disabled(kind,id);

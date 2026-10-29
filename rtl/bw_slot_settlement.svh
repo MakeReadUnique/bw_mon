@@ -4,6 +4,18 @@
   bw_u64_t slot_settlement_generation=0;
   bit slot_settlement_pending=0;
   import "DPI-C" context function int bw_native_request_slot_settlement();
+  // Audit-relevant receipts (continuations, publications, grants, batch
+  // ledgers) can change without any raw clock/reset transition of the owning
+  // scope. Owners register their raw-clock observer once; the completion
+  // funnels report such activity so the native audit round visits the scope.
+  import "DPI-C" function void bw_native_mark_settlement_watch(input chandle handle);
+  chandle settlement_watch_handles[string];
+  function automatic void register_settlement_watch(string id,chandle handle);
+    if(!settlement_watch_handles.exists(id))settlement_watch_handles[id]=handle;
+  endfunction
+  function automatic void note_settlement_activity(string id);
+    if(settlement_watch_handles.exists(id))bw_native_mark_settlement_watch(settlement_watch_handles[id]);
+  endfunction
   export "DPI-C" function bw_slot_settlement_arrived;
   // A common export prototype keeps bare-package simulations linkable. A
   // callback must select the owning module's implementation with its svScope.

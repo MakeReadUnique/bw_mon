@@ -20,9 +20,57 @@ typedef struct point_watch {
     s_vpi_time time;
     s_vpi_value value;
     svLogic previous;
-    struct point_watch *next;
+    int dirty, indexed;
+    struct point_watch *next, *next_dirty, *next_indexed;
 } point_watch;
-static point_watch *point_watches;
+static point_watch *point_watches, *dirty_point_watches;
+/* Settlement observability: public end-of-run counters behind the
+   BW_SETTLE_STATS marker. Creation totals survive the release callback so the
+   marker stays truthful regardless of end-callback order. */
+static unsigned long long settle_rounds, settle_audits, settle_edges,
+    settle_dirty_audits, point_watch_creations;
+
+/* Dirty watcher set: a settlement round audits only watchers with audit-
+   relevant activity since their last audit. Activity sources: this scope's
+   raw clock or reset transitions (native callbacks), settlement/continuation
+   receipts reported by the SV owner (bw_native_mark_settlement_watch), a
+   newly registered watcher, and a watcher whose own audit requested a
+   re-audit (its outcome can change once the shared generation advances). */
+static void mark_point_dirty(point_watch *watch)
+{
+    if (!watch->dirty) {
+        watch->dirty = 1;
+        watch->next_dirty = dirty_point_watches;
+        dirty_point_watches = watch;
+    }
+}
+
+/* Scope -> watcher index so reset observers can dirty their owning watcher. */
+#define BW_SCOPE_BUCKETS 64
+static point_watch *scope_buckets[BW_SCOPE_BUCKETS];
+static unsigned scope_bucket(svScope scope)
+{
+    size_t value = (size_t)scope;
+    value = (value >> 4) ^ (value >> 12);
+    return (unsigned)(value % BW_SCOPE_BUCKETS);
+}
+static void index_point_watch(point_watch *watch)
+{
+    unsigned bucket = scope_bucket(watch->scope);
+    if (watch->scope && !watch->indexed) {
+        watch->indexed = 1;
+        watch->next_indexed = scope_buckets[bucket];
+        scope_buckets[bucket] = watch;
+    }
+}
+static point_watch *find_point_watch(svScope scope)
+{
+    point_watch *watch;
+    if (!scope) return NULL;
+    for (watch = scope_buckets[scope_bucket(scope)]; watch; watch = watch->next_indexed)
+        if (watch->scope == scope) return watch;
+    return NULL;
+}
 
 static PLI_INT32 point_clock_changed(p_cb_data callback)
 {
@@ -31,7 +79,9 @@ static PLI_INT32 point_clock_changed(p_cb_data callback)
     int raw = callback->value->value.scalar;
     svLogic value = raw == vpi0 ? sv_0 : raw == vpi1 ? sv_1 : raw == vpiZ ? sv_z : sv_x;
     svScope previous;
+    settle_edges++;
     watch->previous = value;
+    mark_point_dirty(watch);
     /* IEEE four-state posedge: 0->1/X/Z, X/Z->1. */
     if ((old == sv_0 && value != sv_0) ||
         ((old == sv_x || old == sv_z) && value == sv_1)) {
@@ -70,6 +120,9 @@ void *bw_native_watch_point_clock(const char *scope_path)
     watch->callback = vpi_register_cb(&callback);
     if (!watch->callback) { free(watch); return NULL; }
     watch->next = point_watches; point_watches = watch;
+    index_point_watch(watch);
+    mark_point_dirty(watch);
+    point_watch_creations++;
     return watch;
 }
 
@@ -114,6 +167,7 @@ static PLI_INT32 reset_changed(p_cb_data callback)
     svScope previous_scope;
     watch->previous = current;
     mark_reset_dirty(watch);
+    mark_point_dirty(find_point_watch(watch->scope));
     previous_scope = svSetScope(watch->scope);
     bw_native_reset_seen(0, previous, current);
     if (previous_scope) svSetScope(previous_scope);
@@ -124,8 +178,11 @@ static PLI_INT32 release_reset_watches(p_cb_data callback)
 {
     reset_watch *watch;
     point_watch *point;
+    unsigned bucket;
     (void)callback;
     dirty_resets = NULL;
+    dirty_point_watches = NULL;
+    for (bucket = 0; bucket < BW_SCOPE_BUCKETS; bucket++) scope_buckets[bucket] = NULL;
     while (reset_watches) {
         watch = reset_watches;
         reset_watches = watch->next;
@@ -212,22 +269,41 @@ void bw_native_reset_snapshot(void *handle)
     vpi_get_value(watch->object, &value);
     watch->previous = scalar_logic(value.value.scalar);
     mark_reset_dirty(watch);
+    mark_point_dirty(find_point_watch(watch->scope));
     previous = svSetScope(watch->scope);
     bw_native_reset_seen(0, watch->previous, watch->previous);
     if (previous) svSetScope(previous);
+}
+
+/* SV owners report audit-relevant receipts (continuations, publications,
+   grants, batch ledgers) that no native raw-signal callback observed. */
+void bw_native_mark_settlement_watch(void *handle)
+{
+    if (handle) mark_point_dirty((point_watch *)handle);
 }
 
 static int callback_pending = 0;
 static svScope package_scope;
 int bw_native_request_slot_settlement(void);
 
+static PLI_INT32 report_settle_stats(p_cb_data callback)
+{
+    (void)callback;
+    if (settle_rounds)
+        vpi_printf("BW_SETTLE_STATS rounds=%llu audits=%llu watchers=%llu edges=%llu dirty_audits=%llu\n",
+                   settle_rounds, settle_audits, point_watch_creations, settle_edges,
+                   settle_dirty_audits);
+    return 0;
+}
+
 static PLI_INT32 settle_slot(p_cb_data callback)
 {
     svScope previous;
     reset_watch *watch;
-    point_watch *point;
+    point_watch *point, *pending, *next;
     int reaudit = 0;
     (void)callback;
+    settle_rounds++;
     // Capture is ordered at value change; dispatch waits until all raw input
     // and combinational-condition updates have settled, before granting work.
     while (dirty_resets) {
@@ -239,10 +315,25 @@ static PLI_INT32 settle_slot(p_cb_data callback)
     }
     callback_pending = 0;
     /* Audit the PREVIOUS grant only after its SV continuations. A callback is
-       not a completion receipt and callback registration order is irrelevant. */
-    for (point = point_watches; point; point = point->next) {
+       not a completion receipt and callback registration order is irrelevant.
+       Only watchers with activity since their last audit are visited; a
+       re-audit request keeps its watcher dirty for the next round because the
+       shared generation advance can change its outcome. Marks arriving while
+       this round runs (receipts of just-audited continuations) are consumed
+       by the next round. */
+    pending = dirty_point_watches;
+    dirty_point_watches = NULL;
+    for (point = pending; point; point = next) {
+        next = point->next_dirty;
+        point->next_dirty = NULL;
+        point->dirty = 0;
         previous = svSetScope(point->scope);
-        if (bw_native_point_audit()) reaudit = 1;
+        settle_audits++;
+        settle_dirty_audits++;
+        if (bw_native_point_audit()) {
+            reaudit = 1;
+            mark_point_dirty(point);
+        }
         if (previous) svSetScope(previous);
     }
     previous = svSetScope(package_scope);
@@ -257,12 +348,20 @@ int bw_native_request_slot_settlement(void)
     s_cb_data callback;
     s_vpi_time delay;
     vpiHandle handle;
+    static int stats_registered = 0;
     if (callback_pending) return 1;
 #ifdef BW_MON_TEST_FAULTS
     if (fail_next_slot_registration) { fail_next_slot_registration = 0; return 0; }
 #endif
     package_scope = svGetScope();
     if (!package_scope) return 0;
+    if (!stats_registered) {
+        memset(&callback, 0, sizeof(callback));
+        callback.reason = cbEndOfSimulation;
+        callback.cb_rtn = report_settle_stats;
+        /* A lost stats registration never affects settlement semantics. */
+        if (vpi_register_cb(&callback)) stats_registered = 1;
+    }
     memset(&callback, 0, sizeof(callback));
     memset(&delay, 0, sizeof(delay));
     delay.type = vpiSimTime;

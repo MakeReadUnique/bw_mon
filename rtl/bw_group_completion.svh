@@ -8,7 +8,10 @@
   endclass
   bw_group_batch group_batches[string];
   function automatic void cancel_all_group_completion();
-    foreach(group_batches[id])group_batches[id].cancelled=1;
+    foreach(group_batches[id])begin
+      group_batches[id].cancelled=1;
+      note_settlement_activity(id);
+    end
   endfunction
   function automatic void register_group_completion(string id);
     if(!group_batches.exists(id))group_batches[id]=new;
@@ -17,6 +20,7 @@
     if(!monitor_ready || !group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
     if(group_batches[id].input_generation==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group input generation exhausted");return;end
     group_batches[id].input_generation++;group_batches[id].grant=grant;
+    note_settlement_activity(id);
   endfunction
   function automatic void expect_group_edge(string id,bw_u64_t ticks);
     bw_group_batch batch;
@@ -31,11 +35,13 @@
     if(!group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
     if(group_batches[id].reset_expected==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group reset ledger exhausted");return;end
     group_batches[id].reset_expected++;
+    note_settlement_activity(id);
   endfunction
   function automatic void group_reset_captured(string id);
     if(!group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
     if(group_batches[id].reset_captured==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group reset capture ledger exhausted");return;end
     group_batches[id].reset_captured++;
+    note_settlement_activity(id);
   endfunction
   function automatic void group_core_receipt(string id,bw_u64_t seq);
     if(scope_failed(BW_GROUP,id))return;

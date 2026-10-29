@@ -188,6 +188,7 @@ module bw_point_mon #(
       register_end_role(scope_key(BW_POINT,scope_id),"hint");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent raw-clock observer");
+    register_settlement_watch(scope_id,clock_observer);
     declare_scope_preparation(transport_source);
     // Once the t=0 collection slot ends, a missing coordinator cannot arrive
     // legally. This check does not depend on clocks, traffic or reset release.

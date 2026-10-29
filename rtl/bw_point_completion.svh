@@ -10,7 +10,10 @@
     if(!point_batches.exists(id))point_batches[id]=new;
   endfunction
   function automatic void cancel_point_completion(string id);
-    if(point_batches.exists(id))point_batches[id].cancelled=1;
+    if(point_batches.exists(id))begin
+      point_batches[id].cancelled=1;
+      note_settlement_activity(id);
+    end
   endfunction
   function automatic void point_work_requested(string id,bw_u64_t grant);
     if(!monitor_ready || !point_batches.exists(id) || scope_failed(BW_POINT,id))return;
@@ -19,6 +22,7 @@
     end
     point_batches[id].input_generation++;
     point_batches[id].grant=grant;
+    note_settlement_activity(id);
   endfunction
   function automatic void expect_point_edge(string id,bw_u64_t ticks);
     bw_point_batch batch;
@@ -39,18 +43,22 @@
       runtime_scope_error(BW_POINT,id,"CAPTURE_SEQUENCE","duplicate or out-of-order capture receipt");return;
     end
     point_batches[id].captured=seq;
+    note_settlement_activity(id);
   endfunction
   function automatic void point_inflight_receipt(string id,bw_u64_t seq);
     if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
     point_batches[id].inflight=seq;
+    note_settlement_activity(id);
   endfunction
   function automatic void point_publication_receipt(string id,bw_u64_t seq);
     if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
     point_batches[id].published=seq;
+    note_settlement_activity(id);
   endfunction
   function automatic void point_core_receipt(string id,bw_u64_t seq);
     if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
     point_batches[id].accepted=seq;
+    note_settlement_activity(id);
     // A wakeup is expendable. The next coordinator audit reads this durable
     // receipt even when this advisory request is deliberately lost.
 `ifdef BW_MON_TEST_FAULTS

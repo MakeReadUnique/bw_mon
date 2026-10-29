@@ -42,6 +42,10 @@ module bw_group_mon #(
   bw_u64_t collector_recovery_grant=0,collector_recovery_receipts=0;
   bw_u64_t controls_held=0,controls_published=0,controls_accepted=0,controls_acked=0;
   bw_u64_t expected_notice=0,expected_edge_index=0,last_expected_ticks=0;
+  // Notification sequence already covered by an unexpected-frame scan. The
+  // scan is a durable-state predicate: it only needs to run when a member
+  // actually published (notification.seq advanced) since the last scan.
+  bw_u64_t unexpected_scan_notice=0;
   bit reset_observer_ready=0;
   localparam bit external_reset_capture=0;
   function void apply_captured_reset(logic value,bw_u64_t ticks);
@@ -136,10 +140,13 @@ module bw_group_mon #(
     end
     close_group_batch(scope_id);
     if(scope_failed(BW_GROUP,scope_id))return 0;
-    if(expected_edges.size()==0)for(int m=0;m<direct_member_count;m++)begin
-      if(peek_member_frame(group_handle,m,unexpected))begin
-        runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=UNEXPECTED_FRAME source=%s original_ticks=%0d edge=%0d without actual group edge",source_name(member_source(group_handle,m)),unexpected.timestamp_ticks,unexpected.edge_index));return 0;
+    if(expected_edges.size()==0 && registered_groups[group_handle].notification.seq!=unexpected_scan_notice)begin
+      for(int m=0;m<direct_member_count;m++)begin
+        if(peek_member_frame(group_handle,m,unexpected))begin
+          runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=UNEXPECTED_FRAME source=%s original_ticks=%0d edge=%0d without actual group edge",source_name(member_source(group_handle,m)),unexpected.timestamp_ticks,unexpected.edge_index));return 0;
+        end
       end
+      unexpected_scan_notice=registered_groups[group_handle].notification.seq;
     end
     if(expected_edges.size()!=0 || captured_resets.size()!=0 ||
        core.requested_actions!=core.consumed_actions || core.reset_requests!=core.reset_receipts ||
@@ -179,6 +186,7 @@ module bw_group_mon #(
     register_end_role(scope_key(BW_GROUP,scope_id),"core");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent group raw-clock observer");
+    register_settlement_watch(scope_id,clock_observer);
     raw_record='0;raw_control='0;core_control='0;
     declare_scope_preparation(transport_source);
     fork begin
