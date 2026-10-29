@@ -209,19 +209,11 @@ class HistoryScenario:
         self.overrun_edges = 0
         if self.kind == 'deep' or self.kind == 'overrun':
             self.width, self.stride = (40000 if self.basis == 'ns' else 80000), 1
-            if self.kind == 'deep' and self.basis == 'ns':
-                # The final 2GHz edge lands exactly on the T+40us budget
-                # endpoint (one half period stretched): the endpoint window is
-                # published from a real same-tick sampling edge, which is the
-                # supported way to complete endpoint work without a drain tick.
-                ticks = [250000 + i*500000 for i in range(79999)] + [40000*TICKS]
-            else:
-                ticks = [250000 + i*500000 for i in range(80000)]
-            events = [(t, 1, 1, 4294967294+i % 2, 1, 1, 64) for i, t in enumerate(ticks)]
+            events = [(250000 + i*500000, 1, 1, 4294967294+i % 2, 1, 1, 64) for i in range(80000)]
             end = 40000*TICKS
-            self.resources = dict(event_segments=[80000, 2 if self.kind == 'deep' and self.basis == 'ns' else 1, 80000],
+            self.resources = dict(event_segments=[80000, 1, 80000],
                                   clock_segments=[0 if self.basis == 'ns' else 1]*3,
-                                  event_segments_final=[80000, 2 if self.kind == 'deep' and self.basis == 'ns' else 1, 80000])
+                                  event_segments_final=[80000, 1, 80000])
             if self.kind == 'overrun':
                 # Three real 2GHz edges past the immutable T+40us budget; the
                 # first must be rejected with a runtime warning and isolation.

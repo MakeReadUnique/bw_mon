@@ -253,11 +253,11 @@ endmodule
     $display("HISTORY_PASS scopes=3 raw=%0d windows=%0d end_ticks=%0d",EDGES*3,WINDOWS,$time);
     // Same ending-contract settle step as the scale driver: the endpoint
     // marker keeps its tick and the final input slot closes before finish.
-    // A run that ends exactly at the immutable T+40us budget must finish in
-    // that same tick: the budget supports same-tick endpoint work only and
-    // must not be drained through an extra tick.
+    // A run that ends exactly at the immutable T+40us budget cannot spend a
+    // drain tick: it finishes from the postponed region of the endpoint tick,
+    // after the same-tick settlement of the endpoint's last publication.
     if(END_TICKS<BW_MONITOR_LIMIT_TICKS)#1;
-    $finish;
+    if(END_TICKS<BW_MONITOR_LIMIT_TICKS || OVERRUN_EDGES!=0)$finish;
   end
   initial begin
     if(RESETS)begin
@@ -295,8 +295,15 @@ endmodule
     if(OVERRUN_EDGES!=0)overrun_done=1;
   end
   always @(deadline or completed_scopes)if(deadline)begin
-    HISTORY_ALL_SETTLED:assert final(completed_scopes==3)else end_failure();
+    HISTORY_ALL_SETTLED:assert final(completed_scopes==3)endpoint_finish();else end_failure();
   end
+  function automatic void endpoint_finish();
+    // Postponed-region finish for budget-ending runs: the final-value assert
+    // runs after every same-tick Active/NBA/Reactive/ReNBA settlement, so the
+    // endpoint's last publication has closed its batch and the report can
+    // complete inside the immutable budget, without any drain tick.
+    if(END_TICKS>=BW_MONITOR_LIMIT_TICKS && OVERRUN_EDGES==0 && completed_scopes==3)$finish;
+  endfunction
   function automatic void end_failure();
     if(completed_scopes!=3)$fatal(1,"HISTORY_END_INCOMPLETE completed=%0d",completed_scopes);
   endfunction

@@ -78,9 +78,20 @@ def _reset_episode_reference(oracle, scope, silence):
                            tail_ticks=state['tail'] or 0, confirm_ticks=confirm,
                            bytes=state['bytes'], events=state['events'], duration_ticks=duration,
                            first_known=1, last_known=1, tail_known=int(state['tail'] is not None),
-                           bytes_complete=1, events_complete=1, member_reset=0,
+                           bytes_complete=1, events_complete=1,
+                           member_reset=state.get('member_reset', 0),
                            e2e_valid=int(valid),
                            e2e_gbps=F(state['bytes']*1000000, duration) if valid else F(0)))
+
+    def member_reset_between(first, last):
+        if scope != 2:
+            return 0
+        for index, count in enumerate(oracle.record_resets[scope]):
+            if count and first <= oracle.ticks[index] <= last:
+                return 1
+        return int(any(first < second and last > member_first
+                       for member in (0, 1)
+                       for member_first, second in oracle.resets.get(member, ())))
 
     state = None
     epoch = 0
@@ -88,6 +99,7 @@ def _reset_episode_reference(oracle, scope, silence):
         tick = oracle.ticks[index]
         while epoch < len(intervals) and intervals[epoch][0] <= tick:
             if state is not None:
+                state['member_reset'] = member_reset_between(state['first'], state['last'])
                 emit(3, intervals[epoch][0], state)
                 state = None
             epoch += 1
@@ -96,7 +108,7 @@ def _reset_episode_reference(oracle, scope, silence):
         if inc[1]:
             if state is None:
                 state = dict(epoch=epoch, first=tick, last=tick, tail=None,
-                             bytes=inc[0], events=inc[1])
+                             bytes=inc[0], events=inc[1], member_reset=0)
             else:
                 state['last'] = tick
                 state['tail'] = None
@@ -113,6 +125,7 @@ def _reset_episode_reference(oracle, scope, silence):
                 tail_index = oracle.ticks.index(state['tail'])
                 due = oracle.ticks[tail_index+silence] if tail_index+silence < len(oracle.ticks) else None
         complete = due is not None and due <= oracle.end
+        state['member_reset'] = member_reset_between(state['first'], state['last'])
         emit(2 if complete else 4, due if complete else oracle.end, state)
     return result
 
