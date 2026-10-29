@@ -19,7 +19,9 @@ def bound_metadata():
     value=complete_metadata();sources={'rtl/example.sv':'fixed-source'};tools={'compiler':'fixed-tool'}
     value['freeze']=dict(source_head='fixed-head',source_status='',source_sha256=sources,tools=tools,
                          common_profile_sources=list(sources),source_digest=digest(sources),tools_digest=digest(tools))
-    value.update(started_utc='2026-10-26T00:00:00Z',finished_utc='2026-10-26T00:00:14Z',elapsed_seconds=14,
+    total=len(FULL)+3
+    value.update(started_utc='2026-10-26T00:00:00Z',
+                 finished_utc='2026-10-26T00:00:{:02d}Z'.format(total),elapsed_seconds=total,
                  orchestration_seconds=0,freeze_unchanged=dict(source=True,tools=True,checkout=True,common=True))
     runs={}
     for i,row in enumerate(value['profiles']):
@@ -34,7 +36,7 @@ def bound_metadata():
         run['stages']={name:dict(state='COMPLETED',returncode=0,elapsed_seconds=elapsed,
                                 started_utc=boundaries[j],finished_utc=boundaries[j+1])
                        for j,(name,elapsed) in enumerate(zip(('generation','compile','simulation','verification'),(.1,.2,.5,.2)))}
-    for i,name in enumerate(('components','common_replay','recorded_replay'),11):
+    for i,name in enumerate(('components','common_replay','recorded_replay'),len(FULL)):
         value['stages'][name].update(elapsed_seconds=1,started_utc='2026-10-26T00:00:{:02d}Z'.format(i),
                                    finished_utc='2026-10-26T00:00:{:02d}Z'.format(i+1))
     return value,runs
