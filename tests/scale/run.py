@@ -87,10 +87,18 @@ def verify(s,attempt):
         if marker.get('end_ticks')!=str(origin+s.end):diffs.append(dict(error='measurement_endpoint',expected=origin+s.end,actual=marker.get('end_ticks')))
     summaries=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_SUMMARY ')]
     checks=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_CHECK ')]
+    default_checks=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_DEFAULT_CHECK ')]
     episodes=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_EPISODE ')]
     phases=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_PHASE ')]
     last_steady=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_LAST_STEADY ')]
     observed_episodes={};metrics=Counter(c.get('conclusion') for c in checks)
+    # The public default sustained-variation rows also settle into the summary.
+    # Scale verifies their per-episode presence and internal contract here; the
+    # full independent numeric reference lives in the acceptance campaign.
+    default_metrics=Counter(d.get('conclusion') for d in default_checks)
+    for d in default_checks:
+        if d.get('metric')!='sustained_variation' or d.get('threshold_pct')!='5':diffs.append(dict(error='default_metric_identity',record=d))
+        if d.get('reference_valid')=='0' and (d.get('samples')!='0' or d.get('conclusion')!='WARNING'):diffs.append(dict(error='default_reference_contract',record=d))
     byid={s.identity(k,i):(k,i) for k,i in s.scopes()}
     for e in episodes:
         sid=e.get('scope');seq=int(e.get('result_seq','0'))
@@ -112,6 +120,8 @@ def verify(s,attempt):
     for sid,(kind,index) in byid.items():
         n=len(s.expected_episodes(kind,index))
         if len(observed_episodes.get(sid,[]))!=n:diffs.append(dict(error='episode_count',scope=sid,expected=n,actual=len(observed_episodes.get(sid,[]))))
+        default_rows=[d for d in default_checks if d.get('scope')==sid]
+        if len(default_rows)!=max(n,1):diffs.append(dict(error='default_row_count',scope=sid,expected=max(n,1),actual=len(default_rows)))
     required_metrics={'e2e_bw','steady_bw','ramp_time','fall_time','steady_window_min','steady_window_max','steady_stddev','steady_cv','episode_window_min','episode_window_max','episode_stddev','episode_cv'}
     conclusions={}
     for c in checks:
@@ -135,18 +145,20 @@ def verify(s,attempt):
     else:
         x=summaries[0];scopes=s.points+len(s.groups)
         if x.get('scopes_done')!=str(scopes) or x.get('scopes_expected')!=str(scopes):diffs.append(dict(error='summary_scope_barrier',actual=x))
+        combined=metrics+default_metrics
         for field,conclusion in [('pass','PASS'),('fail','FAIL'),('warning','WARNING')]:
-            if x.get(field)!=str(metrics[conclusion]):diffs.append(dict(error='summary_counter',field=field,actual=x.get(field),expected=metrics[conclusion]))
-        want='FAIL' if metrics['FAIL'] else 'WARNING' if metrics['WARNING'] else 'PASS'
+            if x.get(field)!=str(combined[conclusion]):diffs.append(dict(error='summary_counter',field=field,actual=x.get(field),expected=combined[conclusion]))
+        want='FAIL' if combined['FAIL'] else 'WARNING' if combined['WARNING'] else 'PASS'
         if x.get('status')!=want:diffs.append(dict(error='summary_status',actual=x.get('status'),expected=want))
-        if not metrics['WARNING']:diffs.append(dict(error='missing_expected_truncation_warning'))
+        if not combined['WARNING']:diffs.append(dict(error='missing_expected_truncation_warning'))
         all_lines=log.splitlines();summary_pos=next((i for i,l in enumerate(all_lines) if l.startswith('BW_SUMMARY ')),-1)
-        if any(i>summary_pos and l.startswith(('BW_EPISODE ','BW_PHASE ','BW_CHECK ')) for i,l in enumerate(all_lines)):diffs.append(dict(error='summary_precedes_final_result'))
+        if any(i>summary_pos and l.startswith(('BW_EPISODE ','BW_PHASE ','BW_CHECK ','BW_DEFAULT_CHECK ')) for i,l in enumerate(all_lines)):diffs.append(dict(error='summary_precedes_final_result'))
     save(attempt/'diffs.json',diffs)
     evidence=dict(measurement_start_ticks=origin,expected_scopes=len(ref),observed_scopes=len(actual),checked_raw=sum(int(r['checked_records']) for r in actual),
                   checked_windows=sum(int(r['checked_windows']) for r in actual),expected_raw=sum(int(r['checked_records']) for r in expected),
                   expected_windows=sum(int(r['checked_windows']) for r in expected),episode_records=len(episodes),phase_records=len(phases),
-                  report_conclusions=dict(metrics),summary=summaries,difference_count=len(diffs))
+                  default_check_records=len(default_checks),report_conclusions=dict(metrics),
+                  default_check_conclusions=dict(default_metrics),summary=summaries,difference_count=len(diffs))
     save(attempt/'verification.json',evidence)
     return not diffs,evidence
 

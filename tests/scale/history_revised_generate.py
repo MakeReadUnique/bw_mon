@@ -221,7 +221,11 @@ endmodule
     if(acknowledged_frame_seq(g0.mon.group_handle,0)!=EDGES || acknowledged_frame_seq(g0.mon.group_handle,1)!=EDGES)
       $fatal(1,"HISTORY_ACK_INCOMPLETE");
     $fclose(actual_fd);$fclose(storage_fd);
-    $display("HISTORY_PASS scopes=3 raw=%0d windows=%0d end_ticks=%0d",EDGES*3,WINDOWS*3,$time);$finish;
+    $display("HISTORY_PASS scopes=3 raw=%0d windows=%0d end_ticks=%0d",EDGES*3,WINDOWS*3,$time);
+    // Same ending-contract settle step as the scale driver: the endpoint
+    // marker keeps its tick and the final input slot closes before finish.
+    #1;
+    $finish;
   end
   initial begin
     int fd,rc,v0,k0,v1,k1;

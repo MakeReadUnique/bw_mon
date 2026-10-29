@@ -280,6 +280,10 @@ module tb_bw_scale;
     if($time!=measurement_start_ticks+END_TICKS || core_failure_pending())$fatal(1,"SCALE_FINAL_FAILURE");
     $fclose(actual_fd);
     $display("SCALE_PASS points=%0d groups=%0d scopes=%0d checked_raw=%0d end_ticks=%0d",POINTS,GROUPS,completed_scopes,EDGES*SCOPES,$time);
+    // The endpoint marker keeps its exact tick; one more representable slot
+    // lets the final posted input generation close so the ending protocol
+    // settles every scope normally instead of reporting an interruption.
+    #1;
     $finish;
   end
   initial begin
