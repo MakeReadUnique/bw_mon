@@ -74,7 +74,7 @@ module bw_point_recorder #(
 
   function automatic void observe_reset(logic reset_value,bw_u64_t at_ticks);
     bw_control_t next_control;
-    if(scope_failed(BW_POINT,scope_id))return;
+    if(runtime_failed())return;
     if (reset_observed && observed_reset === reset_value) return;
     check_monitor_time(at_ticks,scope_id);
     if(runtime_failed())return;
@@ -111,7 +111,7 @@ module bw_point_recorder #(
 
   always @(posedge clk) begin : capture_edge
     pending_sample_t sample;
-    if (monitor_ready && $time > measurement_start_ticks && !scope_failed(BW_POINT,scope_id)) begin
+    if (monitor_ready && $time > measurement_start_ticks && !runtime_failed()) begin
 `ifdef BW_MON_TEST_FAULTS
       if(take_point_fault(scope_id,"capture"))disable capture_edge;
 `endif
@@ -147,10 +147,10 @@ module bw_point_recorder #(
   task automatic drain_actions();
     pending_sample_t sample;
     logic transfer;
-    while (consumed_actions != requested_actions && !scope_failed(BW_POINT,scope_id)) begin
+    while (consumed_actions != requested_actions && !runtime_failed()) begin
       wait(slot_settlement_generation>=settlement_required || runtime_cancelled ||
            core_failure_seen || monitoring_shared_disabled);
-      if(scope_failed(BW_POINT,scope_id))return;
+      if(runtime_failed())return;
       if (pending_controls.size()!=0) begin
         control=pending_controls.pop_front();
         consumed_actions=checked_add(consumed_actions,1,scope_id);
@@ -160,7 +160,7 @@ module bw_point_recorder #(
         if(runtime_failed())return;
         if(publication_receipts)wait(published_control_seq>=control.control_seq || runtime_cancelled ||
           core_failure_seen || monitoring_shared_disabled);
-        if(scope_failed(BW_POINT,scope_id))return;
+        if(runtime_failed())return;
         // A ReNBA waiter can wake before module consumers copy the payload.
         // Hold it through a writable quiescent generation before exposing the
         // next item, including multiple controls captured at the same tick.
@@ -220,7 +220,7 @@ module bw_point_recorder #(
       if(runtime_failed())return;
       if(publication_receipts)wait(published_record_seq>=record.record_seq || runtime_cancelled ||
           core_failure_seen || monitoring_shared_disabled);
-      if(scope_failed(BW_POINT,scope_id))return;
+      if(runtime_failed())return;
       // Same merged hold as the control path: the next wait on the monotonic
       // settlement_required covers this publication's quiescent generation
       // before another tuple is exposed.
@@ -240,7 +240,7 @@ program bw_point_record_scheduler;
     bw_point_recorder.scheduler_running=1;
     forever begin
       wait(bw_point_recorder.runtime_cancelled || bw_point_recorder.requested_actions!=bw_point_recorder.consumed_actions);
-      if(bw_point_recorder.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_point_recorder.scope_kind),bw_point_recorder.scope_id))break;
+      if(bw_point_recorder.runtime_failed())break;
       bw_point_recorder.drain_actions();
     end
     bw_point_recorder.scheduler_running=0;

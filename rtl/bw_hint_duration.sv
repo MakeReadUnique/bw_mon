@@ -324,9 +324,9 @@ program bw_hint_duration_scheduler;
     bw_hint_duration.scheduler_running=1;
     forever begin
       wait(bw_hint_duration.runtime_cancelled || bw_hint_duration.requested_actions!=bw_hint_duration.consumed_actions);
-      if(bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id))break;
+      if(bw_hint_duration.runtime_failed())break;
       wait(bw_mon_pkg::slot_settlement_generation>=bw_hint_duration.settlement_required || bw_hint_duration.runtime_cancelled);
-      if(bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id))break;
+      if(bw_hint_duration.runtime_failed())break;
       bw_hint_duration.drain_actions();
     end
     bw_hint_duration.scheduler_running=0;

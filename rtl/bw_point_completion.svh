@@ -30,8 +30,8 @@
     end
     batch.input_generation++;
     batch.grant=grant;
-    if(watch!=null)bw_native_mark_settlement_watch(watch);
-    else note_settlement_activity(id);
+    // A watch-carrying request already marked this watcher dirty.
+    if(watch==null)note_settlement_activity(id);
   endfunction
   function automatic void expect_point_edge(string id,bw_u64_t ticks,chandle watch=null,
                                             bw_point_batch ledger=null);

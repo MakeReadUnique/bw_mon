@@ -301,6 +301,19 @@ void bw_native_note_generation(unsigned long long generation)
     slot_generation = generation;
 }
 
+/* Combined hot request path: report the requester's latest grant, mark its
+   watcher dirty and register the end-of-slot callback in one crossing. The
+   registration result is returned; the caller owns the failure diagnostic. */
+int bw_native_settlement_activity_request(void *handle, unsigned long long grant)
+{
+    point_watch *watch = (point_watch *)handle;
+    if (watch) {
+        if (grant > watch->pending_grant) watch->pending_grant = grant;
+        mark_point_dirty(watch);
+    }
+    return bw_native_request_slot_settlement();
+}
+
 /* Latest grant issued to a watcher; while it exceeds the shared generation
    the watcher's audit can only answer "grant pending". Grants are monotonic
    per scope, so a stale report never lowers a live grant. */

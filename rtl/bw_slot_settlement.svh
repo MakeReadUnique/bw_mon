@@ -11,6 +11,8 @@
   import "DPI-C" function void bw_native_mark_settlement_watch(input chandle handle);
   import "DPI-C" function void bw_native_note_generation(input longint unsigned generation);
   import "DPI-C" function void bw_native_note_settlement_grant(input chandle handle,input longint unsigned grant);
+  import "DPI-C" context function int bw_native_settlement_activity_request(input chandle handle,
+    input longint unsigned grant);
   chandle settlement_watch_handles[string];
   function automatic void register_settlement_watch(string id,chandle handle);
     if(!settlement_watch_handles.exists(id))settlement_watch_handles[id]=handle;
@@ -69,14 +71,20 @@
     required=slot_settlement_generation+1;
     slot_settlement_pending=1;
     // The native scheduler skips a watcher dispatch while its latest grant
-    // still awaits this generation; report the grant so that deferral stays
-    // exact for every requesting scope.
-    if(watch!=null)bw_native_note_settlement_grant(watch,required);
-    else if(settlement_watch_handles.exists(id))
-      bw_native_note_settlement_grant(settlement_watch_handles[id],required);
-    // Keep this wrapper in package scope: the native callback must return to
-    // this package's exported function, independent of the requesting module.
-    if(!bw_native_request_slot_settlement())
-      core_error("SLOT_SCHEDULER",id,"cannot register the writable end-of-slot callback; check VCS VPI/debug compile options");
+    // still awaits this generation; the combined native call reports the
+    // grant, marks the requesting watcher and registers the end-of-slot
+    // callback in one crossing.
+    if(watch!=null)begin
+      if(!bw_native_settlement_activity_request(watch,required))
+        core_error("SLOT_SCHEDULER",id,"cannot register the writable end-of-slot callback; check VCS VPI/debug compile options");
+    end
+    else begin
+      if(settlement_watch_handles.exists(id))
+        bw_native_note_settlement_grant(settlement_watch_handles[id],required);
+      // Keep this wrapper in package scope: the native callback must return to
+      // this package's exported function, independent of the requesting module.
+      if(!bw_native_request_slot_settlement())
+        core_error("SLOT_SCHEDULER",id,"cannot register the writable end-of-slot callback; check VCS VPI/debug compile options");
+    end
     return required;
   endfunction

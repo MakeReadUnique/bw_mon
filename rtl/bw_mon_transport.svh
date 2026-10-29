@@ -53,7 +53,8 @@
       runtime_scope_error(BW_GROUP,group.id,"INTEGER_OVERFLOW","group input generation exhausted");return;
     end
     group.ledger.input_generation++;group.ledger.grant=grant;
-    if(group.settlement_watch!=null)bw_native_mark_settlement_watch(group.settlement_watch);
+    // The combined request call already marked a registered watch dirty.
+    if(group.settlement_watch==null)note_settlement_activity(group.id);
   endfunction
 
   function automatic void notify_parents(int source_handle);
