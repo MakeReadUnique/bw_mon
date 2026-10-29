@@ -4130,7 +4130,7 @@
    "+MODE=0"
   ],
   "expect_log": [
-   "(?m)^BW_SETTLE_STATS rounds=[1-9][0-9]* audits=[1-9][0-9]* watchers=1 edges=[1-9][0-9]* dirty_audits=[0-9]+$"
+   "(?m)^BW_SETTLE_STATS rounds=[1-9][0-9]* audits=[1-9][0-9]* watchers=1 edges=[1-9][0-9]* dirty_audits=[0-9]+ deferred=[0-9]+$"
   ]
  },
  {

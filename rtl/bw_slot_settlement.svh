@@ -9,6 +9,8 @@
   // scope. Owners register their raw-clock observer once; the completion
   // funnels report such activity so the native audit round visits the scope.
   import "DPI-C" function void bw_native_mark_settlement_watch(input chandle handle);
+  import "DPI-C" function void bw_native_note_generation(input longint unsigned generation);
+  import "DPI-C" function void bw_native_note_settlement_grant(input chandle handle,input longint unsigned grant);
   chandle settlement_watch_handles[string];
   function automatic void register_settlement_watch(string id,chandle handle);
     if(!settlement_watch_handles.exists(id))settlement_watch_handles[id]=handle;
@@ -47,6 +49,7 @@
       runtime_shared_error("INTEGER_OVERFLOW","scheduler","slot generation exhausted");return;
     end
     slot_settlement_generation++;
+    bw_native_note_generation(slot_settlement_generation);
   endfunction
 
   function automatic bw_u64_t request_slot_settlement(string id);
@@ -57,6 +60,11 @@
     end
     required=slot_settlement_generation+1;
     slot_settlement_pending=1;
+    // The native scheduler skips a watcher dispatch while its latest grant
+    // still awaits this generation; report the grant so that deferral stays
+    // exact for every requesting scope.
+    if(settlement_watch_handles.exists(id))
+      bw_native_note_settlement_grant(settlement_watch_handles[id],required);
     // Keep this wrapper in package scope: the native callback must return to
     // this package's exported function, independent of the requesting module.
     if(!bw_native_request_slot_settlement())

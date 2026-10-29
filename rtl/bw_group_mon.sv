@@ -83,7 +83,11 @@ module bw_group_mon #(
        core.settlement_required>slot_settlement_generation)return 1;
     // A parent depends on each actual producer's durable certificate. This
     // frozen DAG dependency is independent of native watcher callback order.
-    if(group_producers_pending(group_handle))return 1;
+    // The child's own close leaves no mark here, so this audit asks for its
+    // own re-audit while any producer is still settling.
+    if(group_producers_pending(group_handle))begin
+      note_settlement_activity(scope_id);return 1;
+    end
 `ifdef BW_MON_TEST_SCHEDULING
     if(bw_test_consumer_gates.exists(scope_id) && bw_test_consumer_gates[scope_id].paused &&
        (bw_test_consumer_gates[scope_id].resume_after_group!="" || bw_test_consumer_gates[scope_id].resume_after_groups.size()!=0))begin
@@ -92,15 +96,20 @@ module bw_group_mon #(
           completion_stage_error("CONTINUATION","unknown dependency");return 0;
         end
         if(!scope_failed(BW_GROUP,bw_test_consumer_gates[scope_id].resume_after_groups[d]) && group_batches[bw_test_consumer_gates[scope_id].resume_after_groups[d]].acked<
-           bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
+           bw_test_consumer_gates[scope_id].resume_after_seq)begin
+          note_settlement_activity(scope_id);return 1;
+        end
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_group))begin
         completion_stage_error("CONTINUATION","unknown dependency");return 0;
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !scope_failed(BW_GROUP,bw_test_consumer_gates[scope_id].resume_after_group) && group_batches[bw_test_consumer_gates[scope_id].resume_after_group].acked<
-         bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
+         bw_test_consumer_gates[scope_id].resume_after_seq)begin
+        note_settlement_activity(scope_id);return 1;
+      end
       bw_test_consumer_gates[scope_id].paused=0;
       void'(request_slot_settlement(scope_id));
+      note_settlement_activity(scope_id);
       return 1;
     end
 `endif
@@ -115,6 +124,9 @@ module bw_group_mon #(
         collector_recovery_pending=1;notify_group(group_handle);
         collector_recovery_grant=group_batches[scope_id].grant;
       end
+      // The posted continuation's receipts re-mark this scope; self-mark so
+      // the next round also verifies the recovery receipt itself.
+      note_settlement_activity(scope_id);
       return 1;
     end
     if(group_batches[scope_id].reset_expected!=group_batches[scope_id].reset_captured)begin

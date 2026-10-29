@@ -21,14 +21,16 @@ typedef struct point_watch {
     s_vpi_value value;
     svLogic previous;
     int dirty, indexed;
+    unsigned long long pending_grant;
     struct point_watch *next, *next_dirty, *next_indexed;
 } point_watch;
 static point_watch *point_watches, *dirty_point_watches;
+static unsigned long long slot_generation = 0;
 /* Settlement observability: public end-of-run counters behind the
    BW_SETTLE_STATS marker. Creation totals survive the release callback so the
    marker stays truthful regardless of end-callback order. */
 static unsigned long long settle_rounds, settle_audits, settle_edges,
-    settle_dirty_audits, point_watch_creations;
+    settle_dirty_audits, settle_deferred, point_watch_creations;
 
 /* Dirty watcher set: a settlement round audits only watchers with audit-
    relevant activity since their last audit. Activity sources: this scope's
@@ -43,6 +45,16 @@ static void mark_point_dirty(point_watch *watch)
         watch->next_dirty = dirty_point_watches;
         dirty_point_watches = watch;
     }
+}
+
+/* A watcher whose latest grant still awaits the shared generation would only
+   answer "grant pending" this round; defer its dispatch and re-dirty it for
+   the next round, so once the generation crosses, that round runs the deep
+   completion checks exactly as an immediate dispatch sequence would. */
+static void defer_point_watch(point_watch *watch)
+{
+    settle_deferred++;
+    mark_point_dirty(watch);
 }
 
 /* Scope -> watcher index so reset observers can dirty their owning watcher. */
@@ -282,6 +294,22 @@ void bw_native_mark_settlement_watch(void *handle)
     if (handle) mark_point_dirty((point_watch *)handle);
 }
 
+/* The settlement generation advance lets deferred grant-wait watchers run
+   their deep completion checks in the next round. */
+void bw_native_note_generation(unsigned long long generation)
+{
+    slot_generation = generation;
+}
+
+/* Latest grant issued to a watcher; while it exceeds the shared generation
+   the watcher's audit can only answer "grant pending". Grants are monotonic
+   per scope, so a stale report never lowers a live grant. */
+void bw_native_note_settlement_grant(void *handle, unsigned long long grant)
+{
+    point_watch *watch = (point_watch *)handle;
+    if (watch && grant > watch->pending_grant) watch->pending_grant = grant;
+}
+
 static int callback_pending = 0;
 static svScope package_scope;
 int bw_native_request_slot_settlement(void);
@@ -290,9 +318,9 @@ static PLI_INT32 report_settle_stats(p_cb_data callback)
 {
     (void)callback;
     if (settle_rounds)
-        vpi_printf("BW_SETTLE_STATS rounds=%llu audits=%llu watchers=%llu edges=%llu dirty_audits=%llu\n",
+        vpi_printf("BW_SETTLE_STATS rounds=%llu audits=%llu watchers=%llu edges=%llu dirty_audits=%llu deferred=%llu\n",
                    settle_rounds, settle_audits, point_watch_creations, settle_edges,
-                   settle_dirty_audits);
+                   settle_dirty_audits, settle_deferred);
     return 0;
 }
 
@@ -327,6 +355,13 @@ static PLI_INT32 settle_slot(p_cb_data callback)
         next = point->next_dirty;
         point->next_dirty = NULL;
         point->dirty = 0;
+        if (point->pending_grant > slot_generation) {
+            /* The SV audit would stop at its generation guard: keep the slot
+               open for the granted continuations without paying a dispatch. */
+            reaudit = 1;
+            defer_point_watch(point);
+            continue;
+        }
         previous = svSetScope(point->scope);
         settle_audits++;
         settle_dirty_audits++;
@@ -340,6 +375,13 @@ static PLI_INT32 settle_slot(p_cb_data callback)
     bw_slot_settlement_arrived();
     if (reaudit && !bw_native_request_slot_settlement()) bw_native_scheduler_failed();
     if (previous) svSetScope(previous);
+    if ((settle_rounds & 8191u) == 0) {
+        s_vpi_time now;
+        now.type = vpiSimTime;
+        vpi_get_time(NULL, &now);
+        vpi_printf("BW_SETTLE_PROGRESS rounds=%llu audits=%llu deferred=%llu ticks=%u%09u\n",
+                   settle_rounds, settle_audits, settle_deferred, now.high, now.low);
+    }
     return 0;
 }
 
