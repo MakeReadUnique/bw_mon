@@ -76,9 +76,13 @@ module bw_debug_hints #(
   // positive stored balance proves availability even if live return is unknown.
   // Only same-cycle mode uses live return; stored balance changes only on a
   // finalized sampling record, never from this combinational condition.
+  // Quarantine enters through the observer-driven persistent bit: an inferred
+  // sensitivity list cannot observe associative owner maps behind a function
+  // query, so reading runtime_cancelled here is what makes the disabled state
+  // actually re-evaluate this condition.
   always_comb begin
     credit_shortage_known=credit_supported && credit_enabled && credit_trusted &&
-                          (reset_n===1'b1) && !$isunknown(credit_balance) && !runtime_failed();
+                          (reset_n===1'b1) && !$isunknown(credit_balance) && !runtime_cancelled;
     credit_shortage=1'bx;
     if(credit_shortage_known) begin
       if(credit_balance!=0) credit_shortage=1'b0;

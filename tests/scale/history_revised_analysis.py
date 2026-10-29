@@ -173,6 +173,17 @@ def audit_packets(scenario, lines):
     variation_actual = indexed('BW_VARIATION', ('scope', 'epoch', 'episode', 'phase', 'result_seq', 'interval'))
     steady_actual = indexed('BW_LAST_STEADY', ('scope', 'epoch', 'episode', 'result_seq'))
     check_actual = indexed('BW_CHECK', ('scope', 'scope_kind', 'epoch', 'episode', 'result_seq', 'kind', 'phase', 'metric'))
+    # The default sustained-variation rows settle into the same summary; the
+    # exact numeric default reference lives in the acceptance campaign, so this
+    # audit pins their identity, internal contract and summary contribution.
+    default_actual = indexed('BW_DEFAULT_CHECK', ('scope', 'epoch', 'episode', 'platform'))
+    default_conclusions = Counter()
+    for packet in default_actual.values():
+        if packet.get('metric') != 'sustained_variation' or packet.get('threshold_pct') != '5':
+            fail('default_metric_identity', identity=packet)
+        if packet.get('reference_valid') == '0' and (packet.get('samples') != '0' or packet.get('conclusion') != 'WARNING'):
+            fail('default_reference_contract', identity=packet)
+        default_conclusions[packet.get('conclusion')] += 1
     ep_keys, ph_keys, variation_keys, check_keys = set(), set(), set(), set()
     conclusions = Counter()
     for scope, sid in enumerate(('history.p0', 'history.p1', 'history.group')):
@@ -225,15 +236,21 @@ def audit_packets(scenario, lines):
                                       ('last_steady', steady_actual, ep_keys), ('configured_metric', check_actual, check_keys)]:
         if set(observed) != expected:
             fail('complete_'+label+'_identities', missing=sorted(expected-set(observed)), extra=sorted(set(observed)-expected))
+    default_episode_keys = {(row.get('scope'), row.get('epoch'), row.get('episode')) for row in default_actual.values()}
+    expected_default_episodes = {(row.get('scope'), row.get('epoch'), row.get('episode')) for row in ep_actual.values()}
+    if default_episode_keys != expected_default_episodes:
+        fail('complete_default_check_identities', missing=sorted(expected_default_episodes-default_episode_keys),
+             extra=sorted(default_episode_keys-expected_default_episodes))
     summaries = packets('BW_SUMMARY')
     if len(summaries) != 1:
         fail('independent_summary_count')
     else:
-        expected = dict(status='WARNING' if conclusions['WARNING'] else 'PASS',
-                        scopes_done=3, scopes_expected=3, **{'pass': conclusions['PASS'], 'warning': conclusions['WARNING'], 'fail': 0})
+        combined = conclusions + default_conclusions
+        expected = dict(status='FAIL' if combined['FAIL'] else 'WARNING' if combined['WARNING'] else 'PASS',
+                        scopes_done=3, scopes_expected=3, **{'pass': combined['PASS'], 'warning': combined['WARNING'], 'fail': combined['FAIL']})
         compare(summaries[0], expected, 'report_summary')
         summary_index = next(i for i, x in enumerate(lines) if x.startswith('BW_SUMMARY '))
-        if any(i > summary_index and x.startswith(('BW_EPISODE ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_CHECK '))
+        if any(i > summary_index and x.startswith(('BW_EPISODE ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_CHECK ', 'BW_DEFAULT_CHECK '))
                for i, x in enumerate(lines)):
             fail('summary_precedes_final_packet')
     return errors

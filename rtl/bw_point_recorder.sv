@@ -163,7 +163,7 @@ module bw_point_recorder #(
         // Hold it through a writable quiescent generation before exposing the
         // next item, including multiple controls captured at the same tick.
         settlement_required=request_slot_settlement(scope_id);
-        wait(slot_settlement_generation>=settlement_required || runtime_failed() || runtime_cancelled);
+        wait(slot_settlement_generation>=settlement_required || runtime_cancelled);
         if(runtime_failed())return;
         continue;
       end
@@ -218,7 +218,7 @@ module bw_point_recorder #(
       if(publication_receipts)wait(published_record_seq>=record.record_seq || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
       if(scope_failed(BW_POINT,scope_id))return;
       settlement_required=request_slot_settlement(scope_id);
-      wait(slot_settlement_generation>=settlement_required || runtime_failed() || runtime_cancelled);
+      wait(slot_settlement_generation>=settlement_required || runtime_cancelled);
       if(runtime_failed())return;
     end
   endtask

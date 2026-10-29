@@ -106,13 +106,20 @@ class PendingScenario:
                        excluded_warmup=0, excluded_foreign=0, unknown_samples=0, excluded_denominator=0))
         require_packet('BW_LAST_STEADY', dict(scope='pending.subject', epoch=0, episode=1, result_seq=1,
                        found=0, selection_valid=0, phase=0, phase_result_seq=0))
-        require_packet('BW_SUMMARY', dict(status='STATISTICS_ONLY', **{'pass':0, 'fail':0, 'warning':0,
+        # Phase analysis stays enabled, so the public default checker settles
+        # the never-confirmed platform honestly: one NO_CONFIRMED_STEADY
+        # warning row reaches the summary; no phase packet or explicit check
+        # exists for this short suffix-retention subject.
+        require_packet('BW_DEFAULT_CHECK', dict(scope='pending.subject', epoch=0, episode=1, platform=0,
+                       metric='sustained_variation', reference_valid=0, samples=0,
+                       conclusion='WARNING', reason='NO_CONFIRMED_STEADY'))
+        require_packet('BW_SUMMARY', dict(status='WARNING', **{'pass':0, 'fail':0, 'warning':1,
                        'scopes_done':1, 'scopes_expected':1}))
         if any(line.startswith(('BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ')) for line in log.splitlines()):
             errors.append('unexpected_pending_phase_or_check')
         lines = log.splitlines()
         summary_positions = [i for i, line in enumerate(lines) if line.startswith('BW_SUMMARY ')]
-        final_prefixes = ('BW_EPISODE ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ')
+        final_prefixes = ('BW_EPISODE ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ', 'BW_DEFAULT_CHECK ')
         if len(summary_positions) == 1 and any(i > summary_positions[0] and line.startswith(final_prefixes)
                                              for i, line in enumerate(lines)):
             errors.append('summary_precedes_final_packet')

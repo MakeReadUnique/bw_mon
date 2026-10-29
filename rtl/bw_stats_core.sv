@@ -1431,13 +1431,13 @@ module bw_stats_core #(
         end
         observed_schedule=timer_schedule_seq;
         if (current_reset_n === 1'b0) begin
-          wait(timer_schedule_seq != observed_schedule || runtime_failed() || runtime_cancelled);
+          wait(timer_schedule_seq != observed_schedule || runtime_cancelled);
         end else begin
           due_tick=next_update_ticks;
           if (scheduled_episode_deadline_valid && scheduled_episode_deadline<due_tick)
             due_tick=scheduled_episode_deadline;
           if (due_tick>progress_watermark_ticks)
-            wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks || runtime_failed() || runtime_cancelled);
+            wait(timer_schedule_seq!=observed_schedule || due_tick<=progress_watermark_ticks || runtime_cancelled);
           if(runtime_failed())begin
             timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
             disable core_timer_worker;
@@ -1445,7 +1445,7 @@ module bw_stats_core #(
           if ($time < due_tick) begin
             fork : wait_for_timer
               begin #(due_tick-$time); end
-              begin wait(timer_schedule_seq != observed_schedule || runtime_failed() || runtime_cancelled); end
+              begin wait(timer_schedule_seq != observed_schedule || runtime_cancelled); end
             join_any
             disable wait_for_timer;
           end
@@ -1473,7 +1473,7 @@ module bw_stats_core #(
           disable core_timer_worker;
         end
             settlement_required=request_slot_settlement(scope_id);
-            wait(timer_receipts >= request_number || runtime_failed() || runtime_cancelled);
+            wait(timer_receipts >= request_number || runtime_cancelled);
             if(runtime_failed())begin
           timer_worker_running=0;timer_worker_cancelled=runtime_cancelled || scope_disabled(bw_scope_t'(scope_kind),scope_id);
           disable core_timer_worker;
