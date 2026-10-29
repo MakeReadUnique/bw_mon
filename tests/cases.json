@@ -6560,5 +6560,101 @@
    "BW_REPORT_COMPLETE": 0,
    "BW_REPORT_INCOMPLETE": 1
   }
+ },
+ {
+  "name": "e2e_chain_direct",
+  "top": "tb_e2e_chain_direct",
+  "expect_log": [
+   "TB_PASS e2e_chain_direct isolate=0"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY status=PASS pass=4 fail=0 warning=0 scopes_done=4 scopes_expected=4": 1,
+   "BW_POINT_TERMINAL [^\\n]*state=NORMAL": 3,
+   "BW_GROUP_TERMINAL [^\\n]*state=NORMAL": 1,
+   "BW_REPORT_COMPLETE": 1
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
+ },
+ {
+  "name": "e2e_chain_direct_isolation",
+  "top": "tb_e2e_chain_direct",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+ISOLATE=12"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=recorder\\.samples",
+  "expect_log": [
+   "TB_PASS e2e_chain_direct isolate=1",
+   "BW_POINT_TERMINAL scope=chain\\.c state=DISABLED"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_CORE_WARNING": 1,
+   "BW_SUMMARY status=WARNING pass=3 fail=0 warning=2 scopes_done=4 scopes_expected=4": 1,
+   "BW_DEFAULT_CHECK [^\\n]*scope=chain\\.c [^\\n]*conclusion=WARNING reason=NO_CONFIRMED_STEADY": 1,
+   "BW_REPORT_COMPLETE [^\\n]*integrity=INCOMPLETE performance=WARNING": 1
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
+ },
+ {
+  "name": "e2e_chain_bind",
+  "top": "tb_e2e_chain_bind",
+  "expect_log": [
+   "TB_PASS e2e_chain_bind isolate=0"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_SUMMARY status=PASS pass=4 fail=0 warning=0 scopes_done=4 scopes_expected=4": 1,
+   "BW_POINT_TERMINAL [^\\n]*state=NORMAL": 3,
+   "BW_GROUP_TERMINAL [^\\n]*state=NORMAL": 1,
+   "BW_REPORT_COMPLETE": 1
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
+ },
+ {
+  "name": "e2e_chain_bind_isolation",
+  "top": "tb_e2e_chain_bind",
+  "defines": [
+   "BW_MON_TEST_FAULTS"
+  ],
+  "plusargs": [
+   "+ISOLATE=12"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=STORAGE_FAILURE[^\\n]*resource=recorder\\.samples",
+  "expect_log": [
+   "TB_PASS e2e_chain_bind isolate=1",
+   "BW_POINT_TERMINAL scope=tb_e2e_chain_bind\\.links\\[2\\]\\.link\\.u_bw state=DISABLED"
+  ],
+  "expect_counts": {
+   "BW_READY ": 1,
+   "BW_CORE_WARNING": 1,
+   "BW_SUMMARY status=WARNING pass=3 fail=0 warning=2 scopes_done=4 scopes_expected=4": 1,
+   "BW_DEFAULT_CHECK [^\\n]*scope=tb_e2e_chain_bind\\.links\\[2\\]\\.link\\.u_bw [^\\n]*conclusion=WARNING reason=NO_CONFIRMED_STEADY": 1,
+   "BW_REPORT_COMPLETE [^\\n]*integrity=INCOMPLETE performance=WARNING": 1
+  },
+  "verify": [
+   "python3",
+   "tests/end_contract_check.py",
+   "{log}",
+   "complete"
+  ]
  }
 ]
