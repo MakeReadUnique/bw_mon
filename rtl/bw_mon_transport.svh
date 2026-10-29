@@ -31,16 +31,29 @@
   endfunction
   function automatic void notify_group(int group_handle);
     bw_group_state group;
+    bw_u64_t grant;
     group=registered_groups[group_handle];
-    if(scope_failed(BW_GROUP,group.id))return;
+    // Hot path for every publication/ack notification: the group's failed
+    // bit, ledger and settlement watch are maintained by the failure,
+    // registration and settlement machinery, so no keyed lookups remain.
+    if(monitoring_shared_disabled || core_failure_seen || group.failed)return;
     if(group.notification.seq==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,group.id,"INTEGER_OVERFLOW","group notification sequence exhausted");return;end
 `ifdef BW_MON_TEST_FAULTS
     if(take_group_fault(group.id,"input_notice"))begin
-      group_work_requested(group.id,request_slot_settlement(group.id));return;
+      group_work_requested(group.id,request_slot_settlement(group.id,group.settlement_watch),group.settlement_watch);return;
     end
 `endif
     group.notification.seq++;
-    group_work_requested(group.id,request_slot_settlement(group.id));
+    if(!monitor_ready || group.ledger==null)begin
+      group_work_requested(group.id,request_slot_settlement(group.id,group.settlement_watch),group.settlement_watch);return;
+    end
+    grant=request_slot_settlement(group.id,group.settlement_watch);
+    if(monitoring_shared_disabled || group.failed)return;
+    if(group.ledger.input_generation==BW_U64_MAX)begin
+      runtime_scope_error(BW_GROUP,group.id,"INTEGER_OVERFLOW","group input generation exhausted");return;
+    end
+    group.ledger.input_generation++;group.ledger.grant=grant;
+    if(group.settlement_watch!=null)bw_native_mark_settlement_watch(group.settlement_watch);
   endfunction
 
   function automatic void notify_parents(int source_handle);
@@ -211,55 +224,59 @@
   endfunction
   function automatic bit peek_member_frame(logic [63:0] group_handle,logic [63:0] member_index,output bw_record_t frame);
     bw_source_state source;
+    bw_group_state owner;
     bw_u64_t wanted,index;
     int group_index,source_index;
     frame='0;group_index=checked_group_index(group_handle,"peek frame");
-    if(core_failure_seen || monitoring_shared_disabled)return 0;
-    if(scope_failed(BW_GROUP,registered_groups[group_index].id))return 0;
+    owner=registered_groups[group_index];
+    // The owner's failed bit mirrors its keyed failure entry (direct and
+    // propagated), so the hot consumer scan needs no keyed lookups.
+    if(core_failure_seen || monitoring_shared_disabled || owner.failed)return 0;
     source_index=member_source(group_handle,member_index);
-    if(scope_failed(BW_GROUP,registered_groups[group_index].id))return 0;
+    if(monitoring_shared_disabled || owner.failed)return 0;
     source=registered_sources[source_index];
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+    if(!source.active_consumers[group_handle])return 0;
     if (!source.frame_acks.exists(group_handle))
-      runtime_scope_error(BW_GROUP,registered_groups[group_handle].id,"CONSUMER_REFERENCE",{"not a consumer of ",source.id});
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+      runtime_scope_error(BW_GROUP,owner.id,"CONSUMER_REFERENCE",{"not a consumer of ",source.id});
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
     if (source.frame_acks[group_handle]==source.last_frame_seq) return 0;
     wanted=consumer_next(int'(group_handle),source.frame_acks[group_handle]);
-    if(scope_failed(BW_GROUP,registered_groups[group_handle].id))return 0;
+    if(monitoring_shared_disabled || owner.failed)return 0;
     if (wanted<source.frame_base_seq || source.frames.size()==0)
       source_runtime_error(source,"RECORD_RELEASE",source.id,"an unread direct-consumer frame was released");
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
     index=wanted-source.frame_base_seq;
     if (index>=bw_u64_t'(source.frames.size()))
       source_runtime_error(source,"RECORD_RELEASE",source.id,"published frame is missing from durable storage");
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
     frame=source.frames[int'(index)];return 1;
   endfunction
 
   function automatic bit peek_member_control(logic [63:0] group_handle,logic [63:0] member_index,output bw_control_frame_t control);
     bw_source_state source;
+    bw_group_state owner;
     bw_u64_t wanted,index;
     int group_index,source_index;
     control='0;group_index=checked_group_index(group_handle,"peek control");
-    if(core_failure_seen || monitoring_shared_disabled)return 0;
-    if(scope_failed(BW_GROUP,registered_groups[group_index].id))return 0;
+    owner=registered_groups[group_index];
+    if(core_failure_seen || monitoring_shared_disabled || owner.failed)return 0;
     source_index=member_source(group_handle,member_index);
-    if(scope_failed(BW_GROUP,registered_groups[group_index].id))return 0;
+    if(monitoring_shared_disabled || owner.failed)return 0;
     source=registered_sources[source_index];
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+    if(!source.active_consumers[group_handle])return 0;
     if (!source.control_acks.exists(group_handle))
-      runtime_scope_error(BW_GROUP,registered_groups[group_handle].id,"CONSUMER_REFERENCE",{"not a control consumer of ",source.id});
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+      runtime_scope_error(BW_GROUP,owner.id,"CONSUMER_REFERENCE",{"not a control consumer of ",source.id});
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
     if (source.control_acks[group_handle]==source.last_control_seq) return 0;
     wanted=consumer_next(int'(group_handle),source.control_acks[group_handle]);
-    if(scope_failed(BW_GROUP,registered_groups[group_handle].id))return 0;
+    if(monitoring_shared_disabled || owner.failed)return 0;
     if (wanted<source.control_base_seq || source.controls.size()==0)
       source_runtime_error(source,"CONTROL_RELEASE",source.id,"an unread direct-consumer control was released");
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
     index=wanted-source.control_base_seq;
     if (index>=bw_u64_t'(source.controls.size()))
       source_runtime_error(source,"CONTROL_RELEASE",source.id,"published control is missing from durable storage");
-    if(monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
     control=source.controls[int'(index)];return 1;
   endfunction
 
@@ -369,7 +386,10 @@
     return registered_sources[registered_groups[index].members[int'(member_index)]].frame_acks[index];
   endfunction
   function automatic bit source_failed(bw_source_state source);
-    return scope_failed(source.kind,source.id);
+    // The failed bit mirrors this source's monitoring_disabled entry (set by
+    // the failure machinery for the direct scope and every propagated one);
+    // the shared/global guards stay explicit for exact parity.
+    return core_failure_seen || monitoring_shared_disabled || source.failed;
   endfunction
   function automatic void source_runtime_error(bw_source_state source,string code,string context_id,string detail);
     runtime_scope_error(source.kind,source.id,code,{"context=",context_id," ",detail});

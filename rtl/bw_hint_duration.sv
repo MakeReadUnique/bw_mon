@@ -46,7 +46,7 @@ module bw_hint_duration #(
   function automatic void touch(bw_u64_t at_ticks);
     if(runtime_failed()) return;
     result.update_ticks=at_ticks;
-    result.result_seq=checked_add(result.result_seq,1,{scope_id," ",HINT_NAME," result"});
+    result.result_seq=checked_add_tag(result.result_seq,1,"hint result");
     if(runtime_failed())return;
   endfunction
   // Ending-time evidence only: a timer already due (or whose wake has not
@@ -62,7 +62,7 @@ module bw_hint_duration #(
     result.hit=1;
     result.trigger_ticks=(BASIS==BW_NS) ? checked_add(result.start_ticks,threshold_ticks,scope_id) : at_ticks;
     if(runtime_failed())return;
-    result.hit_count=checked_add(result.hit_count,1,{scope_id," ",HINT_NAME," hit count"});
+    result.hit_count=checked_add_tag(result.hit_count,1,"hint hit count");
     if(runtime_failed())return;
     timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
     if(runtime_failed())return;

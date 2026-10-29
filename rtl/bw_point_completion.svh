@@ -1,13 +1,13 @@
   // Cumulative receipts survive dequeue, lost wakeups, reset and shutdown.
-  // Only the native raw-clock observer creates expected edges.
-  class bw_point_batch;
-    bw_u64_t expected=0,captured=0,inflight=0,published=0,accepted=0;
-    bw_u64_t ticks=0,input_generation=0,closed_generation=0,grant=0;
-    bit cancelled=0;
-  endclass
+  // Only the native raw-clock observer creates expected edges. The ledger
+  // class lives in the registry types so sources hold their own handle.
   bw_point_batch point_batches[string];
   function automatic void register_point_completion(string id);
-    if(!point_batches.exists(id))point_batches[id]=new;
+    if(!point_batches.exists(id))begin
+      point_batches[id]=new;
+      if(point_by_id.exists(id))
+        registered_sources[registered_points[point_by_id[id]].transport_source].point_ledger=point_batches[id];
+    end
   endfunction
   function automatic void cancel_point_completion(string id);
     if(point_batches.exists(id))begin
@@ -15,19 +15,29 @@
       note_settlement_activity(id);
     end
   endfunction
-  function automatic void point_work_requested(string id,bw_u64_t grant);
-    if(!monitor_ready || !point_batches.exists(id) || scope_failed(BW_POINT,id))return;
-    if(point_batches[id].input_generation==BW_U64_MAX)begin
+  function automatic void point_work_requested(string id,bw_u64_t grant,chandle watch=null,
+                                               bw_point_batch ledger=null);
+    bw_point_batch batch;
+    if(!monitor_ready)return;
+    if(ledger!=null)batch=ledger;
+    else begin
+      if(!point_batches.exists(id))return;
+      batch=point_batches[id];
+    end
+    if(scope_failed(BW_POINT,id))return;
+    if(batch.input_generation==BW_U64_MAX)begin
       runtime_scope_error(BW_POINT,id,"INTEGER_OVERFLOW","input generation exhausted");return;
     end
-    point_batches[id].input_generation++;
-    point_batches[id].grant=grant;
-    note_settlement_activity(id);
+    batch.input_generation++;
+    batch.grant=grant;
+    if(watch!=null)bw_native_mark_settlement_watch(watch);
+    else note_settlement_activity(id);
   endfunction
-  function automatic void expect_point_edge(string id,bw_u64_t ticks);
+  function automatic void expect_point_edge(string id,bw_u64_t ticks,chandle watch=null,
+                                            bw_point_batch ledger=null);
     bw_point_batch batch;
     if(!monitor_ready || ticks<=measurement_start_ticks || scope_failed(BW_POINT,id))return;
-    batch=point_batches[id];
+    batch=ledger!=null ? ledger : point_batches[id];
     if(batch.expected!=0 && ticks<=batch.ticks)begin
       runtime_scope_error(BW_POINT,id,"EDGE_TIME","actual sampling edges must have distinct increasing timestamps");return;
     end
@@ -35,7 +45,7 @@
       runtime_scope_error(BW_POINT,id,"INTEGER_OVERFLOW","expected-edge ledger exhausted");return;
     end
     batch.expected++;batch.input_generation++;batch.ticks=ticks;
-    batch.grant=request_slot_settlement(id);
+    batch.grant=request_slot_settlement(id,watch);
   endfunction
   function automatic void point_capture_receipt(string id,bw_u64_t seq);
     if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
@@ -66,11 +76,16 @@
 `endif
     void'(request_slot_settlement(id));
   endfunction
-  function automatic void close_point_batch(string id);
+  function automatic void close_point_batch(string id,bw_point_batch ledger=null);
     bw_point_batch batch;
     string stage;
-    if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
-    batch=point_batches[id];stage="";
+    if(scope_failed(BW_POINT,id))return;
+    if(ledger!=null)batch=ledger;
+    else begin
+      if(!point_batches.exists(id))return;
+      batch=point_batches[id];
+    end
+    stage="";
     if(batch.captured!=batch.expected)stage="CAPTURE";
     else if(batch.inflight!=batch.expected)stage="INFLIGHT";
     else if(batch.published!=batch.expected)stage="PUBLICATION";

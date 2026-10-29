@@ -1,6 +1,32 @@
   // A wait must observe this primitive directly. Native quarantine mutates an
   // associative owner map; VCS does not reliably wake wait(function_query()).
   bit runtime_cancelled=0;
+  // Raw-clock observer handle of the owning public monitor, when this
+  // include belongs to one (worker submodules keep null and the settlement
+  // wrappers fall back to the keyed owner map).
+  chandle clock_observer=null;
+  // Owner-held completion ledgers. The failure machinery marks the ledger
+  // cancelled for exactly the scopes whose keyed failure entries exist, so
+  // hot guards can consult the cached ledger instead of a keyed lookup. They
+  // are filled lazily (registration order is unspecified between a monitor
+  // and its workers).
+  bw_point_batch my_point_ledger=null;
+  bw_group_batch my_group_ledger=null;
+  function automatic bit ledger_scope_failed();
+    if(core_failure_seen || monitoring_shared_disabled)return 1;
+    if(scope_kind==BW_POINT)begin
+      if(my_point_ledger==null)begin
+        if(point_batches.exists(scope_id))my_point_ledger=point_batches[scope_id];
+        else return scope_failed(BW_POINT,scope_id);
+      end
+      return my_point_ledger.cancelled;
+    end
+    if(my_group_ledger==null)begin
+      if(group_batches.exists(scope_id))my_group_ledger=group_batches[scope_id];
+      else return scope_failed(bw_scope_t'(scope_kind),scope_id);
+    end
+    return my_group_ledger.cancelled;
+  endfunction
   initial begin : observe_runtime_cancellation
     wait(monitor_ready || core_failure_seen);
     forever begin
@@ -11,13 +37,15 @@
     end
   end
   function automatic bit runtime_failed();
-    return runtime_cancelled || scope_failed(bw_scope_t'(scope_kind),scope_id);
+    return runtime_cancelled || ledger_scope_failed();
   endfunction
   function automatic bw_u64_t request_slot_settlement(string context_id);
     bw_u64_t grant;
-    grant=bw_mon_pkg::request_slot_settlement(context_id);
-    if(scope_kind==BW_POINT)point_work_requested(scope_id,grant);
-    else group_work_requested(scope_id,grant);
+    chandle watch;
+    watch=clock_observer;
+    grant=bw_mon_pkg::request_slot_settlement(context_id,watch);
+    if(scope_kind==BW_POINT)point_work_requested(scope_id,grant,watch,my_point_ledger);
+    else group_work_requested(scope_id,grant,watch,my_group_ledger);
     return grant;
   endfunction
   // Private typed runtime adapter. Configuration validation stays in the
@@ -32,6 +60,19 @@
     if($isunknown({a,b}))begin core_error("INTEGER_UNKNOWN",context_id,$sformatf("addition a=%h b=%h",a,b));return a;end
     wide={1'b0,a}+{1'b0,b};
     if(wide[64])begin core_error("INTEGER_OVERFLOW",context_id,$sformatf("addition a=%0d b=%0d",a,b));return a;end
+    return wide[63:0];
+  endfunction
+  // Hot-path twin of checked_add: the owning scope is this module's own
+  // scope, so only the short activity tag is passed and no per-call string is
+  // built; diagnostics are assembled solely on the error path.
+  function automatic bw_u64_t checked_add_tag(logic [63:0] a,logic [63:0] b,string tag);
+    logic [64:0] wide;
+    if(runtime_failed())return a;
+    if($isunknown({a,b}))begin
+      core_error("INTEGER_UNKNOWN",scope_id,$sformatf("addition a=%h b=%h (%s)",a,b,tag));return a;end
+    wide={1'b0,a}+{1'b0,b};
+    if(wide[64])begin
+      core_error("INTEGER_OVERFLOW",scope_id,$sformatf("addition a=%0d b=%0d (%s)",a,b,tag));return a;end
     return wide[63:0];
   endfunction
   function automatic bw_u64_t checked_sub(logic [63:0] a,logic [63:0] b,string context_id);

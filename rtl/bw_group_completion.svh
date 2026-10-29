@@ -1,11 +1,7 @@
   // Group receipts are independent of the collector queues. Native actual
   // clock edges establish obligations even when capture or publication fails.
-  class bw_group_batch;
-    bw_u64_t expected=0,captured=0,held=0,published=0,accepted=0,acked=0;
-    bw_u64_t reset_expected=0,reset_captured=0;
-    bw_u64_t ticks=0,input_generation=0,closed_generation=0,grant=0;
-    bit cancelled=0;
-  endclass
+  // The ledger class lives in the registry types so groups hold their own
+  // handle.
   bw_group_batch group_batches[string];
   function automatic void cancel_all_group_completion();
     foreach(group_batches[id])begin
@@ -14,22 +10,44 @@
     end
   endfunction
   function automatic void register_group_completion(string id);
-    if(!group_batches.exists(id))group_batches[id]=new;
+    if(!group_batches.exists(id))begin
+      group_batches[id]=new;
+      if(group_by_id.exists(id))begin
+        registered_groups[group_by_id[id]].ledger=group_batches[id];
+        registered_sources[registered_groups[group_by_id[id]].source_handle].group_ledger=group_batches[id];
+      end
+    end
   endfunction
-  function automatic void group_work_requested(string id,bw_u64_t grant);
-    if(!monitor_ready || !group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
-    if(group_batches[id].input_generation==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group input generation exhausted");return;end
-    group_batches[id].input_generation++;group_batches[id].grant=grant;
-    note_settlement_activity(id);
+  function automatic void group_work_requested(string id,bw_u64_t grant,chandle watch=null,
+                                               bw_group_batch ledger=null);
+    bw_group_batch batch;
+    if(!monitor_ready)return;
+    if(ledger!=null)batch=ledger;
+    else begin
+      if(!group_batches.exists(id))return;
+      batch=group_batches[id];
+    end
+    if(scope_failed(BW_GROUP,id))return;
+    if(batch.input_generation==BW_U64_MAX)begin
+      runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group input generation exhausted");return;
+    end
+    batch.input_generation++;batch.grant=grant;
+    if(watch!=null)bw_native_mark_settlement_watch(watch);
+    else note_settlement_activity(id);
   endfunction
-  function automatic void expect_group_edge(string id,bw_u64_t ticks);
+  function automatic void expect_group_edge(string id,bw_u64_t ticks,chandle watch=null,
+                                            bw_group_batch ledger=null);
     bw_group_batch batch;
     if(!monitor_ready || ticks<=measurement_start_ticks || scope_failed(BW_GROUP,id))return;
-    batch=group_batches[id];
+    if(ledger!=null)batch=ledger;
+    else begin
+      if(!group_batches.exists(id))return;
+      batch=group_batches[id];
+    end
     if(batch.expected!=0 && ticks<=batch.ticks)begin runtime_scope_error(BW_GROUP,id,"GROUP_CLOCK","actual group edges must strictly increase");return;end
     if(batch.expected==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group edge ledger exhausted");return;end
     batch.expected++;batch.ticks=ticks;
-    group_work_requested(id,request_slot_settlement(id));
+    group_work_requested(id,request_slot_settlement(id,watch),watch,batch);
   endfunction
   function automatic void group_reset_expected(string id);
     if(!group_batches.exists(id) || scope_failed(BW_GROUP,id))return;
@@ -60,16 +78,35 @@
     foreach(registered_groups[handle].members[m])begin
       source=registered_sources[registered_groups[handle].members[m]];
       if(source_failed(source))continue;
-      if(source.kind==BW_POINT && point_batches.exists(source.id) && !point_batch_complete(source.id))return 1;
-      if(source.kind==BW_GROUP && group_batches.exists(source.id) && !group_batch_complete(source.id))return 1;
+      // Each source holds its own ledger handle from registration, avoiding
+      // keyed lookups in this per-member audit check.
+      if(source.kind==BW_POINT)begin
+        if(source.point_ledger==null && point_batches.exists(source.id))
+          source.point_ledger=point_batches[source.id];
+        if(source.point_ledger!=null &&
+           source.point_ledger.closed_generation!=source.point_ledger.input_generation)return 1;
+      end
+      else begin
+        if(source.group_ledger==null && group_batches.exists(source.id))
+          source.group_ledger=group_batches[source.id];
+        // A cancelled ledger counts as complete, exactly like the keyed
+        // group_batch_complete query the failure path relies on.
+        if(source.group_ledger!=null && !source.group_ledger.cancelled &&
+           source.group_ledger.closed_generation!=source.group_ledger.input_generation)return 1;
+      end
     end
     return 0;
   endfunction
-  function automatic void close_group_batch(string id);
+  function automatic void close_group_batch(string id,bw_group_batch ledger=null);
     bw_group_batch batch;
     string stage;
     if(scope_failed(BW_GROUP,id))return;
-    batch=group_batches[id];stage="";
+    if(ledger!=null)batch=ledger;
+    else begin
+      if(!group_batches.exists(id))return;
+      batch=group_batches[id];
+    end
+    stage="";
     if(batch.captured!=batch.expected)stage="CAPTURE";
     else if(batch.held!=batch.expected)stage="HELD";
     else if(batch.published!=batch.expected)stage="PUBLICATION";

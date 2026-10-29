@@ -337,15 +337,24 @@ package bw_mon_pkg;
     else begin cancel_group_subscriptions(id);if(group_batches.exists(id))group_batches[id].cancelled=1;end
     monitoring_failure_count++;
     $warning("BW_CORE_WARNING code=%s scope_kind=%0d scope=%s time_ticks=%0d %s",code,kind,id,$time,detail);
-    if(kind==BW_POINT && point_by_id.exists(id))pending_sources.push_back(registered_points[point_by_id[id]].transport_source);
-    if(kind==BW_GROUP && group_by_id.exists(id))pending_sources.push_back(registered_groups[group_by_id[id]].source_handle);
+    if(kind==BW_POINT && point_by_id.exists(id))begin
+      pending_sources.push_back(registered_points[point_by_id[id]].transport_source);
+      registered_sources[registered_points[point_by_id[id]].transport_source].failed=1;
+    end
+    if(kind==BW_GROUP && group_by_id.exists(id))begin
+      registered_groups[group_by_id[id]].failed=1;
+      pending_sources.push_back(registered_groups[group_by_id[id]].source_handle);
+    end
     while(pending_sources.size()!=0)begin
       source=pending_sources.pop_front();
+      registered_sources[source].failed=1;
       foreach(registered_sources[source].parents[p])begin
         parent=registered_sources[source].parents[p];
         if(!monitoring_disabled.exists(scope_key(BW_GROUP,registered_groups[parent].id)))begin
           monitoring_disabled[scope_key(BW_GROUP,registered_groups[parent].id)]=1;
           monitoring_root_cause[scope_key(BW_GROUP,registered_groups[parent].id)]=key;
+          registered_groups[parent].failed=1;
+          registered_sources[registered_groups[parent].source_handle].failed=1;
           $display("BW_SCOPE_DISABLED scope_kind=1 scope=%s root=%s time_ticks=%0d",registered_groups[parent].id,key,$time);
           cancel_group_subscriptions(registered_groups[parent].id);
           if(group_batches.exists(registered_groups[parent].id))group_batches[registered_groups[parent].id].cancelled=1;
@@ -359,7 +368,11 @@ package bw_mon_pkg;
     if(!monitor_ready)begin core_error(code,id,detail);return;end
     if(monitoring_shared_disabled)return;
     monitoring_shared_disabled=1;monitoring_failure_count++;
-    foreach(registered_groups[g])cancel_group_subscriptions(registered_groups[g].id);
+    foreach(registered_groups[g])begin
+      cancel_group_subscriptions(registered_groups[g].id);
+      registered_groups[g].failed=1;
+    end
+    foreach(registered_sources[s])registered_sources[s].failed=1;
     cancel_all_group_completion();
     monitoring_shared_failure_code=code;monitoring_shared_failure_scope=id;monitoring_shared_failure_detail=detail;
     $warning("BW_CORE_WARNING code=%s scope_kind=SHARED scope=%s time_ticks=%0d %s",code,id,$time,detail);

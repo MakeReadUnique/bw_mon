@@ -113,7 +113,7 @@ module bw_debug_hints #(
     // Preserve the first diagnostic until an explicit known reset restores it.
     if(!credit_anomaly) begin
       credit_anomaly=1;credit_reason=reason;
-      credit_anomaly_count=checked_add(credit_anomaly_count,1,{scope_id," credit anomaly count"});
+      credit_anomaly_count=checked_add_tag(credit_anomaly_count,1,"credit anomaly count");
       if(runtime_failed())return;
       $display("BW_HINT_CREDIT_ANOMALY scope=%s time_ticks=%0d record_seq=%0d reason=%s last_trusted=%0d send=%b return=%b attempted=%0d",
         scope_id,at_ticks,credit_record_seq,credit_reason_name(reason),credit_last_trusted_balance,
@@ -131,7 +131,7 @@ module bw_debug_hints #(
     at_ticks=new_frame ? record.timestamp_ticks : control_ticks;
     if(new_frame) credit_record_seq=record.record_seq;
     credit_update_ticks=at_ticks;
-    credit_result_seq=checked_add(credit_result_seq,1,{scope_id," credit result"});
+    credit_result_seq=checked_add_tag(credit_result_seq,1,"credit result");
     if(runtime_failed())return;
     if(!credit_supported) begin
       credit_state=BW_CREDIT_UNSUPPORTED;credit_trusted=0;return;
@@ -143,7 +143,7 @@ module bw_debug_hints #(
     // priority over a same-time sampled frame, which remains raw byte evidence.
     if(reset_value===1'b0) begin
       if(!in_reset) begin
-        credit_epoch=checked_add(credit_epoch,1,{scope_id," credit epoch"});
+        credit_epoch=checked_add_tag(credit_epoch,1,"credit epoch");
         if(runtime_failed())return;
         seed_ledger();
         if(runtime_failed())return;

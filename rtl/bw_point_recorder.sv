@@ -79,14 +79,14 @@ module bw_point_recorder #(
     check_monitor_time(at_ticks,scope_id);
     if(runtime_failed())return;
     if (reset_value === 1'b0 && (!reset_observed || observed_reset !== 1'b0)) begin
-      source_epoch=checked_add(source_epoch,1,{scope_id," source epoch"});
+      source_epoch=checked_add_tag(source_epoch,1,"source epoch");
       if(runtime_failed())return;
       last_assert_ticks=at_ticks;
       assertion_observed=1;
     end
     observed_reset=reset_value;
     reset_observed=1;
-    control_seq=checked_add(control_seq,1,{scope_id," control"});
+    control_seq=checked_add_tag(control_seq,1,"control");
     if(runtime_failed())return;
     next_control='0;
     next_control.timestamp_ticks=at_ticks;
@@ -126,9 +126,9 @@ module bw_point_recorder #(
       sample.sample.lcrdv = lcrdv;
       sample.sample.size_bytes = size_bytes;
       sample.sample.size_known = size_known;
-      edge_index = checked_add(edge_index,1,{scope_id," edge"});
+      edge_index = checked_add_tag(edge_index,1,"edge");
       if(runtime_failed())disable capture_edge;
-      record_seq = checked_add(record_seq,1,{scope_id," record"});
+      record_seq = checked_add_tag(record_seq,1,"record");
       if(runtime_failed())disable capture_edge;
       sample.timestamp_ticks=$time;
       sample.edge_index=edge_index;
@@ -148,7 +148,8 @@ module bw_point_recorder #(
     pending_sample_t sample;
     logic transfer;
     while (consumed_actions != requested_actions && !scope_failed(BW_POINT,scope_id)) begin
-      wait(slot_settlement_generation>=settlement_required || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
+      wait(slot_settlement_generation>=settlement_required || runtime_cancelled ||
+           core_failure_seen || monitoring_shared_disabled);
       if(scope_failed(BW_POINT,scope_id))return;
       if (pending_controls.size()!=0) begin
         control=pending_controls.pop_front();
@@ -157,14 +158,16 @@ module bw_point_recorder #(
         control_toggle<=!control_toggle;
         @(control_toggle or runtime_cancelled);
         if(runtime_failed())return;
-        if(publication_receipts)wait(published_control_seq>=control.control_seq || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
+        if(publication_receipts)wait(published_control_seq>=control.control_seq || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
         if(scope_failed(BW_POINT,scope_id))return;
         // A ReNBA waiter can wake before module consumers copy the payload.
         // Hold it through a writable quiescent generation before exposing the
         // next item, including multiple controls captured at the same tick.
+        // The hold is the next iteration's (or the next drain cycle's) wait
+        // below: settlement_required is monotonic, so awaiting it covers this
+        // publication's grant before another tuple is exposed.
         settlement_required=request_slot_settlement(scope_id);
-        wait(slot_settlement_generation>=settlement_required || runtime_cancelled);
-        if(runtime_failed())return;
         continue;
       end
       sample=pending_samples.pop_front();
@@ -172,7 +175,7 @@ module bw_point_recorder #(
 `ifdef BW_MON_TEST_FAULTS
       if(take_point_fault(scope_id,"held"))begin
         // A held tuple remains an obligation even though its queue is empty.
-        wait(scope_failed(BW_POINT,scope_id) || runtime_cancelled);return;
+        wait(runtime_cancelled || core_failure_seen || monitoring_shared_disabled);return;
       end
 `endif
       sampled_view=sample.sample;
@@ -215,11 +218,13 @@ module bw_point_recorder #(
       record_toggle <= !record_toggle;
       @(record_toggle or runtime_cancelled);
       if(runtime_failed())return;
-      if(publication_receipts)wait(published_record_seq>=record.record_seq || scope_failed(BW_POINT,scope_id) || runtime_cancelled);
+      if(publication_receipts)wait(published_record_seq>=record.record_seq || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
       if(scope_failed(BW_POINT,scope_id))return;
+      // Same merged hold as the control path: the next wait on the monotonic
+      // settlement_required covers this publication's quiescent generation
+      // before another tuple is exposed.
       settlement_required=request_slot_settlement(scope_id);
-      wait(slot_settlement_generation>=settlement_required || runtime_cancelled);
-      if(runtime_failed())return;
     end
   endtask
 

@@ -14,6 +14,14 @@
   chandle settlement_watch_handles[string];
   function automatic void register_settlement_watch(string id,chandle handle);
     if(!settlement_watch_handles.exists(id))settlement_watch_handles[id]=handle;
+    // Publish the handle on the registry records too so the hot transport
+    // paths (notifications, grants) need no keyed owner lookup.
+    if(point_by_id.exists(id))
+      registered_sources[registered_points[point_by_id[id]].transport_source].settlement_watch=handle;
+    if(group_by_id.exists(id))begin
+      registered_groups[group_by_id[id]].settlement_watch=handle;
+      registered_sources[registered_groups[group_by_id[id]].source_handle].settlement_watch=handle;
+    end
   endfunction
   function automatic void note_settlement_activity(string id);
     if(settlement_watch_handles.exists(id))bw_native_mark_settlement_watch(settlement_watch_handles[id]);
@@ -52,7 +60,7 @@
     bw_native_note_generation(slot_settlement_generation);
   endfunction
 
-  function automatic bw_u64_t request_slot_settlement(string id);
+  function automatic bw_u64_t request_slot_settlement(string id,chandle watch=null);
     bw_u64_t required;
     if(monitoring_shared_disabled || core_failure_seen)return slot_settlement_generation;
     if(slot_settlement_generation==BW_U64_MAX)begin
@@ -63,7 +71,8 @@
     // The native scheduler skips a watcher dispatch while its latest grant
     // still awaits this generation; report the grant so that deferral stays
     // exact for every requesting scope.
-    if(settlement_watch_handles.exists(id))
+    if(watch!=null)bw_native_note_settlement_grant(watch,required);
+    else if(settlement_watch_handles.exists(id))
       bw_native_note_settlement_grant(settlement_watch_handles[id],required);
     // Keep this wrapper in package scope: the native callback must return to
     // this package's exported function, independent of the requesting module.

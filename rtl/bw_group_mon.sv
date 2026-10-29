@@ -56,9 +56,8 @@ module bw_group_mon #(
   endfunction
   `include "bw_reset_capture.svh"
 
-  chandle clock_observer=null;
   import "DPI-C" context function chandle bw_native_watch_point_clock(input string scope_path);
-  function void bw_native_point_edge();expect_group_edge(scope_id,$time);endfunction
+  function void bw_native_point_edge();expect_group_edge(scope_id,$time,clock_observer,my_group_ledger);endfunction
   function automatic bit collector_ready_work();
     bw_control_frame_t candidate,control;
     int selected;
@@ -74,12 +73,15 @@ module bw_group_mon #(
     return group_frame_inputs_ready(group_handle,expected_edges[0].edge_index,expected_edges[0].timestamp_ticks);
   endfunction
   function automatic void completion_stage_error(string stage,string detail);
-    runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=%s original_ticks=%0d expected_edge=%0d control_held=%0d control_published=%0d control_accepted=%0d control_acked=%0d reset_expected=%0d reset_captured=%0d reset_requested=%0d reset_received=%0d timer_requested=%0d timer_received=%0d recovery_grant=%0d recovery_received=%0d %s",stage,$time,group_batches[scope_id].expected,controls_held,controls_published,controls_accepted,controls_acked,group_batches[scope_id].reset_expected,group_batches[scope_id].reset_captured,core.reset_requests,core.reset_receipts,core.timer_requests,core.timer_receipts,collector_recovery_grant,collector_recovery_receipts,detail));
+    runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=%s original_ticks=%0d expected_edge=%0d control_held=%0d control_published=%0d control_accepted=%0d control_acked=%0d reset_expected=%0d reset_captured=%0d reset_requested=%0d reset_received=%0d timer_requested=%0d timer_received=%0d recovery_grant=%0d recovery_received=%0d %s",stage,$time,my_group_ledger.expected,controls_held,controls_published,controls_accepted,controls_acked,my_group_ledger.reset_expected,my_group_ledger.reset_captured,core.reset_requests,core.reset_receipts,core.timer_requests,core.timer_receipts,collector_recovery_grant,collector_recovery_receipts,detail));
   endfunction
   function int bw_native_point_audit();
     bw_record_t unexpected;
+    bw_group_batch ledger;
     if(!monitor_ready || scope_failed(BW_GROUP,scope_id))return 0;
-    if(group_batches[scope_id].grant>slot_settlement_generation ||
+    if(my_group_ledger==null)my_group_ledger=group_batches[scope_id];
+    ledger=my_group_ledger;
+    if(ledger.grant>slot_settlement_generation ||
        core.settlement_required>slot_settlement_generation)return 1;
     // A parent depends on each actual producer's durable certificate. This
     // frozen DAG dependency is independent of native watcher callback order.
@@ -122,17 +124,17 @@ module bw_group_mon #(
     if(collector_waiting && collector_ready_work())begin
       if(!collector_recovery_pending)begin
         collector_recovery_pending=1;notify_group(group_handle);
-        collector_recovery_grant=group_batches[scope_id].grant;
+        collector_recovery_grant=ledger.grant;
       end
       // The posted continuation's receipts re-mark this scope; self-mark so
       // the next round also verifies the recovery receipt itself.
       note_settlement_activity(scope_id);
       return 1;
     end
-    if(group_batches[scope_id].reset_expected!=group_batches[scope_id].reset_captured)begin
+    if(ledger.reset_expected!=ledger.reset_captured)begin
       completion_stage_error("RESET_CAPTURE","missing captured raw reset");return 0;
     end
-    if(group_batches[scope_id].reset_captured!=core.reset_requests)begin
+    if(ledger.reset_captured!=core.reset_requests)begin
       completion_stage_error("RESET_POST","captured reset missing core enqueue");return 0;
     end
     if(core.reset_requests!=core.reset_receipts)begin
@@ -150,7 +152,7 @@ module bw_group_mon #(
     if(controls_held!=controls_acked)begin
       completion_stage_error("CONTROL_ACK","input control ACK missing");return 0;
     end
-    close_group_batch(scope_id);
+    close_group_batch(scope_id,ledger);
     if(scope_failed(BW_GROUP,scope_id))return 0;
     if(expected_edges.size()==0 && registered_groups[group_handle].notification.seq!=unexpected_scan_notice)begin
       for(int m=0;m<direct_member_count;m++)begin
@@ -194,6 +196,7 @@ module bw_group_mon #(
                                       WINDOW_WIDTH,effective_stride);
     transport_source=group_source_handle(group_handle);
     register_group_completion(scope_id);
+    my_group_ledger=group_batches[scope_id];
     register_end_role(scope_key(BW_GROUP,scope_id),"owner");
     register_end_role(scope_key(BW_GROUP,scope_id),"core");
     clock_observer=bw_native_watch_point_clock(monitor_path);
@@ -291,7 +294,7 @@ module bw_group_mon #(
       check_storage_growth(expected_edges.size(),scope_id,"group.expected",expected.timestamp_ticks,expected.edge_index,expected.edge_index);
       if(runtime_failed())disable capture_expected_edge;
       expected_edges.push_back(expected);
-      group_batches[scope_id].captured=expected.edge_index;
+      my_group_ledger.captured=expected.edge_index;
       void'(request_slot_settlement(scope_id));
       expected_notice=checked_add(expected_notice,1,scope_id);refresh_progress();
     end
@@ -318,7 +321,8 @@ module bw_group_mon #(
 `else
     core_control_toggle<=!core_control_toggle;
 `endif
-    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+    wait(accepted_control_count>=receipt || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
     if(scope_failed(BW_GROUP,scope_id))return;
     controls_accepted=controls_held;
 `ifdef BW_MON_TEST_FAULTS
@@ -337,7 +341,7 @@ module bw_group_mon #(
 `ifdef BW_MON_TEST_FAULTS
     if(take_group_fault(scope_id,"held"))begin collector_stalled=1;return;end
 `endif
-    group_batches[scope_id].held=expected.edge_index;
+    my_group_ledger.held=expected.edge_index;
     frame='0;frame.timestamp_ticks=expected.timestamp_ticks;frame.edge_index=expected.edge_index;
     frame.record_seq=checked_add(raw_sequence,1,scope_id);
     if(runtime_failed())return;
@@ -360,13 +364,14 @@ module bw_group_mon #(
 `endif
     publish_frame(transport_source,frame);
     if(runtime_failed())return;
-    group_batches[scope_id].published=frame.record_seq;
+    my_group_ledger.published=frame.record_seq;
 `ifdef BW_MON_TEST_FAULTS
     if(!take_group_fault(scope_id,"core"))record_toggle<=!record_toggle;
 `else
     record_toggle<=!record_toggle;
 `endif
-    wait(accepted_record_seq>=frame.record_seq || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+    wait(accepted_record_seq>=frame.record_seq || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
     if(scope_failed(BW_GROUP,scope_id))return;
     group_core_receipt(scope_id,frame.record_seq);
 `ifdef BW_MON_TEST_FAULTS
@@ -376,7 +381,7 @@ module bw_group_mon #(
       acknowledge_member_frame(group_handle,m,frame.record_seq);
       if(runtime_failed())return;
     end
-    group_batches[scope_id].acked=frame.record_seq;
+    my_group_ledger.acked=frame.record_seq;
     discarded=expected_edges.pop_front();expected_notice=checked_add(expected_notice,1,scope_id);
     refresh_progress();
   endtask
@@ -399,7 +404,7 @@ module bw_group_mon #(
     forever begin
       if(scope_failed(BW_GROUP,scope_id))return;
 `ifdef BW_MON_TEST_SCHEDULING
-      wait(!test_gate.paused || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+      wait(!test_gate.paused || runtime_cancelled || core_failure_seen || monitoring_shared_disabled);
       if(runtime_failed())return;
 `endif
       seen_notice=notice.seq;seen_expected=expected_notice;refresh_progress();
@@ -429,7 +434,8 @@ module bw_group_mon #(
         commit_frame(expected_edges[0]);if(collector_stalled)return;continue;
       end
       collector_waiting=1;
-      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
       collector_waiting=0;
       if(runtime_failed())return;
       if(collector_recovery_pending)begin

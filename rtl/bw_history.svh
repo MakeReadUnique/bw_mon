@@ -13,7 +13,7 @@
         if(runtime_failed())return;
         if(run.count==1 || (delta_ticks==run.step_ticks && delta_edges==run.step_edges))begin
           if(run.count==1)begin run.step_ticks=delta_ticks;run.step_edges=delta_edges;end
-          run.count=checked_add(run.count,1,{scope_id," history count"});
+          run.count=checked_add_tag(run.count,1,"history count");
           if(runtime_failed())return;
           run.last_ticks=incoming.timestamp_ticks;run.last_edge=incoming.edge_index;
           history[$]=run;return;
@@ -88,7 +88,7 @@
       if(runtime_failed())return;
       if(run.count==1 || delta_ticks==run.step_ticks)begin
         if(run.count==1)run.step_ticks=delta_ticks;
-        run.count=checked_add(run.count,1,{scope_id," clock count"});
+        run.count=checked_add_tag(run.count,1,"clock count");
         if(runtime_failed())return;
         run.last_ticks=at_ticks;clock_runs[$]=run;return;
       end
