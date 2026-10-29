@@ -8,6 +8,8 @@ import math
 
 
 def episode_reference(oracle, scope, silence):
+    if oracle.resets.get(scope):
+        return _reset_episode_reference(oracle, scope, silence)
     increments = oracle.increments[scope]
     active = [i for i, inc in enumerate(increments) if inc[1]]
     if not active:
@@ -50,12 +52,90 @@ def episode_reference(oracle, scope, silence):
     return result
 
 
+def _reset_episode_reference(oracle, scope, silence):
+    """Episode lifecycle across own resets, from original records only.
+
+    An own-reset assert interrupts the open episode at the assert tick; records
+    held under reset stay invisible; statistics restart after release. Member
+    resets (visible quiet records carrying reset quality) never split an
+    episode, matching the public common-measurement-start contract.
+    """
+    increments = oracle.increments[scope]
+    if any(inc[2] or inc[3] for inc in increments):
+        raise ValueError('reset episode reference requires known observations')
+    intervals = oracle.resets[scope]
+    result = []
+    episode_id = 0
+
+    def emit(status, confirm, state):
+        nonlocal episode_id
+        episode_id += 1
+        duration = (state['tail']-state['first']) if state['tail'] is not None else 0
+        valid = status == 2 and state['tail'] is not None and duration > 0
+        result.append(dict(scope_kind=int(scope == 2), epoch=state['epoch'], episode=episode_id,
+                           result_seq=episode_id, status=status,
+                           first_ticks=state['first'], last_ticks=state['last'],
+                           tail_ticks=state['tail'] or 0, confirm_ticks=confirm,
+                           bytes=state['bytes'], events=state['events'], duration_ticks=duration,
+                           first_known=1, last_known=1, tail_known=int(state['tail'] is not None),
+                           bytes_complete=1, events_complete=1,
+                           member_reset=state.get('member_reset', 0),
+                           e2e_valid=int(valid),
+                           e2e_gbps=F(state['bytes']*1000000, duration) if valid else F(0)))
+
+    def member_reset_between(first, last):
+        if scope != 2:
+            return 0
+        for index, count in enumerate(oracle.record_resets[scope]):
+            if count and first <= oracle.ticks[index] <= last:
+                return 1
+        return int(any(first < second and last > member_first
+                       for member in (0, 1)
+                       for member_first, second in oracle.resets.get(member, ())))
+
+    state = None
+    epoch = 0
+    for index, inc in enumerate(increments):
+        tick = oracle.ticks[index]
+        while epoch < len(intervals) and intervals[epoch][0] <= tick:
+            if state is not None:
+                state['member_reset'] = member_reset_between(state['first'], state['last'])
+                emit(3, intervals[epoch][0], state)
+                state = None
+            epoch += 1
+        if not oracle.accounted[scope][index]:
+            continue
+        if inc[1]:
+            if state is None:
+                state = dict(epoch=epoch, first=tick, last=tick, tail=None,
+                             bytes=inc[0], events=inc[1], member_reset=0)
+            else:
+                state['last'] = tick
+                state['tail'] = None
+                state['bytes'] += inc[0]
+                state['events'] += inc[1]
+        elif state is not None and state['tail'] is None:
+            state['tail'] = tick
+    if state is not None:
+        due = None
+        if state['tail'] is not None:
+            if oracle.basis == 'ns':
+                due = state['tail']+silence*1000000
+            else:
+                tail_index = oracle.ticks.index(state['tail'])
+                due = oracle.ticks[tail_index+silence] if tail_index+silence < len(oracle.ticks) else None
+        complete = due is not None and due <= oracle.end
+        state['member_reset'] = member_reset_between(state['first'], state['last'])
+        emit(2 if complete else 4, due if complete else oracle.end, state)
+    return result
+
+
 def phase_reference(oracle, scope, episodes):
     result = []
     phase_identity = 0
     prior_last = -1
     first_full = (oracle.width+oracle.stride-1)//oracle.stride
-    windows = list(oracle.windows(scope)) if oracle.publication_count-first_full+1 >= 6 else []
+    windows = list(oracle.windows(scope)) if oracle.publication_counts[scope]-first_full+1 >= 6 else []
     # Maximum windows expose at most one full observation; N=6 cannot fit.
     for episode in episodes:
         evidence = []
@@ -65,7 +145,7 @@ def phase_reference(oracle, scope, episodes):
         cap = episode['tail_ticks'] or episode['confirm_ticks']
         def close(at, known, reason):
             if current and min(at, cap) > start:
-                result.append(dict(scope_kind=int(scope == 2), epoch=0, episode=episode['episode'],
+                result.append(dict(scope_kind=int(scope == 2), epoch=episode.get('epoch',0), episode=episode['episode'],
                                    phase=active_identity, result_seq=len(result)+1, kind=current,
                                    start_ticks=start, end_ticks=min(at, cap), confirm_ticks=confirmation,
                                    start_known=1, end_known=int(known), reason=2 if at>cap else reason))
@@ -73,7 +153,8 @@ def phase_reference(oracle, scope, episodes):
             if not episode['first_ticks'] < window['right'] <= episode['confirm_ticks']:
                 continue
             foreign = window['left'] <= prior_last
-            eligible = window['full'] and window['bytes_complete'] and window['denominator_valid'] and not foreign
+            eligible = window['full'] and window['bytes_complete'] and window['denominator_valid'] \
+                and not foreign and window['epoch'] == episode.get('epoch', 0)
             if not eligible:
                 close(window['right'], True, 1)
                 current = candidate = count = 0
@@ -190,7 +271,7 @@ def audit_packets(scenario, lines):
         episodes = episode_reference(scenario.oracle, scope, 30 if scenario.basis == 'ns' else 60)
         phases = phase_reference(scenario.oracle, scope, episodes)
         for phase in phases:
-            key = (sid, '0', str(phase['episode']), str(phase['phase']), str(phase['result_seq']))
+            key = (sid, str(phase['epoch']), str(phase['episode']), str(phase['phase']), str(phase['result_seq']))
             ph_keys.add(key)
             if key not in ph_actual:
                 fail('missing_independent_phase', identity=key)
@@ -198,16 +279,16 @@ def audit_packets(scenario, lines):
                 compare(ph_actual[key], phase, 'phase')
             if key not in metrics_actual:
                 fail('missing_phase_metrics', identity=key)
-            variation_keys.add(key+('PHASE',))
+            variation_keys.add((key[0], key[1], key[2], key[3], key[4], 'PHASE'))
         prior_last = -1
         for episode in episodes:
-            key = (sid, '0', str(episode['episode']), str(episode['result_seq']))
+            key = (sid, str(episode['epoch']), str(episode['episode']), str(episode['result_seq']))
             ep_keys.add(key)
             if key not in ep_actual:
                 fail('missing_independent_episode', identity=key)
             else:
                 compare(ep_actual[key], episode, 'episode')
-            variation_keys.add((sid, '0', str(episode['episode']), '0', str(episode['result_seq']), 'EPISODE'))
+            variation_keys.add((sid, str(episode['epoch']), str(episode['episode']), '0', str(episode['result_seq']), 'EPISODE'))
             episode_phases = [p for p in phases if p['episode'] == episode['episode'] and p['kind'] == 2]
             if key not in steady_actual:
                 fail('missing_last_steady', identity=key)
@@ -220,7 +301,7 @@ def audit_packets(scenario, lines):
                 compare(steady_actual[key], steady, 'last_steady')
             cv = episode_cv(scenario.oracle, scope, episode, prior_last)
             for metric, value in [('e2e_bw', episode['e2e_gbps'] if episode['e2e_valid'] else None), ('episode_cv', cv)]:
-                identity = (sid, str(int(scope == 2)), '0', str(episode['episode']), str(episode['result_seq']), 'episode', '0', metric)
+                identity = (sid, str(int(scope == 2)), str(episode['epoch']), str(episode['episode']), str(episode['result_seq']), 'episode', '0', metric)
                 check_keys.add(identity)
                 conclusion = 'WARNING' if value is None else 'PASS'
                 conclusions[conclusion] += 1

@@ -45,11 +45,16 @@
         "first edge250000fs",
         "NS first full only at40000ns",
         "cycle79999 of80000 remains warmup",
-        "final truncation and unknown tail"
+        "final truncation and unknown tail",
+        "over-budget edge rejected by runtime SIM_TIME_LIMIT warning with isolation",
+        "mid-run point and group resets never extend the T+40us budget"
       ],
       "profiles": [
         "history-revised-ns-deep",
-        "history-revised-cycle-deep"
+        "history-revised-cycle-deep",
+        "history-revised-ns-reset",
+        "history-revised-cycle-reset",
+        "history-revised-ns-overrun"
       ],
       "reused_common": [
         "history-common-ns-long-dense",
@@ -61,13 +66,16 @@
         "actual event segments80000/1/80000",
         "four empty-history drain checkpoints",
         "original variable-clock boundary expansion",
-        "separate event/clock/pending segment and sample peaks"
+        "separate event/clock/pending segment and sample peaks",
+        "reset-cleared history regrows from the release boundary"
       ],
       "profiles": [
         "history-revised-ns-deep",
         "history-revised-cycle-deep",
         "history-revised-ns-expiry",
-        "history-revised-cycle-expiry"
+        "history-revised-cycle-expiry",
+        "history-revised-ns-reset",
+        "history-revised-cycle-reset"
       ]
     },
     "H4": {
@@ -88,7 +96,9 @@
         "history-revised-ns-expiry",
         "history-revised-cycle-expiry",
         "history-revised-ns-deep",
-        "history-revised-cycle-deep"
+        "history-revised-cycle-deep",
+        "history-revised-ns-reset",
+        "history-revised-cycle-reset"
       ]
     },
     "H5": {
@@ -100,7 +110,10 @@
         "pending queues released",
         "independent rational fit derives all phase identities/boundaries/confirmations",
         "exact configured metric identities and independent conclusions",
-        "report summary counters and ordering"
+        "report summary counters and ordering",
+        "own resets interrupt episodes at the assert tick and restart statistics at release",
+        "member resets never split the aggregate episode and mark window coverage",
+        "fixed PAIR6_R2 phases reconfirm on both sides of each reset"
       ],
       "component_cases": [
         "history_trace_ns",
@@ -116,7 +129,9 @@
         "history-revised-cycle-seeded",
         "history-revised-ns-expiry",
         "history-revised-cycle-expiry",
-        "history-revised-pending"
+        "history-revised-pending",
+        "history-revised-ns-reset",
+        "history-revised-cycle-reset"
       ],
       "reused_common": [
         "history-common-ns-control-clock",
@@ -144,7 +159,8 @@
         "exact unsigned64 boundary literals",
         "actual timestamp40000000000fs",
         "all original sequence progression",
-        "production arithmetic error boundaries"
+        "production arithmetic error boundaries",
+        "runtime detectable errors warn and isolate at the public entry while startup errors stay fatal"
       ],
       "component_cases": [
         "numeric_arithmetic_known",
@@ -159,7 +175,8 @@
       ],
       "profiles": [
         "history-revised-ns-deep",
-        "history-revised-cycle-deep"
+        "history-revised-cycle-deep",
+        "history-revised-ns-overrun"
       ]
     }
   },
@@ -170,7 +187,10 @@
     "history-revised-cycle-expiry",
     "history-revised-ns-deep",
     "history-revised-cycle-deep",
-    "history-revised-pending"
+    "history-revised-pending",
+    "history-revised-ns-reset",
+    "history-revised-cycle-reset",
+    "history-revised-ns-overrun"
   ],
   "required_shared_evidence": "M4/H6 full-scale public topology, both bases, unequal consumer progress, 16 direct parents and retained controls",
   "resource_limits": {
@@ -183,7 +203,7 @@
     "product_memory_cap": null,
     "sum_is_not_full_scale_long_history_measurement": true
   },
-  "schema": "bw-history-coverage-v1",
-  "spec": "https://github.com/MakeReadUnique/bw_mon/issues/13",
-  "ticket": "https://github.com/MakeReadUnique/bw_mon/issues/31"
+  "schema": "bw-history-coverage-v2",
+  "spec": "https://github.com/MakeReadUnique/bw_mon/issues/48",
+  "ticket": "https://github.com/MakeReadUnique/bw_mon/issues/59"
 }

@@ -99,5 +99,71 @@ class ExpandedHistoryContracts(unittest.TestCase):
             self.assertIn('selected_samples=3', source)
 
 
+class ResetAwareOracleContracts(unittest.TestCase):
+    """Own resets restart statistics; member resets only mark quality."""
+
+    def events(self, count, byte0=8, byte1=64):
+        return [(250000+i*1000000, 1, 1, byte0, 1, 1, byte1) for i in range(count)]
+
+    def test_ns_own_reset_restarts_publication_grid_epoch_and_totals(self):
+        oracle = EventOracle(self.events(10), end=10000000, basis='ns', width=4, stride=2,
+                             resets={0: [(3500000, 6500000)]})
+        # Segment 0 publishes only grid points before the assert tick 3.5ns;
+        # segment 1 restarts at release+2ns with a new epoch and warmup.
+        self.assertEqual([ (w['seq'], w['epoch'], w['right']) for w in oracle.windows(0) ],
+                         [(1, 0, 2000000), (2, 1, 8500000)])
+        first, second = oracle.windows(0)
+        self.assertEqual((first['left'], first['warmup'], first['bytes'], first['events'], first['reset']),
+                         (0, 1, 16, 2, 0))
+        self.assertEqual((second['left'], second['warmup'], second['bytes'], second['events'], second['reset']),
+                         (6500000, 1, 16, 2, 0))
+        # Own-reset records are zero, marked, and never re-enter totals.
+        self.assertEqual([oracle.raw(0, e)['total_bytes'] for e in (1, 4, 5, 7, 8, 10)],
+                         [8, 32, 0, 0, 8, 24])
+        self.assertEqual([(oracle.raw(0, e)['epoch'], oracle.raw(0, e)['reset_points']) for e in (4, 5, 7, 8)],
+                         [(0, 0), (1, 1), (1, 1), (1, 0)])
+
+    def test_ns_member_reset_keeps_group_grid_and_marks_window_coverage(self):
+        oracle = EventOracle(self.events(10), end=10000000, basis='ns', width=4, stride=2,
+                             resets={0: [(3500000, 6500000)]})
+        self.assertEqual([w['seq'] for w in oracle.windows(2)], [1, 2, 3, 4, 5])
+        final = oracle.window(2, 5)
+        self.assertEqual((final['left'], final['right'], final['full'], final['reset'],
+                          final['bytes'], final['events']), (6000000, 10000000, 1, 1, 280, 7))
+
+    def test_cycle_own_reset_restarts_edge_grid_from_new_origin(self):
+        oracle = EventOracle(self.events(8), end=8000000, basis='cycle', width=3, stride=2,
+                             resets={0: [(3500000, 6500000)]})
+        windows = list(oracle.windows(0))
+        self.assertEqual([(w['seq'], w['epoch'], w['right_cycle'], w['left_cycle']) for w in windows],
+                         [(1, 0, 3, 1)])
+        self.assertEqual((windows[0]['left'], windows[0]['right'], windows[0]['warmup'],
+                          windows[0]['bytes'], windows[0]['reset']), (250000, 2250000, 1, 16, 0))
+        # Uninterrupted scopes keep the original grid: edges 3, 5 and 7 publish.
+        self.assertEqual([len(list(oracle.windows(scope))) for scope in range(3)], [1, 3, 3])
+
+    def test_reset_scenarios_declare_original_pressure_and_endpoint_contract(self):
+        for name in ('history-revised-ns-reset', 'history-revised-cycle-reset'):
+            scenario = build_scenario(name)
+            manifest = scenario.manifest()
+            self.assertIn('H2', manifest['properties'])
+            self.assertIn('H5', manifest['properties'])
+            self.assertEqual(manifest['basis'], name.split('-')[2])
+            self.assertTrue(manifest['resets'])
+            self.assertEqual(manifest['end_ticks'], 40000000000)
+            self.assertEqual(manifest['actual_edges'], 80000)
+            self.assertEqual(manifest['first_edge_ticks'], 250000)
+
+    def test_overrun_scenario_drives_past_the_immutable_budget(self):
+        scenario = build_scenario('history-revised-ns-overrun')
+        manifest = scenario.manifest()
+        self.assertEqual(manifest['basis'], 'ns')
+        self.assertEqual(manifest['overrun_edges'], 3)
+        # Driving continues past the immutable budget; expectations stop at it.
+        self.assertEqual(manifest['end_ticks'], 40000000000)
+        self.assertEqual(manifest['driven_end_ticks'], 40001250000)
+        self.assertEqual(manifest['windows_per_scope'], [40000]*3)
+
+
 if __name__ == '__main__':
     unittest.main()

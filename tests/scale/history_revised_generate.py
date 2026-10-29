@@ -40,9 +40,9 @@ def generate(s, out):
         with (out/('window-%d.txt' % scope)).open('w') as handle:
             for row in oracle.windows(scope):
                 handle.write(' '.join(text(row[field]) for field in WINDOW)+'\n')
-        row = dict(scope=scope, records=len(oracle.events), windows=oracle.publication_count)
+        row = dict(scope=scope, records=len(oracle.events), windows=oracle.publication_counts[scope])
         row.update({'raw_'+k: text(v) for k, v in oracle.raw(scope, len(oracle.events)).items()})
-        row.update({'window_'+k: text(v) for k, v in oracle.window(scope, oracle.publication_count).items()})
+        row.update({'window_'+k: text(v) for k, v in oracle.window(scope, oracle.publication_counts[scope]).items()})
         final.append(row)
     with (out/'expected.csv').open('w') as handle:
         writer = csv.DictWriter(handle, fieldnames=list(final[0]))
@@ -58,10 +58,26 @@ def generate(s, out):
   int actual_fd=0,storage_fd=0,completed_scopes=0;
   bit observation_end=0;
 '''
-    for key, value in dict(BASIS=int(s.basis == 'cycle'), WIDTH=s.width, STRIDE=s.stride,
-                           EDGES=len(oracle.events), WINDOWS=oracle.publication_count, END_TICKS=oracle.end,
-                           EXPIRY=int(s.kind == 'expiry'), SNAPSHOT_STRIDE=0 if s.kind == 'deep' else 512 if s.kind == 'expiry' else 64).items():
+    counts = oracle.publication_counts
+    params = dict(BASIS=int(s.basis == 'cycle'), WIDTH=s.width, STRIDE=s.stride,
+                  EDGES=len(oracle.events), WINDOWS=sum(counts), END_TICKS=oracle.end,
+                  EXPIRY=int(s.kind == 'expiry'),
+                  SNAPSHOT_STRIDE=0 if s.kind in ('deep', 'overrun') else 512 if s.kind == 'expiry' else 16384 if s.kind == 'reset' else 64,
+                  WINDOWS_0=counts[0], WINDOWS_1=counts[1], WINDOWS_2=counts[2],
+                  OVERRUN_EDGES=getattr(s, 'overrun_edges', 0))
+    for prefix in ('P0', 'G'):
+        params.setdefault(prefix+'_RESET_ASSERT', 0)
+        params.setdefault(prefix+'_RESET_RELEASE', 0)
+    for scope, intervals in sorted(getattr(s, 'resets', {}).items()):
+        name = 'P0' if scope == 0 else 'G'
+        params[name+'_RESET_ASSERT'], params[name+'_RESET_RELEASE'] = intervals[0]
+    params['RESETS'] = int(bool(getattr(s, 'resets', {})))
+    for key, value in params.items():
         package += '  localparam bw_u64_t %s=64\'d%d;\n' % (key, value)
+    package += '''  function automatic bw_u64_t expected_windows(int scope);
+    case(scope) 0:return WINDOWS_0; 1:return WINDOWS_1; default:return WINDOWS_2; endcase
+  endfunction
+'''
     package += '''  function automatic bit close_real(real actual,real expected);
     return $abs(actual-expected)<=1e-9+1e-12*$abs(expected);
   endfunction
@@ -115,7 +131,7 @@ endpackage
             checker += '    if(raw_record.record_seq!=records)$fatal(1,"HISTORY_ORIGINAL_SEQUENCE");\n'
         checker += '  end\n'
     checker += '''  always @(observation_end or local_done or windows or records)begin
-    if(observation_end && local_done && !done && windows==WINDOWS && records==EDGES)begin
+    if(observation_end && local_done && !done && windows==expected_windows(scope_index) && records==EDGES)begin
       bw_u64_t surplus;
       if($fscanf(raw_fd,"%d",surplus)!=-1 || $fscanf(window_fd,"%d",surplus)!=-1)
         $fatal(1,"HISTORY_REFERENCE_UNCONSUMED scope=%s",scope_id);
@@ -156,7 +172,7 @@ endmodule
     $fdisplay(storage_fd,"Z %0d %0d",scope_index,snapshot_seq);
   endtask
   always @(observation_end or mon.result_seq or mon.accepted_record_seq)
-    if(observation_end && mon.result_seq==WINDOWS && mon.accepted_record_seq==EDGES && !local_done)
+    if(observation_end && mon.result_seq==expected_windows(scope_index) && mon.accepted_record_seq==EDGES && !local_done)
       begin dump_storage();local_done=1;end
   always @(mon.accepted_record_seq or mon.result_seq)if(monitor_ready)begin
     int ep_count,ph_count;
@@ -176,28 +192,29 @@ endmodule
                 '.total_bytes(mon.total_bytes)', '.total_events(mon.total_events)']
     connects += ['.'+signal+'('+('mon.'+signal if field in REAL else "64'(mon."+signal+')')+')' for field, signal in WINDOW.items()]
     check_instance = '  bit local_done=0;\n  bw_history_checker checker('+',\n    '.join(connects)+');\n'
-    top = '''module bw_history_point #(parameter int INDEX=0)(input logic clk,valid,known,input logic [63:0] size_bytes,input int scope_index);
+    top = '''module bw_history_point #(parameter int INDEX=0)(input logic clk,valid,known,reset_n,input logic [63:0] size_bytes,input int scope_index);
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;import bw_history_input_pkg::*;
   bw_point_mon #(.POINT_ID($sformatf("history.p%0d",INDEX)),.DYNAMIC_BYTES(1),'''+window+''') mon
-    (.clk(clk),.reset_n(1'b1),.valid(valid),.size_bytes(size_bytes),.size_known(known));
+    (.clk(clk),.reset_n(reset_n),.valid(valid),.size_bytes(size_bytes),.size_known(known));
 '''+check_instance+storage+'endmodule\n'
-    top += '''module bw_history_group(input logic clk,input int scope_index);
+    top += '''module bw_history_group(input logic clk,reset_n,input int scope_index);
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;import bw_history_input_pkg::*;
-  bw_group_mon #(.GROUP_ID("history.group"),'''+window+''') mon(.clk(clk),.reset_n(1'b1));
+  bw_group_mon #(.GROUP_ID("history.group"),'''+window+''') mon(.clk(clk),.reset_n(reset_n));
 '''+check_instance+storage+'endmodule\n'
     top += '''module tb_bw_scale;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;import bw_history_input_pkg::*;
   logic clk=0,valid0=0,valid1=0,known0=1,known1=1;
   logic [63:0] bytes0=0,bytes1=0;
-  bit deadline=0;
+  logic reset_p0=1,reset_g=1;
+  bit deadline=0,overrun_done=0;
   string directory,actual_path;
   bw_mon_setup setup();
-  bw_history_point #(.INDEX(0)) p0(clk,valid0,known0,bytes0,0);
-  bw_history_point #(.INDEX(1)) p1(clk,valid1,known1,bytes1,1);
-  bw_history_group g0(clk,2);
+  bw_history_point #(.INDEX(0)) p0(clk,valid0,known0,reset_p0,bytes0,0);
+  bw_history_point #(.INDEX(1)) p1(clk,valid1,known1,1'b1,bytes1,1);
+  bw_history_group g0(clk,reset_g,2);
   initial begin
     if(!$value$plusargs("HISTORY_DIR=%s",directory) || !$value$plusargs("ACTUAL=%s",actual_path))
       $fatal(1,"HISTORY_ARGUMENTS_REQUIRED");
@@ -217,15 +234,44 @@ endmodule
     $display("HISTORY_RUN_START scopes=3 edges=%0d windows=%0d end_ticks=%0d",EDGES,WINDOWS,END_TICKS);
     #END_TICKS;observation_end=1;deadline<=1;
     wait(completed_scopes==3);
-    if($time!=measurement_start_ticks+END_TICKS || core_failure_pending())$fatal(1,"HISTORY_FINAL_FAILURE");
+    if(OVERRUN_EDGES!=0)begin
+      wait(overrun_done);
+      // Detectable over-budget sampling is a runtime warning with isolation:
+      // both points stop accepting and the dependent group is disabled, while
+      // the in-budget endpoint evidence above remains intact.
+      if(!scope_disabled(BW_POINT,"history.p0") || !scope_disabled(BW_POINT,"history.p1") ||
+         !scope_disabled(BW_GROUP,"history.group"))$fatal(1,"HISTORY_OVERRUN_NOT_ISOLATED");
+      if(p0.mon.accepted_record_seq!=EDGES || p1.mon.accepted_record_seq!=EDGES ||
+         g0.mon.accepted_record_seq!=EDGES)$fatal(1,"HISTORY_OVERRUN_ACCEPTED_PAST_BUDGET");
+    end else begin
+      if($time!=measurement_start_ticks+END_TICKS || core_failure_pending())$fatal(1,"HISTORY_FINAL_FAILURE");
+    end
+    if(core_failure_pending())$fatal(1,"HISTORY_FINAL_FAILURE");
     if(acknowledged_frame_seq(g0.mon.group_handle,0)!=EDGES || acknowledged_frame_seq(g0.mon.group_handle,1)!=EDGES)
       $fatal(1,"HISTORY_ACK_INCOMPLETE");
     $fclose(actual_fd);$fclose(storage_fd);
-    $display("HISTORY_PASS scopes=3 raw=%0d windows=%0d end_ticks=%0d",EDGES*3,WINDOWS*3,$time);
+    $display("HISTORY_PASS scopes=3 raw=%0d windows=%0d end_ticks=%0d",EDGES*3,WINDOWS,$time);
     // Same ending-contract settle step as the scale driver: the endpoint
     // marker keeps its tick and the final input slot closes before finish.
-    #1;
-    $finish;
+    // A run that ends exactly at the immutable T+40us budget cannot spend a
+    // drain tick: it finishes from the postponed region of the endpoint tick,
+    // after the same-tick settlement of the endpoint's last publication.
+    if(END_TICKS<BW_MONITOR_LIMIT_TICKS)#1;
+    if(END_TICKS<BW_MONITOR_LIMIT_TICKS || OVERRUN_EDGES!=0)$finish;
+  end
+  initial begin
+    if(RESETS)begin
+      wait(monitor_ready);
+      #(measurement_start_ticks+P0_RESET_ASSERT-$time);reset_p0=0;
+      #(measurement_start_ticks+P0_RESET_RELEASE-$time);reset_p0=1;
+    end
+  end
+  initial begin
+    if(RESETS)begin
+      wait(monitor_ready);
+      #(measurement_start_ticks+G_RESET_ASSERT-$time);reset_g=0;
+      #(measurement_start_ticks+G_RESET_RELEASE-$time);reset_g=1;
+    end
   end
   initial begin
     int fd,rc,v0,k0,v1,k1;
@@ -240,10 +286,24 @@ endmodule
       #1;clk=1;#1;clk=0;
     end
     if($fscanf(fd,"%d",tick)!=-1)$fatal(1,"HISTORY_INPUT_UNCONSUMED");$fclose(fd);
+    // Deliberate real sampling edges past the immutable T+40us budget.
+    for(bw_u64_t i=1;i<=OVERRUN_EDGES;i++)begin
+      #(measurement_start_ticks+tick+i*500000-$time-1);valid0=1;known0=1;bytes0=64;
+      valid1=1;known1=1;bytes1=64;
+      #1;clk=1;#1;clk=0;
+    end
+    if(OVERRUN_EDGES!=0)overrun_done=1;
   end
   always @(deadline or completed_scopes)if(deadline)begin
-    HISTORY_ALL_SETTLED:assert final(completed_scopes==3)else end_failure();
+    HISTORY_ALL_SETTLED:assert final(completed_scopes==3)endpoint_finish();else end_failure();
   end
+  function automatic void endpoint_finish();
+    // Postponed-region finish for budget-ending runs: the final-value assert
+    // runs after every same-tick Active/NBA/Reactive/ReNBA settlement, so the
+    // endpoint's last publication has closed its batch and the report can
+    // complete inside the immutable budget, without any drain tick.
+    if(END_TICKS>=BW_MONITOR_LIMIT_TICKS && OVERRUN_EDGES==0 && completed_scopes==3)$finish;
+  endfunction
   function automatic void end_failure();
     if(completed_scopes!=3)$fatal(1,"HISTORY_END_INCOMPLETE completed=%0d",completed_scopes);
   endfunction

@@ -43,7 +43,7 @@ def verify(s, attempt):
         if scope not in (0, 1, 2):
             continue
         raw = s.oracle.raw(scope, len(s.oracle.events))
-        for field, expected in dict(records=len(s.oracle.events), windows=s.oracle.publication_count,
+        for field, expected in dict(records=len(s.oracle.events), windows=s.oracle.publication_counts[scope],
                                     total_bytes=raw['total_bytes'], total_events=raw['total_events'],
                                     transport_frames_final=0, transport_controls_final=0).items():
             require(row.get(field) == expected, 'final_exact', scope=scope, field=field,
@@ -67,9 +67,33 @@ def verify(s, attempt):
     require(len([x for x in lines if x.startswith('HISTORY_RUN_START ')]) == 1, 'start_marker')
     require(len([x for x in lines if x.startswith('BW_READY ')]) == 1, 'ready_marker')
     require(not re.search(r'Fatal:|Error-\[|HISTORY_\w*MISMATCH|BW_CORE_ERROR|BW_CFG_WARNING', log), 'diagnostic')
+    if s.kind == 'overrun':
+        # Over-budget sampling is a detectable runtime error: one warning per
+        # affected point, ancestor isolation, and a completed report that no
+        # longer claims monitoring integrity.
+        warned = [kv(x) for x in lines if 'BW_CORE_WARNING code=SIM_TIME_LIMIT' in x]
+        require(len(warned) == 2, 'overrun_warning_count', actual=len(warned))
+        require({w.get('scope') for w in warned} == {'history.p0', 'history.p1'},
+                'overrun_warning_scopes', actual=sorted(w.get('scope') for w in warned))
+        require(len([x for x in lines if x.startswith('BW_SCOPE_DISABLED ') and 'scope=history.group' in x]) == 1,
+                'overrun_group_isolated')
+        terminals = [x for x in lines if x.startswith('BW_POINT_TERMINAL ') or x.startswith('BW_GROUP_TERMINAL ')]
+        require(len(terminals) == 3 and all('state=DISABLED' in x for x in terminals),
+                'overrun_terminal_states',
+                actual=[x.split('state=')[1].split()[0] for x in terminals])
+        completed = [x for x in lines if x.startswith('BW_REPORT_COMPLETE ')]
+        require(len(completed) == 1 and 'integrity=INCOMPLETE' in completed[0],
+                'overrun_report_integrity', actual=completed)
     summaries = [kv(x) for x in lines if x.startswith('BW_SUMMARY ')]
-    require(len(summaries) == 1 and summaries[0].get('scopes_done') == '3' and
-            summaries[0].get('scopes_expected') == '3', 'final_report_barrier')
+    if s.kind == 'overrun':
+        # With every scope isolated before any episode settled, the report
+        # completes without a summary: a globally disabled monitor cannot
+        # claim complete results or any performance conclusion.
+        require(not summaries, 'overrun_has_no_summary', actual=len(summaries))
+        require(not [x for x in lines if x.startswith('BW_DEFAULT_CHECK ')], 'overrun_has_no_default_rows')
+    else:
+        require(len(summaries) == 1 and summaries[0].get('scopes_done') == '3' and
+                summaries[0].get('scopes_expected') == '3', 'final_report_barrier')
     episodes = [kv(x) for x in lines if x.startswith('BW_EPISODE ')]
     phases = [kv(x) for x in lines if x.startswith('BW_PHASE ')]
     scopes = {'history.p0': 0, 'history.p1': 1, 'history.group': 2}
@@ -82,12 +106,14 @@ def verify(s, attempt):
         by_scope[sid].append(record)
         require(record.get('result_seq') == str(len(by_scope[sid])), 'episode_sequence', scope=sid)
     for sid, scope in scopes.items():
-        require(bool(by_scope[sid]), 'missing_episode', scope=sid)
+        if s.kind != 'overrun':
+            require(bool(by_scope[sid]), 'missing_episode', scope=sid)
         if s.kind == 'deep':
             require(len(by_scope[sid]) == 1, 'deep_episode_count', scope=sid)
             if by_scope[sid]:
                 actual = by_scope[sid][0]
-                expected = dict(status=4, first_ticks=origin+250000, last_ticks=origin+39999750000,
+                expected = dict(status=4, first_ticks=s.oracle.ticks[0],
+                                last_ticks=s.oracle.ticks[-1],
                                 bytes=s.oracle.raw(scope, 80000)['total_bytes'], events=80000*(2 if scope == 2 else 1),
                                 tail_known=0, bytes_complete=1, events_complete=1, e2e_valid=0)
                 for key, value in expected.items():
@@ -108,6 +134,43 @@ def verify(s, attempt):
                 for key, value in expected.items():
                     require(actual.get(key) == str(value), 'expiry_episode_contract', scope=sid,
                             episode=i+1, field=key, expected=value, actual=actual.get(key))
+        elif s.kind == 'reset':
+            # Boundaries are hand-derived from the fixed timeline: 2GHz edges at
+            # 0.25ns+k*0.5ns; point reset asserted at 30.0005us and released at
+            # 32.0005us; group reset 10.0005us..12.0005us; budget endpoint 40us.
+            own = 0 if scope == 0 else (2 if scope == 2 else None)
+            if own is None:
+                expected_rows = [dict(status=4, epoch=0, first_ticks=origin+250000,
+                                      last_ticks=origin+39999750000,
+                                      tail_known=0, bytes_complete=1, events_complete=1, e2e_valid=0)]
+            else:
+                r1, r2 = (origin+x for x in s.resets[own][0])
+                first_held_edge = -(-(r1-250000-origin)//500000) + 1
+                last_pre_edge = first_held_edge-1
+                first_back_edge = -(-(r2-250000-origin)//500000) + 1
+                expected_rows = [dict(status=3, epoch=0, first_ticks=origin+250000,
+                                      last_ticks=origin+250000+500000*(last_pre_edge-1),
+                                      confirm_ticks=r1, tail_known=0, e2e_valid=0),
+                                 dict(status=4, epoch=1,
+                                      first_ticks=origin+250000+500000*(first_back_edge-1),
+                                      last_ticks=origin+39999750000, tail_known=0, e2e_valid=0)]
+            require(len(by_scope[sid]) == len(expected_rows), 'reset_episode_count', scope=sid,
+                    actual=len(by_scope[sid]))
+            for i, (actual, expected) in enumerate(zip(by_scope[sid], expected_rows)):
+                for key, value in expected.items():
+                    require(actual.get(key) == str(value), 'reset_episode_contract', scope=sid,
+                            episode=i+1, field=key, expected=value, actual=actual.get(key))
+            if scope == 2 and len(by_scope[sid]) == 2:
+                # A member-held point reset never splits the group episode: the
+                # second group episode resumes after the group's own release.
+                require(by_scope[sid][1].get('first_ticks') == str(origin+12000750000),
+                        'group_release_boundary', scope=sid,
+                        actual=by_scope[sid][1].get('first_ticks'))
+        elif s.kind == 'overrun':
+            # Isolated scopes keep frozen internal evidence; no episode result
+            # or new credible conclusion is emitted after the budget breach.
+            require(not by_scope[sid], 'overrun_has_no_episode', scope=sid,
+                    actual=len(by_scope[sid]))
     last_sequence = {}
     for record in phases:
         sid = record.get('scope')
@@ -125,8 +188,11 @@ def verify(s, attempt):
         for sid in ('history.p0', 'history.group'):
             require(any(x.get('bytes_complete') == '0' and x.get('e2e_valid') == '0' for x in by_scope[sid]),
                     'old_episode_remains_incomplete', scope=sid)
-    from history_revised_analysis import audit_packets
-    differences.extend(audit_packets(s, lines))
+    if s.kind != 'overrun':
+        # The overrun profile isolates every scope before any episode settles;
+        # its report structure is asserted above instead of packet identities.
+        from history_revised_analysis import audit_packets
+        differences.extend(audit_packets(s, lines))
     storage_differences, storage_counts = verify_storage(s.oracle, attempt/'storage-runs.txt', expected_snapshots(s))
     differences.extend(storage_differences)
     require(storage_counts['snapshots'] >= 3, 'all_scope_storage_snapshots')
@@ -167,20 +233,35 @@ def verify_storage(oracle, path, expected=None):
                     _, _, tick, edge, left, left_cycle = values
                     if scope not in (0, 1, 2) or not 0 <= edge <= len(oracle.events):
                         raise ValueError('snapshot identity')
-                    publication = (tick-oracle.start)//(oracle.stride*1000000) if oracle.basis == 'ns' else max(0, edge-1)//oracle.stride
-                    reference = oracle.window(scope, publication) if publication else {'left': oracle.start, 'left_cycle': 0}
+                    entries = oracle._publications[scope]
+                    prior = [e for e in entries if (e[2] <= tick if oracle.basis == 'ns' else e[2] <= edge)]
+                    if prior:
+                        reference = oracle.window(scope, prior[-1][0])
+                    else:
+                        reference = {'left': oracle.start, 'left_cycle': 0}
                     if (left, left_cycle) != (reference['left'], reference['left_cycle']):
                         fail('snapshot_independent_left', scope=scope, snapshot=seq)
                     left, left_cycle = reference['left'], reference['left_cycle']
                     observed_snapshots[scope].append((seq, tick, edge))
+                    # History holds only records accounted since the segment's
+                    # own last clear; held-reset records never entered it.
+                    segment_origin = max([o for o, _, _ in oracle._segments(scope) if o <= tick]
+                                         or [oracle.start])
                     expected_events = []
                     for i, event in enumerate(oracle.events[:edge]):
                         inc = oracle.increments[scope][i]
+                        if event[0] < segment_origin:
+                            continue
+                        if not oracle.accounted[scope][i]:
+                            continue
                         if (event[0] < left if oracle.basis == 'ns' else i+1 < left_cycle):
                             continue
-                        if any(inc):
-                            expected_events.append((event[0], i+1, inc[0], inc[1], int(inc[2] == 0), int(inc[3] == 0), 0))
-                    clocks = [(oracle.ticks[i-1], i) for i in range(max(1, edge-oracle.width), edge+1)] if oracle.basis == 'cycle' else []
+                        if any(inc) or oracle.record_resets[scope][i]:
+                            expected_events.append((event[0], i+1, inc[0], inc[1], int(inc[2] == 0),
+                                                    int(inc[3] == 0), int(oracle.record_resets[scope][i] != 0)))
+                    clocks = [(oracle.ticks[i-1], i) for i in range(max(1, edge-oracle.width), edge+1)
+                              if oracle.accounted[scope][i-1] and oracle.ticks[i-1] >= segment_origin] \
+                        if oracle.basis == 'cycle' else []
                     current = dict(key=(scope, seq), expected=expected_events, clocks=clocks, events=[], actual_clocks=[])
                     counts['snapshots'] += 1
                 elif current is None or current['key'] != (scope, seq):
@@ -228,7 +309,7 @@ def verify_storage(oracle, path, expected=None):
 
 
 def expected_snapshots(scenario):
-    stride = 0 if scenario.kind == 'deep' else 512 if scenario.kind == 'expiry' else 64
+    stride = 0 if scenario.kind in ('deep', 'overrun') else 512 if scenario.kind == 'expiry' else 16384 if scenario.kind == 'reset' else 64
     edges = len(scenario.oracle.events)
     checkpoints = list(range(stride, edges+1, stride)) if stride else []
     planned = [(i+1, scenario.oracle.ticks[edge-1], edge) for i, edge in enumerate(checkpoints)]
