@@ -40,6 +40,9 @@ static unsigned long long settle_rounds, settle_audits, settle_edges,
    re-audit (its outcome can change once the shared generation advances). */
 static void mark_point_dirty(point_watch *watch)
 {
+    /* Reset observers can fire (and snapshot) before any point watcher of
+       that scope exists; a missing owner simply contributes no activity. */
+    if (!watch) return;
     if (!watch->dirty) {
         watch->dirty = 1;
         watch->next_dirty = dirty_point_watches;

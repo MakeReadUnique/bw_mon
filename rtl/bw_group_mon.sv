@@ -46,6 +46,10 @@ module bw_group_mon #(
   // scan is a durable-state predicate: it only needs to run when a member
   // actually published (notification.seq advanced) since the last scan.
   bw_u64_t unexpected_scan_notice=0;
+`ifdef BW_MON_TEST_SCHEDULING
+  // Posted (first-phase) test-gate release; see the audit's gate branch.
+  bit gate_release_posted=0;
+`endif
   bit reset_observer_ready=0;
   localparam bit external_reset_capture=0;
   function void apply_captured_reset(logic value,bw_u64_t ticks);
@@ -109,6 +113,17 @@ module bw_group_mon #(
          bw_test_consumer_gates[scope_id].resume_after_seq)begin
         note_settlement_activity(scope_id);return 1;
       end
+      // Two-phase release: dependencies are satisfied, but the held state
+      // must stay observable at the original tick before the resume fires.
+      // Post the release and re-audit; the next settlement round (still the
+      // same original tick) performs it, so external observers scheduled by
+      // the dependency completions run against the still-held gate first.
+      if(!gate_release_posted)begin
+        gate_release_posted=1;
+        note_settlement_activity(scope_id);
+        return 1;
+      end
+      gate_release_posted=0;
       bw_test_consumer_gates[scope_id].paused=0;
       void'(request_slot_settlement(scope_id));
       note_settlement_activity(scope_id);
@@ -121,15 +136,21 @@ module bw_group_mon #(
     if(collector_recovery_pending && collector_recovery_grant<=slot_settlement_generation)begin
       completion_stage_error("COLLECTOR_RECEIPT","posted recovery continuation did not run");return 0;
     end
-    if(collector_waiting && collector_ready_work())begin
-      if(!collector_recovery_pending)begin
-        collector_recovery_pending=1;notify_group(group_handle);
-        collector_recovery_grant=ledger.grant;
-      end
-      // The posted continuation's receipts re-mark this scope; self-mark so
-      // the next round also verifies the recovery receipt itself.
+    if(collector_waiting)begin
+      // A deliberately lost advisory wake (fault injection) leaves this
+      // collector unschedulable: while the wait persists, every audit of a
+      // fault-capable build re-arms the wake-loss recovery below. Production
+      // builds always notify and mark, so they skip the per-round self-mark.
+`ifdef BW_MON_TEST_FAULTS
       note_settlement_activity(scope_id);
-      return 1;
+`endif
+      if(collector_ready_work())begin
+        if(!collector_recovery_pending)begin
+          collector_recovery_pending=1;notify_group(group_handle);
+          collector_recovery_grant=ledger.grant;
+        end
+        return 1;
+      end
     end
     if(ledger.reset_expected!=ledger.reset_captured)begin
       completion_stage_error("RESET_CAPTURE","missing captured raw reset");return 0;
