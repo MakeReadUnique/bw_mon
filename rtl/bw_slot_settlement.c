@@ -304,6 +304,7 @@ void bw_native_note_generation(unsigned long long generation)
 /* Combined hot request path: report the requester's latest grant, mark its
    watcher dirty and register the end-of-slot callback in one crossing. The
    registration result is returned; the caller owns the failure diagnostic. */
+int bw_native_request_slot_settlement(void);
 int bw_native_settlement_activity_request(void *handle, unsigned long long grant)
 {
     point_watch *watch = (point_watch *)handle;
@@ -325,7 +326,6 @@ void bw_native_note_settlement_grant(void *handle, unsigned long long grant)
 
 static int callback_pending = 0;
 static svScope package_scope;
-int bw_native_request_slot_settlement(void);
 
 static PLI_INT32 report_settle_stats(p_cb_data callback)
 {
