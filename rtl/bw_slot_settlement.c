@@ -326,15 +326,6 @@ int bw_native_settlement_activity_request(void *handle, unsigned long long grant
     return bw_native_request_slot_settlement();
 }
 
-/* Latest grant issued to a watcher; while it exceeds the shared generation
-   the watcher's audit can only answer "grant pending". Grants are monotonic
-   per scope, so a stale report never lowers a live grant. */
-void bw_native_note_settlement_grant(void *handle, unsigned long long grant)
-{
-    point_watch *watch = (point_watch *)handle;
-    if (watch && grant > watch->pending_grant) watch->pending_grant = grant;
-}
-
 static int callback_pending = 0;
 static svScope package_scope;
 

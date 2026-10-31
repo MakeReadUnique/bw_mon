@@ -98,7 +98,8 @@ same-time shared arithmetic failure cancels workers without accepting records
 and leaves later user simulation runnable.
 
 Watcher lookup includes both scope kind and ID. Point and group namespaces stay
-independent even when their ID text is equal. Worker submodules use the same
+independent even when their ID text is equal. Separate point and group tables
+avoid nested lookups on receipt paths. Worker submodules use the same
 typed lookup for timer-only work while clocks are stopped. They cache the owner
 handle after registration, allowing subsequent requests to combine grant
 reporting, dirty marking and callback registration in one native call. Early

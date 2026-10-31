@@ -41,9 +41,8 @@
   function automatic bw_u64_t request_slot_settlement(string context_id);
     bw_u64_t grant;
     chandle watch;
-    if(clock_observer==null && settlement_watch_handles.exists(bw_scope_t'(scope_kind)) &&
-       settlement_watch_handles[bw_scope_t'(scope_kind)].exists(scope_id))
-      clock_observer=settlement_watch_handles[bw_scope_t'(scope_kind)][scope_id];
+    if(clock_observer==null)
+      clock_observer=settlement_watch_for_scope(bw_scope_t'(scope_kind),scope_id);
     watch=clock_observer;
     grant=bw_mon_pkg::request_slot_settlement(context_id,watch,bw_scope_t'(scope_kind));
     if(scope_kind==BW_POINT)point_work_requested(scope_id,grant,watch,my_point_ledger);
