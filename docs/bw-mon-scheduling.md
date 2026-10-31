@@ -91,6 +91,11 @@ receipts mark their owning watcher. An audit that still depends on a producer
 or a granted continuation keeps its watcher dirty. Native grant tracking defers
 dispatch until the shared generation reaches the grant; the audit still precedes
 the next generation advance. A callback never substitutes for a receipt.
+Shared or fatal failure cancels native grant deferral, allowing pending watchers
+to reach their existing failure guards even though the generation has stopped.
+The `settle_shared_pending` contract checks that a real edge followed by a
+same-time shared arithmetic failure cancels workers without accepting records
+and leaves later user simulation runnable.
 
 Watcher lookup includes both scope kind and ID. Point and group namespaces stay
 independent even when their ID text is equal. Worker submodules use the same

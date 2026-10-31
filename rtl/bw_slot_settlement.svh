@@ -10,6 +10,7 @@
   // funnels report such activity so the native audit round visits the scope.
   import "DPI-C" function void bw_native_mark_settlement_watch(input chandle handle);
   import "DPI-C" function void bw_native_note_generation(input longint unsigned generation);
+  import "DPI-C" function void bw_native_cancel_slot_settlement();
   import "DPI-C" function void bw_native_note_settlement_grant(input chandle handle,input longint unsigned grant);
   import "DPI-C" context function int bw_native_settlement_activity_request(input chandle handle,
     input longint unsigned grant);

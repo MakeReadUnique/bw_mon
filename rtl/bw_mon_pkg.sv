@@ -368,6 +368,7 @@ package bw_mon_pkg;
     if(!monitor_ready)begin core_error(code,id,detail);return;end
     if(monitoring_shared_disabled)return;
     monitoring_shared_disabled=1;monitoring_failure_count++;
+    bw_native_cancel_slot_settlement();
     foreach(registered_groups[g])begin
       cancel_group_subscriptions(registered_groups[g].id);
       registered_groups[g].failed=1;
@@ -380,6 +381,7 @@ package bw_mon_pkg;
 
   function automatic void fatal_core_error(string code,string scope_id,string detail);
     core_failure_seen=1;
+    bw_native_cancel_slot_settlement();
     if(!monitor_ready)
       $display("BW_STARTUP_FAILURE stage=%s scope=%s %s",startup_stage,scope_id,startup_status());
     $fatal(1,"BW_CORE_ERROR code=%s scope=%s time_ticks=%0d %s",code,scope_id,$time,detail);

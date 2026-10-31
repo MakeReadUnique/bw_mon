@@ -26,6 +26,7 @@ typedef struct point_watch {
 } point_watch;
 static point_watch *point_watches, *dirty_point_watches;
 static unsigned long long slot_generation = 0;
+static int settlement_cancelled = 0;
 /* Settlement observability: public end-of-run counters behind the
    BW_SETTLE_STATS marker. Creation totals survive the release callback so the
    marker stays truthful regardless of end-callback order. */
@@ -304,6 +305,13 @@ void bw_native_note_generation(unsigned long long generation)
     slot_generation = generation;
 }
 
+/* Shared/fatal failure freezes the generation. Outstanding grants must reach
+   the SV failure guard instead of waiting forever for that frozen counter. */
+void bw_native_cancel_slot_settlement(void)
+{
+    settlement_cancelled = 1;
+}
+
 /* Combined hot request path: report the requester's latest grant, mark its
    watcher dirty and register the end-of-slot callback in one crossing. The
    registration result is returned; the caller owns the failure diagnostic. */
@@ -371,7 +379,7 @@ static PLI_INT32 settle_slot(p_cb_data callback)
         next = point->next_dirty;
         point->next_dirty = NULL;
         point->dirty = 0;
-        if (point->pending_grant > slot_generation) {
+        if (!settlement_cancelled && point->pending_grant > slot_generation) {
             /* The SV audit would stop at its generation guard: keep the slot
                open for the granted continuations without paying a dispatch. */
             reaudit = 1;
@@ -395,8 +403,9 @@ static PLI_INT32 settle_slot(p_cb_data callback)
         s_vpi_time now;
         now.type = vpiSimTime;
         vpi_get_time(NULL, &now);
-        vpi_printf("BW_SETTLE_PROGRESS rounds=%llu audits=%llu deferred=%llu ticks=%u%09u\n",
-                   settle_rounds, settle_audits, settle_deferred, now.high, now.low);
+        vpi_printf("BW_SETTLE_PROGRESS rounds=%llu audits=%llu deferred=%llu ticks=%llu\n",
+                   settle_rounds, settle_audits, settle_deferred,
+                   (unsigned long long)(((uint64_t)now.high << 32) | now.low));
     }
     return 0;
 }

@@ -4124,6 +4124,14 @@
   "top": "tb_transport_growth"
  },
  {
+  "name": "settle_shared_pending",
+  "top": "tb_settle_shared_pending",
+  "expect_warning": "BW_CORE_WARNING code=INTEGER_OVERFLOW scope_kind=SHARED[^\\n]*time_ticks=1000001",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
   "name": "settle_typed_owners",
   "top": "tb_settle_typed_owners",
   "sources": [
