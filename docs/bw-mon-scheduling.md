@@ -104,6 +104,9 @@ typed lookup for timer-only work while clocks are stopped. They cache the owner
 handle after registration, allowing subsequent requests to combine grant
 reporting, dirty marking and callback registration in one native call. Early
 preparation requests retain the fallback until a handle exists. The
+point receipt path also reuses its registered ledger and watcher, including
+the sticky cancellation state; ID-only component calls retain their lookup.
+Owner-local audits use the same cached failure guard as their workers. The
 `settle_typed_owners` contract checks these completions through a native read-only
 observer at the original statistics deadline.
 

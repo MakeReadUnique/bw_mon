@@ -41,7 +41,7 @@ module bw_point_mon #(
   endfunction
   function int bw_native_point_audit();
     bw_point_batch batch;
-    if(!monitor_ready || scope_failed(BW_POINT,scope_id))return 0;
+    if(!monitor_ready || runtime_failed())return 0;
     if(my_point_ledger==null)my_point_ledger=point_batches[scope_id];
     batch=my_point_ledger;
     // A posted grant is a real continuation dependency. Auditing it before
@@ -52,7 +52,7 @@ module bw_point_mon #(
        hints.backpressure_hint.completion_dependency()>slot_settlement_generation ||
        hints.credit_shortage_hint.completion_dependency()>slot_settlement_generation)return 1;
     close_point_batch(scope_id,batch);
-    if(scope_failed(BW_POINT,scope_id))return 0;
+    if(runtime_failed())return 0;
     if(recorder.requested_actions!=recorder.consumed_actions ||
        recorder.published_control_seq!=recorder.control_seq || captured_resets.size()!=0 ||
        core.requested_actions!=core.consumed_actions ||
@@ -191,6 +191,7 @@ module bw_point_mon #(
       register_end_role(scope_key(BW_POINT,scope_id),"hint");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent raw-clock observer");
+    my_point_ledger.settlement_watch=clock_observer;
     register_settlement_watch(BW_POINT,scope_id,clock_observer);
     declare_scope_preparation(transport_source);
     // Once the t=0 collection slot ends, a missing coordinator cannot arrive
@@ -244,19 +245,19 @@ module bw_point_mon #(
       note_role_receipt(scope_key(BW_POINT,scope_id),"owner",scope_disabled(BW_POINT,scope_id));
   end
   always @(record_toggle) begin : publish_record
-    if (monitor_ready && raw_record.record_seq!=0 && !scope_failed(BW_POINT,scope_id))begin
+    if (monitor_ready && raw_record.record_seq!=0 && !runtime_failed())begin
 `ifdef BW_MON_TEST_FAULTS
       if(take_point_fault(scope_id,"publication"))disable publish_record;
 `endif
       publish_frame(transport_source,raw_record);
-      if(!scope_failed(BW_POINT,scope_id))begin
+      if(!runtime_failed())begin
         recorder.note_record_published(raw_record.record_seq);
-        point_publication_receipt(scope_id,raw_record.record_seq);
+        point_publication_receipt(scope_id,raw_record.record_seq,my_point_ledger);
       end
     end
   end
   always @(control_toggle)
-    if (configuration_sealed && raw_control.control_seq!=0 && !scope_failed(BW_POINT,scope_id))begin
+    if (configuration_sealed && raw_control.control_seq!=0 && !runtime_failed())begin
       publish_control(transport_source,raw_control);
       if(!core_failure_seen)recorder.note_control_published(raw_control.control_seq);
     end

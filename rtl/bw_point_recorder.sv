@@ -136,7 +136,7 @@ module bw_point_recorder #(
       check_storage_growth(pending_samples.size(),scope_id,"recorder.samples",sample.timestamp_ticks,sample.edge_index,sample.record_seq);
       if(!runtime_failed())begin
         pending_samples.push_back(sample);
-        point_capture_receipt(scope_id,sample.record_seq);
+        point_capture_receipt(scope_id,sample.record_seq,my_point_ledger);
         requested_actions=checked_add(requested_actions,1,scope_id);
         if(runtime_failed())disable capture_edge;
         settlement_required=request_slot_settlement(scope_id);
@@ -171,7 +171,7 @@ module bw_point_recorder #(
         continue;
       end
       sample=pending_samples.pop_front();
-      point_inflight_receipt(scope_id,sample.record_seq);
+      point_inflight_receipt(scope_id,sample.record_seq,my_point_ledger);
 `ifdef BW_MON_TEST_FAULTS
       if(take_point_fault(scope_id,"held"))begin
         // A held tuple remains an obligation even though its queue is empty.

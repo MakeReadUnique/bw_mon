@@ -2,6 +2,9 @@
   // Only the native raw-clock observer creates expected edges. The ledger
   // class lives in the registry types so sources hold their own handle.
   bw_point_batch point_batches[string];
+  function automatic bit point_completion_failed(bw_point_batch batch);
+    return core_failure_seen || monitoring_shared_disabled || batch.cancelled;
+  endfunction
   function automatic void register_point_completion(string id);
     if(!point_batches.exists(id))begin
       point_batches[id]=new;
@@ -24,7 +27,7 @@
       if(!point_batches.exists(id))return;
       batch=point_batches[id];
     end
-    if(scope_failed(BW_POINT,id))return;
+    if(point_completion_failed(batch))return;
     if(batch.input_generation==BW_U64_MAX)begin
       runtime_scope_error(BW_POINT,id,"INTEGER_OVERFLOW","input generation exhausted");return;
     end
@@ -36,8 +39,10 @@
   function automatic void expect_point_edge(string id,bw_u64_t ticks,chandle watch=null,
                                             bw_point_batch ledger=null);
     bw_point_batch batch;
-    if(!monitor_ready || ticks<=measurement_start_ticks || scope_failed(BW_POINT,id))return;
+    if(!monitor_ready || ticks<=measurement_start_ticks)return;
+    if(ledger==null && scope_failed(BW_POINT,id))return;
     batch=ledger!=null ? ledger : point_batches[id];
+    if(point_completion_failed(batch))return;
     if(batch.expected!=0 && ticks<=batch.ticks)begin
       runtime_scope_error(BW_POINT,id,"EDGE_TIME","actual sampling edges must have distinct increasing timestamps");return;
     end
@@ -47,44 +52,62 @@
     batch.expected++;batch.input_generation++;batch.ticks=ticks;
     batch.grant=request_slot_settlement(id,watch);
   endfunction
-  function automatic void point_capture_receipt(string id,bw_u64_t seq);
-    if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
-    if(seq!=point_batches[id].captured+1)begin
+  // Real workers pass their owner-held ledger. Component callers retain the
+  // ID lookup; a missing cached watch retains the typed activity fallback.
+  function automatic void point_capture_receipt(string id,bw_u64_t seq,bw_point_batch ledger=null);
+    bw_point_batch batch;
+    if(ledger!=null)batch=ledger;
+    else begin if(!point_batches.exists(id))return;batch=point_batches[id];end
+    if(point_completion_failed(batch))return;
+    if(seq!=batch.captured+1)begin
       runtime_scope_error(BW_POINT,id,"CAPTURE_SEQUENCE","duplicate or out-of-order capture receipt");return;
     end
-    point_batches[id].captured=seq;
-    note_settlement_activity(BW_POINT,id);
+    batch.captured=seq;
+    if(batch.settlement_watch!=null)bw_native_mark_settlement_watch(batch.settlement_watch);
+    else note_settlement_activity(BW_POINT,id);
   endfunction
-  function automatic void point_inflight_receipt(string id,bw_u64_t seq);
-    if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
-    point_batches[id].inflight=seq;
-    note_settlement_activity(BW_POINT,id);
+  function automatic void point_inflight_receipt(string id,bw_u64_t seq,bw_point_batch ledger=null);
+    bw_point_batch batch;
+    if(ledger!=null)batch=ledger;
+    else begin if(!point_batches.exists(id))return;batch=point_batches[id];end
+    if(point_completion_failed(batch))return;
+    batch.inflight=seq;
+    if(batch.settlement_watch!=null)bw_native_mark_settlement_watch(batch.settlement_watch);
+    else note_settlement_activity(BW_POINT,id);
   endfunction
-  function automatic void point_publication_receipt(string id,bw_u64_t seq);
-    if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
-    point_batches[id].published=seq;
-    note_settlement_activity(BW_POINT,id);
+  function automatic void point_publication_receipt(string id,bw_u64_t seq,bw_point_batch ledger=null);
+    bw_point_batch batch;
+    if(ledger!=null)batch=ledger;
+    else begin if(!point_batches.exists(id))return;batch=point_batches[id];end
+    if(point_completion_failed(batch))return;
+    batch.published=seq;
+    if(batch.settlement_watch!=null)bw_native_mark_settlement_watch(batch.settlement_watch);
+    else note_settlement_activity(BW_POINT,id);
   endfunction
-  function automatic void point_core_receipt(string id,bw_u64_t seq);
-    if(!point_batches.exists(id) || scope_failed(BW_POINT,id))return;
-    point_batches[id].accepted=seq;
-    note_settlement_activity(BW_POINT,id);
+  function automatic void point_core_receipt(string id,bw_u64_t seq,bw_point_batch ledger=null);
+    bw_point_batch batch;
+    if(ledger!=null)batch=ledger;
+    else begin if(!point_batches.exists(id))return;batch=point_batches[id];end
+    if(point_completion_failed(batch))return;
+    batch.accepted=seq;
+    if(batch.settlement_watch!=null)bw_native_mark_settlement_watch(batch.settlement_watch);
+    else note_settlement_activity(BW_POINT,id);
     // A wakeup is expendable. The next coordinator audit reads this durable
     // receipt even when this advisory request is deliberately lost.
 `ifdef BW_MON_TEST_FAULTS
     if(take_point_fault(id,"notice"))return;
 `endif
-    void'(request_slot_settlement(id));
+    void'(request_slot_settlement(id,batch.settlement_watch));
   endfunction
   function automatic void close_point_batch(string id,bw_point_batch ledger=null);
     bw_point_batch batch;
     string stage;
-    if(scope_failed(BW_POINT,id))return;
     if(ledger!=null)batch=ledger;
     else begin
       if(!point_batches.exists(id))return;
       batch=point_batches[id];
     end
+    if(point_completion_failed(batch))return;
     stage="";
     if(batch.captured!=batch.expected)stage="CAPTURE";
     else if(batch.inflight!=batch.expected)stage="INFLIGHT";

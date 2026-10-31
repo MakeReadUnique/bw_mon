@@ -82,7 +82,7 @@ module bw_group_mon #(
   function int bw_native_point_audit();
     bw_record_t unexpected;
     bw_group_batch ledger;
-    if(!monitor_ready || scope_failed(BW_GROUP,scope_id))return 0;
+    if(!monitor_ready || runtime_failed())return 0;
     if(my_group_ledger==null)my_group_ledger=group_batches[scope_id];
     ledger=my_group_ledger;
     if(ledger.grant>slot_settlement_generation ||
@@ -174,7 +174,7 @@ module bw_group_mon #(
       completion_stage_error("CONTROL_ACK","input control ACK missing");return 0;
     end
     close_group_batch(scope_id,ledger);
-    if(scope_failed(BW_GROUP,scope_id))return 0;
+    if(runtime_failed())return 0;
     if(expected_edges.size()==0 && registered_groups[group_handle].notification.seq!=unexpected_scan_notice)begin
       for(int m=0;m<direct_member_count;m++)begin
         if(peek_member_frame(group_handle,m,unexpected))begin
@@ -188,7 +188,7 @@ module bw_group_mon #(
        core.timer_requests!=core.timer_receipts || !group_preparation_ready(group_handle) ||
        controls_held!=controls_published || controls_held!=controls_accepted || controls_held!=controls_acked)
       completion_stage_error("POSTED_ACTION","missing control/core/input receipt");
-    if(!scope_failed(BW_GROUP,scope_id) && WINDOW_BASIS==BW_NS && core.reset_applied && core.current_reset_n!==1'b0 &&
+    if(!runtime_failed() && WINDOW_BASIS==BW_NS && core.reset_applied && core.current_reset_n!==1'b0 &&
        ((core.next_update_ticks<=$time && core.next_update_ticks<=progress_watermark_ticks) ||
         (core.scheduled_episode_deadline_valid && core.scheduled_episode_deadline<=$time && core.scheduled_episode_deadline<=progress_watermark_ticks)))
       completion_stage_error("DUE_TIMER","no due timer receipt or continuation");
@@ -299,7 +299,7 @@ module bw_group_mon #(
 
   always @(posedge clk) begin : capture_expected_edge
     expected_edge_t expected;
-    if (monitor_ready && $time>measurement_start_ticks && !scope_failed(BW_GROUP,scope_id)) begin
+    if (monitor_ready && $time>measurement_start_ticks && !runtime_failed()) begin
 `ifdef BW_MON_TEST_FAULTS
       if(take_group_fault(scope_id,"capture"))disable capture_expected_edge;
 `endif
@@ -344,7 +344,7 @@ module bw_group_mon #(
 `endif
     wait(accepted_control_count>=receipt || runtime_cancelled ||
           core_failure_seen || monitoring_shared_disabled);
-    if(scope_failed(BW_GROUP,scope_id))return;
+    if(runtime_failed())return;
     controls_accepted=controls_held;
 `ifdef BW_MON_TEST_FAULTS
     if(take_group_fault(scope_id,"control_ack"))begin collector_stalled=1;return;end
@@ -393,7 +393,7 @@ module bw_group_mon #(
 `endif
     wait(accepted_record_seq>=frame.record_seq || runtime_cancelled ||
           core_failure_seen || monitoring_shared_disabled);
-    if(scope_failed(BW_GROUP,scope_id))return;
+    if(runtime_failed())return;
     group_core_receipt(scope_id,frame.record_seq);
 `ifdef BW_MON_TEST_FAULTS
     if(take_group_fault(scope_id,"ack"))begin collector_stalled=1;return;end
@@ -423,7 +423,7 @@ module bw_group_mon #(
 `endif
     notice=group_notification(group_handle);
     forever begin
-      if(scope_failed(BW_GROUP,scope_id))return;
+      if(runtime_failed())return;
 `ifdef BW_MON_TEST_SCHEDULING
       wait(!test_gate.paused || runtime_cancelled || core_failure_seen || monitoring_shared_disabled);
       if(runtime_failed())return;

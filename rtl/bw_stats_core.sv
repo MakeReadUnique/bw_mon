@@ -1237,7 +1237,7 @@ module bw_stats_core #(
       if (current_reset_n === 1'b0 || incoming.timestamp_ticks < stats_start_ticks ||
           (assertion_observed && incoming.timestamp_ticks==last_assert_ticks)) begin
         accepted_record_seq=incoming.record_seq;
-        if(scope_kind==BW_POINT)point_core_receipt(scope_id,incoming.record_seq);
+        if(scope_kind==BW_POINT)point_core_receipt(scope_id,incoming.record_seq,my_point_ledger);
         return;
       end
       capture_episode_edge(incoming);
@@ -1302,7 +1302,7 @@ module bw_stats_core #(
       if(runtime_failed())return;
     end
     accepted_record_seq=incoming.record_seq;
-        if(scope_kind==BW_POINT)point_core_receipt(scope_id,incoming.record_seq);
+        if(scope_kind==BW_POINT)point_core_receipt(scope_id,incoming.record_seq,my_point_ledger);
   endtask
 
   always @(record_toggle) begin : receive_record

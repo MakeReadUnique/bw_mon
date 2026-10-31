@@ -21,6 +21,7 @@
     bw_u64_t expected=0,captured=0,inflight=0,published=0,accepted=0;
     bw_u64_t ticks=0,input_generation=0,closed_generation=0,grant=0;
     bit cancelled=0;
+    chandle settlement_watch=null;
   endclass
   class bw_group_batch;
     bw_u64_t expected=0,captured=0,held=0,published=0,accepted=0,acked=0;
