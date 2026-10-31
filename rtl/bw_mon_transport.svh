@@ -88,14 +88,19 @@
     return 1;
   endfunction
 
-  function automatic int member_source(logic [63:0] group_handle,logic [63:0] member_index);
-    int group_index;group_index=checked_group_index(group_handle,"member_source");
+  // Internal callers have already validated the group handle. Retain every
+  // member-index check without repeating the group lookup on each peek/ACK.
+  function automatic int member_source_at(int group_index,logic [63:0] member_index);
     if(core_failure_seen || monitoring_shared_disabled)return 0;
     if($isunknown(member_index))begin runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"INTEGER_UNKNOWN",$sformatf("member_index=%h",member_index));return 0;end
     if(member_index>=registered_groups[group_index].members.size())begin
       runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"MEMBER_REFERENCE",$sformatf("member_index=%0d",member_index));return 0;
     end
     return registered_groups[group_index].members[int'(member_index)];
+  endfunction
+  function automatic int member_source(logic [63:0] group_handle,logic [63:0] member_index);
+    int group_index;group_index=checked_group_index(group_handle,"member_source");
+    return member_source_at(group_index,member_index);
   endfunction
 
   function automatic void set_source_progress(logic [63:0] source_handle,logic [63:0] watermark);
@@ -233,23 +238,23 @@
     // The owner's failed bit mirrors its keyed failure entry (direct and
     // propagated), so the hot consumer scan needs no keyed lookups.
     if(core_failure_seen || monitoring_shared_disabled || owner.failed)return 0;
-    source_index=member_source(group_handle,member_index);
+    source_index=member_source_at(group_index,member_index);
     if(monitoring_shared_disabled || owner.failed)return 0;
     source=registered_sources[source_index];
-    if(!source.active_consumers[group_handle])return 0;
-    if (!source.frame_acks.exists(group_handle))
+    if(!source.active_consumers[group_index])return 0;
+    if (!source.frame_acks.exists(group_index))
       runtime_scope_error(BW_GROUP,owner.id,"CONSUMER_REFERENCE",{"not a consumer of ",source.id});
-    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
-    if (source.frame_acks[group_handle]==source.last_frame_seq) return 0;
-    wanted=consumer_next(int'(group_handle),source.frame_acks[group_handle]);
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_index])return 0;
+    if (source.frame_acks[group_index]==source.last_frame_seq) return 0;
+    wanted=consumer_next(group_index,source.frame_acks[group_index]);
     if(monitoring_shared_disabled || owner.failed)return 0;
     if (wanted<source.frame_base_seq || source.frames.size()==0)
       source_runtime_error(source,"RECORD_RELEASE",source.id,"an unread direct-consumer frame was released");
-    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_index])return 0;
     index=wanted-source.frame_base_seq;
     if (index>=bw_u64_t'(source.frames.size()))
       source_runtime_error(source,"RECORD_RELEASE",source.id,"published frame is missing from durable storage");
-    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_index])return 0;
     frame=source.frames[int'(index)];return 1;
   endfunction
 
@@ -261,23 +266,23 @@
     control='0;group_index=checked_group_index(group_handle,"peek control");
     owner=registered_groups[group_index];
     if(core_failure_seen || monitoring_shared_disabled || owner.failed)return 0;
-    source_index=member_source(group_handle,member_index);
+    source_index=member_source_at(group_index,member_index);
     if(monitoring_shared_disabled || owner.failed)return 0;
     source=registered_sources[source_index];
-    if(!source.active_consumers[group_handle])return 0;
-    if (!source.control_acks.exists(group_handle))
+    if(!source.active_consumers[group_index])return 0;
+    if (!source.control_acks.exists(group_index))
       runtime_scope_error(BW_GROUP,owner.id,"CONSUMER_REFERENCE",{"not a control consumer of ",source.id});
-    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
-    if (source.control_acks[group_handle]==source.last_control_seq) return 0;
-    wanted=consumer_next(int'(group_handle),source.control_acks[group_handle]);
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_index])return 0;
+    if (source.control_acks[group_index]==source.last_control_seq) return 0;
+    wanted=consumer_next(group_index,source.control_acks[group_index]);
     if(monitoring_shared_disabled || owner.failed)return 0;
     if (wanted<source.control_base_seq || source.controls.size()==0)
       source_runtime_error(source,"CONTROL_RELEASE",source.id,"an unread direct-consumer control was released");
-    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_index])return 0;
     index=wanted-source.control_base_seq;
     if (index>=bw_u64_t'(source.controls.size()))
       source_runtime_error(source,"CONTROL_RELEASE",source.id,"published control is missing from durable storage");
-    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_handle])return 0;
+    if(monitoring_shared_disabled || owner.failed || !source.active_consumers[group_index])return 0;
     control=source.controls[int'(index)];return 1;
   endfunction
 
@@ -289,18 +294,18 @@
     group_index=checked_group_index(group_handle,"acknowledge member");
     if(core_failure_seen || monitoring_shared_disabled)return;
     if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
-    source_index=member_source(group_handle,member_index);
+    source_index=member_source_at(group_index,member_index);
     if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
     source=registered_sources[source_index];
-    if(core_failure_seen || monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return;
-    if($isunknown(consumed_seq))begin runtime_scope_error(BW_GROUP,registered_groups[group_handle].id,"INTEGER_UNKNOWN",$sformatf("frame_ack=%h member=%0d",consumed_seq,member_index));
+    if(core_failure_seen || monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_index].id) || !source.active_consumers[group_index])return;
+    if($isunknown(consumed_seq))begin runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"INTEGER_UNKNOWN",$sformatf("frame_ack=%h member=%0d",consumed_seq,member_index));
     return;end
-    if (!peek_member_frame(group_handle,member_index,frame) || frame.record_seq!=consumed_seq)
-      runtime_scope_error(BW_GROUP,registered_groups[group_handle].id,"ACK_SEQUENCE",
-        $sformatf("source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.frame_acks[group_handle]));
-    if(scope_failed(BW_GROUP,registered_groups[group_handle].id))return;
-    source.frame_acks[group_handle]=consumed_seq;release_source_prefix(source);
-    notify_group(group_handle);
+    if (!peek_member_frame(group_index,member_index,frame) || frame.record_seq!=consumed_seq)
+      runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"ACK_SEQUENCE",
+        $sformatf("source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.frame_acks[group_index]));
+    if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
+    source.frame_acks[group_index]=consumed_seq;release_source_prefix(source);
+    notify_group(group_index);
   endfunction
 
   function automatic void acknowledge_member_control(logic [63:0] group_handle,logic [63:0] member_index,logic [63:0] consumed_seq);
@@ -311,25 +316,27 @@
     group_index=checked_group_index(group_handle,"acknowledge member");
     if(core_failure_seen || monitoring_shared_disabled)return;
     if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
-    source_index=member_source(group_handle,member_index);
+    source_index=member_source_at(group_index,member_index);
     if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
     source=registered_sources[source_index];
-    if(core_failure_seen || monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_handle].id) || !source.active_consumers[group_handle])return;
-    if($isunknown(consumed_seq))begin runtime_scope_error(BW_GROUP,registered_groups[group_handle].id,"INTEGER_UNKNOWN",$sformatf("control_ack=%h member=%0d",consumed_seq,member_index));
+    if(core_failure_seen || monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_index].id) || !source.active_consumers[group_index])return;
+    if($isunknown(consumed_seq))begin runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"INTEGER_UNKNOWN",$sformatf("control_ack=%h member=%0d",consumed_seq,member_index));
     return;end
-    if (!peek_member_control(group_handle,member_index,control) || control.transport_seq!=consumed_seq)
-      runtime_scope_error(BW_GROUP,registered_groups[group_handle].id,"ACK_SEQUENCE",
-        $sformatf("control source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.control_acks[group_handle]));
-    if(scope_failed(BW_GROUP,registered_groups[group_handle].id))return;
-    source.control_acks[group_handle]=consumed_seq;release_source_prefix(source);
-    notify_group(group_handle);
+    if (!peek_member_control(group_index,member_index,control) || control.transport_seq!=consumed_seq)
+      runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"ACK_SEQUENCE",
+        $sformatf("control source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.control_acks[group_index]));
+    if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
+    source.control_acks[group_index]=consumed_seq;release_source_prefix(source);
+    notify_group(group_index);
   endfunction
 
   function automatic bw_u64_t group_input_watermark(int group_handle);
     bw_u64_t watermark;
     bw_control_frame_t control;
+    int members;
     watermark=direct_source_watermark(group_handle);
-    for (int m=0;m<group_member_count(group_handle);m++)
+    members=group_member_count(group_handle);
+    for (int m=0;m<members;m++)
       if (peek_member_control(group_handle,m,control) && control.value.timestamp_ticks<watermark)
         watermark=control.value.timestamp_ticks;
     return watermark;
@@ -338,8 +345,10 @@
   function automatic bit group_frame_inputs_ready(int group_handle,bw_u64_t edge_index,bw_u64_t at_ticks);
     bw_record_t frame;
     bw_control_frame_t control;
+    int members;
     if (direct_source_watermark(group_handle)<at_ticks) return 0;
-    for (int m=0;m<group_member_count(group_handle);m++) begin
+    members=group_member_count(group_handle);
+    for (int m=0;m<members;m++) begin
       if (peek_member_control(group_handle,m,control) && control.value.timestamp_ticks<=at_ticks) return 0;
       if (!peek_member_frame(group_handle,m,frame)) return 0;
       if (frame.edge_index!=edge_index || frame.timestamp_ticks!=at_ticks) return 0;
@@ -351,10 +360,11 @@
     string detail;
     bw_record_t frame;
     bw_control_frame_t control;
-    int source;
+    int source,members;
     detail=$sformatf("group=%s expected_edge=%0d expected_ticks=%0d ",
       registered_groups[group_handle].id,edge_index,at_ticks);
-    for (int m=0;m<group_member_count(group_handle);m++) begin
+    members=group_member_count(group_handle);
+    for (int m=0;m<members;m++) begin
       source=member_source(group_handle,m);
       if (registered_sources[source].progress_watermark_ticks<at_ticks)
         detail={detail,$sformatf(" pending_source=%s watermark=%0d",source_name(source),registered_sources[source].progress_watermark_ticks)};

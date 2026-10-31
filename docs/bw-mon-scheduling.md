@@ -109,6 +109,9 @@ the sticky cancellation state; ID-only component calls retain their lookup.
 Owner-local audits use the same cached failure guard as their workers. The
 `settle_typed_owners` contract checks these completions through a native read-only
 observer at the original statistics deadline.
+Transport entries validate the group handle, then reuse its integer index for
+member and cursor lookups; member-index and receipt checks remain at the entry.
+Each input scan reads its frozen direct-member count once before iterating.
 
 `BW_SETTLE_STATS` reports cumulative callback rounds, dispatched audits, created
 watchers, raw clock changes, dirty audits and deferred grant checks at simulation
