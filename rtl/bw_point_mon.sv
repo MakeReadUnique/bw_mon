@@ -35,21 +35,23 @@ module bw_point_mon #(
   string scope_id, monitor_path;
   bw_scope_t scope_kind = BW_POINT;
   `include "bw_scope_runtime.svh"
-  chandle clock_observer=null;
   import "DPI-C" context function chandle bw_native_watch_point_clock(input string scope_path);
   function void bw_native_point_edge();
-    expect_point_edge(scope_id,$time);
+    expect_point_edge(scope_id,$time,clock_observer,my_point_ledger);
   endfunction
   function int bw_native_point_audit();
+    bw_point_batch batch;
     if(!monitor_ready || scope_failed(BW_POINT,scope_id))return 0;
+    if(my_point_ledger==null)my_point_ledger=point_batches[scope_id];
+    batch=my_point_ledger;
     // A posted grant is a real continuation dependency. Auditing it before
     // its program has run would mistake runnable work for a missing receipt.
-    if(point_batches[scope_id].grant>slot_settlement_generation ||
+    if(batch.grant>slot_settlement_generation ||
        recorder.settlement_required>slot_settlement_generation ||
        core.settlement_required>slot_settlement_generation ||
        hints.backpressure_hint.completion_dependency()>slot_settlement_generation ||
        hints.credit_shortage_hint.completion_dependency()>slot_settlement_generation)return 1;
-    close_point_batch(scope_id);
+    close_point_batch(scope_id,batch);
     if(scope_failed(BW_POINT,scope_id))return 0;
     if(recorder.requested_actions!=recorder.consumed_actions ||
        recorder.published_control_seq!=recorder.control_seq || captured_resets.size()!=0 ||
@@ -178,6 +180,7 @@ module bw_point_mon #(
                                  WINDOW_WIDTH,effective_stride);
     transport_source=point_source_handle(source_handle);
     register_point_completion(scope_id);
+    my_point_ledger=point_batches[scope_id];
     register_end_role(scope_key(BW_POINT,scope_id),"owner");
     register_end_role(scope_key(BW_POINT,scope_id),"core");
     // Only really generated duration hints own an end responsibility; an
@@ -188,6 +191,7 @@ module bw_point_mon #(
       register_end_role(scope_key(BW_POINT,scope_id),"hint");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent raw-clock observer");
+    register_settlement_watch(BW_POINT,scope_id,clock_observer);
     declare_scope_preparation(transport_source);
     // Once the t=0 collection slot ends, a missing coordinator cannot arrive
     // legally. This check does not depend on clocks, traffic or reset release.

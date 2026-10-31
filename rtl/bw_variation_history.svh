@@ -19,7 +19,7 @@
         if(runtime_failed())return;
         if(run.count==1 || delta_ticks==run.step_ticks)begin
           if(run.count==1)run.step_ticks=delta_ticks;
-          run.count=checked_add(run.count,1,{scope_id," pending publication count"});
+          run.count=checked_add_tag(run.count,1,"pending publication count");
           if(runtime_failed())return;
           run.last_ticks=sample.ticks;buffer[$]=run;return;
         end

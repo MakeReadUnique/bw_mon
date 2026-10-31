@@ -42,6 +42,14 @@ module bw_group_mon #(
   bw_u64_t collector_recovery_grant=0,collector_recovery_receipts=0;
   bw_u64_t controls_held=0,controls_published=0,controls_accepted=0,controls_acked=0;
   bw_u64_t expected_notice=0,expected_edge_index=0,last_expected_ticks=0;
+  // Notification sequence already covered by an unexpected-frame scan. The
+  // scan is a durable-state predicate: it only needs to run when a member
+  // actually published (notification.seq advanced) since the last scan.
+  bw_u64_t unexpected_scan_notice=0;
+`ifdef BW_MON_TEST_SCHEDULING
+  // Posted (first-phase) test-gate release; see the audit's gate branch.
+  bit gate_release_posted=0;
+`endif
   bit reset_observer_ready=0;
   localparam bit external_reset_capture=0;
   function void apply_captured_reset(logic value,bw_u64_t ticks);
@@ -52,9 +60,8 @@ module bw_group_mon #(
   endfunction
   `include "bw_reset_capture.svh"
 
-  chandle clock_observer=null;
   import "DPI-C" context function chandle bw_native_watch_point_clock(input string scope_path);
-  function void bw_native_point_edge();expect_group_edge(scope_id,$time);endfunction
+  function void bw_native_point_edge();expect_group_edge(scope_id,$time,clock_observer,my_group_ledger);endfunction
   function automatic bit collector_ready_work();
     bw_control_frame_t candidate,control;
     int selected;
@@ -70,16 +77,23 @@ module bw_group_mon #(
     return group_frame_inputs_ready(group_handle,expected_edges[0].edge_index,expected_edges[0].timestamp_ticks);
   endfunction
   function automatic void completion_stage_error(string stage,string detail);
-    runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=%s original_ticks=%0d expected_edge=%0d control_held=%0d control_published=%0d control_accepted=%0d control_acked=%0d reset_expected=%0d reset_captured=%0d reset_requested=%0d reset_received=%0d timer_requested=%0d timer_received=%0d recovery_grant=%0d recovery_received=%0d %s",stage,$time,group_batches[scope_id].expected,controls_held,controls_published,controls_accepted,controls_acked,group_batches[scope_id].reset_expected,group_batches[scope_id].reset_captured,core.reset_requests,core.reset_receipts,core.timer_requests,core.timer_receipts,collector_recovery_grant,collector_recovery_receipts,detail));
+    runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=%s original_ticks=%0d expected_edge=%0d control_held=%0d control_published=%0d control_accepted=%0d control_acked=%0d reset_expected=%0d reset_captured=%0d reset_requested=%0d reset_received=%0d timer_requested=%0d timer_received=%0d recovery_grant=%0d recovery_received=%0d %s",stage,$time,my_group_ledger.expected,controls_held,controls_published,controls_accepted,controls_acked,my_group_ledger.reset_expected,my_group_ledger.reset_captured,core.reset_requests,core.reset_receipts,core.timer_requests,core.timer_receipts,collector_recovery_grant,collector_recovery_receipts,detail));
   endfunction
   function int bw_native_point_audit();
     bw_record_t unexpected;
+    bw_group_batch ledger;
     if(!monitor_ready || scope_failed(BW_GROUP,scope_id))return 0;
-    if(group_batches[scope_id].grant>slot_settlement_generation ||
+    if(my_group_ledger==null)my_group_ledger=group_batches[scope_id];
+    ledger=my_group_ledger;
+    if(ledger.grant>slot_settlement_generation ||
        core.settlement_required>slot_settlement_generation)return 1;
     // A parent depends on each actual producer's durable certificate. This
     // frozen DAG dependency is independent of native watcher callback order.
-    if(group_producers_pending(group_handle))return 1;
+    // The child's own close leaves no mark here, so this audit asks for its
+    // own re-audit while any producer is still settling.
+    if(group_producers_pending(group_handle))begin
+      note_settlement_activity(BW_GROUP,scope_id);return 1;
+    end
 `ifdef BW_MON_TEST_SCHEDULING
     if(bw_test_consumer_gates.exists(scope_id) && bw_test_consumer_gates[scope_id].paused &&
        (bw_test_consumer_gates[scope_id].resume_after_group!="" || bw_test_consumer_gates[scope_id].resume_after_groups.size()!=0))begin
@@ -88,15 +102,31 @@ module bw_group_mon #(
           completion_stage_error("CONTINUATION","unknown dependency");return 0;
         end
         if(!scope_failed(BW_GROUP,bw_test_consumer_gates[scope_id].resume_after_groups[d]) && group_batches[bw_test_consumer_gates[scope_id].resume_after_groups[d]].acked<
-           bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
+           bw_test_consumer_gates[scope_id].resume_after_seq)begin
+          note_settlement_activity(BW_GROUP,scope_id);return 1;
+        end
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !group_batches.exists(bw_test_consumer_gates[scope_id].resume_after_group))begin
         completion_stage_error("CONTINUATION","unknown dependency");return 0;
       end
       if(bw_test_consumer_gates[scope_id].resume_after_group!="" && !scope_failed(BW_GROUP,bw_test_consumer_gates[scope_id].resume_after_group) && group_batches[bw_test_consumer_gates[scope_id].resume_after_group].acked<
-         bw_test_consumer_gates[scope_id].resume_after_seq)return 1;
+         bw_test_consumer_gates[scope_id].resume_after_seq)begin
+        note_settlement_activity(BW_GROUP,scope_id);return 1;
+      end
+      // Two-phase release: dependencies are satisfied, but the held state
+      // must stay observable at the original tick before the resume fires.
+      // Post the release and re-audit; the next settlement round (still the
+      // same original tick) performs it, so external observers scheduled by
+      // the dependency completions run against the still-held gate first.
+      if(!gate_release_posted)begin
+        gate_release_posted=1;
+        note_settlement_activity(BW_GROUP,scope_id);
+        return 1;
+      end
+      gate_release_posted=0;
       bw_test_consumer_gates[scope_id].paused=0;
       void'(request_slot_settlement(scope_id));
+      note_settlement_activity(BW_GROUP,scope_id);
       return 1;
     end
 `endif
@@ -106,17 +136,26 @@ module bw_group_mon #(
     if(collector_recovery_pending && collector_recovery_grant<=slot_settlement_generation)begin
       completion_stage_error("COLLECTOR_RECEIPT","posted recovery continuation did not run");return 0;
     end
-    if(collector_waiting && collector_ready_work())begin
-      if(!collector_recovery_pending)begin
-        collector_recovery_pending=1;notify_group(group_handle);
-        collector_recovery_grant=group_batches[scope_id].grant;
+    if(collector_waiting)begin
+      // A deliberately lost advisory wake (fault injection) leaves this
+      // collector unschedulable: while the wait persists, every audit of a
+      // fault-capable build re-arms the wake-loss recovery below. Production
+      // builds always notify and mark, so they skip the per-round self-mark.
+`ifdef BW_MON_TEST_FAULTS
+      note_settlement_activity(BW_GROUP,scope_id);
+`endif
+      if(collector_ready_work())begin
+        if(!collector_recovery_pending)begin
+          collector_recovery_pending=1;notify_group(group_handle);
+          collector_recovery_grant=ledger.grant;
+        end
+        return 1;
       end
-      return 1;
     end
-    if(group_batches[scope_id].reset_expected!=group_batches[scope_id].reset_captured)begin
+    if(ledger.reset_expected!=ledger.reset_captured)begin
       completion_stage_error("RESET_CAPTURE","missing captured raw reset");return 0;
     end
-    if(group_batches[scope_id].reset_captured!=core.reset_requests)begin
+    if(ledger.reset_captured!=core.reset_requests)begin
       completion_stage_error("RESET_POST","captured reset missing core enqueue");return 0;
     end
     if(core.reset_requests!=core.reset_receipts)begin
@@ -134,12 +173,15 @@ module bw_group_mon #(
     if(controls_held!=controls_acked)begin
       completion_stage_error("CONTROL_ACK","input control ACK missing");return 0;
     end
-    close_group_batch(scope_id);
+    close_group_batch(scope_id,ledger);
     if(scope_failed(BW_GROUP,scope_id))return 0;
-    if(expected_edges.size()==0)for(int m=0;m<direct_member_count;m++)begin
-      if(peek_member_frame(group_handle,m,unexpected))begin
-        runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=UNEXPECTED_FRAME source=%s original_ticks=%0d edge=%0d without actual group edge",source_name(member_source(group_handle,m)),unexpected.timestamp_ticks,unexpected.edge_index));return 0;
+    if(expected_edges.size()==0 && registered_groups[group_handle].notification.seq!=unexpected_scan_notice)begin
+      for(int m=0;m<direct_member_count;m++)begin
+        if(peek_member_frame(group_handle,m,unexpected))begin
+          runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=UNEXPECTED_FRAME source=%s original_ticks=%0d edge=%0d without actual group edge",source_name(member_source(group_handle,m)),unexpected.timestamp_ticks,unexpected.edge_index));return 0;
+        end
       end
+      unexpected_scan_notice=registered_groups[group_handle].notification.seq;
     end
     if(expected_edges.size()!=0 || captured_resets.size()!=0 ||
        core.requested_actions!=core.consumed_actions || core.reset_requests!=core.reset_receipts ||
@@ -175,10 +217,12 @@ module bw_group_mon #(
                                       WINDOW_WIDTH,effective_stride);
     transport_source=group_source_handle(group_handle);
     register_group_completion(scope_id);
+    my_group_ledger=group_batches[scope_id];
     register_end_role(scope_key(BW_GROUP,scope_id),"owner");
     register_end_role(scope_key(BW_GROUP,scope_id),"core");
     clock_observer=bw_native_watch_point_clock(monitor_path);
     if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent group raw-clock observer");
+    register_settlement_watch(BW_GROUP,scope_id,clock_observer);
     raw_record='0;raw_control='0;core_control='0;
     declare_scope_preparation(transport_source);
     fork begin
@@ -271,7 +315,7 @@ module bw_group_mon #(
       check_storage_growth(expected_edges.size(),scope_id,"group.expected",expected.timestamp_ticks,expected.edge_index,expected.edge_index);
       if(runtime_failed())disable capture_expected_edge;
       expected_edges.push_back(expected);
-      group_batches[scope_id].captured=expected.edge_index;
+      my_group_ledger.captured=expected.edge_index;
       void'(request_slot_settlement(scope_id));
       expected_notice=checked_add(expected_notice,1,scope_id);refresh_progress();
     end
@@ -298,7 +342,8 @@ module bw_group_mon #(
 `else
     core_control_toggle<=!core_control_toggle;
 `endif
-    wait(accepted_control_count>=receipt || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+    wait(accepted_control_count>=receipt || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
     if(scope_failed(BW_GROUP,scope_id))return;
     controls_accepted=controls_held;
 `ifdef BW_MON_TEST_FAULTS
@@ -317,7 +362,7 @@ module bw_group_mon #(
 `ifdef BW_MON_TEST_FAULTS
     if(take_group_fault(scope_id,"held"))begin collector_stalled=1;return;end
 `endif
-    group_batches[scope_id].held=expected.edge_index;
+    my_group_ledger.held=expected.edge_index;
     frame='0;frame.timestamp_ticks=expected.timestamp_ticks;frame.edge_index=expected.edge_index;
     frame.record_seq=checked_add(raw_sequence,1,scope_id);
     if(runtime_failed())return;
@@ -340,13 +385,14 @@ module bw_group_mon #(
 `endif
     publish_frame(transport_source,frame);
     if(runtime_failed())return;
-    group_batches[scope_id].published=frame.record_seq;
+    my_group_ledger.published=frame.record_seq;
 `ifdef BW_MON_TEST_FAULTS
     if(!take_group_fault(scope_id,"core"))record_toggle<=!record_toggle;
 `else
     record_toggle<=!record_toggle;
 `endif
-    wait(accepted_record_seq>=frame.record_seq || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+    wait(accepted_record_seq>=frame.record_seq || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
     if(scope_failed(BW_GROUP,scope_id))return;
     group_core_receipt(scope_id,frame.record_seq);
 `ifdef BW_MON_TEST_FAULTS
@@ -356,7 +402,7 @@ module bw_group_mon #(
       acknowledge_member_frame(group_handle,m,frame.record_seq);
       if(runtime_failed())return;
     end
-    group_batches[scope_id].acked=frame.record_seq;
+    my_group_ledger.acked=frame.record_seq;
     discarded=expected_edges.pop_front();expected_notice=checked_add(expected_notice,1,scope_id);
     refresh_progress();
   endtask
@@ -379,7 +425,7 @@ module bw_group_mon #(
     forever begin
       if(scope_failed(BW_GROUP,scope_id))return;
 `ifdef BW_MON_TEST_SCHEDULING
-      wait(!test_gate.paused || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+      wait(!test_gate.paused || runtime_cancelled || core_failure_seen || monitoring_shared_disabled);
       if(runtime_failed())return;
 `endif
       seen_notice=notice.seq;seen_expected=expected_notice;refresh_progress();
@@ -409,7 +455,8 @@ module bw_group_mon #(
         commit_frame(expected_edges[0]);if(collector_stalled)return;continue;
       end
       collector_waiting=1;
-      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || scope_failed(BW_GROUP,scope_id) || runtime_cancelled);
+      wait(notice.seq!=seen_notice || expected_notice!=seen_expected || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
       collector_waiting=0;
       if(runtime_failed())return;
       if(collector_recovery_pending)begin

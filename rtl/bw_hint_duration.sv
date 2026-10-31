@@ -46,7 +46,7 @@ module bw_hint_duration #(
   function automatic void touch(bw_u64_t at_ticks);
     if(runtime_failed()) return;
     result.update_ticks=at_ticks;
-    result.result_seq=checked_add(result.result_seq,1,{scope_id," ",HINT_NAME," result"});
+    result.result_seq=checked_add_tag(result.result_seq,1,"hint result");
     if(runtime_failed())return;
   endfunction
   // Ending-time evidence only: a timer already due (or whose wake has not
@@ -62,7 +62,7 @@ module bw_hint_duration #(
     result.hit=1;
     result.trigger_ticks=(BASIS==BW_NS) ? checked_add(result.start_ticks,threshold_ticks,scope_id) : at_ticks;
     if(runtime_failed())return;
-    result.hit_count=checked_add(result.hit_count,1,{scope_id," ",HINT_NAME," hit count"});
+    result.hit_count=checked_add_tag(result.hit_count,1,"hint hit count");
     if(runtime_failed())return;
     timer_schedule_seq=checked_add(timer_schedule_seq,1,scope_id);
     if(runtime_failed())return;
@@ -324,9 +324,9 @@ program bw_hint_duration_scheduler;
     bw_hint_duration.scheduler_running=1;
     forever begin
       wait(bw_hint_duration.runtime_cancelled || bw_hint_duration.requested_actions!=bw_hint_duration.consumed_actions);
-      if(bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id))break;
+      if(bw_hint_duration.runtime_failed())break;
       wait(bw_mon_pkg::slot_settlement_generation>=bw_hint_duration.settlement_required || bw_hint_duration.runtime_cancelled);
-      if(bw_hint_duration.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_hint_duration.scope_kind),bw_hint_duration.scope_id))break;
+      if(bw_hint_duration.runtime_failed())break;
       bw_hint_duration.drain_actions();
     end
     bw_hint_duration.scheduler_running=0;

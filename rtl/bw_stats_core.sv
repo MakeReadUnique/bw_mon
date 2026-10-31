@@ -1532,9 +1532,9 @@ program bw_stats_core_scheduler;
     bw_stats_core.scheduler_running=1;
     forever begin
       wait(bw_stats_core.runtime_cancelled || bw_stats_core.requested_actions!=bw_stats_core.consumed_actions);
-      if(bw_stats_core.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id))break;
+      if(bw_stats_core.runtime_failed())break;
       wait(bw_mon_pkg::slot_settlement_generation>=bw_stats_core.settlement_required || bw_stats_core.runtime_cancelled);
-      if(bw_stats_core.runtime_cancelled || bw_mon_pkg::scope_failed(bw_mon_pkg::bw_scope_t'(bw_stats_core.scope_kind),bw_stats_core.scope_id))break;
+      if(bw_stats_core.runtime_failed())break;
       bw_stats_core.drain_actions();
     end
     bw_stats_core.scheduler_running=0;

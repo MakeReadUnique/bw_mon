@@ -83,6 +83,41 @@ introduced. Ordinary point traffic still has its direct local core path.
 
 The current group implementation uses independent actual-edge expectations and writable completion audits, with explicit continuation grants and producer certificates. Durable capture/held/publication/core/ACK receipts survive queue removal and advisory wake loss. Read-only observers verify original-time outcomes. Frozen topology supplies causality; active subscriptions supply release obligations. No physical missing deadline remains. The version-qualified results below describe their historical source only.
 
+## Settlement work indexing
+
+The native adapter audits a dirty watcher set rather than scanning every scope
+on every callback. Raw clock/reset changes, posted continuations and durable
+receipts mark their owning watcher. An audit that still depends on a producer
+or a granted continuation keeps its watcher dirty. Native grant tracking defers
+dispatch until the shared generation reaches the grant; the audit still precedes
+the next generation advance. A callback never substitutes for a receipt.
+
+Watcher lookup includes both scope kind and ID. Point and group namespaces stay
+independent even when their ID text is equal. Worker submodules use the same
+typed lookup for timer-only work while clocks are stopped. The
+`settle_typed_owners` contract checks these completions through a native read-only
+observer at the original statistics deadline.
+
+`BW_SETTLE_STATS` reports cumulative callback rounds, dispatched audits, created
+watchers, raw clock changes, dirty audits and deferred grant checks at simulation
+end. `edges` counts all observed clock transitions, including falling edges;
+`deferred` counts skipped dispatches rather than completed work. Counters are
+diagnostic and do not establish completion. `BW_SETTLE_PROGRESS` periodically
+reports progress during long runs.
+
+Reproduce the three maximum-topology performance checks serially with cold
+compilation and the unchanged 600-second end-to-end budget:
+
+```sh
+python3 tests/scale/topology_revised.py \
+  topology-max-ns topology-max-cycle topology-max-cancel-ns \
+  --output-root .build/settlement-max --force-compile
+```
+
+Each bounded run records source snapshots, input hashes, independent verification
+differences, stage times, host load and peak RSS in its manifest and stage
+receipts. A timeout or missing verification is a failed acceptance result.
+
 ## Version-qualified evidence
 
 Production and tests were frozen at
