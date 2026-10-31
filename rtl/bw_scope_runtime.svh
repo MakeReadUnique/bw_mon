@@ -1,9 +1,8 @@
   // A wait must observe this primitive directly. Native quarantine mutates an
   // associative owner map; VCS does not reliably wake wait(function_query()).
   bit runtime_cancelled=0;
-  // Raw-clock observer handle of the owning public monitor, when this
-  // include belongs to one (worker submodules keep null and the settlement
-  // wrappers fall back to the keyed owner map).
+  // The public monitor registers its raw-clock observer. Workers lazily cache
+  // that same typed owner's handle once registration has supplied it.
   chandle clock_observer=null;
   // Owner-held completion ledgers. The failure machinery marks the ledger
   // cancelled for exactly the scopes whose keyed failure entries exist, so
@@ -42,6 +41,9 @@
   function automatic bw_u64_t request_slot_settlement(string context_id);
     bw_u64_t grant;
     chandle watch;
+    if(clock_observer==null && settlement_watch_handles.exists(bw_scope_t'(scope_kind)) &&
+       settlement_watch_handles[bw_scope_t'(scope_kind)].exists(scope_id))
+      clock_observer=settlement_watch_handles[bw_scope_t'(scope_kind)][scope_id];
     watch=clock_observer;
     grant=bw_mon_pkg::request_slot_settlement(context_id,watch,bw_scope_t'(scope_kind));
     if(scope_kind==BW_POINT)point_work_requested(scope_id,grant,watch,my_point_ledger);
