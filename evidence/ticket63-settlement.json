@@ -1,0 +1,366 @@
+{
+  "acceptance": {
+    "contracts": "PASS",
+    "input_and_result_equivalence": "PASS",
+    "mutation_sensitivity": "PASS",
+    "rss_non_degradation": "NOT_ESTABLISHED",
+    "timing": "PASS"
+  },
+  "budget_seconds_per_profile": 600,
+  "contracts": {
+    "cases": 589,
+    "cold": true,
+    "elapsed_seconds": 1119.214778958,
+    "manifest": "/home/eda/bw_cal/.build/ticket63/full-cold/manifest.json",
+    "original_cases_unchanged": 585,
+    "passed": 589,
+    "workers": 3
+  },
+  "issue": "https://github.com/MakeReadUnique/bw_mon/issues/63",
+  "measurement_notes": [
+    "Maximum-topology profiles ran serially, each with cold compilation and the original 600-second bounded pipeline.",
+    "The 589-case cold contract campaign used three disjoint sets of test tops; no contract worker ran during timing qualification.",
+    "Baseline audit counters were not exposed; null is retained rather than an inferred number.",
+    "Peak simulator RSS is reported exactly, including the small positive deltas; no memory cap or numerical tolerance was introduced.",
+    "Earlier interrupted, license-failed and timed-out attempts are not counted as passes."
+  ],
+  "mutation_results": [
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "campaign": {
+        "elapsed_seconds": 11.781158411999968,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m1.campaign.log",
+        "returncode": 0,
+        "timed_out": false
+      },
+      "cases": {
+        "elapsed_seconds": 54.42127210000001,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m1.cases.log",
+        "returncode": 0,
+        "timed_out": false
+      },
+      "file": "rtl/bw_point_completion.svh",
+      "manifest": "/home/eda/bw_cal/.build/ticket63/sensitivity/m1/runs/topology-quick-ns/20261101T075605111972-31065/manifest.json",
+      "mutated_sha256": "8ef11871052b45ea9d98fcf45712a9514c0b887b741972bdc4f1f3a6c2e2b052",
+      "mutation": "m1",
+      "original_sha256": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603",
+      "replacements": [
+        [
+          "    batch.published=seq;\n    if(batch.settlement_watch!=null)bw_native_mark_settlement_watch(batch.settlement_watch);\n    else note_settlement_activity(BW_POINT,id);",
+          "    batch.published=seq;"
+        ]
+      ],
+      "verdict": "SURVIVED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "campaign": {
+        "elapsed_seconds": 12.434186460000035,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m2.campaign.log",
+        "returncode": 0,
+        "timed_out": false
+      },
+      "cases": {
+        "elapsed_seconds": 53.87663953499998,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m2.cases.log",
+        "returncode": 0,
+        "timed_out": false
+      },
+      "file": "rtl/bw_slot_settlement.c",
+      "manifest": "/home/eda/bw_cal/.build/ticket63/sensitivity/m2/runs/topology-quick-ns/20261101T075710772911-54593/manifest.json",
+      "mutated_sha256": "13294a9dcc8a75a8d52f1ad88758fbb64955773824d9c8ab21ab8f759f4a5060",
+      "mutation": "m2",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+      "replacements": [
+        [
+          "    settle_edges++;\n    watch->previous = value;\n    mark_point_dirty(watch);",
+          "    settle_edges++;\n    watch->previous = value;"
+        ]
+      ],
+      "verdict": "SURVIVED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "cases": {
+        "elapsed_seconds": 135.583435059,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m3.cases.log",
+        "returncode": 1,
+        "timed_out": false
+      },
+      "file": "rtl/bw_slot_settlement.svh",
+      "mutated_sha256": "7580ea1ebdd7e8b5334bd031774e074abe28b9c495634180fa84af6585dd6da0",
+      "mutation": "m3",
+      "original_sha256": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76",
+      "replacements": [
+        [
+          "    slot_settlement_generation++;\n    bw_native_note_generation(slot_settlement_generation);",
+          "    slot_settlement_generation++;"
+        ]
+      ],
+      "verdict": "REJECTED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "campaign": {
+        "elapsed_seconds": 12.584065004999957,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m4.campaign.log",
+        "returncode": 0,
+        "timed_out": false
+      },
+      "cases": {
+        "elapsed_seconds": 56.75318068799993,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m4.cases.log",
+        "returncode": 0,
+        "timed_out": false
+      },
+      "file": "rtl/bw_group_mon.sv",
+      "manifest": "/home/eda/bw_cal/.build/ticket63/sensitivity/m4/runs/topology-quick-ns/20261101T080035580232-101052/manifest.json",
+      "mutated_sha256": "f1a475f3c501476bd573002155d37e34767b0e08a3e71f6edb626d74feea77da",
+      "mutation": "m4",
+      "original_sha256": "203c13e0b29aa19a48295ff8b16e19a24cc93634145dd6016d5a27d9e456cee5",
+      "replacements": [
+        [
+          "    if(group_producers_pending(group_handle))begin\n      note_settlement_activity(BW_GROUP,scope_id);return 1;\n    end",
+          "    if(group_producers_pending(group_handle))return 1;"
+        ]
+      ],
+      "verdict": "SURVIVED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "cases": {
+        "elapsed_seconds": 127.43701878399997,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m5.cases.log",
+        "returncode": 1,
+        "timed_out": false
+      },
+      "file": "rtl/bw_slot_settlement.c",
+      "mutated_sha256": "49ff225b7b3e8dbf119ffd18b8d25e8e81ce8e59a81c246d7297555ba175eeac",
+      "mutation": "m5",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+      "replacements": [
+        [
+          "        if (!settlement_cancelled && point->pending_grant > slot_generation) {",
+          "        if (0) {"
+        ],
+        [
+          "        if (bw_native_point_audit()) {\n            reaudit = 1;\n            mark_point_dirty(point);\n        }",
+          "        if (bw_native_point_audit()) {\n            reaudit = 1;\n        }"
+        ]
+      ],
+      "verdict": "REJECTED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "cases": {
+        "elapsed_seconds": 135.572273375,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m8.cases.log",
+        "returncode": 1,
+        "timed_out": false
+      },
+      "file": "rtl/bw_slot_settlement.c",
+      "mutated_sha256": "4591a9ed969af9c7e9f9ed04059c5030ad089cc330be51eb2f49533a81040561",
+      "mutation": "m8",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+      "replacements": [
+        [
+          "int bw_native_settlement_activity_request(void *handle, unsigned long long grant)",
+          "static int callback_pending;\nint bw_native_settlement_activity_request(void *handle, unsigned long long grant)"
+        ],
+        [
+          "    point_watch *watch = (point_watch *)handle;\n    if (watch) {",
+          "    point_watch *watch = (point_watch *)handle;\n    if (callback_pending) return 1;\n    if (watch) {"
+        ]
+      ],
+      "verdict": "REJECTED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "cases": {
+        "elapsed_seconds": 164.6227943,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m7.cases.log",
+        "returncode": 1,
+        "timed_out": false
+      },
+      "file": "rtl/bw_slot_settlement.c",
+      "mutated_sha256": "100517f1b718d80aa8f10d69d4fefb4a93449b0693e0a632a28077a18a54047c",
+      "mutation": "m7",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+      "replacements": [
+        [
+          "    settlement_cancelled = 1;",
+          "    settlement_cancelled = 0;"
+        ]
+      ],
+      "verdict": "REJECTED"
+    },
+    {
+      "baseline_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3",
+      "cases": {
+        "elapsed_seconds": 56.36194361899993,
+        "log": "/home/eda/bw_cal/.build/ticket63/sensitivity/m6.cases.log",
+        "returncode": 1,
+        "timed_out": false
+      },
+      "file": "rtl/bw_slot_settlement.c",
+      "mutated_sha256": "fb49e04a2f146e2376867e4111e769a66cf5028a26306a02895f807a06b12d75",
+      "mutation": "m6",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+      "replacements": [
+        [
+          "    if (handle) mark_point_dirty((point_watch *)handle);",
+          "    (void)handle;"
+        ],
+        [
+          "        if (grant > watch->pending_grant) watch->pending_grant = grant;\n        mark_point_dirty(watch);",
+          "        if (grant > watch->pending_grant) watch->pending_grant = grant;"
+        ]
+      ],
+      "verdict": "REJECTED"
+    }
+  ],
+  "profiles": [
+    {
+      "baseline": {
+        "elapsed_seconds": 3925.2786114710016,
+        "manifest": "/tmp/bw-mon-spec48/ticket60/runs-unbounded/runs/topology-max-ns/20261029T131215998117-109722/manifest.json",
+        "settlement_stats": null,
+        "settlement_stats_note": "Baseline did not expose audit counters; no estimate substituted",
+        "simulation_peak_rss_kib": 2652524,
+        "simulation_seconds": 3805.181385629001
+      },
+      "checked_pass": true,
+      "difference_count": 0,
+      "elapsed_seconds": 531.6411313660003,
+      "inputs_unchanged_from_baseline": true,
+      "manifest": "/tmp/bw-mon-spec48/ticket63/final-20261101/runs/topology-max-ns/20261101T081624255208-254711/manifest.json",
+      "profile": "topology-max-ns",
+      "rss_delta_kib": 12736,
+      "rss_delta_percent": 0.48014645673328804,
+      "settlement_stats": {
+        "audits": 18895481,
+        "deferred": 36807399,
+        "dirty_audits": 18895481,
+        "edges": 20971520,
+        "rounds": 3905,
+        "watchers": 20480
+      },
+      "simulation_peak_rss_kib": 2665260,
+      "source_snapshot": "/tmp/bw-mon-spec48/ticket63/final-20261101/builds/4976b241414bc5acb38288b20e8c7f871022cdf5832bd7fe0c2cbc2740cb7a76/source",
+      "stage_seconds": {
+        "compile": 22.66109755599996,
+        "generation": 1.1293276010001136,
+        "simulation": 432.1306350919999,
+        "verification": 74.62751992899985
+      }
+    },
+    {
+      "baseline": {
+        "elapsed_seconds": 3026.521949539998,
+        "manifest": "/tmp/bw-mon-spec48/ticket60/runs-unbounded/runs/topology-max-cycle/20261029T141741522432-392880/manifest.json",
+        "settlement_stats": null,
+        "settlement_stats_note": "Baseline did not expose audit counters; no estimate substituted",
+        "simulation_peak_rss_kib": 4045444,
+        "simulation_seconds": 2918.5118612320002
+      },
+      "checked_pass": true,
+      "difference_count": 0,
+      "elapsed_seconds": 565.4786773590004,
+      "inputs_unchanged_from_baseline": true,
+      "manifest": "/tmp/bw-mon-spec48/ticket63/final-20261101/runs/topology-max-cycle/20261101T082956384787-267460/manifest.json",
+      "profile": "topology-max-cycle",
+      "rss_delta_kib": 13136,
+      "rss_delta_percent": 0.3247109587971142,
+      "settlement_stats": {
+        "audits": 12685469,
+        "deferred": 31564523,
+        "dirty_audits": 12685469,
+        "edges": 20971520,
+        "rounds": 2707,
+        "watchers": 20480
+      },
+      "simulation_peak_rss_kib": 4058580,
+      "source_snapshot": "/tmp/bw-mon-spec48/ticket63/final-20261101/builds/ee6fa8eaf5a11b5402d25ab8700570d3bb630b3862f8c51be2fe4543bdb701d6/source",
+      "stage_seconds": {
+        "compile": 29.102882074999798,
+        "generation": 1.230014667999967,
+        "simulation": 454.8043845520001,
+        "verification": 79.26853788800008
+      }
+    },
+    {
+      "baseline": {
+        "elapsed_seconds": 3841.6816177069995,
+        "manifest": "/tmp/bw-mon-spec48/ticket60/runs-unbounded/runs/topology-max-cancel-ns/20261029T150655229538-420287/manifest.json",
+        "settlement_stats": null,
+        "settlement_stats_note": "Baseline did not expose audit counters; no estimate substituted",
+        "simulation_peak_rss_kib": 2654708,
+        "simulation_seconds": 3747.0022860710014
+      },
+      "checked_pass": true,
+      "difference_count": 0,
+      "elapsed_seconds": 544.0015036230002,
+      "inputs_unchanged_from_baseline": true,
+      "manifest": "/tmp/bw-mon-spec48/ticket63/final-20261101/runs/topology-max-cancel-ns/20261101T084042188756-278107/manifest.json",
+      "profile": "topology-max-cancel-ns",
+      "rss_delta_kib": 11752,
+      "rss_delta_percent": 0.4426852218775146,
+      "settlement_stats": {
+        "audits": 18895014,
+        "deferred": 36806315,
+        "dirty_audits": 18895014,
+        "edges": 20971520,
+        "rounds": 3901,
+        "watchers": 20480
+      },
+      "simulation_peak_rss_kib": 2666460,
+      "source_snapshot": "/tmp/bw-mon-spec48/ticket63/final-20261101/builds/f4fa112d5d1ebaa433db6eeee471dcf918d61197e5cee2999548da624f84a7b7/source",
+      "stage_seconds": {
+        "compile": 22.313930451000033,
+        "generation": 1.0808831809999901,
+        "simulation": 457.26193243800026,
+        "verification": 62.29862041200022
+      }
+    }
+  ],
+  "reproduction": {
+    "contracts": "python3 tests/run.py --no-cache",
+    "maximum_topology": "python3 tests/scale/topology_revised.py topology-max-ns topology-max-cycle topology-max-cancel-ns --output-root /tmp/bw-mon-ticket63 --force-compile",
+    "mutations": "Replacement pairs, detector logs and immutable campaign manifests are recorded per mutation below."
+  },
+  "review": {
+    "spec_acceptance_detail": "Literal RSS non-degradation is not established: final simulator peaks increased 0.325-0.480% versus the recorded baseline. No tolerance is assumed.",
+    "spec_acceptance_findings": 1,
+    "spec_implementation_findings": 0,
+    "standards_findings": 0
+  },
+  "rtl_sha256": {
+    "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
+    "rtl/bw_check_report.sv": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba",
+    "rtl/bw_debug_hints.sv": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2",
+    "rtl/bw_default_check.svh": "13682c3eed8f00d77c9090e2bebbb98643f15a5f32895d3060d6f34e7f6f573f",
+    "rtl/bw_end_coordinator.c": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97",
+    "rtl/bw_end_protocol.svh": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e",
+    "rtl/bw_group_completion.svh": "fb3256199e7f9009b0619e0286990c2ea868a5e43c9b66e4bbeacb574276bcfd",
+    "rtl/bw_group_mon.sv": "203c13e0b29aa19a48295ff8b16e19a24cc93634145dd6016d5a27d9e456cee5",
+    "rtl/bw_hint_duration.sv": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02",
+    "rtl/bw_history.svh": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269",
+    "rtl/bw_mon_pkg.sv": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032",
+    "rtl/bw_mon_registry.svh": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad",
+    "rtl/bw_mon_registry_types.svh": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623",
+    "rtl/bw_mon_setup.sv": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d",
+    "rtl/bw_mon_transport.svh": "361d8fb995ef0065eb700ce7948605a1febe983fc481ad2a8f137aaa23a1c9d7",
+    "rtl/bw_point_completion.svh": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603",
+    "rtl/bw_point_mon.sv": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12",
+    "rtl/bw_point_recorder.sv": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df",
+    "rtl/bw_reset_capture.svh": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad",
+    "rtl/bw_scope_runtime.svh": "9f090aa541de523e88c3794614c4c7b954bc80e4504d5ca404626d987893b5ae",
+    "rtl/bw_slot_settlement.c": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+    "rtl/bw_slot_settlement.svh": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76",
+    "rtl/bw_stage_ownership.svh": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94",
+    "rtl/bw_stats_core.sv": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288",
+    "rtl/bw_target_completion.svh": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1",
+    "rtl/bw_variation_history.svh": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+  },
+  "source_head": "0a4d7a7ef65dc1b6f85b73a3b3e12a9ce63e0ac3"
+}
