@@ -3,7 +3,7 @@
     "contracts": "PASS",
     "input_and_result_equivalence": "PASS",
     "mutation_sensitivity": "PASS",
-    "rss_non_degradation": "NOT_ESTABLISHED",
+    "rss_non_degradation": "ACCEPTED_MEASURED_OVERHEAD",
     "timing": "PASS"
   },
   "budget_seconds_per_profile": 600,
@@ -22,7 +22,8 @@
     "The 589-case cold contract campaign used three disjoint sets of test tops; no contract worker ran during timing qualification.",
     "Baseline audit counters were not exposed; null is retained rather than an inferred number.",
     "Peak simulator RSS is reported exactly, including the small positive deltas; no memory cap or numerical tolerance was introduced.",
-    "Earlier interrupted, license-failed and timed-out attempts are not counted as passes."
+    "Earlier interrupted, license-failed and timed-out attempts are not counted as passes.",
+    "The user explicitly accepted the recorded RSS increase and instructed closure; this decision applies to these measured results only."
   ],
   "mutation_results": [
     {
@@ -329,10 +330,17 @@
     "mutations": "Replacement pairs, detector logs and immutable campaign manifests are recorded per mutation below."
   },
   "review": {
-    "spec_acceptance_detail": "Literal RSS non-degradation is not established: final simulator peaks increased 0.325-0.480% versus the recorded baseline. No tolerance is assumed.",
-    "spec_acceptance_findings": 1,
+    "spec_acceptance_detail": "Resolved by explicit user acceptance of this measured RSS overhead. The positive RSS deltas remain recorded; this is not a zero-increase claim or a general tolerance.",
+    "spec_acceptance_findings": 0,
     "spec_implementation_findings": 0,
     "standards_findings": 0
+  },
+  "rss_acceptance_decision": {
+    "accepted_by": "user",
+    "general_tolerance_introduced": false,
+    "recorded_utc": "2026-11-01T09:46:24.335576Z",
+    "scope": "Accept the measured 11.5-12.8 MiB (0.325-0.480%) RSS increase for these three qualified runs and close the ticket.",
+    "user_instruction": "ok 接受这个情况，并且关闭"
   },
   "rtl_sha256": {
     "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
