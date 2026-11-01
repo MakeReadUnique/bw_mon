@@ -4,6 +4,9 @@
 的四个新视图。**自动核验通过；实际用户反馈待完成，工单保持开放。**
 [逐文件哈希、源码适用性与人工记录](review.json)分别保存，旧九图签认不覆盖这些资产。
 
+本次完整组件回归 **589/589通过**；[逐项结果](contract-results.txt)与
+[自动核验及双轴代码审查记录](checks.json)保留实际来源。Standards、Spec审查均为0项发现。
+
 运行产品来源为 `eadec744516a125cca3441f29a27420b66285b6b`；RTL 未改。
 十二点/四组场景沿用公开接入和独立原始输入；两个 checker 场景沿用
 `tests/tb_checker_default.sv` 与 `tests/checker_default/check.py`，仅 bind

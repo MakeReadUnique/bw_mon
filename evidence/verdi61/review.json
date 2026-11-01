@@ -355,5 +355,6 @@
       "steady_fail"
     ],
     "note": "Only actual user feedback naming these assets and intervals can change this status. Agent operation/inspection and automatic PASS are separate."
-  }
+  },
+  "evidence_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717"
 }
