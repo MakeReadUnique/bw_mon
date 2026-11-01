@@ -112,6 +112,9 @@ observer at the original statistics deadline.
 Transport entries validate the group handle, then reuse its integer index for
 member and cursor lookups; member-index and receipt checks remain at the entry.
 Each input scan reads its frozen direct-member count once before iterating.
+Repeated group notifications reuse an already reported grant while its native
+callback is pending. Every notice still advances the notification and input
+generation counters; a new owner's first request always marks its own watcher.
 
 `BW_SETTLE_STATS` reports cumulative callback rounds, dispatched audits, created
 watchers, raw clock changes, dirty audits and deferred grant checks at simulation

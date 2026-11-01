@@ -4124,6 +4124,17 @@
   "top": "tb_transport_growth"
  },
  {
+  "name": "settle_notification_owner",
+  "top": "tb_settle_notification_owner",
+  "sources": [
+   "group_completion_observer.c"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=GROUP_COMPLETION scope_kind=1 scope=receiver[^\\n]*stage=UNEXPECTED_FRAME[^\\n]*original_ticks=1000001",
+  "expect_counts": {
+   "BW_CORE_WARNING": 1
+  }
+ },
+ {
   "name": "settle_shared_pending",
   "top": "tb_settle_shared_pending",
   "expect_warning": "BW_CORE_WARNING code=INTEGER_OVERFLOW scope_kind=SHARED[^\\n]*time_ticks=1000001",
