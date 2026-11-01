@@ -101,8 +101,8 @@ Watcher lookup includes both scope kind and ID. Point and group namespaces stay
 independent even when their ID text is equal. Separate point and group tables
 avoid nested lookups on receipt paths. Worker submodules use the same
 typed lookup for timer-only work while clocks are stopped. They cache the owner
-handle after registration, allowing subsequent requests to combine grant
-reporting, dirty marking and callback registration in one native call. Early
+handle after registration. Requests report grants and dirty activity through a
+native-state-only call; only actual VPI callback registration needs DPI context. Early
 preparation requests retain the fallback until a handle exists. The
 point receipt path also reuses its registered ledger and watcher, including
 the sticky cancellation state; ID-only component calls retain their lookup.
@@ -112,9 +112,8 @@ observer at the original statistics deadline.
 Transport entries validate the group handle, then reuse its integer index for
 member and cursor lookups; member-index and receipt checks remain at the entry.
 Each input scan reads its frozen direct-member count once before iterating.
-Repeated group notifications reuse an already reported grant while its native
-callback is pending. Every notice still advances the notification and input
-generation counters; a new owner's first request always marks its own watcher.
+Every notification still reports its owner's activity before checking whether
+a callback is pending, so a different owner's pending callback cannot hide it.
 
 `BW_SETTLE_STATS` reports cumulative callback rounds, dispatched audits, created
 watchers, raw clock changes, dirty audits and deferred grant checks at simulation

@@ -47,14 +47,7 @@
     if(!monitor_ready || group.ledger==null)begin
       group_work_requested(group.id,request_slot_settlement(group.id,group.settlement_watch,BW_GROUP),group.settlement_watch);return;
     end
-    // A matching grant has already reported this owner to the pending native
-    // callback. Repeated fan-out/ACK notices still invalidate the ledger, but
-    // need no second crossing while that same grant is outstanding.
-    if(group.settlement_watch!=null && slot_settlement_pending &&
-       slot_settlement_generation!=BW_U64_MAX &&
-       group.ledger.grant==slot_settlement_generation+1)
-      grant=group.ledger.grant;
-    else grant=request_slot_settlement(group.id,group.settlement_watch,BW_GROUP);
+    grant=request_slot_settlement(group.id,group.settlement_watch,BW_GROUP);
     if(monitoring_shared_disabled || group.failed)return;
     if(group.ledger.input_generation==BW_U64_MAX)begin
       runtime_scope_error(BW_GROUP,group.id,"INTEGER_OVERFLOW","group input generation exhausted");return;

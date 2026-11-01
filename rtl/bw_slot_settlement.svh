@@ -11,7 +11,7 @@
   import "DPI-C" function void bw_native_mark_settlement_watch(input chandle handle);
   import "DPI-C" function void bw_native_note_generation(input longint unsigned generation);
   import "DPI-C" function void bw_native_cancel_slot_settlement();
-  import "DPI-C" context function int bw_native_settlement_activity_request(input chandle handle,
+  import "DPI-C" function int bw_native_note_settlement_activity(input chandle handle,
     input longint unsigned grant);
   chandle point_settlement_watches[string],group_settlement_watches[string];
   function automatic chandle settlement_watch_for_scope(bw_scope_t kind,string id);
@@ -84,17 +84,13 @@
     if(watch==null)watch=settlement_watch_for_scope(kind,id);
     // The native scheduler skips a watcher dispatch while its latest grant
     // still awaits this generation; the combined native call reports the
-    // grant, marks the requesting watcher and registers the end-of-slot
-    // callback in one crossing.
+    // grant and marks the requesting watcher in a native-state-only crossing.
+    // A context-capable call is needed only when no callback is pending.
     if(watch!=null)begin
-      if(!bw_native_settlement_activity_request(watch,required))
-        core_error("SLOT_SCHEDULER",id,"cannot register the writable end-of-slot callback; check VCS VPI/debug compile options");
+      if(bw_native_note_settlement_activity(watch,required))return required;
     end
-    else begin
-      // Keep this wrapper in package scope: the native callback must return to
-      // this package's exported function, independent of the requesting module.
-      if(!bw_native_request_slot_settlement())
-        core_error("SLOT_SCHEDULER",id,"cannot register the writable end-of-slot callback; check VCS VPI/debug compile options");
-    end
+    // Keep registration in package scope so the callback returns here.
+    if(!bw_native_request_slot_settlement())
+      core_error("SLOT_SCHEDULER",id,"cannot register the writable end-of-slot callback; check VCS VPI/debug compile options");
     return required;
   endfunction

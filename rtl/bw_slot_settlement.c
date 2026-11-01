@@ -27,6 +27,7 @@ typedef struct point_watch {
 static point_watch *point_watches, *dirty_point_watches;
 static unsigned long long slot_generation = 0;
 static int settlement_cancelled = 0;
+static int callback_pending = 0;
 /* Settlement observability: public end-of-run counters behind the
    BW_SETTLE_STATS marker. Creation totals survive the release callback so the
    marker stays truthful regardless of end-callback order. */
@@ -312,21 +313,19 @@ void bw_native_cancel_slot_settlement(void)
     settlement_cancelled = 1;
 }
 
-/* Combined hot request path: report the requester's latest grant, mark its
-   watcher dirty and register the end-of-slot callback in one crossing. The
-   registration result is returned; the caller owns the failure diagnostic. */
+/* Pure native-state hot path. Every owner is marked before reporting whether
+   a callback already exists; only actual VPI registration needs DPI context. */
 int bw_native_request_slot_settlement(void);
-int bw_native_settlement_activity_request(void *handle, unsigned long long grant)
+int bw_native_note_settlement_activity(void *handle, unsigned long long grant)
 {
     point_watch *watch = (point_watch *)handle;
     if (watch) {
         if (grant > watch->pending_grant) watch->pending_grant = grant;
         mark_point_dirty(watch);
     }
-    return bw_native_request_slot_settlement();
+    return callback_pending;
 }
 
-static int callback_pending = 0;
 static svScope package_scope;
 
 static PLI_INT32 report_settle_stats(p_cb_data callback)
