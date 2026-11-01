@@ -33,6 +33,7 @@ __pycache__/
 
 # Generated/recovered evidence stays local; keep only final PR screenshots.
 /artifacts/acceptance/
+/artifacts/verdi61-data/
 /artifacts/review-analog/*
 !/artifacts/review-analog/*.png
 /tests/scale/evidence/

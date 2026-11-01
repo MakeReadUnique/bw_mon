@@ -38,3 +38,7 @@ test-evidence-tools:
 .PHONY: campaign58
 campaign58:
 	python3 tests/campaign58/run.py --evidence .build/campaign58-evidence --lock /tmp/bw-mon-spec48/acceptance.lock
+
+.PHONY: verify-verdi61
+verify-verdi61:
+	python3 tests/verdi61/verify.py
