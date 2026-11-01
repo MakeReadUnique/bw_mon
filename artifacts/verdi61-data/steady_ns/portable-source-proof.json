@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "method": "Opened frozen FSDB and extracted source.tar.gz in a separate real Verdi session using tests/verdi61/open.py named_group --source; no original KDB/build needed",
+  "compiler_log": "portable-source-compiler.log",
+  "source_instance": "tb_acceptance_ns.scene.all_dmc",
+  "source_line": 79,
+  "human_feedback": "PENDING"
+}

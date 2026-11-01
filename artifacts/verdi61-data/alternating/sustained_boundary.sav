@@ -1,0 +1,32 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+viewPort 10 10 1860 1000 640 150
+openDirFile -d / "" "waves.fsdb"
+signalSpacing 5
+windowTimeUnit 1ns
+zoom 5 9 1n
+cursor 7.000002
+marker 0
+top 0
+userMarker 6.000001 "BOUNDARY" ID_YELLOW5 long_dashed
+userMarker 7.000001 "CONFIRM" ID_ORANGE5 long_dashed
+addGroup "Native group: checker.group | W=S=1ns"
+addSignal -h 24 /tb_checker_default/group_mon/scope_id
+addSignal -w analog -ds pwc -c ID_CYAN5 -lw 2 -h 140 -gy -ry -va 64.127.64.0.0.0.0.0 0.0.0.0.0.0.0.0 /tb_checker_default/group_mon/bandwidth_gbps
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/result_seq
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/window_start_ticks
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/window_end_ticks
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/window_bytes
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/window_full
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/bytes_complete
+addSignal -h 24 /tb_checker_default/group_mon/phase_current
+addSignal -h 24 /tb_checker_default/group_mon/phase_reason
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/phase_evidence_count
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/phase_evidence_required
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/phase_candidate_count
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/phase_candidate_required
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/phase_start_ticks
+addSignal -h 24 -UNSIGNED -UDEC /tb_checker_default/group_mon/phase_confirmation_ticks
+addSignal -w analog -ds pwc -c ID_CYAN5 -lw 2 -h 140 -gy -ry -va 64.95.64.0.0.0.0.0 0.0.0.0.0.0.0.0 /tb_checker_default/members[0]/point/bandwidth_gbps
+addSignal -h 24 /tb_checker_default/members[0]/point/phase_current
+addGroup "END"

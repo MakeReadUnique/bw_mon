@@ -1,0 +1,8 @@
+/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps	1024.000000
+/tb_acceptance_ns/scene/all_dmc/scope_id	all_dmc
+/tb_acceptance_ns/scene/all_dmc/direct_member_count	2
+/tb_acceptance_ns/scene/all_dmc/recursive_point_count	8
+/tb_acceptance_ns/scene/all_dmc/window_start_ticks	92000001
+/tb_acceptance_ns/scene/all_dmc/window_end_ticks	102000001
+/tb_acceptance_ns/scene/all_dmc/window_bytes	10240
+/tb_acceptance_ns/scene/all_dmc/bytes_complete	1

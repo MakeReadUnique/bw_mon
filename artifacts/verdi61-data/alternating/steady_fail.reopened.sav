@@ -1,0 +1,77 @@
+Magic 271485
+Revision Verdi_W-2024.09-SP1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 10 10 1860 1000 640 150
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "waves.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+windowTimeUnit 1ns
+
+; waveform viewport range
+zoom 5.000000 26.000000 1n
+cursor 20.000002
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+userMarker 7 CONFIRM ID_ORANGE5 long_dashed
+userMarker 6 BOUNDARY ID_YELLOW5 long_dashed
+
+; visible top row signal index
+top 0
+; marker line index
+markerPos 0
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "Native group: checker.group | W=S=1ns"
+activeDirFile "" "waves.fsdb"
+addSignal -h 24 /tb_checker_default/group_mon/scope_id
+addSignal -w analog -ds pwc -c ID_CYAN5 -ls solid -lw 2 -h 140 -gy -ry -va 64.127.64.0.0.0.0.0 0.0.0.0.0.0.0.0 -holdScope bandwidth_gbps
+addSignal -h 24 -UNSIGNED -UDEC -holdScope result_seq[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope window_start_ticks[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope window_end_ticks[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope window_bytes[63:0]
+addSignal -h 24 -holdScope window_full
+addSignal -h 24 -holdScope bytes_complete
+addSignal -h 24 -UNSIGNED -holdScope phase_current[1:0]
+addSignal -h 24 -UNSIGNED -holdScope phase_reason[3:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope phase_evidence_count[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope phase_evidence_required[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope phase_candidate_count[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope phase_candidate_required[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope phase_start_ticks[63:0]
+addSignal -h 24 -UNSIGNED -UDEC -holdScope phase_confirmation_ticks[63:0]
+addSignal -w analog -ds pwc -c ID_CYAN5 -ls solid -lw 2 -h 140 -gy -ry -va 64.95.64.0.0.0.0.0 0.0.0.0.0.0.0.0 /tb_checker_default/members[0]/point/bandwidth_gbps
+addSignal -h 24 -UNSIGNED -holdScope phase_current[1:0]
+addGroup "END"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+

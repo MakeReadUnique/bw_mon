@@ -1,0 +1,1 @@
+["verdi", "-dbdir", "/home/eda/bw_cal/.build/acceptance/tb_acceptance_ns/1c4b07ec9255060d25c86e5802d38f32dca720b92e2e989139b4c502073036d6/simv.daidir", "-ssf", "/home/eda/bw_cal/.build/verdi61/scenes/steady_ns/waves.fsdb", "-play", "/home/eda/bw_cal/.build/verdi61/hierarchy.tcl"]

@@ -1,0 +1,28 @@
+["verdi", "-ssf", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/waves.fsdb", "-sv", "+incdir+/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl", "-top", "tb_acceptance_ns", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_mon_pkg.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_check_report.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_debug_hints.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_group_mon.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_hint_duration.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_mon_setup.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_point_mon.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_point_recorder.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/rtl/bw_stats_core.sv", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/source/tests/acceptance/scene.sv", "-play", "/home/eda/bw_cal/artifacts/verdi61-data/steady_ns/open-named_group.tcl"]
+logDir = /home/eda/bw_cal/artifacts/verdi61-data/steady_ns/verdiLog
+
+
+                                   Verdi (R)
+
+               Version W-2024.09-SP1 for linux64 - Dec 01, 2024 
+
+                    Copyright (c) 1999 - 2024 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+rcfile = /home/eda/app/synopsys/verdi/W-2024.09-SP1/etc/novas.rc
+*WARN* Cannot open /home/eda/bw_cal/artifacts/verdi61-data/steady_ns/novas.conf for read access. No such file or directory
+*WARN* Cannot open /home/eda/novas.conf for read access. No such file or directory
+guiConfFile (read)= N/A (default)
+guiConfFile (write)= /home/eda/bw_cal/artifacts/verdi61-data/steady_ns/novas.conf (working directory)
