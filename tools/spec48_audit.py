@@ -80,6 +80,7 @@ from pathlib import Path
 source=Path(sys.argv[1]);directory=Path(sys.argv[2]);sys.path.insert(0,str(source/'tests/campaign58'))
 import aspects,joint,run
 r=json.loads((directory/'timing.json').read_text())
+assert r['source']==sys.argv[3]
 assert r['passed'] and r['completed'] and r['cold'] and not r['dirty_source']
 assert r['budget_seconds']==900 and run.within_budget(r)
 assert abs(run.campaign_total_seconds(r)-r['total_seconds'])<1e-6
@@ -114,7 +115,11 @@ for folder in sorted(directory.iterdir()):
  m=json.loads((folder/'commands.json').read_text());c=m['configuration'];configurations.append(c)
  assert c['N']==6
  native=scene_runtime_evidence(source,directory,folder,m,{})
+ assert native['head']==sys.argv[3]
  assert native['rtl_sha256']==runtime_sources(source)
+ project=project_sources(directory,folder,m)
+ assert all((source/name).is_file() and hashlib.sha256((source/name).read_bytes()).hexdigest()==hashlib.sha256(data).hexdigest()
+            for name,data in project.items())
  rows=[[int(v) for v in line.split()] for line in (folder/'stimulus.txt').read_text().splitlines()]
  assert rows==model.stimulus(model.configuration(c['scene'],c['basis']))
  for name,digest in m['dependency_sha256'].items():
@@ -142,7 +147,7 @@ def verify(directory):
     source=directory/'source'
     count=verify_contracts(directory,source,receipt)
     for code,folder in [(CAMPAIGN_REPLAY,'campaign58'),(ACCEPTANCE_REPLAY,'acceptance')]:
-        subprocess.check_call([sys.executable,'-B','-c',code,str(source),str(directory/folder)])
+        subprocess.check_call([sys.executable,'-B','-c',code,str(source),str(directory/folder),receipt['source_head']])
     return dict(checked_pass=True,contract_cases=count,public_scenes=43)
 
 

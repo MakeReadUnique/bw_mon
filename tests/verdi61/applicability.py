@@ -74,7 +74,7 @@ for scene,source in current.items():
     assert set(project)<=set(review['source_sha256'])
     assert all(sha(ROOT/name)==digest for name,digest in project.items()),scene
     changed={n:dict(original=old_source[n],current=actual[n]) for n in actual if old_source[n]!=actual[n]}
-    assert set(changed)=={'rtl/bw_default_check.svh'},changed
+    assert set(changed)=={'rtl/bw_default_check.svh','rtl/bw_group_mon.sv','rtl/bw_mon_transport.svh'},changed
     scene_runs[scene]=dict(files=copied,old_fsdb_sha256=sha(old_fsdb),new_fsdb_sha256=sha(source/'waves.fsdb'),
                            compiled_rtl_sha256=new_source,source_changes=changed,identical_default_check_rows=len(new_checks))
     exports[scene]={}
