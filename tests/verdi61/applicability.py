@@ -20,9 +20,14 @@ args=parser.parse_args()
 SOURCE=args.source_root.resolve()
 OUT=args.output.resolve()
 sys.path.insert(0,str(ROOT/'tests/verdi61'))
-from compare import canonical_trace
+from compare import canonical_trace, canonical_string_trace
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+def native_tool(path):
+    binary=path.parent.parent/'platform/LINUXAMD64/bin'/path.name
+    assert binary.is_file(),binary
+    return dict(path=str(path),sha256=sha(path),resolved_launcher=str(path.resolve()),
+                native_path=str(binary),native_sha256=sha(binary))
 def save(path,value):path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
 def run(command,cwd,log):
     start=time.monotonic()
@@ -46,8 +51,11 @@ assert configuration['scene']=='steady' and configuration['basis']=='ns'
 archive=subprocess.check_output(['git','archive',review['asset_commit'],'artifacts/verdi61-data'],cwd=ROOT)
 with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
     assets={m.name:bundle.extractfile(m).read() for m in bundle.getmembers() if m.isfile()}
-converter=Path(shutil.which('fsdb2vcd')).resolve()
-exports={};scene_runs={};files={}
+# Verdi dispatches this symlink by argv[0]; resolving it invokes .wrapper.
+converter=Path(shutil.which('fsdb2vcd')).absolute()
+reporter=Path(shutil.which('fsdbreport')).absolute()
+converter_identity=native_tool(converter);reporter_identity=native_tool(reporter)
+exports={};string_exports={};scene_runs={};files={}
 for scene,source in current.items():
     scopes=sorted({signal.rsplit('/',1)[0] for view in review['views'] if view['scene']==scene for signal in view['expected_values']})
     folder=OUT/scene;folder.mkdir(exist_ok=True)
@@ -80,8 +88,10 @@ for scene,source in current.items():
     scene_runs[scene]=dict(files=copied,old_fsdb_sha256=sha(old_fsdb),new_fsdb_sha256=sha(source/'waves.fsdb'),
                            compiled_rtl_sha256=new_source,source_changes=changed,identical_default_check_rows=len(new_checks))
     exports[scene]={}
+    string_exports[scene]={}
     for role,fsdb in [('accepted',old_fsdb),('current',folder/'waves.fsdb')]:
         exports[scene][role]={}
+        string_exports[scene][role]={}
         for i,scope in enumerate(scopes):
             vcd=folder/(role+'-'+str(i)+'.vcd')
             log=folder/(role+'-'+str(i)+'.export.log')
@@ -89,6 +99,14 @@ for scene,source in current.items():
             receipt=run(command,folder,log)
             receipt.update(fsdb_sha256=sha(fsdb),vcd=str(vcd.relative_to(OUT)),vcd_sha256=sha(vcd))
             exports[scene][role][scope]=receipt
+        strings=sorted({path for view in review['views'] if view['scene']==scene
+                        for path in view['expected_values'] if path.endswith('/scope_id')})
+        for i,path in enumerate(strings):
+            csv_file=folder/(role+'-string-'+str(i)+'.csv')
+            log=folder/(role+'-string-'+str(i)+'.export.log')
+            receipt=run([reporter,fsdb,'-s',path,'-csv','-nolog','-o',csv_file],folder,log)
+            receipt.update(fsdb_sha256=sha(fsdb),csv=str(csv_file.relative_to(OUT)),csv_sha256=sha(csv_file))
+            string_exports[scene][role][path]=receipt
 views=[]
 for view in review['views']:
     begin,end=[int(Decimal(str(n))*1000000) for n in view['range_ns']]
@@ -97,9 +115,13 @@ for view in review['views']:
     for role in ['accepted','current']:
         trace={}
         for scope in scopes:
-            paths=[p for p in view['expected_values'] if p.rsplit('/',1)[0]==scope]
+            paths=[p for p in view['expected_values'] if p.rsplit('/',1)[0]==scope and not p.endswith('/scope_id')]
             vcd=OUT/exports[view['scene']][role][scope]['vcd']
             trace.update(canonical_trace(vcd.read_text(),paths,begin,end))
+        for path in view['expected_values']:
+            if path.endswith('/scope_id'):
+                csv_file=OUT/string_exports[view['scene']][role][path]['csv']
+                trace.update(canonical_string_trace(csv_file.read_text(),[path],begin,end))
         traces[role]=trace
     assert traces['accepted']==traces['current'],view['name']
     digest=hashlib.sha256(json.dumps(traces['current'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
@@ -108,14 +130,15 @@ for view in review['views']:
                       identical_trace_sha256=digest,unchanged=True))
 for path in OUT.rglob('*'):
     if path.is_file():files[str(path.relative_to(OUT))]=sha(path)
+assert converter_identity==native_tool(converter) and reporter_identity==native_tool(reporter)
 proof=dict(schema='bw-verdi-source-applicability-v1',state='VERIFIED',
            source_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=SOURCE,universal_newlines=True).strip(),
            accepted_asset_commit=review['asset_commit'],accepted_runtime_base=review['runtime_base'],
-           converter=dict(path=str(converter),sha256=sha(converter)),prepare=prepare,
+           converter=converter_identity,prepare=prepare,reporter=reporter_identity,
            verification_tool_sha256={str(p.relative_to(ROOT)):sha(p) for p in
                [Path(__file__).resolve(),ROOT/'tests/verdi61/compare.py',ROOT/'tests/verdi61/verify.py']},
            original_source_sha256=review['source_sha256'],current_source_sha256={n:sha(ROOT/n) for n in review['source_sha256']},
-           scene_runs=scene_runs,exports=exports,views=views,files_sha256=files,
+           scene_runs=scene_runs,exports=exports,string_exports=string_exports,views=views,files_sha256=files,
            note='Original accepted images/FSDBs and feedback remain unchanged. Native sequential exports cover each whole FSDB; selected ordered signal changes over each reviewed interval and final default-check rows match freshly compiled product source exactly. No unselected signal or other interval is certified.')
 save(OUT/'applicability.json',proof)
 print('PASS complete, exact waveform applicability:',len(views),'views',flush=True)

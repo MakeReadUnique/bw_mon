@@ -1,9 +1,26 @@
 import unittest
 
-from compare import canonical_trace
+from compare import canonical_trace, canonical_string_trace
 
 
 class WaveformApplicability(unittest.TestCase):
+    def test_native_string_report_retains_names_times_and_same_time_changes(self):
+        text='Time(1fs),/scene/scope_id\n0,old\n100,one\n100,two\n200,two\n'
+        trace=canonical_string_trace(text,['/scene/scope_id'],50,150)
+        self.assertEqual(trace['/scene/scope_id']['values'],[[50,'old'],[100,'one'],[100,'two']])
+        self.assertNotEqual(trace,canonical_string_trace(text.replace('100,two','100,other'),['/scene/scope_id'],50,150))
+
+    def test_native_string_report_requires_complete_interval_and_initial_value(self):
+        path='/scene/scope_id'
+        text='Time(1fs),'+path+'\n0,name\n200,name\n'
+        self.assertEqual(canonical_string_trace(text,[path],50,150)[path]['values'],[[50,'name']])
+        with self.assertRaisesRegex(ValueError,'coverage'):
+            canonical_string_trace(text.replace('200,name\n',''),[path],50,150)
+        with self.assertRaisesRegex(ValueError,'initial'):
+            canonical_string_trace(text.replace('\n0,name','\n100,name'),[path],50,150)
+        with self.assertRaisesRegex(ValueError,'missing'):
+            canonical_string_trace(text,['/scene/missing'],50,150)
+
     def test_trace_uses_signal_paths_and_physical_times_not_export_identifiers(self):
         old='''$timescale 1ps $end
 $scope module scene $end

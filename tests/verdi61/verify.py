@@ -10,7 +10,7 @@ import sys
 import tarfile
 import tempfile
 from decimal import Decimal
-from compare import canonical_trace
+from compare import canonical_trace, canonical_string_trace
 
 ROOT = Path(__file__).resolve().parents[2]
 REVIEW = ROOT / 'evidence/verdi61/review.json'
@@ -96,13 +96,26 @@ def source_expectations(review, accepted):
                 receipt=proof['exports'][view['scene']][role][scope]
                 assert receipt['exit_code']==0
                 command=receipt['command']
+                assert command[0]==proof['converter']['path']
                 assert all(flag in command for flag in ['-seq','-sv','-keep_last_time','-s'])
                 assert command[command.index('-s')+1]==scope
                 assert sha(files[receipt['vcd']])==receipt['vcd_sha256']
                 run=proof['scene_runs'][view['scene']]
                 assert receipt['fsdb_sha256']==run['old_fsdb_sha256' if role=='accepted' else 'new_fsdb_sha256']
-                paths=[p for p in view['expected_values'] if p.rsplit('/',1)[0]==scope]
+                paths=[p for p in view['expected_values'] if p.rsplit('/',1)[0]==scope and not p.endswith('/scope_id')]
                 trace.update(canonical_trace(files[receipt['vcd']].decode(),paths,begin,end))
+            for path in view['expected_values']:
+                if not path.endswith('/scope_id'):continue
+                receipt=proof['string_exports'][view['scene']][role][path]
+                command=receipt['command']
+                assert command[0]==proof['reporter']['path']
+                assert receipt['exit_code']==0 and '-csv' in command and '-s' in command
+                assert command[command.index('-s')+1]==path
+                assert '-bt' not in command and '-et' not in command
+                assert sha(files[receipt['csv']])==receipt['csv_sha256']
+                run=proof['scene_runs'][view['scene']]
+                assert receipt['fsdb_sha256']==run['old_fsdb_sha256' if role=='accepted' else 'new_fsdb_sha256']
+                trace.update(canonical_string_trace(files[receipt['csv']].decode(),[path],begin,end))
             traces[role]=trace
         assert traces['accepted']==traces['current'],view['name']
         assert sha(json.dumps(traces['current'],sort_keys=True,separators=(',',':')).encode())==entry['identical_trace_sha256']
