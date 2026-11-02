@@ -1,12 +1,39 @@
 import unittest
 import tempfile
+import json
+import hashlib
+from unittest.mock import patch
 from pathlib import Path
 
-from spec48_audit import case_inventory,contract_fingerprint
+from spec48_audit import case_inventory,contract_fingerprint,verify
 from contract_campaign import partition
 
 
 class CompleteContractInventory(unittest.TestCase):
+    def test_delivery_rejects_outer_budget_overrun_or_incomplete_execution(self):
+        names=['quick-cold','quick-hot','full-cold','full-hot','campaign58','acceptance',
+               'bw_mon_quickstart-compile','bw_mon_quickstart','bw_mon_grouped-compile',
+               'bw_mon_grouped','verdi-applicability','python-tools','contracts-final']
+        budgets={'quick-cold':300,'quick-hot':120,'full-cold':1800,'full-hot':1800,'campaign58':900}
+        rows=[dict(name=name,exit_code=0,elapsed_seconds=10,
+                   **(dict(budget_seconds=budgets[name],budget_met=True) if name in budgets else {}))
+              for name in names]
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            receipt=dict(schema='bw-spec48-run-evidence-v1',state='VERIFIED',files_sha256={},
+                         source_head='fixed',execution=rows)
+            original=root/'execution/results.json';original.parent.mkdir();original.write_text(json.dumps(rows))
+            receipt['files_sha256']={'execution/results.json':hashlib.sha256(original.read_bytes()).hexdigest()}
+            path=root/'run-evidence.json'
+            with patch('spec48_audit.verify_contracts',return_value=597),patch('spec48_audit.subprocess.check_call'):
+                path.write_text(json.dumps(receipt));self.assertTrue(verify(root)['checked_pass'])
+                for altered in [rows[:-1],rows+[rows[0]],
+                                [dict(r,elapsed_seconds=1800.001) if r['name']=='full-cold' else r for r in rows],
+                                [dict(r,exit_code=1) if r['name']=='contracts-final' else r for r in rows],
+                                [dict(r,elapsed_seconds=11) if r['name']=='full-cold' else r for r in rows]]:
+                    receipt['execution']=altered;path.write_text(json.dumps(receipt))
+                    with self.assertRaises(ValueError):verify(root)
+
     def test_parallel_contracts_share_no_test_top_and_cover_each_case_once(self):
         cases=[{'name':'a0','top':'a'},{'name':'a1','top':'a','defines':['FAULT']},
                {'name':'b','top':'b'},{'name':'c','top':'c'}]

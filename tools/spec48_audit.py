@@ -4,6 +4,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import math
 from pathlib import Path
 import re
 import subprocess
@@ -151,13 +152,34 @@ print('PASS 43 new-source scenes:',totals)
 '''
 
 
+def verify_execution(rows):
+    expected={'quick-cold','quick-hot','full-cold','full-hot','campaign58','acceptance',
+              'bw_mon_quickstart-compile','bw_mon_quickstart','bw_mon_grouped-compile',
+              'bw_mon_grouped','verdi-applicability','python-tools','contracts-final'}
+    require(len(rows)==len(expected) and {row['name'] for row in rows}==expected,
+            'delivery execution missing, duplicate or unexpected job')
+    budgets={'quick-cold':300,'quick-hot':120,'full-cold':1800,'full-hot':1800,'campaign58':900}
+    for row in rows:
+        require(row['exit_code']==0,'delivery job failed: '+row['name'])
+        elapsed=row['elapsed_seconds']
+        require(isinstance(elapsed,(int,float)) and not isinstance(elapsed,bool) and
+                math.isfinite(elapsed) and elapsed>=0,'invalid outer elapsed time')
+        if row['name'] in budgets:
+            budget=budgets[row['name']]
+            require(row.get('budget_seconds')==budget and row.get('budget_met') is True and elapsed<=budget,
+                    'outer command budget failed: '+row['name'])
+
+
 def verify(directory):
     receipt=json.loads((directory/'run-evidence.json').read_text())
     require(receipt['schema']=='bw-spec48-run-evidence-v1' and receipt['state']=='VERIFIED','delivery incomplete')
+    verify_execution(receipt['execution'])
     for relative,digest in receipt['files_sha256'].items():
         path=Path(relative)
         require(not path.is_absolute() and '..' not in path.parts,'unsafe proof path')
         require(sha(directory/path)==digest,'proof file changed: '+relative)
+    require(json.loads((directory/'execution/results.json').read_text())==receipt['execution'],
+            'execution summary differs from original controller record')
     source=directory/'source'
     count=verify_contracts(directory,source,receipt)
     for code,folder in [(CAMPAIGN_REPLAY,'campaign58'),(ACCEPTANCE_REPLAY,'acceptance')]:
