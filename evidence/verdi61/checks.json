@@ -48,6 +48,6 @@
     "reviewed_head": "c6a7e28e378e07440ce93adcfeb31bfc65ab459e",
     "issue_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717"
   },
-  "human_acceptance": "PENDING",
-  "scope_note": "Automated contract/asset verification and agent reviews do not grant human acceptance or close the parent specification. No PR created."
+  "human_acceptance": "ACCEPTED: actual user reply on 2026-11-02; exact feedback and accepted assets/intervals are recorded in review.json",
+  "scope_note": "The automatic results and reviews above retain their original source and scope. Human acceptance is recorded separately in review.json; it does not close the parent specification or satisfy the remaining final delivery gates."
 }

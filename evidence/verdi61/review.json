@@ -344,17 +344,20 @@
     "differences": []
   },
   "human": {
-    "status": "PENDING",
-    "reviewer": null,
-    "reviewed_at": null,
-    "feedback": [],
-    "pending_views": [
-      "named_group",
-      "default_phase",
-      "sustained_boundary",
-      "steady_fail"
+    "status": "ACCEPTED",
+    "reviewer": "MakeReadUnique",
+    "reviewed_at": "2026-11-02",
+    "feedback": [
+      {
+        "source": "User reply during implementation of issue 62",
+        "verbatim": "包括，四张图及区间均确认 OK",
+        "scope": "All four views and their tabled intervals in the linked evidence comment; the image and FSDB hashes in views remain the accepted assets.",
+        "views": ["named_group", "default_phase", "sustained_boundary", "steady_fail"],
+        "differences_reported": []
+      }
     ],
-    "note": "Only actual user feedback naming these assets and intervals can change this status. Agent operation/inspection and automatic PASS are separate."
+    "pending_views": [],
+    "note": "Actual user feedback accepts these assets and intervals only. Agent inspection and automatic PASS remain separate; changed sources or assets require a fresh applicability assessment."
   },
   "evidence_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717"
 }
