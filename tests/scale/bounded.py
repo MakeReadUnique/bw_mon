@@ -13,6 +13,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 
 HERE = Path(__file__).resolve().parent
@@ -35,6 +36,48 @@ def sha(path):
 
 def build_identity(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+def verification_input_name(name):
+    return name not in {'manifest.json','verification.json','diffs.json','qualification.json'} and not name.startswith('verification.')
+
+
+def qualify(scenario,module,attempt):
+    """Perform the source-bound independent audit inside this run's budget."""
+    began=time.monotonic();started=datetime.datetime.utcnow().isoformat()+'Z'
+    manifest=json.loads((attempt/'manifest.json').read_text())
+    simulation=manifest['stages']['simulation']
+    assert simulation['state']=='COMPLETED' and simulation['returncode']==0
+    snapshot=Path(manifest['source_snapshot']);build=Path(manifest['build'])
+    for relative,digest in manifest['source_sha256'].items():assert sha(snapshot/relative)==digest,relative
+    assert sha(build/'compile-success.json')==manifest['build_receipt_sha256']
+    receipt=json.loads((build/'compile-success.json').read_text())
+    assert receipt['digest']==manifest['compile_digest']
+    assert receipt['artifacts_sha256']==build_artifacts(build)
+    with tempfile.TemporaryDirectory(prefix='bw-frozen-input-replay-') as temporary:
+        replay=Path(temporary)
+        subprocess.check_call([sys.executable,str(Path(__file__).resolve()),'worker',module,
+                               scenario.name,'generate',str(replay)],stdout=subprocess.DEVNULL)
+        regenerated={name:sha(replay/name) for name in manifest['input_sha256']}
+        assert regenerated==manifest['input_sha256'],'independent input/reference regeneration differs'
+    consumed={p.name:sha(p) for p in attempt.iterdir() if p.is_file() and verification_input_name(p.name)}
+    if hasattr(scenario,'verify'):result=scenario.verify(attempt)
+    else:
+        from run import verify
+        result=verify(scenario,attempt)
+    good=result[0] if isinstance(result,tuple) else result
+    if not good:return False
+    assert consumed=={p.name:sha(p) for p in attempt.iterdir() if p.is_file() and verification_input_name(p.name)}
+    assert json.loads((attempt/'verification.json').read_text())['difference_count']==0
+    proof=dict(schema='bw-source-bound-verification-v1',scenario=manifest['scenario'],started_utc=manifest['started_utc'],
+               attempt_directory=simulation['cwd'],simulation_stage_sha256=sha(attempt/'simulation.stage.json'),
+               source_sha256=manifest['source_sha256'],input_sha256=manifest['input_sha256'],
+               regenerated_inputs_sha256=regenerated,build_receipt_sha256=manifest['build_receipt_sha256'],
+               consumed_sha256=consumed,verification_sha256=sha(attempt/'verification.json'),diffs_sha256=sha(attempt/'diffs.json'),
+               audit_started_utc=started,audit_finished_utc=datetime.datetime.utcnow().isoformat()+'Z',
+               elapsed_seconds=time.monotonic()-began)
+    save(attempt/'qualification.json',proof)
+    return True
 
 
 def build_artifacts(build):
@@ -176,7 +219,7 @@ def tool_identity():
                 'executables': {name: {'path': str(Path(shutil.which(name)).resolve()),
                                        'sha256': sha(Path(shutil.which(name)).resolve())}
                                 for name in ('vcs', 'gcc', 'g++', 'python3')}}
-    native = sorted((REPO / 'rtl').glob('*.c'))
+    native = sorted((REPO / 'rtl').glob('*.c')) + [HERE/'memory_advice.c']
     headers = set()
     for source in native:
         deps = capture(['gcc', '-M', '-w', '-pipe', '-fPIC', '-O', '-I'+str(include), str(source)])
@@ -225,7 +268,7 @@ def run_bounded(scenario, output, force=False):
         return finish(False, 'GENERATION_INCOMPLETE')
     inputs = {p.name: sha(p) for p in sorted(attempt.iterdir()) if p.is_file() and
               p.name not in {'manifest.json', 'generation.log', 'generation.time-v.txt', 'generation.stage.json'}}
-    sources = sorted(p for p in (REPO/'rtl').rglob('*') if p.is_file()) + sorted(HERE.glob('*.py'))
+    sources = sorted(p for p in (REPO/'rtl').rglob('*') if p.is_file()) + sorted(HERE.glob('*.py')) + [HERE/'memory_advice.c']
     sources += [Path(p) if Path(p).is_absolute() else REPO/Path(p)
                 for p in getattr(scenario, 'source_files', [])]
     sources = sorted(set(sources))
@@ -248,7 +291,9 @@ def run_bounded(scenario, output, force=False):
         else:
             shutil.copyfile(str(source), str(target))
     manifest.update(source_sha256=inventory, input_sha256=inputs, build_identity=identity,
-                    compile_digest=digest, source_snapshot=str(snapshot), build_cache=str(build_cache))
+                    compile_digest=digest, source_snapshot=str(snapshot), build_cache=str(build_cache),
+                    memory_advice=dict(source='tests/scale/memory_advice.c',method='MADV_HUGEPAGE',
+                                       scope='private anonymous mappings >=2MiB in the simulator process'))
     verify_worker = [sys.executable, str(snapshot/'tests/scale/bounded.py'), 'worker', module, scenario.name]
     cache = build_cache / 'compile-success.json'
     valid_cache = False
@@ -268,6 +313,7 @@ def run_bounded(scenario, output, force=False):
         rtl = snapshot / 'rtl'
         rtl_sources = sorted(rtl.glob('*.sv'), key=lambda p: (p.name != 'bw_mon_pkg.sv', p.name))
         rtl_sources += sorted(rtl.glob('*.c'))
+        rtl_sources += [snapshot/'tests/scale/memory_advice.c']
         command = ['vcs'] + options + ['+incdir+'+str(rtl), '-o', str(binary)]
         command += list(map(str, rtl_sources)) + [str(build/name) for name in ('input_pkg.sv','checker.sv','tb_bw_scale.sv')]
         if not stage('compile', command, build):
@@ -287,9 +333,10 @@ def run_bounded(scenario, output, force=False):
         '+VARIANT='+scenario.variant, '+ACTUAL='+str(attempt/'actual.csv'), '+BW_EXPECT='+str(attempt/'expect.cfg')]
     if not stage('simulation', ['stdbuf', '-oL', str(binary), '-no_save'] + args):
         return finish(False, 'SIMULATION_INCOMPLETE')
-    if not stage('verification', verify_worker + ['verify', str(attempt)]):
+    if not stage('verification', verify_worker + ['qualify', str(attempt)]):
         return finish(False, 'VERIFICATION_INCOMPLETE')
     manifest['verification'] = json.loads((attempt/'verification.json').read_text())
+    manifest['qualification_sha256']=sha(attempt/'qualification.json')
     manifest['evidence_sha256'] = {p.name: sha(p) for p in attempt.iterdir() if p.is_file() and p.name != 'manifest.json'}
     return finish(True, 'BUDGET_EXCEEDED')
 
@@ -299,7 +346,7 @@ def main():
     parser.add_argument('worker', choices=['worker'])
     parser.add_argument('module')
     parser.add_argument('profile')
-    parser.add_argument('stage', choices=['generate','verify'])
+    parser.add_argument('stage', choices=['generate','verify','qualify'])
     parser.add_argument('attempt', type=Path)
     args = parser.parse_args()
     scenario = importlib.import_module(args.module).build_scenario(args.profile)
@@ -310,6 +357,7 @@ def main():
             from generate import generate
             generate(scenario, args.attempt)
         return 0
+    if args.stage=='qualify':return 0 if qualify(scenario,args.module,args.attempt) else 1
     if hasattr(scenario, 'verify'):
         result = scenario.verify(args.attempt)
     else:

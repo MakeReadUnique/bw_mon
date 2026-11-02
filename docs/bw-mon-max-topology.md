@@ -46,7 +46,7 @@ campaign.
 Daily regression uses three real 128-point/32-group topology cases (both
 bases plus the cancellation shape), two seeded history cases and the
 pending-suffix case. The complete suite adds both maximum topologies, the
-maximum cancellation topology, all seven history cases, fifteen directed
+maximum cancellation topology, all ten history cases, fifteen directed
 H5/H7 component cases, frozen-source COMMON replay and independent replay of
 every new case. Shared M4/H6 scenarios occur once per suite. The exact gates
 are 120 seconds hot / 300 seconds cold daily, 600 seconds per maximum case,
@@ -55,13 +55,31 @@ Timeouts, missing receipts, differences and over-budget runs remain
 incomplete.
 
 `bounded.py` counts generation, compilation, initialization, simulation,
-verification, process cleanup and orchestration in the end-to-end result. Ready
+verification, process cleanup and orchestration in the end-to-end result. Each
+measured verification regenerates the original inputs from frozen sources,
+checks the native build and executes every independent model comparison. Its
+receipt binds the attempt, simulation-stage receipt, source, inputs and all
+consumed raw/output hashes. The final suite audit revalidates these receipts
+and runs member-misconnection sensitivity without repeating the same model
+computation. Portable archive verification still regenerates and replays every
+case in full. Ready
 is a flushed marker with recorded 50 ms polling resolution. VCS may leave a
 short DNS helper during shutdown; bounded cleanup is included in stage time
 and persistent children are terminated and rejected. Cache reuse matches all
 input/source/tool/header/options fingerprints and the simulator launcher plus
 its native shared payloads. Component builds are forced in both full-suite
 modes because their older runner has a weaker cache key.
+
+The revised harness also compiles `tests/scale/memory_advice.c` into each
+measured simulator. On the qualified Linux x86-64 host it applies
+`MADV_HUGEPAGE` to large private anonymous mappings before their first page
+faults, preserving `mmap` arguments, results and errno. This process-local
+advice makes transparent huge-page use less sensitive to host fragmentation;
+the kernel still decides whether to allocate huge pages. The helper and its
+system headers are part of the source/tool fingerprints and immutable native
+receipt. Its initialization and execution costs remain inside the same hard
+budgets, and RSS is still measured. Ordinary monitor integration continues to
+compile the two native RTL sources; this helper belongs to qualification.
 
 ## Same-slot M4/H6 interaction (spec 48 recalibration)
 

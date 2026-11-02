@@ -25,7 +25,7 @@ def profiles(tier):
 
 
 def frozen_inputs(tier):
-    source_set=set(p for p in (REPO/'rtl').rglob('*') if p.is_file())|set(HERE.glob('*.py'))
+    source_set=set(p for p in (REPO/'rtl').rglob('*') if p.is_file())|set(HERE.glob('*.py'))|{HERE/'memory_advice.c'}
     common_sources=sorted(str(p.relative_to(REPO)) for p in source_set)
     for name in profiles(tier):
         scenario=(topology_scenario if name in TOPOLOGY else history_scenario)(name)
@@ -131,7 +131,7 @@ def run_suite(tier,output,cache_mode,lock_path):
             passed=result['state']=='COMPLETED'
         if passed:
             directory=suite_attempt/'recorded-replay'
-            result=execute_stage([sys.executable,str(REPO/'tests/scale/revised_evidence.py'),'audit-runs','--member-sensitivity']+
+            result=execute_stage([sys.executable,str(REPO/'tests/scale/revised_evidence.py'),'audit-runs','--member-sensitivity','--receipts-only']+
                                  [r['manifest'] for r in manifest['profiles']],directory,'recorded-replay',
                                  budget-(time.monotonic()-started))
             manifest['stages']['recorded_replay']=result

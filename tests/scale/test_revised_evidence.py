@@ -3,8 +3,12 @@ import unittest
 import copy
 import datetime
 import json
+import tempfile
+import subprocess
+import sys
 from pathlib import Path
 from revised_evidence import validate_suite, validate_run_metadata, utc_seconds, FULL, QUICK, COMPONENT_CASES, digest
+from revised_evidence import validate_source_bound_verification,sha
 
 
 def complete_metadata():
@@ -43,6 +47,54 @@ def bound_metadata():
 
 
 class RevisedCompletion(unittest.TestCase):
+    def test_portable_verifier_starts_without_checkout_modules(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            script=Path(temporary)/'verify.py'
+            script.write_bytes(Path(__file__).with_name('revised_evidence.py').read_bytes())
+            result=subprocess.run([sys.executable,'-I',str(script),'--help'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+
+    def test_original_source_bound_audit_cannot_be_reused_or_hide_changed_raw_data(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            out=Path(temporary)
+            for name,text in {'input.json':'fixed input','simulation.log':'actual run','actual.csv':'independent bytes',
+                              'simulation.stage.json':'{"state":"COMPLETED"}',
+                              'verification.json':'{"difference_count":0}','diffs.json':'[]'}.items():
+                (out/name).write_text(text)
+            run={'scenario':'fixed-profile','started_utc':'2026-11-02T00:00:00Z',
+                 'source_snapshot':'/frozen/source',
+                 'source_sha256':{'rtl/fixed.sv':'source'},'input_sha256':{'input.json':sha(out/'input.json')},
+                 'build_receipt_sha256':'native','stages':{'simulation':{'cwd':'/original/attempt'},
+                    'verification':{'started_utc':'2026-11-02T00:00:01Z','finished_utc':'2026-11-02T00:00:02Z',
+                    'command':['python3','/frozen/source/tests/scale/bounded.py','worker','topology_revised','fixed-profile','qualify','/original/attempt']}},
+                 'evidence_sha256':{p.name:sha(p) for p in out.iterdir()}}
+            run['verification']={'difference_count':0}
+            proof={'schema':'bw-source-bound-verification-v1','source_sha256':run['source_sha256'],
+                   'input_sha256':run['input_sha256'],'regenerated_inputs_sha256':run['input_sha256'],
+                   'build_receipt_sha256':'native','scenario':'fixed-profile',
+                   'started_utc':run['started_utc'],'attempt_directory':'/original/attempt',
+                   'simulation_stage_sha256':sha(out/'simulation.stage.json'),
+                   'consumed_sha256':{n:d for n,d in run['evidence_sha256'].items()
+                                     if n not in ('verification.json','diffs.json')},
+                   'verification_sha256':sha(out/'verification.json'),'diffs_sha256':sha(out/'diffs.json')}
+            proof.update(audit_started_utc='2026-11-02T00:00:01.100000Z',
+                         audit_finished_utc='2026-11-02T00:00:01.900000Z',elapsed_seconds=0.8)
+            (out/'qualification.json').write_text(json.dumps(proof))
+            run['qualification_sha256']=sha(out/'qualification.json')
+            validate_source_bound_verification(run,out)
+            changed_summary=copy.deepcopy(run);changed_summary['verification']['checked_raw']=123
+            with self.assertRaisesRegex(ValueError,'summary'):
+                validate_source_bound_verification(changed_summary,out)
+            wrong=copy.deepcopy(run);wrong['started_utc']='2026-11-02T01:00:00Z'
+            with self.assertRaisesRegex(ValueError,'attempt'):
+                validate_source_bound_verification(wrong,out)
+            (out/'actual.csv').write_text('changed raw bytes')
+            # Even a newly written outer hash cannot detach the old audit
+            # receipt from the raw stream it actually checked.
+            run['evidence_sha256']['actual.csv']=sha(out/'actual.csv')
+            with self.assertRaisesRegex(ValueError,'consumed'):
+                validate_source_bound_verification(run,out)
+
     def test_full_audit_covers_every_executed_profile_in_order(self):
         from revised_suite import profiles
         self.assertEqual(FULL, profiles('full'))
