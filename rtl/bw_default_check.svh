@@ -118,7 +118,7 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   bw_u64_t width,min_span,start_tick,end_tick,reference_end_tick,check_count,first_u,last_u;
   bw_u64_t run_count,run_first,run_last,runs,longest_count,longest_first,longest_last,longest_span;
   bw_u64_t reference_first_seq,reference_last_seq,reference_first_u,reference_last_u,previous_seq,exclusion_count,excluded_left,excluded_right;
-  real baseline,deviation,maximum;
+  real baseline,deviation,maximum,margin,lower_bound,upper_bound;
   bit reference_valid,quality,failed,exempt,over,trusted;
   string reason,conclusion,reference_seqs,baseline_text,threshold_text,maximum_text,percent_text,steady_text;
   trusted=default_scopes[index].terminal_trust;
@@ -226,6 +226,10 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
     end
     if(reference_valid && baseline==0)reason="ZERO_REFERENCE";
     if(reference_valid && baseline>0)begin
+      // B is frozen for this platform; calculate its exact inclusive bounds
+      // once rather than repeating the same real arithmetic for every row.
+      margin=0.05*baseline;
+      lower_bound=baseline-margin;upper_bound=baseline+margin;
       foreach(default_scopes[index].raw[r])begin
         for(bw_u64_t n=0;n<default_scopes[index].raw[r].count;n++)begin
           row=default_row(default_scopes[index].raw[r],n);
@@ -256,7 +260,7 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
           // Compare the inclusive bounds directly: subtracting two nearby
           // bandwidths can round an equal-boundary sample into an excursion.
           // No tolerance widens the five-percent interval.
-          over=row.value>baseline+0.05*baseline || row.value<baseline-0.05*baseline;
+          over=row.value>upper_bound || row.value<lower_bound;
           if(!over)begin run_count=0;continue;end
           if(run_count==0)begin run_first=row.u;runs=default_add(index,runs,1);end
           run_last=row.u;run_count=default_add(index,run_count,1);
