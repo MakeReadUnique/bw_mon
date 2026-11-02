@@ -571,23 +571,7 @@ module bw_stats_core #(
     real x,y,mean_x,mean_y_delta,xx,xy,slope,residual,sum_residual;
     real anchor_y,pair_x[3],pair_y[3];
     bw_u64_t origin;
-    bit constant_level;
     origin=phase_samples[0].ticks;anchor_y=phase_samples[0].value;
-    // For six identical finite values every anchored pair delta, covariance
-    // and residual below is exactly zero. Strictly ordered, supported physical
-    // timestamps guarantee positive finite x variance. Keep all other inputs
-    // on the full fit path, including degenerate or unknown timestamps.
-    constant_level=finite_nonnegative_real(anchor_y) && !$isunknown(origin);
-    for(int i=1;i<PHASE_N;i++)begin
-      if($realtobits(phase_samples[i].value)!=$realtobits(anchor_y) ||
-         $isunknown(phase_samples[i].ticks) ||
-         phase_samples[i].ticks<=phase_samples[i-1].ticks)constant_level=0;
-    end
-    if(constant_level && phase_samples[$].ticks-origin<=BW_MONITOR_LIMIT_TICKS)begin
-      phase_fit_mean=anchor_y+0.0;
-      phase_fit_delta=0.0;phase_fit_rms=0.0;phase_fit_trend_rms=0.0;
-      phase_fit_valid=1;return;
-    end
     mean_x=0.0;mean_y_delta=0.0;
     // Take integer differences first to preserve sub-ns physical time, then
     // pair adjacent observations. Raw samples remain intact for all metrics.
