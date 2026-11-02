@@ -39,12 +39,15 @@
     return runtime_cancelled || ledger_scope_failed();
   endfunction
   function automatic bw_u64_t request_slot_settlement(string context_id);
-    bw_u64_t grant;
+    bw_u64_t grant,pending_grant;
     chandle watch;
     if(clock_observer==null)
       clock_observer=settlement_watch_for_scope(bw_scope_t'(scope_kind),scope_id);
     watch=clock_observer;
-    grant=bw_mon_pkg::request_slot_settlement(context_id,watch,bw_scope_t'(scope_kind));
+    pending_grant=0;
+    if(scope_kind==BW_POINT && my_point_ledger!=null)pending_grant=my_point_ledger.grant;
+    else if(scope_kind==BW_GROUP && my_group_ledger!=null)pending_grant=my_group_ledger.grant;
+    grant=bw_mon_pkg::request_slot_settlement(context_id,watch,bw_scope_t'(scope_kind),pending_grant);
     if(scope_kind==BW_POINT)point_work_requested(scope_id,grant,watch,my_point_ledger);
     else group_work_requested(scope_id,grant,watch,my_group_ledger);
     return grant;

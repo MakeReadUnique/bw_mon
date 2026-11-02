@@ -46,6 +46,8 @@ def source_expectations(review, accepted):
     assert set(expected)==set(review['source_sha256'])
     changed={name for name,digest in expected.items() if digest!=review['source_sha256'][name]}
     assert changed=={'rtl/bw_default_check.svh','rtl/bw_group_mon.sv','rtl/bw_mon_transport.svh',
+                     'rtl/bw_slot_settlement.svh','rtl/bw_scope_runtime.svh',
+                     'rtl/bw_point_completion.svh','rtl/bw_group_completion.svh',
                      'tests/verdi61/verify.py'},changed
     # Reuse the established native source/option/dependency audit. The checker
     # capture receipt lacks scene-only keys, which can be derived from its

@@ -48,6 +48,7 @@ module bw_group_mon #(
   bw_u64_t unexpected_scan_notice=0;
 `ifdef BW_MON_TEST_SCHEDULING
   // Posted (first-phase) test-gate release; see the audit's gate branch.
+  bw_test_consumer_gate test_gate;
   bit gate_release_posted=0;
 `endif
   bit reset_observer_ready=0;
@@ -288,13 +289,15 @@ module bw_group_mon #(
       note_role_receipt(scope_key(BW_GROUP,scope_id),"owner",scope_disabled(BW_GROUP,scope_id));
   end
 
-  task automatic refresh_progress();
-    bw_u64_t watermark;
-    watermark=group_input_watermark(group_handle);
+  task automatic update_progress(bw_u64_t watermark);
     if (expected_edges.size()!=0 && expected_edges[0].timestamp_ticks<watermark)
       watermark=expected_edges[0].timestamp_ticks;
     progress_watermark_ticks=watermark;
     set_source_progress(transport_source,watermark);
+  endtask
+
+  task automatic refresh_progress();
+    update_progress(group_input_watermark(group_handle));
   endtask
 
   always @(posedge clk) begin : capture_expected_edge
@@ -352,7 +355,10 @@ module bw_group_mon #(
     acknowledge_member_control(group_handle,member_index,envelope.transport_seq);
     if(runtime_failed())return;
     controls_acked=controls_held;
-    refresh_progress();
+    // collect_inputs refreshes progress before yielding or committing again.
+`ifdef BW_MON_TEST_SCHEDULING
+    if(test_gate.paused)refresh_progress();
+`endif
   endtask
 
   task automatic commit_frame(expected_edge_t expected);
@@ -404,15 +410,15 @@ module bw_group_mon #(
     end
     my_group_ledger.acked=frame.record_seq;
     discarded=expected_edges.pop_front();expected_notice=checked_add(expected_notice,1,scope_id);
-    refresh_progress();
+    // The caller immediately scans the next batch and refreshes its watermark.
+`ifdef BW_MON_TEST_SCHEDULING
+    if(test_gate.paused)refresh_progress();
+`endif
   endtask
 
   task automatic collect_inputs();
     bw_notification notice;
-`ifdef BW_MON_TEST_SCHEDULING
-    bw_test_consumer_gate test_gate;
-`endif
-    bw_u64_t seen_notice,seen_expected;
+    bw_u64_t seen_notice,seen_expected,watermark,input_watermark;
     bw_control_frame_t candidate,control;
     bw_record_t frame;
     int selected_control,owner_index;
@@ -429,7 +435,7 @@ module bw_group_mon #(
       wait(!test_gate.paused || runtime_cancelled || core_failure_seen || monitoring_shared_disabled);
       if(runtime_failed())return;
 `endif
-      seen_notice=notice.seq;seen_expected=expected_notice;refresh_progress();
+      seen_notice=notice.seq;seen_expected=expected_notice;
       selected_control=-1;candidate='0;
       for (int m=0;m<direct_member_count;m++) begin
         if (peek_member_control_at(owner_index,m,control) &&
@@ -437,12 +443,19 @@ module bw_group_mon #(
           candidate=control;selected_control=m;
         end
       end
-      if (selected_control>=0 && candidate.value.timestamp_ticks<=direct_source_watermark(group_handle) &&
+      watermark=direct_source_watermark(group_handle);input_watermark=watermark;
+      // The earliest control found above also caps the input watermark; one
+      // scan supplies both the control barrier and the progress calculation.
+      if(selected_control>=0 && candidate.value.timestamp_ticks<input_watermark)input_watermark=candidate.value.timestamp_ticks;
+      update_progress(input_watermark);
+      if (selected_control>=0 && candidate.value.timestamp_ticks<=watermark &&
           (expected_edges.size()==0 || candidate.value.timestamp_ticks<=expected_edges[0].timestamp_ticks)) begin
         commit_control(selected_control,candidate);if(collector_stalled)return;continue;
       end
       all_frames=(expected_edges.size()!=0);
-      for (int m=0;m<direct_member_count;m++) begin
+      // With no expected edge there is nothing to commit. The independent
+      // completion audit still detects any unexpected unread publication.
+      if(all_frames)for (int m=0;m<direct_member_count;m++) begin
         if (peek_member_frame_at(owner_index,m,frame)) begin
           if (expected_edges.size()==0) all_frames=0;
           else if (frame.edge_index!=expected_edges[0].edge_index || frame.timestamp_ticks!=expected_edges[0].timestamp_ticks)

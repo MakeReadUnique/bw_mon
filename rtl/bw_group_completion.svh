@@ -47,7 +47,7 @@
     if(batch.expected!=0 && ticks<=batch.ticks)begin runtime_scope_error(BW_GROUP,id,"GROUP_CLOCK","actual group edges must strictly increase");return;end
     if(batch.expected==BW_U64_MAX)begin runtime_scope_error(BW_GROUP,id,"INTEGER_OVERFLOW","group edge ledger exhausted");return;end
     batch.expected++;batch.ticks=ticks;
-    group_work_requested(id,request_slot_settlement(id,watch,BW_GROUP),watch,batch);
+    group_work_requested(id,request_slot_settlement(id,watch,BW_GROUP,batch.grant),watch,batch);
   endfunction
   function automatic void group_reset_expected(string id);
     if(!group_batches.exists(id) || scope_failed(BW_GROUP,id))return;

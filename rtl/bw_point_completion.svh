@@ -50,7 +50,7 @@
       runtime_scope_error(BW_POINT,id,"INTEGER_OVERFLOW","expected-edge ledger exhausted");return;
     end
     batch.expected++;batch.input_generation++;batch.ticks=ticks;
-    batch.grant=request_slot_settlement(id,watch);
+    batch.grant=request_slot_settlement(id,watch,BW_POINT,batch.grant);
   endfunction
   // Real workers pass their owner-held ledger. Component callers retain the
   // ID lookup; a missing cached watch retains the typed activity fallback.
@@ -97,7 +97,7 @@
 `ifdef BW_MON_TEST_FAULTS
     if(take_point_fault(id,"notice"))return;
 `endif
-    void'(request_slot_settlement(id,batch.settlement_watch));
+    void'(request_slot_settlement(id,batch.settlement_watch,BW_POINT,batch.grant));
   endfunction
   function automatic void close_point_batch(string id,bw_point_batch ledger=null);
     bw_point_batch batch;

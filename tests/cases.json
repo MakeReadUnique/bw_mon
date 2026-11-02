@@ -6757,5 +6757,12 @@
    "{log}",
    "complete"
   ]
+ },
+ {
+  "name": "transport_gate_after_publication",
+  "top": "tb_transport_gate_after_publication",
+  "defines": [
+   "BW_MON_TEST_SCHEDULING"
+  ]
  }
 ]

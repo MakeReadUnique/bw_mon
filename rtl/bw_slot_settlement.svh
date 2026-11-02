@@ -73,13 +73,18 @@
     bw_native_note_generation(slot_settlement_generation);
   endfunction
 
-  function automatic bw_u64_t request_slot_settlement(string id,chandle watch=null,bw_scope_t kind=BW_POINT);
+  function automatic bw_u64_t request_slot_settlement(string id,chandle watch=null,bw_scope_t kind=BW_POINT,bw_u64_t pending_grant=0);
     bw_u64_t required;
     if(monitoring_shared_disabled || core_failure_seen)return slot_settlement_generation;
     if(slot_settlement_generation==BW_U64_MAX)begin
       runtime_shared_error("INTEGER_OVERFLOW","scheduler","slot generation exhausted");return slot_settlement_generation;
     end
     required=slot_settlement_generation+1;
+    // Only an owner ledger for this same watch may supply pending_grant.
+    // The native scheduler defers (and keeps dirty) a watch until its grant
+    // arrives, so another request for that still-pending grant adds no native
+    // responsibility. Callers must still record every new action/receipt.
+    if(watch!=null && pending_grant==required)return required;
     slot_settlement_pending=1;
     if(watch==null)watch=settlement_watch_for_scope(kind,id);
     // The native scheduler skips a watcher dispatch while its latest grant
