@@ -228,12 +228,14 @@
     end
     return current+1;
   endfunction
-  function automatic bit peek_member_frame(logic [63:0] group_handle,logic [63:0] member_index,output bw_record_t frame);
+  // Internal collectors retain their validated group index after topology
+  // freezing. Member, ownership, storage and failure checks still run per peek.
+  function automatic bit peek_member_frame_at(int group_index,logic [63:0] member_index,output bw_record_t frame);
     bw_source_state source;
     bw_group_state owner;
     bw_u64_t wanted,index;
-    int group_index,source_index;
-    frame='0;group_index=checked_group_index(group_handle,"peek frame");
+    int source_index;
+    frame='0;
     owner=registered_groups[group_index];
     // The owner's failed bit mirrors its keyed failure entry (direct and
     // propagated), so the hot consumer scan needs no keyed lookups.
@@ -258,12 +260,18 @@
     frame=source.frames[int'(index)];return 1;
   endfunction
 
-  function automatic bit peek_member_control(logic [63:0] group_handle,logic [63:0] member_index,output bw_control_frame_t control);
+  function automatic bit peek_member_frame(logic [63:0] group_handle,logic [63:0] member_index,output bw_record_t frame);
+    int index;
+    index=checked_group_index(group_handle,"peek frame");
+    return peek_member_frame_at(index,member_index,frame);
+  endfunction
+
+  function automatic bit peek_member_control_at(int group_index,logic [63:0] member_index,output bw_control_frame_t control);
     bw_source_state source;
     bw_group_state owner;
     bw_u64_t wanted,index;
-    int group_index,source_index;
-    control='0;group_index=checked_group_index(group_handle,"peek control");
+    int source_index;
+    control='0;
     owner=registered_groups[group_index];
     if(core_failure_seen || monitoring_shared_disabled || owner.failed)return 0;
     source_index=member_source_at(group_index,member_index);
@@ -286,6 +294,12 @@
     control=source.controls[int'(index)];return 1;
   endfunction
 
+  function automatic bit peek_member_control(logic [63:0] group_handle,logic [63:0] member_index,output bw_control_frame_t control);
+    int index;
+    index=checked_group_index(group_handle,"peek control");
+    return peek_member_control_at(index,member_index,control);
+  endfunction
+
   function automatic void acknowledge_member_frame(logic [63:0] group_handle,logic [63:0] member_index,logic [63:0] consumed_seq);
     bw_record_t frame,discarded;
     bw_source_state source;
@@ -300,7 +314,7 @@
     if(core_failure_seen || monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_index].id) || !source.active_consumers[group_index])return;
     if($isunknown(consumed_seq))begin runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"INTEGER_UNKNOWN",$sformatf("frame_ack=%h member=%0d",consumed_seq,member_index));
     return;end
-    if (!peek_member_frame(group_index,member_index,frame) || frame.record_seq!=consumed_seq)
+    if (!peek_member_frame_at(group_index,member_index,frame) || frame.record_seq!=consumed_seq)
       runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"ACK_SEQUENCE",
         $sformatf("source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.frame_acks[group_index]));
     if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
@@ -322,7 +336,7 @@
     if(core_failure_seen || monitoring_shared_disabled || scope_failed(BW_GROUP,registered_groups[group_index].id) || !source.active_consumers[group_index])return;
     if($isunknown(consumed_seq))begin runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"INTEGER_UNKNOWN",$sformatf("control_ack=%h member=%0d",consumed_seq,member_index));
     return;end
-    if (!peek_member_control(group_index,member_index,control) || control.transport_seq!=consumed_seq)
+    if (!peek_member_control_at(group_index,member_index,control) || control.transport_seq!=consumed_seq)
       runtime_scope_error(BW_GROUP,registered_groups[group_index].id,"ACK_SEQUENCE",
         $sformatf("control source=%s received_ack=%0d current_ack=%0d",source.id,consumed_seq,source.control_acks[group_index]));
     if(scope_failed(BW_GROUP,registered_groups[group_index].id))return;
@@ -337,7 +351,7 @@
     watermark=direct_source_watermark(group_handle);
     members=group_member_count(group_handle);
     for (int m=0;m<members;m++)
-      if (peek_member_control(group_handle,m,control) && control.value.timestamp_ticks<watermark)
+      if (peek_member_control_at(group_handle,m,control) && control.value.timestamp_ticks<watermark)
         watermark=control.value.timestamp_ticks;
     return watermark;
   endfunction
@@ -349,8 +363,8 @@
     if (direct_source_watermark(group_handle)<at_ticks) return 0;
     members=group_member_count(group_handle);
     for (int m=0;m<members;m++) begin
-      if (peek_member_control(group_handle,m,control) && control.value.timestamp_ticks<=at_ticks) return 0;
-      if (!peek_member_frame(group_handle,m,frame)) return 0;
+      if (peek_member_control_at(group_handle,m,control) && control.value.timestamp_ticks<=at_ticks) return 0;
+      if (!peek_member_frame_at(group_handle,m,frame)) return 0;
       if (frame.edge_index!=edge_index || frame.timestamp_ticks!=at_ticks) return 0;
     end
     return 1;

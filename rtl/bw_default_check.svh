@@ -110,6 +110,8 @@ endfunction
 function automatic bit default_result(int index,bw_episode_result_t episode,
     bw_phase_result_t platform,bit have_platform);
   bw_check_window_t row,reference[$];
+  bw_check_window_t cursor,next_row;
+  bw_u64_t seq_step,tick_step,left_tick_step,u_step,left_u_step;
   stage_handoff_t handoff,own_handoff;
   stage_step_t step;
   int next_platform;
@@ -231,8 +233,22 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
       margin=0.05*baseline;
       lower_bound=baseline-margin;upper_bound=baseline+margin;
       foreach(default_scopes[index].raw[r])begin
+        // Compression fixes these five affine increments for the whole run.
+        // Advance a separate cursor so temporary reference/check rows cannot
+        // change the next original observation. No row or endpoint is omitted.
+        cursor=default_scopes[index].raw[r].first;
+        if(default_scopes[index].raw[r].count>1)begin
+          next_row=default_row(default_scopes[index].raw[r],1);
+          seq_step=next_row.seq-cursor.seq;tick_step=next_row.ticks-cursor.ticks;
+          left_tick_step=next_row.left_ticks-cursor.left_ticks;
+          u_step=next_row.u-cursor.u;left_u_step=next_row.left_u-cursor.left_u;
+        end
         for(bw_u64_t n=0;n<default_scopes[index].raw[r].count;n++)begin
-          row=default_row(default_scopes[index].raw[r],n);
+          if(n!=0)begin
+            cursor.seq+=seq_step;cursor.ticks+=tick_step;cursor.left_ticks+=left_tick_step;
+            cursor.u+=u_step;cursor.left_u+=left_u_step;
+          end
+          row=cursor;
           // A disabled owner's unknown terminal boundary is an observation
           // cutoff, not a natural episode tail. Keep its last submitted row;
           // a qualified platform handoff still excludes the next platform.

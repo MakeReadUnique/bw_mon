@@ -67,7 +67,7 @@ module bw_group_mon #(
     int selected;
     selected=-1;candidate='0;
     for(int m=0;m<direct_member_count;m++)
-      if(peek_member_control(group_handle,m,control) &&
+      if(peek_member_control_at(group_handle,m,control) &&
          (selected<0 || control.value.timestamp_ticks<candidate.value.timestamp_ticks))begin
         selected=m;candidate=control;
       end
@@ -177,7 +177,7 @@ module bw_group_mon #(
     if(runtime_failed())return 0;
     if(expected_edges.size()==0 && registered_groups[group_handle].notification.seq!=unexpected_scan_notice)begin
       for(int m=0;m<direct_member_count;m++)begin
-        if(peek_member_frame(group_handle,m,unexpected))begin
+        if(peek_member_frame_at(group_handle,m,unexpected))begin
           runtime_scope_error(BW_GROUP,scope_id,"GROUP_COMPLETION",$sformatf("stage=UNEXPECTED_FRAME source=%s original_ticks=%0d edge=%0d without actual group edge",source_name(member_source(group_handle,m)),unexpected.timestamp_ticks,unexpected.edge_index));return 0;
         end
       end
@@ -368,7 +368,7 @@ module bw_group_mon #(
     if(runtime_failed())return;
     frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1'b1;
     for (int m=0;m<direct_member_count;m++) begin
-      if (!peek_member_frame(group_handle,m,member))
+      if (!peek_member_frame_at(group_handle,m,member))
         core_error("COLLECTOR_STATE",scope_id,"complete input disappeared before commit");
       if(runtime_failed())return;
       frame.byte_inc=checked_add(frame.byte_inc,member.byte_inc,scope_id);
@@ -415,9 +415,10 @@ module bw_group_mon #(
     bw_u64_t seen_notice,seen_expected;
     bw_control_frame_t candidate,control;
     bw_record_t frame;
-    int selected_control,source;
+    int selected_control,owner_index;
     bit all_frames;
     wait(configuration_sealed);
+    owner_index=checked_group_index(group_handle,"collect input owner");
 `ifdef BW_MON_TEST_SCHEDULING
     test_gate=bw_test_gate_for(scope_id);
 `endif
@@ -431,7 +432,7 @@ module bw_group_mon #(
       seen_notice=notice.seq;seen_expected=expected_notice;refresh_progress();
       selected_control=-1;candidate='0;
       for (int m=0;m<direct_member_count;m++) begin
-        if (peek_member_control(group_handle,m,control) &&
+        if (peek_member_control_at(owner_index,m,control) &&
             (selected_control<0 || control.value.timestamp_ticks<candidate.value.timestamp_ticks)) begin
           candidate=control;selected_control=m;
         end
@@ -442,8 +443,7 @@ module bw_group_mon #(
       end
       all_frames=(expected_edges.size()!=0);
       for (int m=0;m<direct_member_count;m++) begin
-        if (peek_member_frame(group_handle,m,frame)) begin
-          source=member_source(group_handle,m);
+        if (peek_member_frame_at(owner_index,m,frame)) begin
           if (expected_edges.size()==0) all_frames=0;
           else if (frame.edge_index!=expected_edges[0].edge_index || frame.timestamp_ticks!=expected_edges[0].timestamp_ticks)
             core_error("FRAME_ALIGNMENT",scope_id,group_missing_detail(group_handle,
