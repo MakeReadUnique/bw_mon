@@ -9,7 +9,9 @@ integration remains point/bind, group module and unified setup.
 ## Build requirements
 
 Compile `bw_mon_pkg.sv` first, then `bw_check_report.sv`, the remaining
-`rtl/*.sv`, `rtl/bw_slot_settlement.c` and the testbench. Include `rtl/` for the
+`rtl/*.sv`, both native sources (`rtl/bw_slot_settlement.c` and
+`rtl/bw_end_coordinator.c`), and the testbench. The second native source verifies
+the final report after all SystemVerilog final blocks. Include `rtl/` for the
 SV headers and the installed VCS `include/` directory for `svdpi.h` and
 `vpi_user.h`.
 
@@ -21,7 +23,7 @@ and `-kdb`. For example, the compiler argument list includes:
 -full64 -sverilog +vpi -debug_access -assert svaext
 +incdir+rtl -CFLAGS -I<VCS-installation>/include
 rtl/bw_mon_pkg.sv rtl/bw_check_report.sv <remaining-RTL.sv>
-rtl/bw_slot_settlement.c <testbench.sv>
+rtl/bw_slot_settlement.c rtl/bw_end_coordinator.c <testbench.sv>
 ```
 
 `tests/run.py`, `tests/acceptance/run.py`, `tests/scale/run.py` and the standalone

@@ -2,7 +2,18 @@
 
 `bw_mon` 用于 SystemVerilog 仿真，可以观察接口传了多少字节、最近一段时间的带宽，以及一次流量过程的平均带宽。接入时，把监测器连接到接口的时钟、复位和传输控制信号即可，不需要 UVM。
 
-第一次使用，可以先运行第 2、3 节的小例子。接到自己的 DUT 时，主要修改 **协议类型、每拍字节数、窗口大小和信号连接**。点、组和直接成员数由监测器自动发现。多接口汇总、阶段分析和性能检查可以按需增加。
+第一次使用，先运行第 2、3 节的单接口例子。需要观察多个已有 DUT 实例时，再运行第 6 节的 bind 与聚合组例子。接到自己的 DUT 时，主要修改 **协议类型、每次传输的计量字节数、窗口大小和信号连接**。
+
+按以下顺序接入：
+
+1. 确定哪个采样沿算一次传输，以及这次传输计入多少字节。
+2. 每个接口放一个 `bw_point_mon`，或用一条类型 `bind` 为多个 DUT 实例添加观测点。
+3. 整个仿真放一个 `bw_mon_setup`。需要汇总时，再例化真实的 `bw_group_mon` 并添加成员。
+4. 在仿真开始时配置成员。等待 `monitor_ready` 后，再开始发送流量。
+5. 从点或组实例读取结果，先看有效位，再看数值。
+6. 停止发送后保留时钟，等流量过程结束，再调用 `$finish`。最后检查报告完成状态和性能结果。
+
+点数、组数和直接成员数由监测器自动计算。修改聚合范围时，仍需更新对应的成员引用。
 
 目录：
 
@@ -112,11 +123,12 @@ endmodule
 
 当前构建使用 VCS，已验证的工具版本为 `W-2024.09-SP1_Full64`。需要能在终端执行 `vcs`，并有可用的仿真许可。其他仿真器需要另外适配调度接口。
 
-在仓库根目录执行下面的 Bash 命令。示例会把编译结果和日志放在 `.build/quickstart`：
+在仓库根目录执行下面的 Bash 命令。`BW_EXAMPLE` 选择要运行的顶层模块；本节先使用单接口例子。编译结果和日志放在 `.build/bw_mon_quickstart`：
 
 ```bash
-mkdir -p .build/quickstart
-cd .build/quickstart
+BW_EXAMPLE=bw_mon_quickstart
+mkdir -p ".build/${BW_EXAMPLE}"
+cd ".build/${BW_EXAMPLE}"
 
 # 根据 PATH 中的 vcs 找到安装目录及 SDK 头文件。
 BW_VCS_ROOT="$(dirname "$(dirname "$(readlink -f "$(command -v vcs)")")")"
@@ -133,8 +145,9 @@ vcs -full64 -sverilog -error=AOUP +vpi -debug_access+all -assert svaext \
   ../../rtl/bw_group_mon.sv \
   ../../rtl/bw_mon_setup.sv \
   ../../rtl/bw_slot_settlement.c \
-  ../../examples/bw_mon_quickstart.sv \
-  -top bw_mon_quickstart -o simv -l compile.log
+  ../../rtl/bw_end_coordinator.c \
+  "../../examples/${BW_EXAMPLE}.sv" \
+  -top "${BW_EXAMPLE}" -o simv -l compile.log
 
 ./simv -no_save -l run.log
 cd ../..
@@ -150,13 +163,15 @@ QUICKSTART total_bytes=1280 total_events=20 e2e_gbps=64.000 e2e_valid=1
 BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=1
 ```
 
-本例开启过程分析后默认开启阶段分析和持续波动检查。原有 20 拍输入可完成带宽统计，但稳定平台内不足六条完整参考窗口，因此默认规则给出一次 WARNING；没有预期文件也会检查。阶段分析关闭且无显式性能规则时才为 `STATISTICS_ONLY`。第 10 节说明如何独立添加性能目标。
+本例发送 20 拍，可以得到完整的全程平均带宽。但稳定阶段内的完整参考窗口不足，默认持续超限检查给出 `WARNING reason=REFERENCE_INSUFFICIENT`。这个 WARNING 表示证据不足，计量结果仍是上表中的数值。
+
+如需查看默认检查 `PASS` 的完整例子，运行第 6 节的 `bw_mon_grouped`，其中每个接口发送 40 拍。第 10 节说明如何额外配置性能预期。
 
 集成到自己的编译脚本时，保留以下要求：
 
 - 保留 `-error=AOUP`，让已删除参数的覆盖在 VCS 编译阶段直接报原生错误。
 - `bw_mon_pkg.sv` 最先编译；`bw_check_report.sv` 必须放在 `bw_mon_setup.sv` 前面。
-- 加入上述 RTL 和 `bw_slot_settlement.c`。即使只监测一个点，也需要这个 C 文件及 `+vpi`、`-debug_access`、`-assert svaext`。
+- 加入上述 RTL 和两个 C 文件：`bw_slot_settlement.c` 处理同一时刻的采样与统计更新，`bw_end_coordinator.c` 核对仿真结束时的报告完成状态。即使只监测一个点，也需要这两个文件及 `+vpi`、`-debug_access`、`-assert svaext`。
 - 通过 `+incdir+` 指定 `rtl` 目录，通过 `-CFLAGS` 指定 VCS 的 `include` 目录。`.svh` 文件由源码包含，不单独编译。
 - 保留监测器源码中的 `timeunit 1fs; timeprecision 1fs;`，不要通过工具选项覆盖它们。testbench 可以像例子一样使用 `timeunit 1ns`。
 
@@ -177,7 +192,7 @@ BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=
 | `UPDATE_STRIDE` | 省略时取 `WINDOW_WIDTH` | 每隔多少 ns 或周期更新结果；要求 `0 < UPDATE_STRIDE <= WINDOW_WIDTH`。省略时每个窗口宽度发布一次；显式填 0 或超过 W 都会报错 |
 | `EPISODE_ENABLE` | `0` | 设为 `1` 才分析完整流量过程及全程平均带宽 |
 | `SILENCE_THRESHOLD` | 省略时为 10 | 开启过程分析时默认 10（ns 模式为 10 ns，cycle 模式为 10 个本地周期）；显式合法正数可覆盖且允许大于 W；显式 0／未知值报错，不回退默认；过程关闭时不校验 |
-| `PHASE_ENABLE` | `0` | 设为 `1` 分析爬坡、稳定和下降；还需要第 8 节的完整参数 |
+| `PHASE_ENABLE` | 省略时跟随 `EPISODE_ENABLE` | 开启过程分析后，默认识别爬坡、稳定和下降；显式设为 `0` 可只保留过程分析。无需填写阶段算法参数 |
 
 参数是例化时的配置，仿真期间不能动态修改。开关参数填已知的 `0` 或 `1`。`FIXED_BYTES` 默认的 0 是合法值：忘记填写时会统计到传输次数，但字节数为 0。
 
@@ -220,7 +235,7 @@ BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=
 
 窗口宽度决定看多长时间，步长决定多久更新一次。比如宽度 10、步长 1 的相邻窗口会重叠；步长等于宽度时，相邻窗口互不重叠。步长越小，更新越频繁。
 
-当前限制是：ns 窗口最大 40000 ns，cycle 窗口最大 80000 周期；从 setup 配置系统起，整个监测时段最长 **40000 ns，也就是 40 μs**。复位不会重新计算这个总时限，长仿真集成前要确认观察时段。
+当前限制是：ns 窗口最大 40000 ns，cycle 窗口最大 80000 周期；从公布的共同计量起点 T 起，整个监测时段最长 **40000 ns，也就是 40 μs**。复位不会重新计算这个总时限，长仿真集成前要确认观察时段。
 
 ## 5 三种接口怎么接线
 
@@ -234,7 +249,7 @@ BW_SUMMARY status=WARNING pass=0 fail=0 warning=1 scopes_done=1 scopes_expected=
 
 不用的传输端口可以省略。尤其注意：**valid/ready 接口必须选择 `BW_VALID_READY`**，只接上 `ready` 不会自动改变默认传输规则。
 
-以下片段用于替换或扩展自己 testbench 中的例化；增减监测器或 bind 命中的实例数都不需要改任何配置，setup 自动发现实际范围。
+以下片段用于替换或扩展自己 testbench 中的例化。setup 自动发现实际观测点，无需填写数量。若点还属于某个聚合组，请同时维护该组的成员规则。
 
 ### 只有 valid 的接口
 
@@ -339,6 +354,47 @@ tb.link1.u_bw
 
 完成注册后，用 `wait (bw_mon_pkg::monitor_ready);` 等待启动。真正计入统计的采样沿必须晚于 ready 所在的物理时刻；像第 2 节那样在后续下降沿准备激励即可。
 
+### 完整例子：两个接口通过 bind 接入，再汇总带宽
+
+可运行文件为 [examples/bw_mon_grouped.sv](../examples/bw_mon_grouped.sv)。它包含两个被观察的接口实例、一条类型 `bind`、一个聚合组和一个 setup。
+
+在仓库根目录，把第 3 节编译命令的第一行改为下面这一行，再执行整段命令：
+
+```bash
+BW_EXAMPLE=bw_mon_grouped
+```
+
+这个例子使用以下身份和路径：
+
+| 对象 | 实际监测器路径 | 配置中使用的标识 |
+| --- | --- | --- |
+| 第一个观测点 | `bw_mon_grouped.mem0.u_bw` | 自动观测点标识：`bw_mon_grouped.mem0.u_bw` |
+| 第二个观测点 | `bw_mon_grouped.mem1.u_bw` | 自动观测点标识：`bw_mon_grouped.mem1.u_bw` |
+| 聚合组 | `bw_mon_grouped.all_mem` | 聚合组标识：`all_mem` |
+
+聚合组的成员配置如下，放在仿真开始时执行的 `initial` 中：
+
+```systemverilog
+initial begin
+  add_point_member("all_mem", "bw_mon_grouped.mem0.u_bw");
+  add_point_member("all_mem", "bw_mon_grouped.mem1.u_bw");
+end
+```
+
+这里填写的是监测器的自动观测点标识，路径末尾包含 `u_bw`。类型 `bind` 的端口连接仍使用被绑定模块内部的信号名。
+
+两个接口使用同一个 1 GHz 时钟，每次传输各计 64 B，连续发送 40 拍。日志应包含：
+
+```text
+GROUPED window0=640 window1=640 window_group=1280 bandwidth_group=128.000 window_valid=1
+GROUPED total0=2560 total1=2560 total_group=5120 e2e_group=128.000 e2e_valid=1
+BW_SUMMARY status=PASS pass=3 fail=0 warning=0 scopes_done=3 scopes_expected=3
+```
+
+两个观测点和聚合组各有一条默认检查结果，因此共 3 条 `PASS`。这个例子省略了 `PHASE_ENABLE` 和 `SILENCE_THRESHOLD`：过程分析开启后，默认阶段分析开启，静默阈值取 10 ns。
+
+接到自己的工程时，保留工程中唯一的 setup；把 `bw_mon_example_port` 换成实际 DUT 模块类型，修改信号连接和计量字节数，再把成员引用改成实际监测器路径。
+
 ## 7 把多个接口汇总成一个组
 
 例如两个 memory 接口分别命名为 `mem0`、`mem1`，想同时查看它们各自的带宽和合计带宽。需要两个点、一个组，以及一个 setup。
@@ -383,11 +439,11 @@ end
 
 配置聚合组时，注意以下规则：
 
-- 组成员用 **Point ID** 引用。如果点写了 `.POINT_ID("mem0")`，成员就填 `"mem0"`；省略 Point ID 时，要填自动生成的完整路径。
+- 组成员用**观测点标识（Point ID）**引用。如果点写了 `.POINT_ID("mem0")`，成员就填 `"mem0"`；省略时，要填监测器自动生成的完整路径，可从 `scope_id` 读取。
 - 组和成员的 `WINDOW_BASIS`、`WINDOW_WIDTH`、`UPDATE_STRIDE` 必须一致。监测器不再要求填写时钟域名称，也不做时钟一致性检查；聚合的前提仍然是各成员实际使用同一个采样时钟，跨异步时钟汇总不支持。
 - 组通过注册信息取得成员传输，不需要连接各点的带宽信号。组统计的是成员原始字节增量。
 - 一个真实组实例就是一项组声明；成员调用全部放在实际 t=0，setup 自动封口。相同类型的同一直接成员重复命中只计一次，无需手工结束配置；只有点时也无需空配置过程。
-- 点和组分别控制自己的过程、阶段分析。若想得到组的全程平均带宽，也要在组实例上设置 `EPISODE_ENABLE(1)` 和正的 `SILENCE_THRESHOLD`。
+- 点和组分别控制自己的流量过程、阶段分析。若想得到组的全程平均带宽，也要在组实例上设置 `EPISODE_ENABLE(1)`。省略静默阈值时取默认值 10；需要其他值时再显式设置 `SILENCE_THRESHOLD`。
 
 也可以让一个组包含两个已经配置好的下级组：
 
@@ -423,9 +479,32 @@ add_group_member("all_mem", "die1_mem");
 
 最后一拍之后直接 `$finish`，或者立刻停钟，都可能无法得到完整结果。应保持时钟运行，让末拍有结束边界，并等待足够的静默时间。读取最终结果时，先看 `episode_result_e2e_valid`，为 1 时再用 `episode_result_e2e_gbps`。
 
-### 结束时的全局审计与一次报告完成
+### 什么时候可以结束仿真
 
-仿真结束时不再依赖任何 final 块顺序：第一个到达结束的 owner 先执行一次幂等的全局审计（日志行 `BW_END_AUDIT`），冻结持久责任清单，然后每个点和组得到自己的终态行 `BW_POINT_TERMINAL` / `BW_GROUP_TERMINAL`（`state=NORMAL|UNOBSERVED|DISABLED|INTERRUPTED`，中断时附 `stage=` 责任阶段）。所有 SV 结算完成后，一个原生结束回调核对全部 core/hint/owner 回执，仅当每个已登记责任都有真实终态时输出唯一一行 `BW_REPORT_COMPLETE`；缺任何回执则输出 `BW_REPORT_INCOMPLETE reason=...` 并且不补发标记。标记行上的 `integrity=` 表达监测完整性（存在 DISABLED/INTERRUPTED 终态即 INCOMPLETE），`performance=` 表达汇总结果，两者与进程状态（退出码/TB_PASS）分别可判。被外部强杀或工具停滞的进程不会出现标记，未正常完成只由这类外部证据表达，不伪造库内缺帧诊断。运行期禁用的范围在结束时仍会对其尚未结束的过程用禁用前已提交的证据做一次终态结算：无已确认平台时给一条该过程 WARNING，已结算的可靠 FAIL 保留；分析关闭的范围保持 STATISTICS_ONLY。
+普通仿真按以下顺序结束：
+
+1. 停止发送，让接口保持无传输状态。
+2. 继续运行时钟。让末次传输之后出现真实采样沿，并等够静默阈值。
+3. 读取已经结算的 `episode_result_*`。先确认 `episode_result_e2e_valid=1`，再使用全程平均带宽。
+4. 让最后一次输入变化所在时刻的统计更新完成，再调用 `$finish`。本手册的例子在后续下降沿等待，并在读取前推进 `1 fs`。
+
+若在最后一个输入变化的同一时刻立即 `$finish`，该范围可能报告 `INTERRUPTED`。若必须在共同计量起点后的 **40 μs 精确终点**结束，应使用目标完成查询协议，在原时刻确认完成；不能再额外推进 `1 fs`。精确终点集成参考[目标完成示例](../tests/tb_target_query.sv)，普通接入使用本手册的结束步骤即可。
+
+### 结束后检查哪些日志
+
+库在 `$finish` 时自动汇总全部点和组。用户无需手动调用报告函数。自动回归应分别检查以下内容：
+
+| 要确认的内容 | 日志字段 | 怎么判断 |
+| --- | --- | --- |
+| 报告是否完成 | 唯一一行 `BW_REPORT_COMPLETE`，其中 `summary=1` | 全部范围已提交结束结果；缺少该行或出现 `BW_REPORT_INCOMPLETE` 时，报告未完成 |
+| 监测结果是否完整 | `BW_REPORT_COMPLETE` 中的 `integrity=COMPLETE` | 有禁用或中断范围时为 `INCOMPLETE`，需按范围查原因 |
+| 性能检查结果 | `BW_SUMMARY status=` 和完成行的 `performance=` | 按场景要求核对 `PASS`、`FAIL`、`WARNING` 或 `STATISTICS_ONLY` |
+| 已报告的范围是否齐全 | `BW_SUMMARY` 中的 `scopes_done`、`scopes_expected` | 两者应相等；包含未归组的观测点 |
+| 仿真进程是否正常退出 | 仿真器退出码和 testbench 自身检查 | 与报告完成状态、监测完整性、性能结果分别记录 |
+
+需要定位某个范围时，再看 `BW_POINT_TERMINAL` 或 `BW_GROUP_TERMINAL`。`NORMAL` 表示正常结束；`UNOBSERVED` 表示没有实际观测；`DISABLED` 表示该范围已停止监测；`INTERRUPTED` 表示结束时仍有工作未完成，`stage=` 给出对应环节。运行期故障会保留此前已提交的结果，并隔离受影响范围；健康范围继续监测。
+
+进程被外部强杀或停滞时，可能无法产生结束标记。完整原因表见[结束报告接口](bw-mon-api.md#ending-audit-and-the-one-report-complete-marker)。
 
 ### 识别爬坡 稳定和下降
 
@@ -443,11 +522,20 @@ add_group_member("all_mem", "die1_mem");
 
 两项开关都只接受已知的 0/1；过程关闭但阶段显式开启属于配置错误。省略 `EPISODE_ENABLE` 时两项均关闭。原有 N、K、最小跨度和十个 ABS/REL 算法参数已经删除，升级时移除这些参数并重新编译，不再需要人工调参。仓库 VCS 编译入口使用 `-error=AOUP`，把 VCS 默认会忽略的未知参数覆盖诊断提升为原生编译错误；自有 VCS 命令也应保留此选项。
 
-内部策略版本为 `PAIR6_R2`：最近 6 条连续合格窗口，相邻两条配成 3 个均值，按实际物理发布时间拟合趋势；相同候选连续 2 次才确认，最小证据跨度为 `min(W,5×S)`。稳定进入／保持的拟合总变化门槛分别为平均带宽的 4%／8%，原始残差 RMS 门槛为 10%／12%；升降要求总变化至少 10%，配对拟合点残差 RMS 不超过 2.5%。全零有效活动可以确认零带宽稳定阶段，完全无活动则没有流量过程。
+查看当前阶段用 `phase_current`。阶段未判定时，结合 `phase_reason` 查看原因：可能是没有流量过程、窗口预热、字节不完整或阶段证据不足。`phase_evidence_count` 和 `phase_evidence_required` 分别表示已有和所需的阶段证据数。
 
-这些内部门槛只解释阶段识别，不代表性能达标。原始窗口不会被配对拟合替换；阶段原始残差也不同于性能波动。Q 独立决定过程结束，不会为了等阶段确认而延长。
+阶段边界用 `phase_start_ticks`，阶段确认时刻用 `phase_confirmation_ticks`。确认时刻可以晚于阶段边界。一次流量过程可以没有稳定阶段，也可以包含多个稳定阶段；过程结算后，`episode_last_steady_*` 给出最后一个已确认稳定阶段的结果。
 
-窗口预热、字节不完整或连续结果不足时，阶段可能保持 `BW_PHASE_UNDETERMINED`，表示暂时不能判断。一次流量可以没有稳定段，也可以反复出现多个稳定段；最终代表值采用该过程最后一个已确认的稳定段。阶段边界与稍后的确认时刻分别可见，不能把确认延迟当成阶段持续时间。
+进入稳定阶段表示流量形态已确认。默认 5% 检查仍可能报告持续超限 `FAIL`。两类结果的读法见[四个真实 Verdi 视图](../evidence/verdi61/README.md)。
+
+<details>
+<summary>默认阶段策略的解释参数</summary>
+
+内部策略版本为 `PAIR6_R2`：最近 6 条连续合格窗口，相邻两条配成 3 个均值，按实际物理发布时间拟合趋势；相同候选连续 2 次才确认，最小证据跨度为 `min(W,5×S)`。稳定进入／保持的拟合总变化门槛分别为平均带宽的 4%／8%，原始残差 RMS 门槛为 10%／12%；升降要求总变化至少 10%，配对拟合点残差 RMS 不超过 2.5%。全零有效活动可确认零带宽稳定阶段，完全无活动则没有流量过程。
+
+这些参数由库内部管理。阶段识别使用原始窗口的连续证据；原始残差与性能检查中的带宽波动分别计算。静默阈值独立决定流量过程何时结束，阶段确认不会延长它。
+
+</details>
 
 ## 9 配置反压和信用提示
 
@@ -488,7 +576,13 @@ add_group_member("all_mem", "die1_mem");
 
 ## 10 配置带宽达标检查
 
-启用阶段分析即自动启用每个平台的持续波动检查，无需预期文件或新参数。参考 B 来自最早六条完整位于最终平台内的连续有效窗口，跨度至少为 `min(W,5*S)`；B 建立后冻结并回查参考期。`abs(y-B)>0.05*B` 才超限，等号合格；至少两条连续新有效超限样本且逻辑跨度达到 W 才 FAIL。高低交替不中断超限；缺口、复位和已确认豁免会中断。B 为零、参考或覆盖不足则 WARNING，已有可靠 FAIL 保留。它与稳定段原始字节/时间带宽、CV 是不同指标。
+启用阶段分析后，库会自动检查每个稳定阶段是否出现持续超限。无需增加模块、参数或性能预期文件。
+
+参考带宽 B 来自最早六条完整位于该稳定阶段内的连续有效滑动窗口，其跨度至少为 `min(W,5*S)`。建立后保持不变，并回查建立参考带宽时的观测。
+
+允许范围为 `[B−0.05×B, B+0.05×B]`，包含两个边界值。例如 B=100 GB/s 时，95 和 105 GB/s 均在范围内。至少两条连续有效的新观测超出该范围，且它们的窗口右端点跨度达到 W，才报告持续超限 `FAIL`。交替高于和低于范围的观测仍属于连续超限。
+
+范围内的观测、观测缺口、复位或已确认的过渡豁免会打断连续超限。B 为零、参考观测或覆盖不足时给出 `WARNING`；此前可靠的 `FAIL` 会保留。参考带宽、稳定段带宽和 CV 各有计算方法，应分别读取。
 
 额外的显式性能目标放在独立文本文件中，通过仿真参数 `+BW_EXPECT=文件路径` 读取，不调整默认规则的 5% 门槛。硬件接口、窗口等模块参数仍然写在例化里。
 
@@ -503,7 +597,7 @@ e2e_bw_max_gbps = 64
 它要求第 2 节的 `master0` 全程平均带宽恰好为 64 GB/s。在仓库根目录执行：
 
 ```bash
-cd .build/quickstart
+cd .build/bw_mon_quickstart
 ./simv -no_save +BW_EXPECT=../../examples/bw_mon_quickstart.cfg -l check.log
 cd ../..
 ```
@@ -569,39 +663,45 @@ CV 是标准差除以平均值，再乘 100%，数值越大表示窗口带宽波
 | 最终全程带宽 | `episode_result_e2e_gbps`、`episode_result_e2e_valid` | 最近一次已经结算的过程结果及其有效位 |
 | 最终过程身份 | `episode_result_episode_id`、`episode_result_result_seq` | 区分多个过程；结果序号为 0 时尚未结算 |
 | 当前阶段 | `phase_current` | 未判定、爬坡、稳定或下降 |
+| 阶段原因和证据 | `phase_reason`、`phase_evidence_count`、`phase_evidence_required` | 区分分析关闭、无流量过程、证据不足和已确认 |
+| 候选进度 | `phase_candidate`、`phase_candidate_count`、`phase_candidate_required` | 查看待确认的流量阶段及连续候选进度 |
+| 当前阶段的两个时刻 | `phase_start_ticks`、`phase_confirmation_ticks` | 阶段边界与阶段确认时刻，单位 fs |
+| 最近结算的阶段 | `phase_result_kind`、`phase_result_start_ticks`、`phase_result_end_ticks` | 已结束阶段的类型和区间；当前阶段字段可能已描述后续状态 |
 | 最后稳定段带宽 | `episode_last_steady_bandwidth_gbps`、`episode_last_steady_bandwidth_valid` | 最近结算过程选出的最终稳定段结果 |
 
 窗口使用左闭右开区间。例如 `[10 ns, 20 ns)` 包含 10 ns 处的传输，不包含 20 ns 处的传输；20 ns 的这一拍要在后续窗口中体现。初始预热期间按实际覆盖时间计算带宽，不能仅凭它有数值就认定已经满窗。
 
 **先看有效位，再看数值。** 无效指标的存储值可能为 0，这不代表实际测得零带宽。存在未知输入时，小计仍保留已经确定的贡献，不代表完整流量。cycle 停钟时结果保持，也不代表停钟期间产生了新的测量结果。
 
-自己的 testbench 若在某次发布时间读取字段，应等该时刻的更新完成，例如在读数前延后 `#1fs`。驱动 `valid`、`ready`、大小等输入时，放在采样沿之前；避免与监测器在同一个上升沿用阻塞赋值争抢执行顺序。
+自己的 testbench 若在某次发布时间读取字段，应等该时刻的更新完成。本手册在普通观察时刻延后 `#1fs` 再读取；精确总预算终点的处理见第 8 节。驱动 `valid`、`ready`、大小等输入时，放在采样沿之前，例如在下降沿更新。
 
-如果工程已有 FSDB 波形输出，保持原来的输出方式，把点和组实例加入 dump 范围；调试编译可使用 `-debug_access+all -kdb`。字段读法及现有波形示例见[中文波形阅读说明](bw-mon-wave-review-zh.md)。
+如果工程已有 FSDB 波形输出，把点和聚合组的公共实例加入 dump 范围；调试编译可使用 `-debug_access+all -kdb`。在 Verdi 层级树中找到真实实例，例如 `bw_mon_grouped.all_mem`，从信号列表拉取 `scope_id`、`bandwidth_gbps`、`window_valid`、窗口起止时间和阶段字段。带宽曲线可选择 Analog 显示，窗口序号和有效位保留数字显示。
+
+实际截图、各字段的预期值及原始波形入口见[四个真实 Verdi 视图](../evidence/verdi61/README.md)。更早版本的读图说明见[历史波形指南](bw-mon-wave-review-zh.md)。
 
 ## 12 常见问题
 
 | 现象 | 优先检查 |
 | --- | --- |
 | 启动报错或未出现 `monitor_ready` | 是否恰好一个 setup、有实际观测点、每个组有真实实例且非空；成员引用和拓扑是否合法；查看错误中的阶段、对象和实际数量 |
-| 报 `SETUP_MISSING` | 点或组实例是否缺少与之相连的唯一 `bw_mon_setup`；检查编译列表里是否漏掉 `bw_mon_setup.sv` |
+| 报 `SETUP_MISSING` | 是否例化唯一的 `bw_mon_setup`；检查编译列表里是否漏掉 `bw_mon_setup.sv`。setup 无端口，无需与点、组连线 |
 | 报 `EMPTY_SCOPE` | 是否只放了 setup 而没有任何实际点/组；bind 是否真的命中了实例 |
 | 报 `GROUP_OWNER` | 成员规则引用的组是否有真实 `bw_group_mon` 实例；规则先到、实例后到是允许的，但封口时实例必须存在 |
 | 报 `LATE_CONFIG` | 是否在实际正时间调用注册或添加成员；即使粗 TB timescale 显示为 0 也必须放回 t=0 |
 | 输出 `BW_REPORT_INCOMPLETE` | 对照 reason：`CORE_FAILURE`／`NO_END_AUDIT`／`NOT_READY`／`MISSING_ROLE_RECEIPT`／`MISSING_SCOPE_TERMINAL`；被强杀或停滞的进程不输出任何标记，只用外部证据表达 |
 | 报 `DUPLICATE_POINT` | 是否给多个点写了相同的 Point ID；类型 bind 时可保留自动 ID |
-| 报 `WINDOW_CONFIG` | 是否漏填宽度或步长，或步长大于宽度；检查所选基准的上限 |
+| 报 `WINDOW_CONFIG` | 是否漏填窗口宽度，或显式设置了非法宽度／步长；省略步长时取窗口宽度。检查所选基准的上限 |
 | 报 `GROUP_CONTEXT` | 组和成员的窗口基准、宽度、有效步长是否一致；共同采样时钟仍需正确连接 |
-| 组终态为 `INTERRUPTED` 并附 `stage=` | 仿真结束时该组仍有未结算责任；检查激励是否在最后一个输入同刻立即 `$finish`，让末槽先闭合（例如终点断言后再推进 1 fs），并查看 stage 指出的责任阶段 |
+| 组终态为 `INTERRUPTED` 并附 `stage=` | 仿真结束时该组仍有工作未完成；检查是否在最后一个输入变化的同一时刻立即 `$finish`。普通时刻先完成更新再结束；T+40 μs 精确终点按第 8 节处理 |
 | 有传输次数，但字节数一直为 0 | 是否忘记填 `FIXED_BYTES`；动态模式下是否提供正确的 `size_bytes` 和 `size_known` |
 | `ready=0` 仍在计数 | 是否忘记设置 `PROTOCOL(BW_VALID_READY)` |
 | `bytes_complete=0` 或 `events_complete=0` | 检查复位、传输控制、动态大小中是否有 X/Z；能确定不传输的拍不会因未使用的大小未知而变坏 |
 | 复位后带宽暂时不可用 | 自身复位会清空本地统计，释放后要重新预热；组的统计复位不清空成员或其他组的统计 |
 | 有滑窗带宽但没有完整 e2e | 是否开启过程分析；是否出现过传输；末拍后是否有真实采样沿，是否等够静默阈值 |
-| 没有稳定段结果 | 是否填写全部阶段参数；是否有足够连续满窗结果，跨度和门槛是否合适 |
+| 没有稳定段结果 | 是否开启过程分析，且未显式关闭阶段分析；查看 `phase_reason` 和阶段证据数，确认是否有足够连续、满窗、字节完整的观测。阶段算法参数无需填写 |
 | 输出 `STATISTICS_ONLY` | 阶段分析未开启且没有显式性能目标；可按需开启分析或按第 10 节添加独立目标 |
-| 性能 FAIL 后仿真仍运行 | 这是正常行为；自动化脚本需要检查 `BW_CHECK` 和最终 `BW_SUMMARY` |
+| 性能 FAIL 后仿真仍运行 | 这是正常行为；默认规则看 `BW_DEFAULT_CHECK`，显式规则看 `BW_CHECK`，结束时核对 `BW_SUMMARY` 和 `BW_REPORT_COMPLETE` |
 | 报 `SIM_TIME_LIMIT` | 是否超过公布的 T+40 μs 总监测截止时间；复位不能延长它 |
-| 编译缺少 DPI/VPI 符号或头文件 | 是否加入 `bw_slot_settlement.c`、`+vpi`、调试选项和正确的 VCS SDK include 路径 |
+| 编译缺少 DPI/VPI 符号或头文件 | 是否同时加入 `bw_slot_settlement.c`、`bw_end_coordinator.c`，以及 `+vpi`、调试选项和正确的 VCS SDK include 路径 |
 
 需要查看全部参数、公开字段和边界规则时，使用[完整接口说明](bw-mon-api.md)。
