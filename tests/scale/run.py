@@ -80,17 +80,20 @@ def verify(s,attempt):
             else:good=a==e
             if not good:diffs.append(dict(key=k,field=field,expected=e,actual=a))
     if 'SCALE_PASS ' not in log or re.search(r'Fatal:|Error-\[|SCALE_\w*MISMATCH|BW_CFG_WARNING',log):diffs.append(dict(error='simulation_completion_or_diagnostic'))
-    starts=[keyvalues(l) for l in log.splitlines() if l.startswith('SCALE_RUN_START ')]
-    ends=[keyvalues(l) for l in log.splitlines() if l.startswith('SCALE_PASS ')]
+    lines=log.splitlines()
+    starts=[keyvalues(l) for l in lines if l.startswith('SCALE_RUN_START ')]
+    ends=[keyvalues(l) for l in lines if l.startswith('SCALE_PASS ')]
     if len(starts)!=1 or len(ends)!=1:diffs.append(dict(error='start_or_completion_count',starts=len(starts),ends=len(ends)))
     for marker in starts+ends:
         if marker.get('end_ticks')!=str(origin+s.end):diffs.append(dict(error='measurement_endpoint',expected=origin+s.end,actual=marker.get('end_ticks')))
-    summaries=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_SUMMARY ')]
-    checks=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_CHECK ')]
-    default_checks=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_DEFAULT_CHECK ')]
-    episodes=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_EPISODE ')]
-    phases=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_PHASE ')]
-    last_steady=[keyvalues(l) for l in log.splitlines() if l.startswith('BW_LAST_STEADY ')]
+    summaries=[keyvalues(l) for l in lines if l.startswith('BW_SUMMARY ')]
+    checks=[keyvalues(l) for l in lines if l.startswith('BW_CHECK ')]
+    default_checks=[keyvalues(l) for l in lines if l.startswith('BW_DEFAULT_CHECK ')]
+    episodes=[keyvalues(l) for l in lines if l.startswith('BW_EPISODE ')]
+    phases=[keyvalues(l) for l in lines if l.startswith('BW_PHASE ')]
+    last_steady=[keyvalues(l) for l in lines if l.startswith('BW_LAST_STEADY ')]
+    del lines
+    default_counts=Counter(d.get('scope') for d in default_checks)
     observed_episodes={};metrics=Counter(c.get('conclusion') for c in checks)
     # The public default sustained-variation rows also settle into the summary.
     # Scale verifies their per-episode presence and internal contract here; the
@@ -120,9 +123,8 @@ def verify(s,attempt):
     for sid,(kind,index) in byid.items():
         n=len(s.expected_episodes(kind,index))
         if len(observed_episodes.get(sid,[]))!=n:diffs.append(dict(error='episode_count',scope=sid,expected=n,actual=len(observed_episodes.get(sid,[]))))
-        default_rows=[d for d in default_checks if d.get('scope')==sid]
         want_rows=s.expected_default_rows(kind,index) if hasattr(s,'expected_default_rows') else max(n,1)
-        if len(default_rows)!=want_rows:diffs.append(dict(error='default_row_count',scope=sid,expected=want_rows,actual=len(default_rows)))
+        if default_counts[sid]!=want_rows:diffs.append(dict(error='default_row_count',scope=sid,expected=want_rows,actual=default_counts[sid]))
     required_metrics={'e2e_bw','steady_bw','ramp_time','fall_time','steady_window_min','steady_window_max','steady_stddev','steady_cv','episode_window_min','episode_window_max','episode_stddev','episode_cv'}
     conclusions={}
     for c in checks:

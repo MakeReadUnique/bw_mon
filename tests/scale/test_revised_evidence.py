@@ -43,6 +43,12 @@ def bound_metadata():
 
 
 class RevisedCompletion(unittest.TestCase):
+    def test_full_audit_covers_every_executed_profile_in_order(self):
+        from revised_suite import profiles
+        self.assertEqual(FULL, profiles('full'))
+        self.assertTrue({'history-revised-ns-reset', 'history-revised-cycle-reset',
+                         'history-revised-ns-overrun'} <= set(FULL))
+
     def test_valid_metadata_requires_matching_serial_source_bound_receipts(self):
         value,runs=bound_metadata()
         validate_suite(value,expected_key='full-hot',run_loader=lambda row:runs[row['name']])

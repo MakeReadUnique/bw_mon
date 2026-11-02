@@ -5514,6 +5514,34 @@
   ]
  },
  {
+  "name": "checker_numeric_high_close_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=high_close_over"
+  ]
+ },
+ {
+  "name": "checker_numeric_high_next_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=high_next_over"
+  ]
+ },
+ {
+  "name": "checker_numeric_low_close_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=low_close_over"
+  ]
+ },
+ {
+  "name": "checker_numeric_low_next_over",
+  "top": "tb_checker_numeric",
+  "plusargs": [
+   "+CASE=low_next_over"
+  ]
+ },
+ {
   "name": "checker_numeric_low_over",
   "top": "tb_checker_numeric",
   "plusargs": [
@@ -5755,6 +5783,43 @@
   "expect_log": [
    "BW_SUMMARY status=FAIL pass=2 fail=2 warning=0"
   ]
+ },
+ {
+  "name": "checker_disabled_old_platform_fail",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=disabled_old_fail"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*platform=1 .*conclusion=FAIL reason=SUSTAINED_EXCEEDANCE": 1,
+   "BW_DEFAULT_CHECK .*platform=2 .*conclusion=WARNING": 1,
+   "BW_CHECK_WARNING .*reason=MONITOR_DISABLED": 1
+  }
+ },
+ {
+  "name": "checker_disabled_tail_platform_fail",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=disabled_tail_fail"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*platform=1 .*longest_count=2 .*conclusion=FAIL reason=SUSTAINED_EXCEEDANCE": 1,
+   "BW_CHECK_WARNING .*reason=MONITOR_DISABLED": 1
+  }
+ },
+ {
+  "name": "checker_disabled_clean_platforms",
+  "top": "tb_checker_ownership_records",
+  "plusargs": [
+   "+CASE=disabled_clean"
+  ],
+  "expect_warning": "BW_CORE_WARNING code=TEST_FAULT",
+  "expect_counts": {
+   "BW_DEFAULT_CHECK .*conclusion=WARNING": 2,
+   "BW_CHECK_WARNING .*reason=MONITOR_DISABLED": 1
+  }
  },
  {
   "name": "checker_numeric_explicit_time",

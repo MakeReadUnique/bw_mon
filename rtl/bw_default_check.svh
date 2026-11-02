@@ -175,7 +175,7 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
   failed=0;
   // A qualified handoff closes this owned interval independently of later
   // terminal uncertainty. In-interval raw gaps still set quality below.
-  quality=(handoff_phase==0 && (episode.status!==BW_EPISODE_COMPLETE ||
+  quality=trusted || (handoff_phase==0 && (episode.status!==BW_EPISODE_COMPLETE ||
     !episode.tail_known || !episode.last_known)) ||
     (have_platform && (!platform.bytes_complete || !platform.end_known));
   reason=have_platform ? "REFERENCE_INSUFFICIENT" : (episode.episode_id==0 ? "NO_EPISODE" : "NO_CONFIRMED_STEADY");
@@ -229,8 +229,12 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
       foreach(default_scopes[index].raw[r])begin
         for(bw_u64_t n=0;n<default_scopes[index].raw[r].count;n++)begin
           row=default_row(default_scopes[index].raw[r],n);
+          // A disabled owner's unknown terminal boundary is an observation
+          // cutoff, not a natural episode tail. Keep its last submitted row;
+          // a qualified platform handoff still excludes the next platform.
           if(row.stats_epoch!=episode.stats_epoch || row.episode_id!=episode.episode_id ||
-             row.ticks<start_tick || row.ticks>=end_tick)continue;
+             row.ticks<start_tick || (row.ticks>=end_tick &&
+               !(trusted && handoff_phase==0 && row.ticks==end_tick)))continue;
           if(previous_seq!=0 && row.seq!=previous_seq+1)begin quality=1;run_count=0;end
           previous_seq=row.seq;
           exempt=step.valid && row.ticks>=step.start_ticks && row.ticks<step.end_ticks;
@@ -249,14 +253,14 @@ function automatic bit default_result(int index,bw_episode_result_t episode,
           last_u=row.u;check_count=default_add(index,check_count,1);
           deviation=$abs(row.value-baseline);
           if(deviation>maximum)maximum=deviation;
-          // Equality qualifies at the five-percent boundary. Byte/time ratios
-          // are rational, but their floating images carry last-ulp noise, so a
-          // sample exactly at the boundary must not become an excursion.
-          over=deviation>(0.05+1e-12)*baseline;
+          // Compare the inclusive bounds directly: subtracting two nearby
+          // bandwidths can round an equal-boundary sample into an excursion.
+          // No tolerance widens the five-percent interval.
+          over=row.value>baseline+0.05*baseline || row.value<baseline-0.05*baseline;
           if(!over)begin run_count=0;continue;end
           if(run_count==0)begin run_first=row.u;runs=default_add(index,runs,1);end
           run_last=row.u;run_count=default_add(index,run_count,1);
-          if(scope_failed(scopes[index].kind,scopes[index].id))return 0;
+          if(!trusted && scope_failed(scopes[index].kind,scopes[index].id))return 0;
           if(run_last-run_first>longest_span || (run_last-run_first==longest_span && run_count>longest_count))begin
             longest_count=run_count;longest_first=run_first;longest_last=run_last;longest_span=run_last-run_first;
           end
@@ -294,7 +298,7 @@ endfunction
 function automatic bit settle_default_episode(int index,bw_episode_result_t episode);
   bit found;
   bw_phase_result_t empty_platform;
-  if(scope_disabled(scopes[index].kind,scopes[index].id))return 0;
+  if(scope_disabled(scopes[index].kind,scopes[index].id) && !default_scopes[index].terminal_trust)return 0;
   if(!default_scopes[index].enabled)return 1;
   found=0;
   foreach(default_scopes[index].phases[p])begin
@@ -320,7 +324,7 @@ function automatic bit settle_terminal_default(int index);
   bw_episode_result_t episode;
   bw_phase_result_t platform;
   bw_check_window_t last_row;
-  bit have_platform,have_row;
+  bit have_platform,have_row,settled;
   int last_run;
   if(!default_scopes[index].enabled)return 1;
   have_platform=0;have_row=0;
@@ -350,7 +354,7 @@ function automatic bit settle_terminal_default(int index);
   episode.first_known=0;episode.last_known=0;episode.tail_known=0;
   episode.bytes_complete=0;episode.events_complete=0;
   default_scopes[index].terminal_trust=1;
-  have_platform=default_result(index,episode,platform,have_platform);
+  settled=settle_default_episode(index,episode);
   default_scopes[index].terminal_trust=0;
-  return have_platform;
+  return settled;
 endfunction

@@ -450,6 +450,7 @@ def verify_cancel(s,out):
     def keyvalues(line):return dict(re.findall(r'(\w+)=([^\s]+)',line))
     episodes=[keyvalues(l) for l in lines if l.startswith('BW_EPISODE ')]
     default_checks=[keyvalues(l) for l in lines if l.startswith('BW_DEFAULT_CHECK ')]
+    default_counts=Counter(d.get('scope') for d in default_checks)
     checks=[keyvalues(l) for l in lines if l.startswith('BW_CHECK ')]
     byid={s.identity(k,i):(k,i) for k,i in s.scopes()}
     slow_id=s.group_id(s.slow_consumer)
@@ -468,10 +469,9 @@ def verify_cancel(s,out):
         if sid==slow_id:continue
         n=len(s.expected_episodes(kind,index))
         if len(seen.get(sid,[]))!=n:diffs.append(dict(error='episode_count',scope=sid,expected=n,actual=len(seen.get(sid,[]))))
-        rows=[d for d in default_checks if d.get('scope')==sid]
-        if len(rows)!=s.expected_default_rows(kind,index):
+        if default_counts[sid]!=s.expected_default_rows(kind,index):
             diffs.append(dict(error='default_row_count',scope=sid,
-                              expected=s.expected_default_rows(kind,index),actual=len(rows)))
+                              expected=s.expected_default_rows(kind,index),actual=default_counts[sid]))
     slow_defaults=[d for d in default_checks if d.get('scope')==slow_id]
     if len(slow_defaults)!=1 or slow_defaults[0].get('conclusion')!='WARNING':
         diffs.append(dict(error='cancel_default_settlement',actual=slow_defaults))

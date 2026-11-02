@@ -21,8 +21,9 @@ module tb_checker_ownership_records;
         ticks:measurement_start_ticks+n*10000000,left_ticks:measurement_start_ticks+(n-1)*10000000,
         u:measurement_start_ticks+n*10000000,left_u:measurement_start_ticks+(n-1)*10000000,
         value:n<=16 ? 100.0 : 200.0,valid:1,full:1,bytes_complete:1,denominator_valid:1,default:0};
+      if(mode=="disabled_tail_fail")row.value=n>=31 ? 106.0 : 100.0;
       if(mode=="gap" && n==16)row.valid=0;
-      if(mode=="old_fail" && n inside {13,14})row.value=106;
+      if(mode inside {"old_fail","disabled_old_fail"} && n inside {13,14})row.value=106;
       if(mode=="bad_support" && n==17)row.value=198;
       if(mode=="overlap" && n==17)row.value=100;
       if(mode=="reverse" && n==15)row.value=120;
@@ -44,7 +45,19 @@ module tb_checker_ownership_records;
     phase.end_ticks=measurement_start_ticks+321000000;phase.confirmation_ticks=measurement_start_ticks+230000000;
     phase.support_first_seq=17;phase.support_last_seq=23;phase.support_min_gbps=200;phase.support_max_gbps=200;
     if(mode=="overlap")phase.support_min_gbps=100;
-    emit_phase_result("ownership.records",phase);
+    if(mode!="disabled_tail_fail")emit_phase_result("ownership.records",phase);
+    if(mode inside {"disabled_old_fail","disabled_tail_fail","disabled_clean"})begin
+      runtime_scope_error(BW_POINT,"ownership.records","TEST_FAULT",
+        "disable one active episode after a failing platform and a clean platform");
+      #1; // Let the writable coordinator apply the scope cancellation first.
+      report_scope_done(BW_POINT,"ownership.records");
+      report_scope_done(BW_POINT,"ownership.records");
+      result=check_report_summary();
+      if(result.pass_count!=0 || result.fail_count!=(mode=="disabled_clean" ? 0 : 1) ||
+         result.warning_count!=(mode=="disabled_tail_fail" ? 1 : (mode=="disabled_clean" ? 3 : 2)))
+        $fatal(1,"terminal settlement must retain the old platform FAIL without a disabled-scope PASS or replay");
+      $display("TB_PASS checker_ownership_records %s",mode);$finish;
+    end
     episode='{scope_kind:BW_POINT,stats_epoch:0,episode_id:1,result_seq:1,status:BW_EPISODE_COMPLETE,
       first_ticks:measurement_start_ticks,tail_ticks:measurement_start_ticks+(mode=="crop" ? 225000000 : 321000000),
       first_known:1,last_known:1,tail_known:1,bytes_complete:1,default:0};

@@ -18,10 +18,11 @@ import time
 
 QUICK = ['topology-quick-ns','topology-quick-cycle','topology-quick-cancel-ns',
          'history-revised-ns-seeded','history-revised-cycle-seeded','history-revised-pending']
-FULL = ['topology-quick-ns','topology-quick-cycle','topology-quick-cancel-ns',
-        'topology-max-ns','topology-max-cycle','topology-max-cancel-ns',
+FULL = ['topology-quick-ns','topology-quick-cycle','topology-max-ns','topology-max-cycle',
+        'topology-quick-cancel-ns','topology-max-cancel-ns',
         'history-revised-ns-seeded','history-revised-cycle-seeded','history-revised-ns-expiry',
-        'history-revised-cycle-expiry','history-revised-ns-deep','history-revised-cycle-deep','history-revised-pending']
+        'history-revised-cycle-expiry','history-revised-ns-deep','history-revised-cycle-deep',
+        'history-revised-ns-reset','history-revised-cycle-reset','history-revised-pending','history-revised-ns-overrun']
 COMPONENT_CASES = ['numeric_arithmetic_known','numeric_add_unknown','numeric_mul_unknown','numeric_add_overflow',
                    'numeric_mul_overflow','numeric_queue_range','numeric_subtract_known','numeric_subtract_underflow',
                    'numeric_subtract_unknown','history_trace_ns','history_trace_cycle','phase_delayed',
