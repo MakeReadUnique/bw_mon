@@ -1,6 +1,0 @@
-Command Line: /home/eda/app/synopsys/verdi/W-2024.09-SP1/platform/LINUXAMD64/bin/fsdb2vcd /home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/waves.fsdb -o /home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/current-0.vcd -sv -seq -keep_last_time -s /tb_acceptance_ns/scene/all_dmc -level 1
-uname(Linux localhost.localdomain 4.18.0-553.89.1.el8_10.x86_64 #1 SMP Fri Dec 12 10:42:53 UTC 2025 x86_64)
-Load signals (0)-(160000002) time 0.005957 0.002852 0.006561 delta 45678592 45678592 total 307986432 307986432
-Write signals (0)-(160000002) time 0.001895 0.000956 0.000872 delta 0 0 total 307986432 307986432
-Unload (0)-(160000002) time 0.000117 0.000048 0.000068 delta 0 0 total 307986432 307986432
-au time 0.064171 0.010737 0.015358 delta 61194240 61194240 total 256106496 256106496

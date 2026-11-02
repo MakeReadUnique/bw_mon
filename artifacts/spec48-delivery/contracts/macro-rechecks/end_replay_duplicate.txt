@@ -1,2 +1,0 @@
-PASS end_replay_duplicate: /home/eda/bw-mon-ticket62-candidate-source/.build/tests/tb_end_replay/end_replay_duplicate.log
-1/1 contract cases passed

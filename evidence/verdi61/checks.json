@@ -49,5 +49,17 @@
     "issue_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717"
   },
   "human_acceptance": "ACCEPTED: actual user reply on 2026-11-02; exact feedback and accepted assets/intervals are recorded in review.json",
-  "scope_note": "The automatic results and reviews above retain their original source and scope. Human acceptance is recorded separately in review.json; it does not close the parent specification or satisfy the remaining final delivery gates."
+  "scope_note": "The automatic results and reviews above retain their original source and scope. Human acceptance is recorded separately in review.json; it does not close the parent specification or satisfy the remaining final delivery gates.",
+  "final_source_applicability": {
+    "runtime_snapshot": "154d45f2ba32242cd728c9996157cee296491fa2",
+    "status": "PASS",
+    "views": 4,
+    "cursor_fields": 62,
+    "proof": {
+      "commit": "4bf1e03ecc8991f14d0018c2c5d95aa9b6b8bb1a",
+      "path": "artifacts/spec48-delivery/verdi-applicability",
+      "manifest_sha256": "d2bc9937993470c6e7a536aaa63b880980205e1ba4b6c58a5b69054c21dc7e07"
+    },
+    "note": "Original automatic checks above retain their original scope; final597 contracts and budgets are reported by the Spec48 delivery manifest. Actual human feedback is unchanged."
+  }
 }

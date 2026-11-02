@@ -1,0 +1,301 @@
+{
+  "baseline": "6f9b3a66d53f783eda50f7223d6990ec1171819c",
+  "scenes": [
+    {
+      "scene": "protocols",
+      "basis": "ns",
+      "raw_input_rows": 319,
+      "raw_sha256": "fea183cd4db6a57f1462d5e7034567e1b505d575af2fdcd266f57b3be324739a",
+      "unchanged": true
+    },
+    {
+      "scene": "protocols",
+      "basis": "cycle",
+      "raw_input_rows": 319,
+      "raw_sha256": "fea183cd4db6a57f1462d5e7034567e1b505d575af2fdcd266f57b3be324739a",
+      "unchanged": true
+    },
+    {
+      "scene": "steady",
+      "basis": "ns",
+      "raw_input_rows": 319,
+      "raw_sha256": "6b62c6850e424f6f8c3f84e80114931d17fc3f891da69734f76c6409c0993ebf",
+      "unchanged": true
+    },
+    {
+      "scene": "steady",
+      "basis": "cycle",
+      "raw_input_rows": 319,
+      "raw_sha256": "6b62c6850e424f6f8c3f84e80114931d17fc3f891da69734f76c6409c0993ebf",
+      "unchanged": true
+    },
+    {
+      "scene": "start_stop",
+      "basis": "ns",
+      "raw_input_rows": 199,
+      "raw_sha256": "593efbcb72ac03ac8f137003d89b900fee3996e910a805db9ccf202e3ebe5b3d",
+      "unchanged": true
+    },
+    {
+      "scene": "start_stop",
+      "basis": "cycle",
+      "raw_input_rows": 199,
+      "raw_sha256": "593efbcb72ac03ac8f137003d89b900fee3996e910a805db9ccf202e3ebe5b3d",
+      "unchanged": true
+    },
+    {
+      "scene": "varying",
+      "basis": "ns",
+      "raw_input_rows": 359,
+      "raw_sha256": "f3c93cacd5547bf6fa5d9ddb2e679a845411e7a50d650149af81bf6c6bad73c7",
+      "unchanged": true
+    },
+    {
+      "scene": "varying",
+      "basis": "cycle",
+      "raw_input_rows": 359,
+      "raw_sha256": "f3c93cacd5547bf6fa5d9ddb2e679a845411e7a50d650149af81bf6c6bad73c7",
+      "unchanged": true
+    },
+    {
+      "scene": "point_reset",
+      "basis": "ns",
+      "raw_input_rows": 321,
+      "raw_sha256": "b4713e42e1480aabd1ecb65a80959d58d1c580acfd159e915f1a14c5fbf71912",
+      "unchanged": true
+    },
+    {
+      "scene": "point_reset",
+      "basis": "cycle",
+      "raw_input_rows": 321,
+      "raw_sha256": "b4713e42e1480aabd1ecb65a80959d58d1c580acfd159e915f1a14c5fbf71912",
+      "unchanged": true
+    },
+    {
+      "scene": "child_reset",
+      "basis": "ns",
+      "raw_input_rows": 321,
+      "raw_sha256": "b9ddb58c7ecf0ecd2fde59d60aff898cd388f0df328aa62fccdb38fa1132ba55",
+      "unchanged": true
+    },
+    {
+      "scene": "child_reset",
+      "basis": "cycle",
+      "raw_input_rows": 321,
+      "raw_sha256": "b9ddb58c7ecf0ecd2fde59d60aff898cd388f0df328aa62fccdb38fa1132ba55",
+      "unchanged": true
+    },
+    {
+      "scene": "upper_reset",
+      "basis": "ns",
+      "raw_input_rows": 321,
+      "raw_sha256": "993ab833169f618771ef17e58eade1f842c5a66ce1d589128f9daf747416b21d",
+      "unchanged": true
+    },
+    {
+      "scene": "upper_reset",
+      "basis": "cycle",
+      "raw_input_rows": 321,
+      "raw_sha256": "993ab833169f618771ef17e58eade1f842c5a66ce1d589128f9daf747416b21d",
+      "unchanged": true
+    },
+    {
+      "scene": "size_unknown",
+      "basis": "ns",
+      "raw_input_rows": 321,
+      "raw_sha256": "7f7ca16ec72f63ab10f106469290099973a5ab204ab922f5f3c1239c6d3ee828",
+      "unchanged": true
+    },
+    {
+      "scene": "size_unknown",
+      "basis": "cycle",
+      "raw_input_rows": 321,
+      "raw_sha256": "7f7ca16ec72f63ab10f106469290099973a5ab204ab922f5f3c1239c6d3ee828",
+      "unchanged": true
+    },
+    {
+      "scene": "valid_unknown",
+      "basis": "ns",
+      "raw_input_rows": 321,
+      "raw_sha256": "1be8cf7d15f794464706d260634f6c7b239e961f260ec1577ec4364d873d06fd",
+      "unchanged": true
+    },
+    {
+      "scene": "valid_unknown",
+      "basis": "cycle",
+      "raw_input_rows": 321,
+      "raw_sha256": "1be8cf7d15f794464706d260634f6c7b239e961f260ec1577ec4364d873d06fd",
+      "unchanged": true
+    },
+    {
+      "scene": "reset_unknown",
+      "basis": "ns",
+      "raw_input_rows": 321,
+      "raw_sha256": "840d954adba33d2564aa69e1e8ee0581c89a93d4d7f0b9bb3b6cf173176401df",
+      "unchanged": true
+    },
+    {
+      "scene": "reset_unknown",
+      "basis": "cycle",
+      "raw_input_rows": 321,
+      "raw_sha256": "840d954adba33d2564aa69e1e8ee0581c89a93d4d7f0b9bb3b6cf173176401df",
+      "unchanged": true
+    },
+    {
+      "scene": "clock_stop",
+      "basis": "ns",
+      "raw_input_rows": 278,
+      "raw_sha256": "0892c4d87f689e9463e9e9f0805c8029b24495a6bdf36da8672873742d05608e",
+      "unchanged": true
+    },
+    {
+      "scene": "clock_stop",
+      "basis": "cycle",
+      "raw_input_rows": 278,
+      "raw_sha256": "0892c4d87f689e9463e9e9f0805c8029b24495a6bdf36da8672873742d05608e",
+      "unchanged": true
+    },
+    {
+      "scene": "frequency",
+      "basis": "ns",
+      "raw_input_rows": 239,
+      "raw_sha256": "f3854d0c73e98e0ca6fa0f8d066b3bee412ed54b46375432bb93af64804a1f0e",
+      "unchanged": true
+    },
+    {
+      "scene": "frequency",
+      "basis": "cycle",
+      "raw_input_rows": 239,
+      "raw_sha256": "f3854d0c73e98e0ca6fa0f8d066b3bee412ed54b46375432bb93af64804a1f0e",
+      "unchanged": true
+    },
+    {
+      "scene": "hints",
+      "basis": "ns",
+      "raw_input_rows": 280,
+      "raw_sha256": "2170d9a90b11978915e91ce8a5ddb7bbd4527ffa0644f38541d6c227aafead82",
+      "unchanged": true
+    },
+    {
+      "scene": "hints",
+      "basis": "cycle",
+      "raw_input_rows": 280,
+      "raw_sha256": "2170d9a90b11978915e91ce8a5ddb7bbd4527ffa0644f38541d6c227aafead82",
+      "unchanged": true
+    },
+    {
+      "scene": "zero",
+      "basis": "ns",
+      "raw_input_rows": 119,
+      "raw_sha256": "443cb1934b32143f1171d8ed711d0f2f0704313a1c496eed3c1bb4a55f097e6d",
+      "unchanged": true
+    },
+    {
+      "scene": "zero",
+      "basis": "cycle",
+      "raw_input_rows": 119,
+      "raw_sha256": "443cb1934b32143f1171d8ed711d0f2f0704313a1c496eed3c1bb4a55f097e6d",
+      "unchanged": true
+    },
+    {
+      "scene": "no_episode",
+      "basis": "ns",
+      "raw_input_rows": 119,
+      "raw_sha256": "f01bab0084f016663712ac3cdb0d3bf36de4831c0a5da7091636c7b79c2ef1d9",
+      "unchanged": true
+    },
+    {
+      "scene": "no_episode",
+      "basis": "cycle",
+      "raw_input_rows": 119,
+      "raw_sha256": "f01bab0084f016663712ac3cdb0d3bf36de4831c0a5da7091636c7b79c2ef1d9",
+      "unchanged": true
+    },
+    {
+      "scene": "truncated",
+      "basis": "ns",
+      "raw_input_rows": 219,
+      "raw_sha256": "30f3095814f0cbfe3c05868f8d1c7a22ef98e4541c4d029a3317db5d4a9917ba",
+      "unchanged": true
+    },
+    {
+      "scene": "truncated",
+      "basis": "cycle",
+      "raw_input_rows": 219,
+      "raw_sha256": "30f3095814f0cbfe3c05868f8d1c7a22ef98e4541c4d029a3317db5d4a9917ba",
+      "unchanged": true
+    },
+    {
+      "scene": "isolated",
+      "basis": "ns",
+      "raw_input_rows": 119,
+      "raw_sha256": "77e1fd0ad78dbb4ee4e12c4723e96c9ff5aa82acc43c1009e9f04b65290f957b",
+      "unchanged": true
+    },
+    {
+      "scene": "isolated",
+      "basis": "cycle",
+      "raw_input_rows": 119,
+      "raw_sha256": "77e1fd0ad78dbb4ee4e12c4723e96c9ff5aa82acc43c1009e9f04b65290f957b",
+      "unchanged": true
+    },
+    {
+      "scene": "e2",
+      "basis": "ns",
+      "raw_input_rows": 79,
+      "raw_sha256": "28675a59335c4599e7f3f161b177ed970bb0506a7e75f5abf24b73c166a6d239",
+      "unchanged": true
+    },
+    {
+      "scene": "e2",
+      "basis": "cycle",
+      "raw_input_rows": 79,
+      "raw_sha256": "28675a59335c4599e7f3f161b177ed970bb0506a7e75f5abf24b73c166a6d239",
+      "unchanged": true
+    },
+    {
+      "scene": "e3_boundary",
+      "basis": "ns",
+      "raw_input_rows": 31,
+      "raw_sha256": "98548355d7a488bcf408b1aaf9a2760ca03ab2d9e341cc67410e86925e0c2636",
+      "unchanged": true
+    },
+    {
+      "scene": "e3_delayed",
+      "basis": "ns",
+      "raw_input_rows": 195,
+      "raw_sha256": "a0737cc2a1d3aeacebf8d4cdfa4c9da8a3d4d329c319d1f62195ec9dfb02b45a",
+      "unchanged": true
+    },
+    {
+      "scene": "e4_boundary",
+      "basis": "ns",
+      "raw_input_rows": 129,
+      "raw_sha256": "a7a823f53f7b73ed0721ff79da016176d679d8cb5d3de952875ceff658fa4f96",
+      "unchanged": true
+    },
+    {
+      "scene": "e4_below",
+      "basis": "ns",
+      "raw_input_rows": 129,
+      "raw_sha256": "5218412093126ec8691fc8b73f2280af174a174263a52f5b3fa642d7e98d7026",
+      "unchanged": true
+    },
+    {
+      "scene": "e4_low",
+      "basis": "ns",
+      "raw_input_rows": 129,
+      "raw_sha256": "bae5d7c89f421d717cb83612087ff1fdd6e219ba559d13050321532df5fe0ab3",
+      "unchanged": true
+    },
+    {
+      "scene": "e5",
+      "basis": "ns",
+      "raw_input_rows": 359,
+      "raw_sha256": "f3c93cacd5547bf6fa5d9ddb2e679a845411e7a50d650149af81bf6c6bad73c7",
+      "unchanged": true
+    }
+  ],
+  "new_scene": "e3_delayed_fixed_ns",
+  "unchanged_original_scenes": 42
+}

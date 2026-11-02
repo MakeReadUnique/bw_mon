@@ -1,7 +1,0 @@
-Command Line: /home/eda/app/synopsys/verdi/W-2024.09-SP1/platform/LINUXAMD64/bin/fsdbextract /home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/waves.fsdb -s /tb_acceptance_ns/scene/all_dmc -level 1 -o /home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/current-0.vcd -vcd_tree -sv
-uname(Linux localhost.localdomain 4.18.0-553.89.1.el8_10.x86_64 #1 SMP Fri Dec 12 10:42:53 UTC 2025 x86_64)
-First time to read tree time 0.000645 0.000280 0.000362 delta 13393920 13393920 total 258301952 258301952
-fsdbextract:Find signals time 0.001952 0.000000 0.001821 delta 3436544 3436544 total 261738496 261738496
-fsdbextract:Retrieve VC time 0.000013 0.000000 0.000014 delta 0 0 total 261738496 261738496
-fsdbextract main program time 0.013269 0.002803 0.008465 delta 26132480 26132480 total 224014336 224014336
-au time 0.013354 0.002832 0.008519 delta 26132480 26132480 total 224014336 224014336

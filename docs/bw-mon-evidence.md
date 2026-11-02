@@ -19,7 +19,7 @@ python3 tools/evidence.py verify waveforms
 python3 tools/evidence.py verify common
 ```
 
-需要 Python 3.6+、Git 和已记录提交。历史证明从 `b22e32e1beb704beb290e65f7af20bbe44065a34` 读取；新版证明使用交付摘要记录的独立归档提交。工具在临时目录重放校验器，检查原始输入再生成、源码／工具／构建回执、预期／实际／差异、串行时序、预算及资产哈希，不启动仿真器。
+需要 Python 3.6+、Git 和已记录提交。历史证明从 `b22e32e1beb704beb290e65f7af20bbe44065a34` 读取；新版证明使用交付摘要记录的独立归档提交 `4bf1e03ecc8991f14d0018c2c5d95aa9b6b8bb1a`，运行快照为 `154d45f2ba32242cd728c9996157cee296491fa2`。工具在临时目录重放校验器，检查原始输入再生成、源码／工具／构建回执、预期／实际／差异、串行时序、预算及资产哈希，不启动仿真器。
 
 `verify spec48 --current-source` 与 `make verify-evidence` 核对新版实测源码清单，并拒绝遗漏的新RTL文件；历史证明仍按其原源码核验。显式历史入口的 `--current-source` 只用于对照旧300文件清单，升级后失败是预期行为。任何来源检查失败均不能用旧结果替当前代码背书。
 
@@ -54,7 +54,7 @@ python3 tools/evidence.py restore waveforms --destination /tmp/bw-wave-review
 以下命令需要 VCS、Verdi/FSDB 支持和项目的 native helper 构建环境，见[构建说明](bw-mon-scheduling.md)。
 
 ```sh
-make test                 # 组件测试
+make test                 # 597项契约测试
 make acceptance           # 12 点 / 4 组，43 场端到端测试
 make scale-quick          # 日常规模 / 边界回归
 make scale-quick BW_CACHE_MODE=hot # 使用匹配的已有构建

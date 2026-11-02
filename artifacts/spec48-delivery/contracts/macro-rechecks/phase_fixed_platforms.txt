@@ -1,2 +1,0 @@
-PASS phase_fixed_platforms: /home/eda/bw-mon-ticket62-candidate-source/.build/tests/tb_phase_fixed/phase_fixed_platforms.log
-1/1 contract cases passed

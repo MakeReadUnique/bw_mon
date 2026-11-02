@@ -1,2 +1,0 @@
-PASS e2e_chain_bind: /home/eda/bw-mon-ticket62-candidate-source/.build/tests/tb_e2e_chain_bind/e2e_chain_bind.log
-1/1 contract cases passed

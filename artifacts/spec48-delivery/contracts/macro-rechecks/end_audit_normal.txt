@@ -1,2 +1,0 @@
-PASS end_audit_normal: /home/eda/bw-mon-ticket62-candidate-source/.build/tests/tb_end_audit/end_audit_normal.log
-1/1 contract cases passed

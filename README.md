@@ -53,3 +53,5 @@
 固定公开信号、独立预期/实际/差异、真实 Verdi 视图和工具命令。自动检查、agent
 图像检查、人工 T6 记录及规模验收分别标记。[九张新波形图的人工评审](https://github.com/MakeReadUnique/bw_mon/issues/33#issuecomment-6411618527)
 已于 2026-10-26 获用户确认；该记录只覆盖 Issue 中列出的视图和区间。
+
+最终运行来源、597项契约、43场公开场景、四图人工确认适用性及冷／热预算见[最终来源验收](evidence/README.md)。

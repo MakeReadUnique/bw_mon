@@ -4,14 +4,16 @@
 的四个新视图。**自动核验通过；用户于2026-11-02确认四张图及表列区间均OK，工单已关闭。**
 [逐文件哈希、源码适用性与人工记录](review.json)分别保存，旧九图签认不覆盖这些资产。
 
-本次完整组件回归 **589/589通过**；[逐项结果](contract-results.txt)与
+原始图片捕获阶段的完整组件回归 **589/589通过**；[逐项结果](contract-results.txt)与
 [自动核验及双轴代码审查记录](checks.json)保留实际来源。Standards、Spec审查均为0项发现。
 
-运行产品来源为 `eadec744516a125cca3441f29a27420b66285b6b`；RTL 未改。
+原始图片的运行产品来源为 `eadec744516a125cca3441f29a27420b66285b6b`；该捕获阶段RTL未改。
 十二点/四组场景沿用公开接入和独立原始输入；两个 checker 场景沿用
 `tests/tb_checker_default.sv` 与 `tests/checker_default/check.py`，仅 bind
 [FSDB dump](../../tests/verdi61/dump.sv)，不修改流量或预设阶段归属。
 VCS W-2024.09、Verdi W-2024.09-SP1；图为原生 Verdi 截图，无信号重命名和图像编辑。
+
+最终运行快照 `154d45f2ba32242cd728c9996157cee296491fa2` 已另行取得新FSDB及编译源码回执；四个完整区间内的所选信号变化、字符串身份及最终默认检查行与原资产一致。原始40文件来源清单、图片和人工反馈均保留，新增适用性证明见 `review.json.source_applicability`。下方截图的源码面板所示 `tests/acceptance/scene.sv` 也与当前编译输入逐字一致。当前597项契约及完整冷／热预算见[整体验收摘要](../README.md)。
 
 本次共同起点 **T=1 fs=0.000001 ns**。横轴为绝对 ns，所有 `*_ticks` 的单位为 fs。
 光标放在发布后 1 fs。下表区间中的 `T+` 不能省略。

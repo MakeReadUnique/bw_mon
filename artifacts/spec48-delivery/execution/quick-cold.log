@@ -1,7 +1,0 @@
-PASS topology-quick-ns /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-quick-ns/20261102T163051990310-882778/manifest.json
-PASS topology-quick-cycle /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-quick-cycle/20261102T163103451774-882778/manifest.json
-PASS topology-quick-cancel-ns /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-quick-cancel-ns/20261102T163115338816-882778/manifest.json
-PASS history-revised-ns-seeded /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-ns-seeded/20261102T163126799354-882778/manifest.json
-PASS history-revised-cycle-seeded /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-cycle-seeded/20261102T163136699625-882778/manifest.json
-PASS history-revised-pending /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-pending/20261102T163146647197-882778/manifest.json
-PASS /home/eda/bw-mon-ticket62-candidate-runs/revised/suite-quick-cold.json

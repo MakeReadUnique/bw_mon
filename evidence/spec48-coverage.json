@@ -1,0 +1,3170 @@
+{
+  "archive_commit": "4bf1e03ecc8991f14d0018c2c5d95aa9b6b8bb1a",
+  "archive_path": "artifacts/spec48-delivery",
+  "clauses": [
+    {
+      "clause": "D1",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "source"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "增量范围与依据。 本规格落实已完成决策，不重新选择产品行为。未被本轮修改的协议接入、精确原始计量、窗口半开边界、质量、过程、统计指标、诊断与复位隔离沿用历史 Spec。来源索引见 Further Notes；原决议中的文件化分组条款已被范围决定和最终启动契约取代。"
+    },
+    {
+      "clause": "D2",
+      "contract_inventories": [
+        "configuration"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "examples"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_stats_core.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/49#issuecomment-6460456245",
+          "state": "CLOSED",
+          "title": "窗口与静默默认值及 CLOCK_CONTEXT 退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/49"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/52#issuecomment-6467942331",
+          "state": "CLOSED",
+          "title": "统一 checker 的单平台 5% 检查",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/52"
+        }
+      ],
+      "title": "延续现有模块边界。 不新增需要用户例化的 checker、手工启动器或测试模块。"
+    },
+    {
+      "clause": "D3",
+      "contract_inventories": [
+        "configuration"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58",
+        "examples"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_stats_core.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/49#issuecomment-6460456245",
+          "state": "CLOSED",
+          "title": "窗口与静默默认值及 CLOCK_CONTEXT 退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/49"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/51#issuecomment-6466057288",
+          "state": "CLOSED",
+          "title": "无需算法参数的默认阶段识别",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/51"
+        }
+      ],
+      "title": "公开配置及默认值。 点、具名组与共享统计核心采用一致规则。删除 CLOCK_CONTEXT 及其专用登记／校验，不换名保留同类要求，不新增时钟一致性探测；共同采样时钟仍是使用前提。"
+    },
+    {
+      "clause": "D4",
+      "contract_inventories": [
+        "hierarchy",
+        "startup"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_mon_transport.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        }
+      ],
+      "title": "具名 SV 组与成员接口。 一个真实 bw_group_mon 实例即一项组声明。保留 add_point_member()／add_group_member()；不再公开要求或支持 define_group()、人工直接成员数、finish_configuration()。成员引用可以早于目标注册，精确匹配、按层次段边界的点路径前缀匹配和类型区分沿用基线。同类型同一直接成员重复命中先去重；不同直接路径递归覆盖同一点仍拒绝。直接成员数中下级组计为一个，不以其叶子数代替。"
+    },
+    {
+      "clause": "D5",
+      "contract_inventories": [
+        "startup"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance"
+      ],
+      "implementation": [
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_setup.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        }
+      ],
+      "title": "注册封口与启动。 点、组、成员配置只允许实际 t=0 的有限同刻调度，普通 initial、类型 bind、#0、NBA 及后续合法同刻动作不依赖执行顺序。协调器在初始化时间槽之后第一个可表示的正时间步封口；必须真实推进时间，不靠若干轮无变化或猜测 delta 数量。各调用入口同时校验库统一时间作用域中的实际时间与状态，不能用调用方粗时间单位取整，也不能仅等封口标志后来被设置。"
+    },
+    {
+      "clause": "D6",
+      "contract_inventories": [
+        "startup",
+        "completion"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_group_completion.svh",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_completion.svh",
+        "rtl/bw_scope_runtime.svh",
+        "rtl/bw_slot_settlement.c",
+        "rtl/bw_slot_settlement.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/54#issuecomment-6466729413",
+          "state": "CLOSED",
+          "title": "仅点场景的同刻完成与故障隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/54"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/56#issuecomment-6485463258",
+          "state": "CLOSED",
+          "title": "完整结束、中断诊断与一次报告完成",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/56"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        }
+      ],
+      "title": "共同计量起点与时间预算。 仅接纳严格晚于 T 的采样沿，T 同刻沿统一排除。TB 依据持久 monitor_ready 状态等待，再开始受监测流量并保证首个计量沿晚于 T，不只监听一次脉冲。无复位干预时，ns 计划发布从 T+S 起算，cycle 按实际本地沿推进；启动快照不冒充已发布窗口。预算截至 T+40µs，端点包含在支持范围，局部复位不重启预算。"
+    },
+    {
+      "clause": "D7",
+      "contract_inventories": [
+        "completion",
+        "hierarchy"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_group_completion.svh",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_point_completion.svh",
+        "rtl/bw_scope_runtime.svh",
+        "rtl/bw_slot_settlement.c",
+        "rtl/bw_slot_settlement.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/54#issuecomment-6466729413",
+          "state": "CLOSED",
+          "title": "仅点场景的同刻完成与故障隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/54"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/63#issuecomment-6556312385",
+          "state": "CLOSED",
+          "title": "最大拓扑槽结算性能优化：单场 600 秒达标",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/63"
+        }
+      ],
+      "title": "无物理 timeout 的完成协议。 每个实际采样沿独立建立应有工作，覆盖未归组点和各层组，不以有流量、非复位、数据已知或已经收到记录为前提。按源身份、原时刻和沿序号追踪采集、持久发布、本地核心接纳和各直接消费者回执；出队不等于发布／接纳完成。"
+    },
+    {
+      "clause": "D8",
+      "contract_inventories": [
+        "completion",
+        "numeric_storage",
+        "termination"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_end_coordinator.c",
+        "rtl/bw_end_protocol.svh",
+        "rtl/bw_group_completion.svh",
+        "rtl/bw_history.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_point_completion.svh",
+        "rtl/bw_scope_runtime.svh",
+        "rtl/bw_slot_settlement.c",
+        "rtl/bw_slot_settlement.svh",
+        "rtl/bw_target_completion.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/54#issuecomment-6466729413",
+          "state": "CLOSED",
+          "title": "仅点场景的同刻完成与故障隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/54"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/56#issuecomment-6485463258",
+          "state": "CLOSED",
+          "title": "完整结束、中断诊断与一次报告完成",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/56"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "运行期 WARNING 与影响范围隔离。 启动、配置生命周期和 ready 后迟到调用仍终止。启动成功后的可检测计量、运输、调度、数值或资源错误发核心 WARNING，不调用终止动作；禁用受影响范围及依赖它的祖先，若共享／全局状态失效或影响无法可靠定位则禁用全部监测。禁用持续到本次仿真结束，局部复位不复活。"
+    },
+    {
+      "clause": "D9",
+      "contract_inventories": [
+        "quality"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_history.svh",
+        "rtl/bw_reset_capture.svh",
+        "rtl/bw_stats_core.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/54#issuecomment-6466729413",
+          "state": "CLOSED",
+          "title": "仅点场景的同刻完成与故障隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/54"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        }
+      ],
+      "title": "停钟、复位与观测缺口。 仅实际采样沿建立应有记录；合法停钟／恢复／变频不按预计频率虚构缺帧。ns 窗口、静默与 hint 按各自既有时间语义推进，cycle 停钟快照不产生新样本。合法复位与质量记录仍完成正常运输；子组统计复位不停止上行原始供应，观测缺口不当作确定静默或零字节，也不因其质量不完整自动触发运输隔离。"
+    },
+    {
+      "clause": "D10",
+      "contract_inventories": [
+        "termination",
+        "startup"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_end_coordinator.c",
+        "rtl/bw_end_protocol.svh",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_target_completion.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/56#issuecomment-6485463258",
+          "state": "CLOSED",
+          "title": "完整结束、中断诊断与一次报告完成",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/56"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "结束、完成状态与报告。 任一已接入监测对象都可建立启动检查／结束诊断，不只依赖可能缺失的 setup。ready 前结束报告当前启动状态，不补启动或推进时间；ready 后无有效观测不能凭 ready 给性能 PASS。"
+    },
+    {
+      "clause": "D11",
+      "contract_inventories": [
+        "analysis"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58",
+        "acceptance"
+      ],
+      "implementation": [
+        "rtl/bw_analysis_public.svh",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_variation_history.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/51#issuecomment-6466057288",
+          "state": "CLOSED",
+          "title": "无需算法参数的默认阶段识别",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/51"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        }
+      ],
+      "title": "已采纳的内部默认阶段策略。 点与组使用同一规则，具体取值来自已确认的行为原型，属于内部策略而非公开参数。"
+    },
+    {
+      "clause": "D12",
+      "contract_inventories": [
+        "checker",
+        "analysis"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58"
+      ],
+      "implementation": [
+        "rtl/bw_analysis_public.svh",
+        "rtl/bw_check_report.sv",
+        "rtl/bw_default_check.svh",
+        "rtl/bw_stage_ownership.svh",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_variation_history.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/53#issuecomment-6469516843",
+          "state": "CLOSED",
+          "title": "平台切换、正常过渡与异常证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/53"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        }
+      ],
+      "title": "平台交接与正常过渡归属。 新平台交接资格与建立自身参考的资格分开：最终区间内至少两条连续有效发布且首末跨度达到 W，才可接走旧参考的待结算检查；不足跨度的短平台独立 WARNING，不能截断旧持续超限。交接足够但不足六条完整参考窗口的新平台，自身仍 WARNING。"
+    },
+    {
+      "clause": "D13",
+      "contract_inventories": [
+        "checker"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58",
+        "examples"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_default_check.svh",
+        "rtl/bw_stage_ownership.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/52#issuecomment-6467942331",
+          "state": "CLOSED",
+          "title": "统一 checker 的单平台 5% 检查",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/52"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        }
+      ],
+      "title": "默认 5% 检查的启用、身份与参考。 在既有 bw_check_report 内实现，跟随阶段分析启用，不需要 BW_EXPECT 文件，不新增专用开关／禁用项、阈值、时长、参考数量或近零下限。已有显式 CV、带宽、时间规则独立执行，不能覆盖／禁用本规则，本规则也不替代它们。"
+    },
+    {
+      "clause": "D14",
+      "contract_inventories": [
+        "checker"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_default_check.svh",
+        "rtl/bw_stage_ownership.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/52#issuecomment-6467942331",
+          "state": "CLOSED",
+          "title": "统一 checker 的单平台 5% 检查",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/52"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/53#issuecomment-6469516843",
+          "state": "CLOSED",
+          "title": "平台切换、正常过渡与异常证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/53"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "持续超限定义。 对有效 B>0，允许绝对偏离为 0.05B，样本偏离为 |y−B|；仅严格大于允许偏离才超限，等号合格。比较采用实际有效数值，不先按显示精度舍入，无隐藏 epsilon 或近零下限。"
+    },
+    {
+      "clause": "D15",
+      "contract_inventories": [
+        "checker",
+        "termination"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_default_check.svh",
+        "rtl/bw_end_coordinator.c",
+        "rtl/bw_end_protocol.svh",
+        "rtl/bw_stage_ownership.svh",
+        "rtl/bw_target_completion.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/52#issuecomment-6467942331",
+          "state": "CLOSED",
+          "title": "统一 checker 的单平台 5% 检查",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/52"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/53#issuecomment-6469516843",
+          "state": "CLOSED",
+          "title": "平台切换、正常过渡与异常证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/53"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/56#issuecomment-6485463258",
+          "state": "CLOSED",
+          "title": "完整结束、中断诊断与一次报告完成",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/56"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "默认检查的结果与报告。 每个平台在所属过程结束、复位或仿真截断结算时产生一条最终结果；重复超限报告段数／最长跨度，不逐窗重复累计平台 FAIL。报告重放不重复计数，复位不清除既有最终记录。无可用平台的整个过程合并为一次 WARNING；启用分析但范围没有过程时按既有约定产生一次本规则 WARNING。"
+    },
+    {
+      "clause": "D16",
+      "contract_inventories": [
+        "configuration",
+        "analysis"
+      ],
+      "evidence_sets": [
+        "acceptance",
+        "examples",
+        "verdi-applicability",
+        "source"
+      ],
+      "implementation": [
+        "rtl/bw_analysis_public.svh",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_variation_history.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6572946060",
+          "state": "CLOSED",
+          "title": "真实 Verdi 截图与聚焦人工验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/61"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "可观测性与迁移。 保留真实组实例及其普通可观察信号，支持 Verdi 按组实例查找并手动拉信号，与源码层级一致。常规分析输出提供当前阶段、未判定原因、已有／所需证据、候选进度；区分关闭、无过程、阶段未判定。启动摘要给实际数量、T／预算、时间刻度、策略版本、W/S/Q 和启用状态；详细诊断给有效内部配置和量级依据，作为解释信息而非必填接入项。"
+    },
+    {
+      "clause": "D17",
+      "contract_inventories": [
+        "numeric_storage",
+        "hierarchy"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_history.svh",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_scope_runtime.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/63#issuecomment-6556312385",
+          "state": "CLOSED",
+          "title": "最大拓扑槽结算性能优化：单场 600 秒达标",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/63"
+        }
+      ],
+      "title": "规模、容量与资源不降级。 支持上限仍为 16,384 点、4,096 组、8 层、65,536 直接边、每源 16 直接上级，以及既有 64 位数值、精确历史和 40µs 预算。自动启动、新默认分析、checker 与完成／隔离协议进入实际全规模链路。历史容量不以近似、丢事件、固定产品内存 cap 或额外采样时间换取。"
+    },
+    {
+      "clause": "T1",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "campaign58",
+        "revised",
+        "verdi-applicability"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6572946060",
+          "state": "CLOSED",
+          "title": "真实 Verdi 截图与聚焦人工验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/61"
+        }
+      ],
+      "title": "已确认的主要测试边界。 以公开 SV 产品边界作为主要测试入口：直接例化／类型 bind 的点、真实具名组与成员调用、统一 setup，加真实协议／时钟／复位输入，观察公开状态、统计／分析结果、统一报告和实际 FSDB。测试验证外部契约和可解释结果，不锁定内部 enum 编码、容器、辅助函数顺序或具体数据表示。"
+    },
+    {
+      "clause": "T2",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "campaign58",
+        "revised",
+        "source"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "测试映射与独立预期。 每项建立“原意图 → 最终决策／本规格条款 → 场景 → 原始输入／独立预期 → 实际结果／差异 → 来源”的映射。参考来自原始活动、时间模型、独立拓扑／叶集合和已确认公式，不从产品内部历史、输出标签或结果反推预期。整数、身份、质量及序号精确比较，real 容差单列；容差不改变严格 5% 门槛。预期的 FAIL、WARNING、禁用和启动错误也是正确测试结果，测试通过不要求性能全部 PASS。"
+    },
+    {
+      "clause": "T3",
+      "contract_inventories": [
+        "configuration",
+        "startup"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "examples",
+        "acceptance"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_setup.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_stats_core.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/49#issuecomment-6460456245",
+          "state": "CLOSED",
+          "title": "窗口与静默默认值及 CLOCK_CONTEXT 退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/49"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        }
+      ],
+      "title": "接入、启动和兼容。 分别在点、组、核心覆盖 S 省略／显式密集、显式 0／大于 W／未知，Q 的 ns/cycle 默认 10、合法覆盖、非法生效值与未使用值，及完整过程／阶段启停表。验证删除配置不再出现于入门例子和 bind／setup 接口，不恢复 CLOCK_CONTEXT 或替代时钟探测。"
+    },
+    {
+      "clause": "T4",
+      "contract_inventories": [
+        "analysis"
+      ],
+      "evidence_sets": [
+        "campaign58",
+        "contracts"
+      ],
+      "implementation": [
+        "rtl/bw_analysis_public.svh",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_variation_history.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/51#issuecomment-6466057288",
+          "state": "CLOSED",
+          "title": "无需算法参数的默认阶段识别",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/51"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        }
+      ],
+      "title": "默认阶段专项及质量目标。 沿用已确认四份固定输入、同一小程序、单点和一个四成员组；分配覆盖 ns/cycle、默认 S=W 与一个密集显式 S、两个固定字节量级，全部省略算法参数并实际覆盖 Q=10。输入包括持续平台、B→2B 阶跃及重复平台、持续 16 个合格窗口的匀速升降、交替 ±2%／±8% 长平台、短暂停顿、短突发、零字节活动、完全无活动、缺口／复位及恢复。"
+    },
+    {
+      "clause": "T5",
+      "contract_inventories": [
+        "checker"
+      ],
+      "evidence_sets": [
+        "campaign58",
+        "contracts"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_default_check.svh",
+        "rtl/bw_stage_ownership.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/52#issuecomment-6467942331",
+          "state": "CLOSED",
+          "title": "统一 checker 的单平台 5% 检查",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/52"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/53#issuecomment-6469516843",
+          "state": "CLOSED",
+          "title": "平台切换、正常过渡与异常证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/53"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "5% 数学与联合行为。 定向核对 B=100 时 104.9、105、95 的阈值内／等号行为，105.1／94.9 的持续失败，单条 106 后恢复的峰值而非持续失败；W=10、S=10 两条间距 W 与 S=1 的十一条跨度 W，以及短超限、106／94 交替和缺口打断。覆盖 B=0、有效正近零 B、无过程／无平台、一个样本、跨度不足、参考窗口跨边界、参考建立期回查、停钟旧快照及逻辑端点。"
+    },
+    {
+      "clause": "T6",
+      "contract_inventories": [
+        "completion",
+        "numeric_storage",
+        "quality",
+        "hierarchy"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_group_completion.svh",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_history.svh",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_point_completion.svh",
+        "rtl/bw_reset_capture.svh",
+        "rtl/bw_scope_runtime.svh",
+        "rtl/bw_slot_settlement.c",
+        "rtl/bw_slot_settlement.svh",
+        "rtl/bw_stats_core.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/54#issuecomment-6466729413",
+          "state": "CLOSED",
+          "title": "仅点场景的同刻完成与故障隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/54"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/63#issuecomment-6556312385",
+          "state": "CLOSED",
+          "title": "最大拓扑槽结算性能优化：单场 600 秒达标",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/63"
+        }
+      ],
+      "title": "新完成协议、隔离及工具证明。 全部采用已确认错误契约的触发／结果表和八组最小反例，至少包括："
+    },
+    {
+      "clause": "T7",
+      "contract_inventories": [
+        "termination"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_end_coordinator.c",
+        "rtl/bw_end_protocol.svh",
+        "rtl/bw_target_completion.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/56#issuecomment-6485463258",
+          "state": "CLOSED",
+          "title": "完整结束、中断诊断与一次报告完成",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/56"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        }
+      ],
+      "title": "结束和报告。 覆盖缺 setup、ready 前结束、ready 后无观测、采样沿 Active 中立即 finish、目标同刻完成后 finish、T+40µs 端点、已禁用范围、缺一项报告终态、重复报告与外部异常结束。分别检查进程状态、报告完成标记、监测完整性、性能结果及次数。立即中断不能误报已确认缺失，缺报告责任不补完成标记，完成报告可明确表达结果不完整；不得依靠额外正时间取得端点结果。"
+    },
+    {
+      "clause": "T8",
+      "contract_inventories": [
+        "hierarchy",
+        "numeric_storage"
+      ],
+      "evidence_sets": [
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_history.svh",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_scope_runtime.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        }
+      ],
+      "title": "完整重验修订规模与历史矩阵。 在新产品来源上完整执行下表；共享组合场景仅执行／归档一次并被双方准确引用。保持原始要求到性质／状态／场景／独立预期／证据的等价映射，不恢复被停止的旧全规模长跑。"
+    },
+    {
+      "clause": "T9",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "revised",
+        "campaign58",
+        "execution"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/63#issuecomment-6556312385",
+          "state": "CLOSED",
+          "title": "最大拓扑槽结算性能优化：单场 600 秒达标",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/63"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "运行预算。 使用既定参考主机、工具、串行条件和可复现命令，记录生成、准备、编译、初始化、执行、核验、清理及总耗时。新组件／集成沿用现有入口并记录各阶段与整轮耗时；下表预算各自适用，不把 900 秒当成所有新回归的统一上限。"
+    },
+    {
+      "clause": "T10",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "source",
+        "execution",
+        "revised",
+        "acceptance",
+        "campaign58",
+        "verdi-applicability"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6572946060",
+          "state": "CLOSED",
+          "title": "真实 Verdi 截图与聚焦人工验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/61"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "证据复用与来源。 固定产品、工具／选项、输入、独立预期、输出／差异、命令、耗时、状态高水位及资源来源。历史实现 `b22e32e1beb704beb290e65f7af20bbe44065a34` 的正式证明与原型 `3fb3fdb93249db0ca0211d9d6e0110d72d51521b` 的 R2 记录各保留原身份。"
+    },
+    {
+      "clause": "T11",
+      "contract_inventories": [
+        "analysis"
+      ],
+      "evidence_sets": [
+        "verdi-applicability"
+      ],
+      "implementation": [
+        "rtl/bw_analysis_public.svh",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_variation_history.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6572946060",
+          "state": "CLOSED",
+          "title": "真实 Verdi 截图与聚焦人工验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/61"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "真实 Verdi 与人工确认。 在新产品生成的真实 FSDB／源码资产上，验证按具名组实例查找并手动拉取信号、层级与源码一致、默认阶段边界／确认及 5% 结果可解释。覆盖正常结果和能说明 STEADY 与 FAIL 共存等关键边界的少量聚焦视图，不以示意图代替真实波形。"
+    },
+    {
+      "clause": "T12",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "campaign58",
+        "revised",
+        "examples",
+        "verdi-applicability",
+        "execution"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "本规格完成条件。 以下全部满足后才可把实现规格关闭为完成："
+    },
+    {
+      "clause": "A1",
+      "contract_inventories": [
+        "configuration"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "examples",
+        "campaign58"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_pkg.sv",
+        "rtl/bw_point_mon.sv",
+        "rtl/bw_stats_core.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/49#issuecomment-6460456245",
+          "state": "CLOSED",
+          "title": "窗口与静默默认值及 CLOCK_CONTEXT 退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/49"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/51#issuecomment-6466057288",
+          "state": "CLOSED",
+          "title": "无需算法参数的默认阶段识别",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/51"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        }
+      ],
+      "title": "参数与默认值"
+    },
+    {
+      "clause": "A2",
+      "contract_inventories": [
+        "startup"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance"
+      ],
+      "implementation": [
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_setup.sv"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        }
+      ],
+      "title": "自动启动"
+    },
+    {
+      "clause": "A3",
+      "contract_inventories": [
+        "hierarchy",
+        "completion"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised",
+        "verdi-applicability"
+      ],
+      "implementation": [
+        "rtl/bw_group_completion.svh",
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_point_completion.svh",
+        "rtl/bw_scope_runtime.svh",
+        "rtl/bw_slot_settlement.c",
+        "rtl/bw_slot_settlement.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/50#issuecomment-6464799584",
+          "state": "CLOSED",
+          "title": "自动注册、具名组配置与一次 ready",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/50"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        }
+      ],
+      "title": "具名 SV 组"
+    },
+    {
+      "clause": "A4",
+      "contract_inventories": [
+        "analysis"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58"
+      ],
+      "implementation": [
+        "rtl/bw_analysis_public.svh",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_variation_history.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/51#issuecomment-6466057288",
+          "state": "CLOSED",
+          "title": "无需算法参数的默认阶段识别",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/51"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/53#issuecomment-6469516843",
+          "state": "CLOSED",
+          "title": "平台切换、正常过渡与异常证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/53"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        }
+      ],
+      "title": "默认分析"
+    },
+    {
+      "clause": "A5",
+      "contract_inventories": [
+        "checker"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "campaign58"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_default_check.svh",
+        "rtl/bw_stage_ownership.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/52#issuecomment-6467942331",
+          "state": "CLOSED",
+          "title": "统一 checker 的单平台 5% 检查",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/52"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/53#issuecomment-6469516843",
+          "state": "CLOSED",
+          "title": "平台切换、正常过渡与异常证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/53"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/58#issuecomment-6490414221",
+          "state": "CLOSED",
+          "title": "默认阶段与 5% 的产品专项验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/58"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "5% 检查"
+    },
+    {
+      "clause": "A6",
+      "contract_inventories": [
+        "completion",
+        "termination",
+        "quality"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "revised"
+      ],
+      "implementation": [
+        "rtl/bw_check_report.sv",
+        "rtl/bw_end_coordinator.c",
+        "rtl/bw_end_protocol.svh",
+        "rtl/bw_group_completion.svh",
+        "rtl/bw_history.svh",
+        "rtl/bw_point_completion.svh",
+        "rtl/bw_reset_capture.svh",
+        "rtl/bw_scope_runtime.svh",
+        "rtl/bw_slot_settlement.c",
+        "rtl/bw_slot_settlement.svh",
+        "rtl/bw_stats_core.sv",
+        "rtl/bw_target_completion.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/54#issuecomment-6466729413",
+          "state": "CLOSED",
+          "title": "仅点场景的同刻完成与故障隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/54"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/55#issuecomment-6470822711",
+          "state": "CLOSED",
+          "title": "分层多父的同刻消费与影响范围隔离",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/55"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/56#issuecomment-6485463258",
+          "state": "CLOSED",
+          "title": "完整结束、中断诊断与一次报告完成",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/56"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/63#issuecomment-6556312385",
+          "state": "CLOSED",
+          "title": "最大拓扑槽结算性能优化：单场 600 秒达标",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/63"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "等待、隔离、结束"
+    },
+    {
+      "clause": "A7",
+      "contract_inventories": [
+        "all_contracts"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "acceptance",
+        "source",
+        "examples",
+        "verdi-applicability"
+      ],
+      "implementation": [
+        "tests/cases.json",
+        "tests/run.py"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/57#issuecomment-6487835592",
+          "state": "CLOSED",
+          "title": "新接入端到端迁移与旧入口退出",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/57"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6572946060",
+          "state": "CLOSED",
+          "title": "真实 Verdi 截图与聚焦人工验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/61"
+        }
+      ],
+      "title": "计量、兼容与波形"
+    },
+    {
+      "clause": "A8",
+      "contract_inventories": [
+        "hierarchy",
+        "numeric_storage"
+      ],
+      "evidence_sets": [
+        "contracts",
+        "revised",
+        "execution"
+      ],
+      "implementation": [
+        "rtl/bw_group_mon.sv",
+        "rtl/bw_history.svh",
+        "rtl/bw_mon_registry.svh",
+        "rtl/bw_mon_transport.svh",
+        "rtl/bw_scope_runtime.svh"
+      ],
+      "tickets": [
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/59#issuecomment-6495618215",
+          "state": "CLOSED",
+          "title": "深历史、数值边界与固定策略证据保留",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/59"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/60#issuecomment-6502020598",
+          "state": "CLOSED",
+          "title": "最大拓扑与多父交互验收",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/60"
+        },
+        {
+          "resolution": "https://github.com/MakeReadUnique/bw_mon/issues/63#issuecomment-6556312385",
+          "state": "CLOSED",
+          "title": "最大拓扑槽结算性能优化：单场 600 秒达标",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/63"
+        },
+        {
+          "resolution": null,
+          "state": "OPEN",
+          "title": "整体验收完成后提交唯一 PR",
+          "url": "https://github.com/MakeReadUnique/bw_mon/issues/62"
+        }
+      ],
+      "title": "规模、历史及资源"
+    }
+  ],
+  "contract_case_count": 597,
+  "contract_inventories": {
+    "all_contracts": [
+      "ns_bind",
+      "ns_stride",
+      "startup_empty",
+      "startup_bad_width",
+      "startup_bad_stride",
+      "startup_duplicate",
+      "startup_late",
+      "startup_reconfigure",
+      "byte_config_error",
+      "cycle_window",
+      "cycle_stride",
+      "cycle_config",
+      "startup_ns_width_limit",
+      "startup_cycle_width_limit",
+      "startup_cycle_bad_stride",
+      "cycle_edge_error",
+      "protocol_recording",
+      "subns_vectors",
+      "sample_view",
+      "recorder_edges",
+      "dynamic_size_error",
+      "protocol_config_error",
+      "adapter_decode",
+      "credit_timing",
+      "credit_config_error",
+      "credit_initial_error",
+      "credit_return_error",
+      "fixed_unknown_config",
+      "credit_ledger",
+      "credit_boundaries",
+      "credit_reset_unknown",
+      "hint_ns",
+      "hint_equal",
+      "hint_cycle",
+      "hint_shortage",
+      "hint_credit_cycle",
+      "hint_cycle_truncation",
+      "hint_missing_basis",
+      "hint_missing_threshold",
+      "hint_zero_threshold",
+      "hint_bad_basis",
+      "hint_time_overflow",
+      "hint_accounting",
+      "hint_reset_release",
+      "hint_unknown_protocol",
+      "reset_rewarm",
+      "reset_same_time_0",
+      "reset_same_time_1",
+      "reset_same_time_2",
+      "reset_same_time_3",
+      "reset_unknown",
+      "reset_time_budget",
+      "reset_member_controls",
+      "reset_cycle_unknown",
+      "reset_initial",
+      "member_control_error",
+      "member_control_reference_error",
+      "reset_deassert_sample",
+      "hint_time_budget",
+      "hint_final_budget",
+      "hint_same_cycle_stream",
+      "hint_same_cycle_live",
+      "hint_same_cycle_cycle_live",
+      "episode_boundary",
+      "episode_gaps",
+      "episode_cycle",
+      "episode_controls",
+      "episode_reset_deadline",
+      "episode_final",
+      "episode_final_budget",
+      "episode_config_error",
+      "episode_unknown_q",
+      "episode_late_metadata",
+      "episode_frame_first",
+      "episode_pending",
+      "episode_pending_reset",
+      "episode_pending_final",
+      "report_e2e_boundary",
+      "report_e2e_below",
+      "report_e2e_low",
+      "report_e2e_range_lower",
+      "report_cfg_suffix",
+      "report_cfg_overflow",
+      "report_cfg_huge_exp",
+      "report_cfg_underflow",
+      "report_cfg_short_exp",
+      "report_cfg_nan",
+      "report_cfg_inf",
+      "report_cfg_negative",
+      "report_cfg_negative_zero",
+      "report_cfg_hex",
+      "report_cfg_underscore",
+      "report_cfg_max_above",
+      "report_cfg_conflict",
+      "report_cfg_tolerance_overflow",
+      "report_cfg_tolerance_only",
+      "report_cfg_quoted",
+      "report_cfg_empty",
+      "report_quality",
+      "report_records",
+      "report_records_later_pass",
+      "report_records_nonfinite",
+      "report_records_reset_quality",
+      "report_cfg_duplicate",
+      "report_cfg_unknown_key",
+      "report_cfg_malformed_header",
+      "report_cfg_unregistered",
+      "report_cfg_wrong_type",
+      "report_cfg_missing_equals",
+      "report_cfg_decimal_forms",
+      "report_cfg_max_finite",
+      "report_cfg_subnormal",
+      "report_e2e_range_upper",
+      "report_e2e_range_below",
+      "report_e2e_range_above",
+      "report_e2e_upper",
+      "report_e2e_upper_above",
+      "report_e2e_abs",
+      "report_e2e_default_tolerance",
+      "report_e2e_zero",
+      "report_e2e_negative_effective",
+      "report_statistics_only",
+      "report_unreadable",
+      "report_missing_path",
+      "report_final_forward",
+      "report_final_reverse",
+      "report_final_budget",
+      "report_directory",
+      "report_identity",
+      "report_records_unknown_status",
+      "report_result_budget",
+      "report_unrelated_plusargs",
+      "report_empty_path",
+      "phase_delayed",
+      "phase_hysteresis",
+      "phase_actual_time",
+      "phase_episode_residue",
+      "phase_reset",
+      "phase_repeated",
+      "phase_zero",
+      "phase_config_valid",
+      "phase_config_episode",
+      "phase_config_unknown",
+      "phase_candidate_change",
+      "report_transient_deferred",
+      "report_scope_deferred",
+      "report_final_deferred",
+      "report_hint_deferred",
+      "group_basic",
+      "group_matching",
+      "group_delayed",
+      "group_metadata_order",
+      "transport_retention",
+      "group_fault_missing_first",
+      "group_fault_missing_second",
+      "group_fault_duplicate",
+      "group_fault_record_gap",
+      "group_fault_wrong_edge",
+      "group_fault_wrong_time",
+      "group_fault_reverse",
+      "group_cycle_quality",
+      "group_reset_quality",
+      "group_wide",
+      "group_config_empty_id",
+      "group_config_window",
+      "group_config_stride",
+      "group_config_duplicate_owner",
+      "group_config_unknown_rule",
+      "group_config_missing_reference",
+      "group_config_prefix_empty",
+      "group_config_empty_group",
+      "group_config_member_after_seal",
+      "group_config_hot_member",
+      "group_config_late_registration",
+      "group_metadata_reactive",
+      "group_control_barrier",
+      "group_deferred_final_late",
+      "group_deferred_final_missing",
+      "report_group_barrier",
+      "report_typed_scope_barrier",
+      "hierarchy_basic",
+      "hierarchy_self_cycle",
+      "hierarchy_cycle",
+      "hierarchy_point_overlap",
+      "hierarchy_overlap32",
+      "hierarchy_overlap64",
+      "hierarchy_siblings",
+      "hierarchy_diamond",
+      "hierarchy_missing_group",
+      "hierarchy_missing_point",
+      "hierarchy_group_prefix",
+      "hierarchy_unknown_kind",
+      "hierarchy_depth9",
+      "hierarchy_fanout17",
+      "hierarchy_hot_group",
+      "hierarchy_depth8",
+      "hierarchy_fanout16",
+      "hierarchy_t4_ns_normal",
+      "hierarchy_t4_ns_child_reset",
+      "hierarchy_t4_ns_point_reset",
+      "hierarchy_t4_ns_size_unknown",
+      "hierarchy_t4_ns_parent_reset",
+      "hierarchy_t4_cycle_normal",
+      "hierarchy_t4_cycle_child_reset",
+      "hierarchy_t4_cycle_point_reset",
+      "hierarchy_t4_cycle_size_unknown",
+      "hierarchy_t4_cycle_parent_reset",
+      "hierarchy_depth_transport",
+      "hierarchy_retention_all_first",
+      "hierarchy_retention_mixed_first",
+      "hierarchy_t4_overlap",
+      "hierarchy_edge_limit_exact",
+      "hierarchy_edge_limit_excess",
+      "hierarchy_depth_missing",
+      "hierarchy_invalid_kind",
+      "hierarchy_retention_all_first_child_reset",
+      "hierarchy_retention_all_first_point_reset",
+      "hierarchy_retention_all_first_size_unknown",
+      "hierarchy_retention_mixed_first_child_reset",
+      "hierarchy_retention_mixed_first_point_reset",
+      "hierarchy_retention_mixed_first_size_unknown",
+      "metrics_delayed",
+      "metrics_repeated",
+      "metrics_quality",
+      "metrics_zero",
+      "metrics_actual_clock",
+      "metrics_exclusions",
+      "metrics_small",
+      "metrics_controls",
+      "metrics_interrupted",
+      "metrics_first_boundary",
+      "metrics_first_boundary_known_start",
+      "metrics_first_boundary_unknown_end",
+      "metrics_independent",
+      "metrics_late_recovery",
+      "metrics_late_recovery_reset",
+      "metrics_late_recovery_epoch_gap",
+      "metrics_late_recovery_own_gap",
+      "metrics_late_recovery_left_boundary",
+      "metrics_stopped_history",
+      "report_metrics_repeated",
+      "report_group_metrics_normal",
+      "report_group_metrics_child_reset",
+      "report_group_metrics_point_reset",
+      "report_group_metrics_size_unknown",
+      "report_metrics_all",
+      "report_metrics_bad_duration",
+      "report_metrics_raw_independent",
+      "report_metrics_unresolved_selection",
+      "report_metrics_nonfinite",
+      "report_metrics_zero_mean",
+      "report_metrics_later_truncated",
+      "report_metrics_transient",
+      "report_phase_result_budget",
+      "report_metrics_invalid_e2e_bw",
+      "report_metrics_invalid_steady_bw",
+      "report_metrics_invalid_ramp_time",
+      "report_metrics_invalid_fall_time",
+      "report_metrics_invalid_steady_window_min",
+      "report_metrics_invalid_steady_window_max",
+      "report_metrics_invalid_steady_stddev",
+      "report_metrics_invalid_steady_cv",
+      "report_metrics_invalid_episode_window_min",
+      "report_metrics_invalid_episode_window_max",
+      "report_metrics_invalid_episode_stddev",
+      "report_metrics_invalid_episode_cv",
+      "report_metrics_mixed",
+      "report_metrics_zero",
+      "report_metrics_independent",
+      "report_metrics_quality",
+      "report_metrics_interrupted",
+      "report_metrics_delayed",
+      "report_group_cycle_normal",
+      "report_group_cycle_child_reset",
+      "report_group_cycle_point_reset",
+      "report_group_cycle_size_unknown",
+      "report_group_full_ns",
+      "report_group_full_cycle",
+      "report_metrics_repeated_full",
+      "report_group_repeat_ns",
+      "report_group_repeat_cycle",
+      "report_metrics_stopped",
+      "group_analysis_config_valid",
+      "group_analysis_config_requires_episode",
+      "group_analysis_config_unknown_q",
+      "report_metrics_initial_snapshot",
+      "report_metrics_reason_priority",
+      "group_analysis_config_unknown_episode_enable",
+      "group_analysis_config_invalid_episode_enable",
+      "group_analysis_config_unknown_phase_enable",
+      "group_analysis_config_invalid_phase_enable",
+      "report_metrics_unknown_steady_kind",
+      "report_metrics_unknown_phase_kind",
+      "numeric_window_unknown",
+      "numeric_add_unknown",
+      "numeric_mul_unknown",
+      "numeric_arithmetic_known",
+      "numeric_frame_bytes_unknown",
+      "numeric_frame_ticks_unknown",
+      "numeric_frame_sequence_unknown",
+      "numeric_control_sequence_unknown",
+      "numeric_control_origin_unknown",
+      "numeric_dynamic_policy",
+      "numeric_policy_dynamic_x",
+      "numeric_policy_dynamic_2",
+      "numeric_policy_credit_x",
+      "numeric_policy_credit_2",
+      "numeric_policy_initial_x",
+      "numeric_policy_initial_2",
+      "numeric_policy_episode_x",
+      "numeric_policy_episode_2",
+      "numeric_policy_phase_x",
+      "numeric_policy_phase_2",
+      "numeric_policy_hint_x",
+      "numeric_policy_hint_2",
+      "numeric_policy_basis_x",
+      "numeric_policy_basis_2",
+      "numeric_policy_stride_x",
+      "numeric_policy_disabled",
+      "history_trace_ns",
+      "history_trace_cycle",
+      "numeric_subtract_known",
+      "numeric_subtract_underflow",
+      "numeric_subtract_unknown",
+      "numeric_transport_publish_handle",
+      "numeric_transport_ack_frame",
+      "numeric_transport_ack_control",
+      "numeric_transport_group_handle",
+      "numeric_transport_member_index",
+      "numeric_transport_progress",
+      "numeric_transport_valid_reset",
+      "storage_failure_history",
+      "storage_failure_core_frames",
+      "storage_failure_core_controls",
+      "storage_failure_core_resets",
+      "storage_failure_core_timers",
+      "storage_failure_quality_window",
+      "storage_failure_quality_episode",
+      "storage_failure_phase_fit",
+      "storage_failure_phase_pending",
+      "storage_failure_variation_episode",
+      "storage_failure_variation_phase",
+      "storage_failure_recorder_samples",
+      "storage_failure_recorder_controls",
+      "storage_failure_transport_frames",
+      "storage_failure_transport_controls",
+      "storage_failure_transport_origins",
+      "storage_failure_group_expected",
+      "storage_failure_hint_backpressure_status",
+      "storage_failure_hint_backpressure_edges",
+      "storage_failure_hint_backpressure_timers",
+      "storage_failure_report_scopes",
+      "storage_failure_report_rules",
+      "storage_failure_report_cfg-line",
+      "storage_failure_report_token",
+      "storage_failure_clock",
+      "storage_failure_final_phase",
+      "storage_failure_registry_source",
+      "storage_failure_registry_points",
+      "storage_failure_registry_groups",
+      "storage_failure_registry_rules",
+      "storage_failure_registry_members",
+      "storage_failure_registry_parents",
+      "variation_pending_retention",
+      "numeric_query_time",
+      "numeric_query_scope_kind",
+      "numeric_query_scope_index",
+      "numeric_query_scope_invalid",
+      "numeric_query_pure_time",
+      "numeric_query_known",
+      "numeric_core_frame_bytes",
+      "numeric_core_frame_time",
+      "numeric_core_control_sequence",
+      "numeric_core_kind",
+      "numeric_core_progress",
+      "numeric_core_known_partial",
+      "numeric_add_overflow",
+      "numeric_mul_overflow",
+      "numeric_queue_range",
+      "transport_growth",
+      "settle_notification_owner",
+      "settle_shared_pending",
+      "settle_typed_owners",
+      "settle_audit_stats",
+      "settle_reset_module_nba",
+      "settle_reset_program_renba",
+      "settle_hint_active_clock",
+      "settle_hint_program_renba",
+      "settle_phase_module_nba",
+      "settle_phase_program_renba",
+      "settle_group_module",
+      "settle_group_assert",
+      "settle_group_pulse",
+      "settle_group_release",
+      "settle_group_unknown",
+      "settle_exact_budget",
+      "settle_reset_stream_mixed",
+      "settle_reset_stream_group_only",
+      "settle_storage_reset_observer",
+      "settle_storage_reset_capture",
+      "cfg_defaults",
+      "cfg_error_stride_zero",
+      "cfg_error_stride_gt_w",
+      "cfg_error_stride_x",
+      "cfg_error_q_zero",
+      "cfg_error_q_x",
+      "cfg_error_q_overflow",
+      "cfg_error_group_stride_zero",
+      "cfg_error_group_q_zero",
+      "cfg_error_core_stride_zero",
+      "cfg_error_core_q_zero",
+      "auto_start",
+      "auto_start_coarse",
+      "auto_start_bind",
+      "auto_error_empty_setup",
+      "auto_error_missing_setup",
+      "auto_error_duplicate_setup",
+      "auto_error_ghost_owner",
+      "auto_error_late_member",
+      "auto_error_late_register",
+      "phase_defaults",
+      "phase_pair6",
+      "phase_fixed_continuous",
+      "phase_fixed_platforms",
+      "phase_fixed_activity",
+      "phase_fixed_recovery",
+      "cfg_explicit_max_stride",
+      "cfg_explicit_max_q",
+      "phase_removed_parameters",
+      "group_actual_scope",
+      "auto_prepared",
+      "auto_end_before_ready",
+      "auto_start_chain",
+      "auto_start_bind_more",
+      "auto_late_coarse",
+      "auto_error_duplicate_point",
+      "auto_error_duplicate_group",
+      "auto_error_empty_group",
+      "auto_error_missing_group_setup",
+      "auto_error_group_cycle",
+      "auto_error_missing_reference",
+      "auto_removed_point_count",
+      "auto_removed_group_count",
+      "auto_removed_startup_timeout",
+      "auto_removed_record_timeout",
+      "auto_removed_define_group",
+      "auto_removed_finish_configuration",
+      "auto_no_observations",
+      "auto_reset_slot",
+      "auto_core_origin",
+      "point_runtime_isolation",
+      "point_missing_capture",
+      "point_missing_publication",
+      "point_missing_core",
+      "point_lost_notice",
+      "point_stopped_clock",
+      "point_held_record",
+      "point_finish_immediate",
+      "point_finish_normal",
+      "point_finish_control",
+      "point_reactive_completion",
+      "point_historical_fail",
+      "point_four_state_edges",
+      "point_shared_scheduler",
+      "point_reset_capture_isolation",
+      "point_historical_shared_arithmetic",
+      "transport_consumer_cancellation",
+      "group_completion_capture",
+      "group_completion_none",
+      "group_completion_notice",
+      "group_completion_publication",
+      "group_completion_core",
+      "group_completion_ack",
+      "group_completion_held",
+      "group_completion_reactive",
+      "transport_capacity4096",
+      "transport_same_time_pressure4096",
+      "group_completion_source_failure",
+      "transport_bad_ack_cancellation",
+      "transport_same_time_pressure_cancel",
+      "transport_m4_capacity",
+      "group_public_pressure",
+      "group_completion_control_core",
+      "group_completion_control_publication",
+      "group_completion_control_ack",
+      "group_completion_reset_capture",
+      "group_completion_reset_post",
+      "group_completion_reset_core",
+      "group_control_lost_notice",
+      "group_timer_missing_receipt",
+      "group_control_missing_continuation",
+      "group_fault_unexpected_frame",
+      "group_public_pressure_failed_parent",
+      "checker_default_constant",
+      "checker_default_alternating",
+      "checker_numeric_low_equal",
+      "checker_numeric_high_equal",
+      "checker_numeric_high_inside",
+      "checker_numeric_low_inside",
+      "checker_numeric_high_over",
+      "checker_numeric_high_close_over",
+      "checker_numeric_high_next_over",
+      "checker_numeric_low_close_over",
+      "checker_numeric_low_next_over",
+      "checker_numeric_low_over",
+      "checker_numeric_alternating",
+      "checker_numeric_reference_backcheck",
+      "checker_numeric_nearzero",
+      "checker_numeric_reset_fail",
+      "checker_numeric_cycle",
+      "checker_numeric_dense_short",
+      "checker_numeric_dense_fail",
+      "checker_numeric_coverage",
+      "checker_numeric_gap",
+      "checker_numeric_zero",
+      "checker_numeric_reference_short",
+      "checker_numeric_truncated",
+      "checker_numeric_single_peak",
+      "checker_numeric_expanded",
+      "checker_empty",
+      "checker_default_explicit",
+      "checker_numeric_platform_replay",
+      "checker_default_reset",
+      "checker_default_gap",
+      "checker_default_truncated",
+      "checker_numeric_expanded_high_equal",
+      "checker_numeric_expanded_high_over",
+      "checker_numeric_expanded_low_over",
+      "checker_cycle_alternating",
+      "checker_cycle_constant",
+      "checker_history",
+      "checker_disabled_old_platform_fail",
+      "checker_disabled_tail_platform_fail",
+      "checker_disabled_clean_platforms",
+      "checker_numeric_explicit_time",
+      "checker_numeric_terminal_crop",
+      "checker_numeric_start_unknown",
+      "checker_numeric_nearzero_pass",
+      "checker_disabled",
+      "checker_disabled_phase",
+      "checker_equivalence_low_equal",
+      "checker_equivalence_high_equal",
+      "checker_equivalence_high_over",
+      "checker_equivalence_low_over",
+      "checker_numeric_unknown_status",
+      "checker_quickstart_default",
+      "checker_quickstart_explicit",
+      "checker_empty_immediate",
+      "checker_prefix_default",
+      "checker_prefix_explicit",
+      "checker_prefix_gap",
+      "checker_prefix_truncated",
+      "checker_replay",
+      "point_group_future_timer_cancellation",
+      "group_timer_missing_receipt_siblings",
+      "numeric_transport_late_control",
+      "group_all_disabled_continues",
+      "checker_ownership_five_reference",
+      "checker_ownership_early_fail",
+      "checker_ownership_crop",
+      "checker_ownership_crop_reset",
+      "checker_ownership_crop_truncated",
+      "checker_ownership_records_normal",
+      "checker_ownership_records_crop",
+      "checker_ownership_records_gap",
+      "checker_ownership_records_old_fail",
+      "checker_ownership_records_bad_support",
+      "checker_ownership_records_overlap",
+      "checker_ownership_records_reverse",
+      "checker_ownership_records_long_bridge",
+      "checker_ownership_records_reset_bridge",
+      "checker_ownership_late_reset",
+      "checker_ownership_member_reset",
+      "checker_ownership_member_unknown",
+      "checker_ownership_member_gap",
+      "checker_ownership_member_held",
+      "checker_ownership_member_bridge",
+      "end_audit_normal",
+      "end_audit_reverse",
+      "end_audit_suppress_hint",
+      "end_audit_suppress_core",
+      "target_query_stale",
+      "target_query_budget",
+      "target_query_late1fs",
+      "end_pending_edge",
+      "end_pending_hint_timer",
+      "end_disabled_roles",
+      "end_terminal_fail_active",
+      "end_terminal_no_platform",
+      "end_terminal_stats_only",
+      "end_replay_duplicate",
+      "end_replay_suppress_owner",
+      "e2e_chain_direct",
+      "e2e_chain_direct_isolation",
+      "e2e_chain_bind",
+      "e2e_chain_bind_isolation",
+      "transport_gate_after_publication"
+    ],
+    "analysis": [
+      "phase_delayed",
+      "phase_hysteresis",
+      "phase_actual_time",
+      "phase_episode_residue",
+      "phase_reset",
+      "phase_repeated",
+      "phase_zero",
+      "phase_config_valid",
+      "phase_config_episode",
+      "phase_config_unknown",
+      "phase_candidate_change",
+      "metrics_delayed",
+      "metrics_repeated",
+      "metrics_quality",
+      "metrics_zero",
+      "metrics_actual_clock",
+      "metrics_exclusions",
+      "metrics_small",
+      "metrics_controls",
+      "metrics_interrupted",
+      "metrics_first_boundary",
+      "metrics_first_boundary_known_start",
+      "metrics_first_boundary_unknown_end",
+      "metrics_independent",
+      "metrics_late_recovery",
+      "metrics_late_recovery_reset",
+      "metrics_late_recovery_epoch_gap",
+      "metrics_late_recovery_own_gap",
+      "metrics_late_recovery_left_boundary",
+      "metrics_stopped_history",
+      "variation_pending_retention",
+      "phase_defaults",
+      "phase_pair6",
+      "phase_fixed_continuous",
+      "phase_fixed_platforms",
+      "phase_fixed_activity",
+      "phase_fixed_recovery",
+      "phase_removed_parameters",
+      "checker_default_constant",
+      "checker_default_alternating",
+      "checker_numeric_low_equal",
+      "checker_numeric_high_equal",
+      "checker_numeric_high_inside",
+      "checker_numeric_low_inside",
+      "checker_numeric_high_over",
+      "checker_numeric_high_close_over",
+      "checker_numeric_high_next_over",
+      "checker_numeric_low_close_over",
+      "checker_numeric_low_next_over",
+      "checker_numeric_low_over",
+      "checker_numeric_alternating",
+      "checker_numeric_reference_backcheck",
+      "checker_numeric_nearzero",
+      "checker_numeric_reset_fail",
+      "checker_numeric_cycle",
+      "checker_numeric_dense_short",
+      "checker_numeric_dense_fail",
+      "checker_numeric_coverage",
+      "checker_numeric_gap",
+      "checker_numeric_zero",
+      "checker_numeric_reference_short",
+      "checker_numeric_truncated",
+      "checker_numeric_single_peak",
+      "checker_numeric_expanded",
+      "checker_empty",
+      "checker_default_explicit",
+      "checker_numeric_platform_replay",
+      "checker_default_reset",
+      "checker_default_gap",
+      "checker_default_truncated",
+      "checker_numeric_expanded_high_equal",
+      "checker_numeric_expanded_high_over",
+      "checker_numeric_expanded_low_over",
+      "checker_cycle_alternating",
+      "checker_cycle_constant",
+      "checker_history",
+      "checker_disabled_old_platform_fail",
+      "checker_disabled_tail_platform_fail",
+      "checker_disabled_clean_platforms",
+      "checker_numeric_explicit_time",
+      "checker_numeric_terminal_crop",
+      "checker_numeric_start_unknown",
+      "checker_numeric_nearzero_pass",
+      "checker_disabled",
+      "checker_disabled_phase",
+      "checker_equivalence_low_equal",
+      "checker_equivalence_high_equal",
+      "checker_equivalence_high_over",
+      "checker_equivalence_low_over",
+      "checker_numeric_unknown_status",
+      "checker_quickstart_default",
+      "checker_quickstart_explicit",
+      "checker_empty_immediate",
+      "checker_prefix_default",
+      "checker_prefix_explicit",
+      "checker_prefix_gap",
+      "checker_prefix_truncated",
+      "checker_replay",
+      "checker_ownership_five_reference",
+      "checker_ownership_early_fail",
+      "checker_ownership_crop",
+      "checker_ownership_crop_reset",
+      "checker_ownership_crop_truncated",
+      "checker_ownership_records_normal",
+      "checker_ownership_records_crop",
+      "checker_ownership_records_gap",
+      "checker_ownership_records_old_fail",
+      "checker_ownership_records_bad_support",
+      "checker_ownership_records_overlap",
+      "checker_ownership_records_reverse",
+      "checker_ownership_records_long_bridge",
+      "checker_ownership_records_reset_bridge",
+      "checker_ownership_late_reset",
+      "checker_ownership_member_reset",
+      "checker_ownership_member_unknown",
+      "checker_ownership_member_gap",
+      "checker_ownership_member_held",
+      "checker_ownership_member_bridge"
+    ],
+    "checker": [
+      "checker_default_constant",
+      "checker_default_alternating",
+      "checker_numeric_low_equal",
+      "checker_numeric_high_equal",
+      "checker_numeric_high_inside",
+      "checker_numeric_low_inside",
+      "checker_numeric_high_over",
+      "checker_numeric_high_close_over",
+      "checker_numeric_high_next_over",
+      "checker_numeric_low_close_over",
+      "checker_numeric_low_next_over",
+      "checker_numeric_low_over",
+      "checker_numeric_alternating",
+      "checker_numeric_reference_backcheck",
+      "checker_numeric_nearzero",
+      "checker_numeric_reset_fail",
+      "checker_numeric_cycle",
+      "checker_numeric_dense_short",
+      "checker_numeric_dense_fail",
+      "checker_numeric_coverage",
+      "checker_numeric_gap",
+      "checker_numeric_zero",
+      "checker_numeric_reference_short",
+      "checker_numeric_truncated",
+      "checker_numeric_single_peak",
+      "checker_numeric_expanded",
+      "checker_empty",
+      "checker_default_explicit",
+      "checker_numeric_platform_replay",
+      "checker_default_reset",
+      "checker_default_gap",
+      "checker_default_truncated",
+      "checker_numeric_expanded_high_equal",
+      "checker_numeric_expanded_high_over",
+      "checker_numeric_expanded_low_over",
+      "checker_cycle_alternating",
+      "checker_cycle_constant",
+      "checker_history",
+      "checker_disabled_old_platform_fail",
+      "checker_disabled_tail_platform_fail",
+      "checker_disabled_clean_platforms",
+      "checker_numeric_explicit_time",
+      "checker_numeric_terminal_crop",
+      "checker_numeric_start_unknown",
+      "checker_numeric_nearzero_pass",
+      "checker_disabled",
+      "checker_disabled_phase",
+      "checker_equivalence_low_equal",
+      "checker_equivalence_high_equal",
+      "checker_equivalence_high_over",
+      "checker_equivalence_low_over",
+      "checker_numeric_unknown_status",
+      "checker_quickstart_default",
+      "checker_quickstart_explicit",
+      "checker_empty_immediate",
+      "checker_prefix_default",
+      "checker_prefix_explicit",
+      "checker_prefix_gap",
+      "checker_prefix_truncated",
+      "checker_replay",
+      "checker_ownership_five_reference",
+      "checker_ownership_early_fail",
+      "checker_ownership_crop",
+      "checker_ownership_crop_reset",
+      "checker_ownership_crop_truncated",
+      "checker_ownership_records_normal",
+      "checker_ownership_records_crop",
+      "checker_ownership_records_gap",
+      "checker_ownership_records_old_fail",
+      "checker_ownership_records_bad_support",
+      "checker_ownership_records_overlap",
+      "checker_ownership_records_reverse",
+      "checker_ownership_records_long_bridge",
+      "checker_ownership_records_reset_bridge",
+      "checker_ownership_late_reset",
+      "checker_ownership_member_reset",
+      "checker_ownership_member_unknown",
+      "checker_ownership_member_gap",
+      "checker_ownership_member_held",
+      "checker_ownership_member_bridge"
+    ],
+    "completion": [
+      "transport_retention",
+      "group_control_barrier",
+      "transport_growth",
+      "settle_notification_owner",
+      "settle_shared_pending",
+      "settle_typed_owners",
+      "settle_audit_stats",
+      "settle_reset_module_nba",
+      "settle_reset_program_renba",
+      "settle_hint_active_clock",
+      "settle_hint_program_renba",
+      "settle_phase_module_nba",
+      "settle_phase_program_renba",
+      "settle_group_module",
+      "settle_group_assert",
+      "settle_group_pulse",
+      "settle_group_release",
+      "settle_group_unknown",
+      "settle_exact_budget",
+      "settle_reset_stream_mixed",
+      "settle_reset_stream_group_only",
+      "settle_storage_reset_observer",
+      "settle_storage_reset_capture",
+      "point_runtime_isolation",
+      "point_missing_capture",
+      "point_missing_publication",
+      "point_missing_core",
+      "point_lost_notice",
+      "point_stopped_clock",
+      "point_held_record",
+      "point_finish_immediate",
+      "point_finish_normal",
+      "point_finish_control",
+      "point_reactive_completion",
+      "point_historical_fail",
+      "point_four_state_edges",
+      "point_shared_scheduler",
+      "point_reset_capture_isolation",
+      "point_historical_shared_arithmetic",
+      "transport_consumer_cancellation",
+      "group_completion_capture",
+      "group_completion_none",
+      "group_completion_notice",
+      "group_completion_publication",
+      "group_completion_core",
+      "group_completion_ack",
+      "group_completion_held",
+      "group_completion_reactive",
+      "transport_capacity4096",
+      "transport_same_time_pressure4096",
+      "group_completion_source_failure",
+      "transport_bad_ack_cancellation",
+      "transport_same_time_pressure_cancel",
+      "transport_m4_capacity",
+      "group_completion_control_core",
+      "group_completion_control_publication",
+      "group_completion_control_ack",
+      "group_completion_reset_capture",
+      "group_completion_reset_post",
+      "group_completion_reset_core",
+      "group_control_lost_notice",
+      "group_control_missing_continuation",
+      "point_group_future_timer_cancellation",
+      "end_audit_normal",
+      "end_audit_reverse",
+      "end_audit_suppress_hint",
+      "end_audit_suppress_core",
+      "end_pending_edge",
+      "end_pending_hint_timer",
+      "end_disabled_roles",
+      "end_terminal_fail_active",
+      "end_terminal_no_platform",
+      "end_terminal_stats_only",
+      "end_replay_duplicate",
+      "end_replay_suppress_owner",
+      "transport_gate_after_publication"
+    ],
+    "configuration": [
+      "startup_empty",
+      "startup_bad_width",
+      "startup_bad_stride",
+      "startup_duplicate",
+      "startup_late",
+      "startup_reconfigure",
+      "byte_config_error",
+      "cycle_config",
+      "startup_ns_width_limit",
+      "startup_cycle_width_limit",
+      "startup_cycle_bad_stride",
+      "protocol_config_error",
+      "credit_config_error",
+      "fixed_unknown_config",
+      "episode_config_error",
+      "phase_config_valid",
+      "phase_config_episode",
+      "phase_config_unknown",
+      "group_config_empty_id",
+      "group_config_window",
+      "group_config_stride",
+      "group_config_duplicate_owner",
+      "group_config_unknown_rule",
+      "group_config_missing_reference",
+      "group_config_prefix_empty",
+      "group_config_empty_group",
+      "group_config_member_after_seal",
+      "group_config_hot_member",
+      "group_config_late_registration",
+      "group_analysis_config_valid",
+      "group_analysis_config_requires_episode",
+      "group_analysis_config_unknown_q",
+      "group_analysis_config_unknown_episode_enable",
+      "group_analysis_config_invalid_episode_enable",
+      "group_analysis_config_unknown_phase_enable",
+      "group_analysis_config_invalid_phase_enable",
+      "cfg_defaults",
+      "cfg_error_stride_zero",
+      "cfg_error_stride_gt_w",
+      "cfg_error_stride_x",
+      "cfg_error_q_zero",
+      "cfg_error_q_x",
+      "cfg_error_q_overflow",
+      "cfg_error_group_stride_zero",
+      "cfg_error_group_q_zero",
+      "cfg_error_core_stride_zero",
+      "cfg_error_core_q_zero",
+      "auto_start",
+      "auto_start_coarse",
+      "auto_start_bind",
+      "auto_error_empty_setup",
+      "auto_error_missing_setup",
+      "auto_error_duplicate_setup",
+      "auto_error_ghost_owner",
+      "auto_error_late_member",
+      "auto_error_late_register",
+      "phase_defaults",
+      "cfg_explicit_max_stride",
+      "cfg_explicit_max_q",
+      "phase_removed_parameters",
+      "auto_prepared",
+      "auto_end_before_ready",
+      "auto_start_chain",
+      "auto_start_bind_more",
+      "auto_late_coarse",
+      "auto_error_duplicate_point",
+      "auto_error_duplicate_group",
+      "auto_error_empty_group",
+      "auto_error_missing_group_setup",
+      "auto_error_group_cycle",
+      "auto_error_missing_reference",
+      "auto_removed_point_count",
+      "auto_removed_group_count",
+      "auto_removed_startup_timeout",
+      "auto_removed_record_timeout",
+      "auto_removed_define_group",
+      "auto_removed_finish_configuration",
+      "auto_no_observations",
+      "auto_reset_slot",
+      "auto_core_origin"
+    ],
+    "hierarchy": [
+      "group_basic",
+      "group_matching",
+      "group_delayed",
+      "group_metadata_order",
+      "transport_retention",
+      "group_fault_missing_first",
+      "group_fault_missing_second",
+      "group_fault_duplicate",
+      "group_fault_record_gap",
+      "group_fault_wrong_edge",
+      "group_fault_wrong_time",
+      "group_fault_reverse",
+      "group_cycle_quality",
+      "group_reset_quality",
+      "group_wide",
+      "group_config_empty_id",
+      "group_config_window",
+      "group_config_stride",
+      "group_config_duplicate_owner",
+      "group_config_unknown_rule",
+      "group_config_missing_reference",
+      "group_config_prefix_empty",
+      "group_config_empty_group",
+      "group_config_member_after_seal",
+      "group_config_hot_member",
+      "group_config_late_registration",
+      "group_metadata_reactive",
+      "group_control_barrier",
+      "group_deferred_final_late",
+      "group_deferred_final_missing",
+      "hierarchy_basic",
+      "hierarchy_self_cycle",
+      "hierarchy_cycle",
+      "hierarchy_point_overlap",
+      "hierarchy_overlap32",
+      "hierarchy_overlap64",
+      "hierarchy_siblings",
+      "hierarchy_diamond",
+      "hierarchy_missing_group",
+      "hierarchy_missing_point",
+      "hierarchy_group_prefix",
+      "hierarchy_unknown_kind",
+      "hierarchy_depth9",
+      "hierarchy_fanout17",
+      "hierarchy_hot_group",
+      "hierarchy_depth8",
+      "hierarchy_fanout16",
+      "hierarchy_t4_ns_normal",
+      "hierarchy_t4_ns_child_reset",
+      "hierarchy_t4_ns_point_reset",
+      "hierarchy_t4_ns_size_unknown",
+      "hierarchy_t4_ns_parent_reset",
+      "hierarchy_t4_cycle_normal",
+      "hierarchy_t4_cycle_child_reset",
+      "hierarchy_t4_cycle_point_reset",
+      "hierarchy_t4_cycle_size_unknown",
+      "hierarchy_t4_cycle_parent_reset",
+      "hierarchy_depth_transport",
+      "hierarchy_retention_all_first",
+      "hierarchy_retention_mixed_first",
+      "hierarchy_t4_overlap",
+      "hierarchy_edge_limit_exact",
+      "hierarchy_edge_limit_excess",
+      "hierarchy_depth_missing",
+      "hierarchy_invalid_kind",
+      "hierarchy_retention_all_first_child_reset",
+      "hierarchy_retention_all_first_point_reset",
+      "hierarchy_retention_all_first_size_unknown",
+      "hierarchy_retention_mixed_first_child_reset",
+      "hierarchy_retention_mixed_first_point_reset",
+      "hierarchy_retention_mixed_first_size_unknown",
+      "group_analysis_config_valid",
+      "group_analysis_config_requires_episode",
+      "group_analysis_config_unknown_q",
+      "group_analysis_config_unknown_episode_enable",
+      "group_analysis_config_invalid_episode_enable",
+      "group_analysis_config_unknown_phase_enable",
+      "group_analysis_config_invalid_phase_enable",
+      "transport_growth",
+      "group_actual_scope",
+      "transport_consumer_cancellation",
+      "group_completion_capture",
+      "group_completion_none",
+      "group_completion_notice",
+      "group_completion_publication",
+      "group_completion_core",
+      "group_completion_ack",
+      "group_completion_held",
+      "group_completion_reactive",
+      "transport_capacity4096",
+      "transport_same_time_pressure4096",
+      "group_completion_source_failure",
+      "transport_bad_ack_cancellation",
+      "transport_same_time_pressure_cancel",
+      "transport_m4_capacity",
+      "group_public_pressure",
+      "group_completion_control_core",
+      "group_completion_control_publication",
+      "group_completion_control_ack",
+      "group_completion_reset_capture",
+      "group_completion_reset_post",
+      "group_completion_reset_core",
+      "group_control_lost_notice",
+      "group_timer_missing_receipt",
+      "group_control_missing_continuation",
+      "group_fault_unexpected_frame",
+      "group_public_pressure_failed_parent",
+      "group_timer_missing_receipt_siblings",
+      "group_all_disabled_continues",
+      "transport_gate_after_publication"
+    ],
+    "numeric_storage": [
+      "numeric_window_unknown",
+      "numeric_add_unknown",
+      "numeric_mul_unknown",
+      "numeric_arithmetic_known",
+      "numeric_frame_bytes_unknown",
+      "numeric_frame_ticks_unknown",
+      "numeric_frame_sequence_unknown",
+      "numeric_control_sequence_unknown",
+      "numeric_control_origin_unknown",
+      "numeric_dynamic_policy",
+      "numeric_policy_dynamic_x",
+      "numeric_policy_dynamic_2",
+      "numeric_policy_credit_x",
+      "numeric_policy_credit_2",
+      "numeric_policy_initial_x",
+      "numeric_policy_initial_2",
+      "numeric_policy_episode_x",
+      "numeric_policy_episode_2",
+      "numeric_policy_phase_x",
+      "numeric_policy_phase_2",
+      "numeric_policy_hint_x",
+      "numeric_policy_hint_2",
+      "numeric_policy_basis_x",
+      "numeric_policy_basis_2",
+      "numeric_policy_stride_x",
+      "numeric_policy_disabled",
+      "history_trace_ns",
+      "history_trace_cycle",
+      "numeric_subtract_known",
+      "numeric_subtract_underflow",
+      "numeric_subtract_unknown",
+      "numeric_transport_publish_handle",
+      "numeric_transport_ack_frame",
+      "numeric_transport_ack_control",
+      "numeric_transport_group_handle",
+      "numeric_transport_member_index",
+      "numeric_transport_progress",
+      "numeric_transport_valid_reset",
+      "storage_failure_history",
+      "storage_failure_core_frames",
+      "storage_failure_core_controls",
+      "storage_failure_core_resets",
+      "storage_failure_core_timers",
+      "storage_failure_quality_window",
+      "storage_failure_quality_episode",
+      "storage_failure_phase_fit",
+      "storage_failure_phase_pending",
+      "storage_failure_variation_episode",
+      "storage_failure_variation_phase",
+      "storage_failure_recorder_samples",
+      "storage_failure_recorder_controls",
+      "storage_failure_transport_frames",
+      "storage_failure_transport_controls",
+      "storage_failure_transport_origins",
+      "storage_failure_group_expected",
+      "storage_failure_hint_backpressure_status",
+      "storage_failure_hint_backpressure_edges",
+      "storage_failure_hint_backpressure_timers",
+      "storage_failure_report_scopes",
+      "storage_failure_report_rules",
+      "storage_failure_report_cfg-line",
+      "storage_failure_report_token",
+      "storage_failure_clock",
+      "storage_failure_final_phase",
+      "storage_failure_registry_source",
+      "storage_failure_registry_points",
+      "storage_failure_registry_groups",
+      "storage_failure_registry_rules",
+      "storage_failure_registry_members",
+      "storage_failure_registry_parents",
+      "numeric_query_time",
+      "numeric_query_scope_kind",
+      "numeric_query_scope_index",
+      "numeric_query_scope_invalid",
+      "numeric_query_pure_time",
+      "numeric_query_known",
+      "numeric_core_frame_bytes",
+      "numeric_core_frame_time",
+      "numeric_core_control_sequence",
+      "numeric_core_kind",
+      "numeric_core_progress",
+      "numeric_core_known_partial",
+      "numeric_add_overflow",
+      "numeric_mul_overflow",
+      "numeric_queue_range",
+      "numeric_transport_late_control"
+    ],
+    "quality": [
+      "fixed_unknown_config",
+      "credit_reset_unknown",
+      "hint_reset_release",
+      "hint_unknown_protocol",
+      "reset_rewarm",
+      "reset_same_time_0",
+      "reset_same_time_1",
+      "reset_same_time_2",
+      "reset_same_time_3",
+      "reset_unknown",
+      "reset_time_budget",
+      "reset_member_controls",
+      "reset_cycle_unknown",
+      "reset_initial",
+      "reset_deassert_sample",
+      "episode_gaps",
+      "episode_reset_deadline",
+      "episode_unknown_q",
+      "episode_pending_reset",
+      "report_quality",
+      "report_records_reset_quality",
+      "report_cfg_unknown_key",
+      "report_records_unknown_status",
+      "phase_reset",
+      "phase_config_unknown",
+      "group_fault_record_gap",
+      "group_cycle_quality",
+      "group_reset_quality",
+      "group_config_unknown_rule",
+      "hierarchy_unknown_kind",
+      "hierarchy_t4_ns_child_reset",
+      "hierarchy_t4_ns_point_reset",
+      "hierarchy_t4_ns_size_unknown",
+      "hierarchy_t4_ns_parent_reset",
+      "hierarchy_t4_cycle_child_reset",
+      "hierarchy_t4_cycle_point_reset",
+      "hierarchy_t4_cycle_size_unknown",
+      "hierarchy_t4_cycle_parent_reset",
+      "hierarchy_retention_all_first_child_reset",
+      "hierarchy_retention_all_first_point_reset",
+      "hierarchy_retention_all_first_size_unknown",
+      "hierarchy_retention_mixed_first_child_reset",
+      "hierarchy_retention_mixed_first_point_reset",
+      "hierarchy_retention_mixed_first_size_unknown",
+      "metrics_quality",
+      "metrics_actual_clock",
+      "metrics_first_boundary_unknown_end",
+      "metrics_late_recovery_reset",
+      "metrics_late_recovery_epoch_gap",
+      "metrics_late_recovery_own_gap",
+      "metrics_stopped_history",
+      "report_group_metrics_child_reset",
+      "report_group_metrics_point_reset",
+      "report_group_metrics_size_unknown",
+      "report_metrics_quality",
+      "report_group_cycle_child_reset",
+      "report_group_cycle_point_reset",
+      "report_group_cycle_size_unknown",
+      "report_metrics_stopped",
+      "group_analysis_config_unknown_q",
+      "group_analysis_config_unknown_episode_enable",
+      "group_analysis_config_unknown_phase_enable",
+      "report_metrics_unknown_steady_kind",
+      "report_metrics_unknown_phase_kind",
+      "numeric_window_unknown",
+      "numeric_add_unknown",
+      "numeric_mul_unknown",
+      "numeric_frame_bytes_unknown",
+      "numeric_frame_ticks_unknown",
+      "numeric_frame_sequence_unknown",
+      "numeric_control_sequence_unknown",
+      "numeric_control_origin_unknown",
+      "numeric_subtract_unknown",
+      "numeric_transport_valid_reset",
+      "storage_failure_core_resets",
+      "storage_failure_quality_window",
+      "storage_failure_quality_episode",
+      "storage_failure_clock",
+      "settle_reset_module_nba",
+      "settle_reset_program_renba",
+      "settle_hint_active_clock",
+      "settle_group_unknown",
+      "settle_reset_stream_mixed",
+      "settle_reset_stream_group_only",
+      "settle_storage_reset_observer",
+      "settle_storage_reset_capture",
+      "auto_reset_slot",
+      "point_stopped_clock",
+      "point_reset_capture_isolation",
+      "group_completion_reset_capture",
+      "group_completion_reset_post",
+      "group_completion_reset_core",
+      "checker_numeric_reset_fail",
+      "checker_numeric_gap",
+      "checker_default_reset",
+      "checker_default_gap",
+      "checker_numeric_start_unknown",
+      "checker_numeric_unknown_status",
+      "checker_prefix_gap",
+      "checker_ownership_crop_reset",
+      "checker_ownership_records_gap",
+      "checker_ownership_records_reset_bridge",
+      "checker_ownership_late_reset",
+      "checker_ownership_member_reset",
+      "checker_ownership_member_unknown",
+      "checker_ownership_member_gap"
+    ],
+    "startup": [
+      "startup_empty",
+      "startup_bad_width",
+      "startup_bad_stride",
+      "startup_duplicate",
+      "startup_late",
+      "startup_reconfigure",
+      "startup_ns_width_limit",
+      "startup_cycle_width_limit",
+      "startup_cycle_bad_stride",
+      "auto_start",
+      "auto_start_coarse",
+      "auto_start_bind",
+      "auto_error_empty_setup",
+      "auto_error_missing_setup",
+      "auto_error_duplicate_setup",
+      "auto_error_ghost_owner",
+      "auto_error_late_member",
+      "auto_error_late_register",
+      "auto_prepared",
+      "auto_end_before_ready",
+      "auto_start_chain",
+      "auto_start_bind_more",
+      "auto_late_coarse",
+      "auto_error_duplicate_point",
+      "auto_error_duplicate_group",
+      "auto_error_empty_group",
+      "auto_error_missing_group_setup",
+      "auto_error_group_cycle",
+      "auto_error_missing_reference",
+      "auto_removed_point_count",
+      "auto_removed_group_count",
+      "auto_removed_startup_timeout",
+      "auto_removed_record_timeout",
+      "auto_removed_define_group",
+      "auto_removed_finish_configuration",
+      "auto_no_observations",
+      "auto_reset_slot",
+      "auto_core_origin"
+    ],
+    "termination": [
+      "auto_end_before_ready",
+      "auto_no_observations",
+      "point_finish_immediate",
+      "point_finish_normal",
+      "point_finish_control",
+      "checker_disabled_old_platform_fail",
+      "checker_disabled_tail_platform_fail",
+      "checker_disabled_clean_platforms",
+      "checker_disabled",
+      "checker_disabled_phase",
+      "end_audit_normal",
+      "end_audit_reverse",
+      "end_audit_suppress_hint",
+      "end_audit_suppress_core",
+      "target_query_stale",
+      "target_query_budget",
+      "target_query_late1fs",
+      "end_pending_edge",
+      "end_pending_hint_timer",
+      "end_disabled_roles",
+      "end_terminal_fail_active",
+      "end_terminal_no_platform",
+      "end_terminal_stats_only",
+      "end_replay_duplicate",
+      "end_replay_suppress_owner"
+    ]
+  },
+  "evidence_sets": {
+    "acceptance": {
+      "archive_paths": [
+        "acceptance"
+      ]
+    },
+    "campaign58": {
+      "archive_paths": [
+        "campaign58"
+      ]
+    },
+    "contracts": {
+      "archive_paths": [
+        "contracts"
+      ]
+    },
+    "examples": {
+      "archive_paths": [
+        "source/examples",
+        "execution/bw_mon_quickstart-compile.log",
+        "execution/bw_mon_quickstart.log",
+        "execution/bw_mon_grouped-compile.log",
+        "execution/bw_mon_grouped.log"
+      ]
+    },
+    "execution": {
+      "archive_paths": [
+        "execution"
+      ]
+    },
+    "revised": {
+      "archive_paths": [
+        "revised"
+      ]
+    },
+    "source": {
+      "archive_paths": [
+        "source"
+      ]
+    },
+    "verdi-applicability": {
+      "archive_paths": [
+        "verdi-applicability"
+      ]
+    }
+  },
+  "migration": "spec48-migration.json",
+  "note": "All37 clause mappings bind complete original records and independently replayed expectations. Historical evidence retains its original source; failed/interrupted/diagnostic attempts are excluded from passing results.",
+  "public_raw_inputs": {
+    "baseline": "6f9b3a66d53f783eda50f7223d6990ec1171819c",
+    "new_scene": "e3_delayed_fixed_ns",
+    "scenes": [
+      {
+        "basis": "ns",
+        "raw_input_rows": 319,
+        "raw_sha256": "fea183cd4db6a57f1462d5e7034567e1b505d575af2fdcd266f57b3be324739a",
+        "scene": "protocols",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 319,
+        "raw_sha256": "fea183cd4db6a57f1462d5e7034567e1b505d575af2fdcd266f57b3be324739a",
+        "scene": "protocols",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 319,
+        "raw_sha256": "6b62c6850e424f6f8c3f84e80114931d17fc3f891da69734f76c6409c0993ebf",
+        "scene": "steady",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 319,
+        "raw_sha256": "6b62c6850e424f6f8c3f84e80114931d17fc3f891da69734f76c6409c0993ebf",
+        "scene": "steady",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 199,
+        "raw_sha256": "593efbcb72ac03ac8f137003d89b900fee3996e910a805db9ccf202e3ebe5b3d",
+        "scene": "start_stop",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 199,
+        "raw_sha256": "593efbcb72ac03ac8f137003d89b900fee3996e910a805db9ccf202e3ebe5b3d",
+        "scene": "start_stop",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 359,
+        "raw_sha256": "f3c93cacd5547bf6fa5d9ddb2e679a845411e7a50d650149af81bf6c6bad73c7",
+        "scene": "varying",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 359,
+        "raw_sha256": "f3c93cacd5547bf6fa5d9ddb2e679a845411e7a50d650149af81bf6c6bad73c7",
+        "scene": "varying",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 321,
+        "raw_sha256": "b4713e42e1480aabd1ecb65a80959d58d1c580acfd159e915f1a14c5fbf71912",
+        "scene": "point_reset",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 321,
+        "raw_sha256": "b4713e42e1480aabd1ecb65a80959d58d1c580acfd159e915f1a14c5fbf71912",
+        "scene": "point_reset",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 321,
+        "raw_sha256": "b9ddb58c7ecf0ecd2fde59d60aff898cd388f0df328aa62fccdb38fa1132ba55",
+        "scene": "child_reset",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 321,
+        "raw_sha256": "b9ddb58c7ecf0ecd2fde59d60aff898cd388f0df328aa62fccdb38fa1132ba55",
+        "scene": "child_reset",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 321,
+        "raw_sha256": "993ab833169f618771ef17e58eade1f842c5a66ce1d589128f9daf747416b21d",
+        "scene": "upper_reset",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 321,
+        "raw_sha256": "993ab833169f618771ef17e58eade1f842c5a66ce1d589128f9daf747416b21d",
+        "scene": "upper_reset",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 321,
+        "raw_sha256": "7f7ca16ec72f63ab10f106469290099973a5ab204ab922f5f3c1239c6d3ee828",
+        "scene": "size_unknown",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 321,
+        "raw_sha256": "7f7ca16ec72f63ab10f106469290099973a5ab204ab922f5f3c1239c6d3ee828",
+        "scene": "size_unknown",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 321,
+        "raw_sha256": "1be8cf7d15f794464706d260634f6c7b239e961f260ec1577ec4364d873d06fd",
+        "scene": "valid_unknown",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 321,
+        "raw_sha256": "1be8cf7d15f794464706d260634f6c7b239e961f260ec1577ec4364d873d06fd",
+        "scene": "valid_unknown",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 321,
+        "raw_sha256": "840d954adba33d2564aa69e1e8ee0581c89a93d4d7f0b9bb3b6cf173176401df",
+        "scene": "reset_unknown",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 321,
+        "raw_sha256": "840d954adba33d2564aa69e1e8ee0581c89a93d4d7f0b9bb3b6cf173176401df",
+        "scene": "reset_unknown",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 278,
+        "raw_sha256": "0892c4d87f689e9463e9e9f0805c8029b24495a6bdf36da8672873742d05608e",
+        "scene": "clock_stop",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 278,
+        "raw_sha256": "0892c4d87f689e9463e9e9f0805c8029b24495a6bdf36da8672873742d05608e",
+        "scene": "clock_stop",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 239,
+        "raw_sha256": "f3854d0c73e98e0ca6fa0f8d066b3bee412ed54b46375432bb93af64804a1f0e",
+        "scene": "frequency",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 239,
+        "raw_sha256": "f3854d0c73e98e0ca6fa0f8d066b3bee412ed54b46375432bb93af64804a1f0e",
+        "scene": "frequency",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 280,
+        "raw_sha256": "2170d9a90b11978915e91ce8a5ddb7bbd4527ffa0644f38541d6c227aafead82",
+        "scene": "hints",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 280,
+        "raw_sha256": "2170d9a90b11978915e91ce8a5ddb7bbd4527ffa0644f38541d6c227aafead82",
+        "scene": "hints",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 119,
+        "raw_sha256": "443cb1934b32143f1171d8ed711d0f2f0704313a1c496eed3c1bb4a55f097e6d",
+        "scene": "zero",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 119,
+        "raw_sha256": "443cb1934b32143f1171d8ed711d0f2f0704313a1c496eed3c1bb4a55f097e6d",
+        "scene": "zero",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 119,
+        "raw_sha256": "f01bab0084f016663712ac3cdb0d3bf36de4831c0a5da7091636c7b79c2ef1d9",
+        "scene": "no_episode",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 119,
+        "raw_sha256": "f01bab0084f016663712ac3cdb0d3bf36de4831c0a5da7091636c7b79c2ef1d9",
+        "scene": "no_episode",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 219,
+        "raw_sha256": "30f3095814f0cbfe3c05868f8d1c7a22ef98e4541c4d029a3317db5d4a9917ba",
+        "scene": "truncated",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 219,
+        "raw_sha256": "30f3095814f0cbfe3c05868f8d1c7a22ef98e4541c4d029a3317db5d4a9917ba",
+        "scene": "truncated",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 119,
+        "raw_sha256": "77e1fd0ad78dbb4ee4e12c4723e96c9ff5aa82acc43c1009e9f04b65290f957b",
+        "scene": "isolated",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 119,
+        "raw_sha256": "77e1fd0ad78dbb4ee4e12c4723e96c9ff5aa82acc43c1009e9f04b65290f957b",
+        "scene": "isolated",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 79,
+        "raw_sha256": "28675a59335c4599e7f3f161b177ed970bb0506a7e75f5abf24b73c166a6d239",
+        "scene": "e2",
+        "unchanged": true
+      },
+      {
+        "basis": "cycle",
+        "raw_input_rows": 79,
+        "raw_sha256": "28675a59335c4599e7f3f161b177ed970bb0506a7e75f5abf24b73c166a6d239",
+        "scene": "e2",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 31,
+        "raw_sha256": "98548355d7a488bcf408b1aaf9a2760ca03ab2d9e341cc67410e86925e0c2636",
+        "scene": "e3_boundary",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 195,
+        "raw_sha256": "a0737cc2a1d3aeacebf8d4cdfa4c9da8a3d4d329c319d1f62195ec9dfb02b45a",
+        "scene": "e3_delayed",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 129,
+        "raw_sha256": "a7a823f53f7b73ed0721ff79da016176d679d8cb5d3de952875ceff658fa4f96",
+        "scene": "e4_boundary",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 129,
+        "raw_sha256": "5218412093126ec8691fc8b73f2280af174a174263a52f5b3fa642d7e98d7026",
+        "scene": "e4_below",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 129,
+        "raw_sha256": "bae5d7c89f421d717cb83612087ff1fdd6e219ba559d13050321532df5fe0ab3",
+        "scene": "e4_low",
+        "unchanged": true
+      },
+      {
+        "basis": "ns",
+        "raw_input_rows": 359,
+        "raw_sha256": "f3c93cacd5547bf6fa5d9ddb2e679a845411e7a50d650149af81bf6c6bad73c7",
+        "scene": "e5",
+        "unchanged": true
+      }
+    ],
+    "unchanged_original_scenes": 42
+  },
+  "qualification_scope": "Product, source-bound automated evidence, measured budgets and applicability of actual human feedback. Publication of the single PR follows this qualification; the parent issue remains open.",
+  "raw_input_applicability": "spec48-input-applicability.json",
+  "run_evidence_sha256": "8e417ba3b0a364eed3123dfdcba10030997ac28e470e28a7887c7dd29af1be95",
+  "schema": "bw-spec48-coverage-v1",
+  "shared_M4_H6": "Each topology profile runs once per cold/hot suite and is referenced by both matrix properties; no separate H6 rerun is claimed.",
+  "source_head": "154d45f2ba32242cd728c9996157cee296491fa2",
+  "spec": "https://github.com/MakeReadUnique/bw_mon/issues/48",
+  "state": "VERIFIED"
+}

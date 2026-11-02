@@ -329,7 +329,7 @@
   ],
   "automatic": {
     "status": "PASS",
-    "scope": "Three fresh product simulations; original public-input oracles; 54 exact cursor values; native source lookup and X11 signal drag; portable source reopen. No scale or full-spec completion inferred."
+    "scope": "Three fresh product simulations; original public-input oracles; 62 exact cursor values; native source lookup and X11 signal drag; portable source reopen. No scale or full-spec completion inferred."
   },
   "agent": {
     "operator": "Codex",
@@ -352,12 +352,23 @@
         "source": "User reply during implementation of issue 62",
         "verbatim": "包括，四张图及区间均确认 OK",
         "scope": "All four views and their tabled intervals in the linked evidence comment; the image and FSDB hashes in views remain the accepted assets.",
-        "views": ["named_group", "default_phase", "sustained_boundary", "steady_fail"],
+        "views": [
+          "named_group",
+          "default_phase",
+          "sustained_boundary",
+          "steady_fail"
+        ],
         "differences_reported": []
       }
     ],
     "pending_views": [],
     "note": "Actual user feedback accepts these assets and intervals only. Agent inspection and automatic PASS remain separate; changed sources or assets require a fresh applicability assessment."
   },
-  "evidence_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717"
+  "evidence_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717",
+  "source_applicability": {
+    "commit": "4bf1e03ecc8991f14d0018c2c5d95aa9b6b8bb1a",
+    "path": "artifacts/spec48-delivery/verdi-applicability",
+    "manifest_sha256": "d2bc9937993470c6e7a536aaa63b880980205e1ba4b6c58a5b69054c21dc7e07"
+  },
+  "source_applicability_note": "The original accepted images, FSDBs, source map and actual human feedback retain their identities. Fresh runtime source 154d45f matches every selected signal change over all four complete reviewed intervals, native string identities and final default-check rows. This automatic assessment does not grant human approval."
 }
