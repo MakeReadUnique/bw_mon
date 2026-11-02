@@ -83,12 +83,12 @@ def collect(source,runs,records,destination):
         if not case.get('expect_compile_error'):entry.update(builds[entry['build_digest']])
     subprocess.check_call([sys.executable,str(source/'tests/scale/revised_evidence.py'),'archive',
                            str(runs/'revised'),'--destination',str(destination/'revised')],cwd=source)
-    for name in ['campaign58','acceptance','verdi-applicability']:
+    for name in ['campaign58','acceptance','verdi-applicability','contracts-campaign']:
         shutil.copytree(str(runs/name),str(destination/name))
     shutil.copytree(str(records),str(destination/'execution'))
     receipt=dict(schema='bw-spec48-run-evidence-v1',state='VERIFIED',source_head=head,
                  contracts=dict(source_root=str(source),exit_code=0,output='contracts/results.txt',cases=entries,
-                                macro_rechecks=rechecks),
+                                macro_rechecks=rechecks,campaign='contracts-campaign/campaign.json'),
                  execution=execution,
                  files_sha256={str(p.relative_to(destination)):sha(p) for p in destination.rglob('*') if p.is_file()})
     (destination/'run-evidence.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')

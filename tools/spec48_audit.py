@@ -46,6 +46,20 @@ def verify_contracts(directory,source,receipt):
     require(record['exit_code']==0,'contract process did not complete')
     case_inventory(cases,read(directory/record['output']))
     require(set(record['cases'])=={case['name'] for case in cases},'contract log inventory differs')
+    campaign_path=directory/record['campaign'];campaign=json.loads(campaign_path.read_text())
+    require(campaign['checked_pass'] and campaign['source_unchanged'] and campaign['cold'] and
+            campaign['source_head']==receipt['source_head'],'contract campaign source or completion differs')
+    seen=set();top_owner={}
+    for n,job in enumerate(campaign['jobs']):
+        require(job['exit_code']==0,'contract shard failed')
+        selected=[case for case in cases if case['name'] in set(job['cases'])]
+        require(not (seen & set(job['cases'])),'contract case repeated in shards')
+        case_inventory(selected,read(campaign_path.parent/job['output']))
+        for case in selected:
+            require(case['top'] not in top_owner or top_owner[case['top']]==n,'test top shared by parallel shards')
+            top_owner[case['top']]=n
+        seen.update(job['cases'])
+    require(seen=={case['name'] for case in cases},'contract shard inventory incomplete')
     with tempfile.TemporaryDirectory(prefix='bw-contract-replay-') as temporary:
         for case in cases:
             entry=record['cases'][case['name']]
