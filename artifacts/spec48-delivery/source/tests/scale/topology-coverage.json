@@ -1,0 +1,287 @@
+{
+  "completion_gate": "tests/scale/revised_evidence.py verify tests/scale/revised_evidence/final-campaign",
+  "decomposed_history": [
+    "H1 expanded boundary/quality oracle",
+    "H2 real80000edges/40000ns/maxwidths",
+    "H3 fragmented80000segments andgrowth/expiry/regrowth",
+    "H4 expanded merged/unmergedhistory",
+    "H5 Q/N/K,clipping,reset/unknown/clock controls",
+    "H7 unsigned64arithmetic and real large-total integration"
+  ],
+  "legacy_completion_gate": false,
+  "legacy_maximum_states": {
+    "max-cycle": "OPERATOR_INTERRUPTED_NOT_PASSED",
+    "max-cycle-short-reset": "OPERATOR_INTERRUPTED_NOT_PASSED",
+    "max-ns": "OPERATOR_INTERRUPTED_NOT_PASSED",
+    "max-ns-short-unknown": "OPERATOR_INTERRUPTED_NOT_PASSED"
+  },
+  "numeric_tolerance": {
+    "integer_and_quality": "exact",
+    "real_absolute": 1e-09,
+    "real_relative": 1e-12
+  },
+  "original_limits": {
+    "depth": 8,
+    "direct_edges": 65536,
+    "direct_parents": 16,
+    "groups": 4096,
+    "points": 16384
+  },
+  "parent": "https://github.com/MakeReadUnique/bw_mon/issues/13",
+  "profiles": {
+    "topology-max-cycle": {
+      "actual_edges": 512,
+      "basis": "cycle",
+      "end_ticks": 256000000,
+      "expected_raw": 10485760,
+      "expected_windows": 10465274,
+      "groups": 4096,
+      "points": 16384,
+      "properties": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "H6"
+      ],
+      "stride": 1,
+      "topology": {
+        "depth": 8,
+        "direct_edges": 65536,
+        "graph_sha256": "282b27f34fce5a3053077535d92b359c878fc2cae80a69acd4e1fcb1c58fa3d5",
+        "groups": 4096,
+        "max_direct_parents": 16,
+        "points": 16384,
+        "recursive_cardinality_histogram": {
+          "16": 4074,
+          "31": 16,
+          "46": 1,
+          "61": 1,
+          "76": 1,
+          "91": 1,
+          "106": 1,
+          "121": 1
+        },
+        "ungrouped_points": [
+          16383
+        ]
+      },
+      "width": 128
+    },
+    "topology-max-ns": {
+      "actual_edges": 512,
+      "basis": "ns",
+      "end_ticks": 256000000,
+      "expected_raw": 10485760,
+      "expected_windows": 5242876,
+      "groups": 4096,
+      "points": 16384,
+      "properties": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "H6"
+      ],
+      "stride": 1,
+      "topology": {
+        "depth": 8,
+        "direct_edges": 65536,
+        "graph_sha256": "282b27f34fce5a3053077535d92b359c878fc2cae80a69acd4e1fcb1c58fa3d5",
+        "groups": 4096,
+        "max_direct_parents": 16,
+        "points": 16384,
+        "recursive_cardinality_histogram": {
+          "16": 4074,
+          "31": 16,
+          "46": 1,
+          "61": 1,
+          "76": 1,
+          "91": 1,
+          "106": 1,
+          "121": 1
+        },
+        "ungrouped_points": [
+          16383
+        ]
+      },
+      "width": 16
+    },
+    "topology-quick-cycle": {
+      "actual_edges": 512,
+      "basis": "cycle",
+      "end_ticks": 256000000,
+      "expected_raw": 81920,
+      "expected_windows": 81754,
+      "groups": 32,
+      "points": 128,
+      "properties": [
+        "daily regression",
+        "M4 tracer"
+      ],
+      "stride": 1,
+      "topology": {
+        "depth": 8,
+        "direct_edges": 119,
+        "graph_sha256": "8bf85709f5fc69bf4640e140d438d49866ed622469cab45aab62952399298c4f",
+        "groups": 32,
+        "max_direct_parents": 16,
+        "points": 128,
+        "recursive_cardinality_histogram": {
+          "3": 1,
+          "4": 16,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 10,
+          "9": 1,
+          "10": 1
+        },
+        "ungrouped_points": [
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127
+        ]
+      },
+      "width": 128
+    },
+    "topology-quick-ns": {
+      "actual_edges": 512,
+      "basis": "ns",
+      "end_ticks": 256000000,
+      "expected_raw": 81920,
+      "expected_windows": 40956,
+      "groups": 32,
+      "points": 128,
+      "properties": [
+        "daily regression",
+        "M4 tracer"
+      ],
+      "stride": 1,
+      "topology": {
+        "depth": 8,
+        "direct_edges": 119,
+        "graph_sha256": "8bf85709f5fc69bf4640e140d438d49866ed622469cab45aab62952399298c4f",
+        "groups": 32,
+        "max_direct_parents": 16,
+        "points": 128,
+        "recursive_cardinality_histogram": {
+          "3": 1,
+          "4": 16,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 10,
+          "9": 1,
+          "10": 1
+        },
+        "ungrouped_points": [
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127
+        ]
+      },
+      "width": 16
+    }
+  },
+  "properties": {
+    "M1": {
+      "independent": "original input ranks, distinct point weights and typed leaf sets; all integer/quality/sequence fields exact",
+      "invariant": "every registered public scope enters raw publication, core acceptance, windows and final reports"
+    },
+    "M2": {
+      "independent": "every direct edge identity compared to fixed graph; counts/depth/fanout limits; every group raw/window compared to leaf sums",
+      "invariant": "recursive disjointness, original-time sums and independent consumers"
+    },
+    "M3": {
+      "independent": "p0 unknownedge193; p0reset100.1\u2013101.1ns; group0reset128.1\u2013129.1ns; separate epochs and per-range interval model",
+      "invariant": "local reset does not clear ancestor history or stop upward raw supply"
+    },
+    "M4": {
+      "independent": "group8 pause99\u2013102ns; at101.5ns fast203/slow198, five frames/two controls, realhistory>4; afterrelease204 andqueuesempty; ns/cycle publicationwatermarks",
+      "invariant": "input acknowledged only after core acceptance; retained until all parents acknowledge"
+    },
+    "M5": {
+      "independent": "stage GNUtimeRSS; per-scope sampledmaxima+finalstate; realgrowthrequest queuehighwater byresourcetype; no maximumscope\u00d7deephistoryRSS claim",
+      "invariant": "resource statements distinguish measured scope/history/backlog/checker/simulator state"
+    }
+  },
+  "required_suite_receipts": [
+    "suite-quick-cold.json",
+    "suite-quick-hot.json",
+    "suite-full-cold.json",
+    "suite-full-hot.json"
+  ],
+  "resource_boundary": "No sum of short maximum-scope RSS and small-scope deep-history RSS is claimed as a simultaneous maximum measurement.",
+  "schema": "revised-topology-coverage-v1",
+  "shared_history_evidence": {
+    "execute_once_per_suite": true,
+    "properties": [
+      "H6"
+    ],
+    "scenarios": [
+      "topology-max-ns",
+      "topology-max-cycle"
+    ],
+    "ticket": 31
+  },
+  "ticket": "https://github.com/MakeReadUnique/bw_mon/issues/30"
+}

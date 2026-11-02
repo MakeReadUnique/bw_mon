@@ -1,0 +1,11 @@
+Chronologic VCS simulator copyright 1991-2024
+Contains Synopsys proprietary information.
+Compiler version W-2024.09-SP1_Full64; Runtime version W-2024.09-SP1_Full64;  Nov  2 11:28 2026
+BW_STARTUP_FAILURE stage=COLLECTING scope=phase.config setup_installed=0 sealed=0 ready=0 registered_points=0 registered_groups=0 prepared_scopes=0 preparing_scopes=0
+Fatal: "/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv", 387: bw_mon_pkg::fatal_core_error: at time 0 fs
+BW_CORE_ERROR code=PHASE_CONFIG scope=phase.config time_ticks=0 phase analysis requires known enabled episode analysis
+$finish called from file "/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv", line 387.
+BW_END_AUDIT ready=0 owners=0 pending_responsibilities=0 time_ticks=0
+$finish at simulation time                    0
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 0 fs

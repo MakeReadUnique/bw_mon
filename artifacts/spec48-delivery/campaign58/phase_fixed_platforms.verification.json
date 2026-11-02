@@ -1,0 +1,110 @@
+{
+  "family": "platforms",
+  "registered_points": 5,
+  "registered_groups": 1,
+  "windows_checked": 186,
+  "targets_checked": 8,
+  "targets": [
+    {
+      "case": 3,
+      "kind": "point",
+      "target": "micro",
+      "first_ticks": 10000002,
+      "boundary_ticks": 60000002,
+      "confirmation_ticks": 70000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 3,
+      "kind": "group",
+      "target": "micro",
+      "first_ticks": 10000002,
+      "boundary_ticks": 60000002,
+      "confirmation_ticks": 70000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 4,
+      "kind": "point",
+      "target": "alt8",
+      "first_ticks": 263000002,
+      "boundary_ticks": 313000002,
+      "confirmation_ticks": 323000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 4,
+      "kind": "group",
+      "target": "alt8",
+      "first_ticks": 263000002,
+      "boundary_ticks": 313000002,
+      "confirmation_ticks": 323000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 5,
+      "kind": "point",
+      "target": "firstfail",
+      "first_ticks": 516000002,
+      "boundary_ticks": 566000002,
+      "confirmation_ticks": 576000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 5,
+      "kind": "point",
+      "target": "lastpass",
+      "first_ticks": 756000002,
+      "boundary_ticks": 806000002,
+      "confirmation_ticks": 816000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 5,
+      "kind": "group",
+      "target": "firstfail",
+      "first_ticks": 516000002,
+      "boundary_ticks": 566000002,
+      "confirmation_ticks": 576000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    },
+    {
+      "case": 5,
+      "kind": "group",
+      "target": "lastpass",
+      "first_ticks": 756000002,
+      "boundary_ticks": 806000002,
+      "confirmation_ticks": 816000002,
+      "updates": 7,
+      "seven_stride_ticks": 70000000,
+      "first_to_confirmation_ticks": 60000000,
+      "input_to_confirmation_ticks": 70000000
+    }
+  ],
+  "wrong_confirmations": 0,
+  "extra_switches": 0,
+  "checker_claim": false,
+  "time_comparison": "exact integer femtoseconds",
+  "window_oracle": "raw input clock/reset/episode model"
+}

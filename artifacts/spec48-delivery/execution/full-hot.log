@@ -1,0 +1,18 @@
+PASS restore common: 288 files -> /home/eda/bw-mon-ticket62-candidate-source
+PASS topology-quick-ns /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-quick-ns/20261102T170348194536-930973/manifest.json
+PASS topology-quick-cycle /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-quick-cycle/20261102T170352126348-930973/manifest.json
+PASS topology-max-ns /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-max-ns/20261102T170356400895-930973/manifest.json
+PASS topology-max-cycle /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-max-cycle/20261102T171038474129-930973/manifest.json
+PASS topology-quick-cancel-ns /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-quick-cancel-ns/20261102T171736502833-930973/manifest.json
+PASS topology-max-cancel-ns /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/topology-max-cancel-ns/20261102T171740608680-930973/manifest.json
+PASS history-revised-ns-seeded /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-ns-seeded/20261102T172446819802-930973/manifest.json
+PASS history-revised-cycle-seeded /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-cycle-seeded/20261102T172450001245-930973/manifest.json
+PASS history-revised-ns-expiry /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-ns-expiry/20261102T172453161669-930973/manifest.json
+PASS history-revised-cycle-expiry /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-cycle-expiry/20261102T172457677295-930973/manifest.json
+PASS history-revised-ns-deep /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-ns-deep/20261102T172503204479-930973/manifest.json
+PASS history-revised-cycle-deep /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-cycle-deep/20261102T172522208250-930973/manifest.json
+PASS history-revised-ns-reset /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-ns-reset/20261102T172546399468-930973/manifest.json
+PASS history-revised-cycle-reset /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-cycle-reset/20261102T172605952033-930973/manifest.json
+PASS history-revised-pending /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-pending/20261102T172631000878-930973/manifest.json
+PASS history-revised-ns-overrun /home/eda/bw-mon-ticket62-candidate-runs/revised/runs/history-revised-ns-overrun/20261102T172634592034-930973/manifest.json
+PASS /home/eda/bw-mon-ticket62-candidate-runs/revised/suite-full-hot.json

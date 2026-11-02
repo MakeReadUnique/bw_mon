@@ -1,0 +1,168 @@
+{
+  "original_manifest_sha256": "1bcf55a44277619c1f935a9d0b4774348595ebf0d7dd46ba2bd79fed69d54bc2",
+  "run": {
+    "budget_seconds": 299.75327663499047,
+    "compile_reused": false,
+    "elapsed_seconds": 17.71558367399848,
+    "finished_utc": "2026-10-26T15:26:08.369856Z",
+    "scenario": "topology-quick-ns",
+    "stages": {
+      "compile": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999/compile.time-v.txt",
+          "vcs",
+          "-full64",
+          "-sverilog",
+          "-timescale=1ns/1fs",
+          "+vpi",
+          "-debug_access",
+          "-CFLAGS",
+          "-I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include",
+          "-assert",
+          "svaext",
+          "-top",
+          "tb_bw_scale",
+          "+define+BW_MON_TEST_SCHEDULING",
+          "+incdir+/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl",
+          "-o",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999/simv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_mon_pkg.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_check_report.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_debug_hints.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_group_mon.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_hint_duration.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_mon_setup.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_point_mon.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_point_recorder.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_stats_core.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/rtl/bw_slot_settlement.c",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999/input_pkg.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999/checker.sv",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999/tb_bw_scale.sv"
+        ],
+        "cwd": "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999",
+        "descendant_drain_seconds": 3.375922517996514,
+        "descendants_at_parent_exit": [
+          {
+            "command": "sh -c host -W 2 192.168.249.129 2>&1 ",
+            "parent": 1,
+            "pid": 209830,
+            "state": "S"
+          },
+          {
+            "command": "host -W 2 192.168.249.129 ",
+            "parent": 209830,
+            "pid": 209831,
+            "state": "S"
+          }
+        ],
+        "elapsed_seconds": 11.018102225003531,
+        "finished_utc": "2026-10-26T15:26:02.038038Z",
+        "peak_rss_kib": 355672,
+        "pid": 209195,
+        "returncode": 0,
+        "started_utc": "2026-10-26T15:25:51.019920Z",
+        "state": "COMPLETED",
+        "timeout_seconds": 299.3876460859901
+      },
+      "generation": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999/generation.time-v.txt",
+          "/usr/bin/python3",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/wt-30/tests/scale/bounded.py",
+          "worker",
+          "topology_revised",
+          "topology-quick-ns",
+          "generate",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999"
+        ],
+        "cwd": "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999",
+        "descendant_drain_seconds": 0.021898809995036572,
+        "descendants_at_parent_exit": [],
+        "elapsed_seconds": 0.12980926397722214,
+        "finished_utc": "2026-10-26T15:25:50.801532Z",
+        "peak_rss_kib": 16516,
+        "pid": 209108,
+        "returncode": 0,
+        "started_utc": "2026-10-26T15:25:50.671709Z",
+        "state": "COMPLETED",
+        "timeout_seconds": 299.7358823969844
+      },
+      "simulation": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999/simulation.time-v.txt",
+          "stdbuf",
+          "-oL",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/attempt-20261026T152550654282-208999/simv",
+          "-no_save",
+          "+VARIANT=reset",
+          "+ACTUAL=/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999/actual.csv",
+          "+BW_EXPECT=/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999/expect.cfg"
+        ],
+        "cwd": "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999",
+        "descendant_drain_seconds": 2.905932849011151,
+        "descendants_at_parent_exit": [
+          {
+            "command": "sh -c host -W 2 192.168.249.129 2>&1 ",
+            "parent": 1,
+            "pid": 210268,
+            "state": "S"
+          },
+          {
+            "command": "host -W 2 192.168.249.129 ",
+            "parent": 210268,
+            "pid": 210269,
+            "state": "S"
+          }
+        ],
+        "elapsed_seconds": 6.144439680996584,
+        "finished_utc": "2026-10-26T15:26:08.191255Z",
+        "initialization_seconds": 2.171876248001354,
+        "marker_poll_resolution_seconds": 0.05,
+        "peak_rss_kib": 138704,
+        "pid": 210193,
+        "returncode": 0,
+        "simulation_after_ready_seconds": 3.97256343299523,
+        "started_utc": "2026-10-26T15:26:02.046803Z",
+        "state": "COMPLETED",
+        "timeout_seconds": 288.3607666750031
+      },
+      "verification": {
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999/verification.time-v.txt",
+          "/usr/bin/python3",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/builds/8b48aa6bc4d10bdc7543485a732afbabd26a079bf0cecafb4adcd700f3dc68dc/source/tests/scale/bounded.py",
+          "worker",
+          "topology_revised",
+          "topology-quick-ns",
+          "verify",
+          "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999"
+        ],
+        "cwd": "/tmp/bw-mon-spec13-revised.uX6BKM/ticket30/suite-probe/runs/topology-quick-ns/20261026T152550654282-208999",
+        "descendant_drain_seconds": 0.014703258988447487,
+        "descendants_at_parent_exit": [],
+        "elapsed_seconds": 0.1739628509967588,
+        "finished_utc": "2026-10-26T15:26:08.366316Z",
+        "peak_rss_kib": 38016,
+        "pid": 210282,
+        "returncode": 0,
+        "started_utc": "2026-10-26T15:26:08.192344Z",
+        "state": "COMPLETED",
+        "timeout_seconds": 282.2152339160093
+      }
+    },
+    "started_utc": "2026-10-26T15:25:50.654273Z"
+  }
+}

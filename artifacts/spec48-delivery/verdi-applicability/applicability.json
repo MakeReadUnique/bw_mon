@@ -1,0 +1,949 @@
+{
+  "accepted_asset_commit": "c1e691077943baac2b5656d53624fdd2c1327e33",
+  "accepted_runtime_base": "eadec744516a125cca3441f29a27420b66285b6b",
+  "converter": {
+    "native_path": "/home/eda/app/synopsys/verdi/W-2024.09-SP1/platform/LINUXAMD64/bin/fsdb2vcd",
+    "native_sha256": "fdab79e6c7b93f8a2807055cfa7d83925dbb4470050d42491acb273a6b48a81d",
+    "path": "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+    "resolved_launcher": "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/.wrapper",
+    "sha256": "af19f0efc9de078be4a19c7427168f5983c9b45aef5f94ea002ba83185c16060"
+  },
+  "current_source_sha256": {
+    "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
+    "rtl/bw_check_report.sv": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba",
+    "rtl/bw_debug_hints.sv": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2",
+    "rtl/bw_default_check.svh": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+    "rtl/bw_end_coordinator.c": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97",
+    "rtl/bw_end_protocol.svh": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e",
+    "rtl/bw_group_completion.svh": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+    "rtl/bw_group_mon.sv": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+    "rtl/bw_hint_duration.sv": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02",
+    "rtl/bw_history.svh": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269",
+    "rtl/bw_mon_pkg.sv": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032",
+    "rtl/bw_mon_registry.svh": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad",
+    "rtl/bw_mon_registry_types.svh": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623",
+    "rtl/bw_mon_setup.sv": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d",
+    "rtl/bw_mon_transport.svh": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+    "rtl/bw_point_completion.svh": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+    "rtl/bw_point_mon.sv": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12",
+    "rtl/bw_point_recorder.sv": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df",
+    "rtl/bw_reset_capture.svh": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad",
+    "rtl/bw_scope_runtime.svh": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+    "rtl/bw_slot_settlement.c": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+    "rtl/bw_slot_settlement.svh": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+    "rtl/bw_stage_ownership.svh": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94",
+    "rtl/bw_stats_core.sv": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288",
+    "rtl/bw_target_completion.svh": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1",
+    "rtl/bw_variation_history.svh": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52",
+    "tests/acceptance/analysis.py": "6de807944dfbf38ee74fef9ac49a71fd737d8f31470a1959b14dadbb11c5f57a",
+    "tests/acceptance/build.py": "0f65e086e057eca49f36aebe5b42e64acbce0fc9859734ea19beb1a902409305",
+    "tests/acceptance/evidence.py": "0df9bce832dde0b0755914f469a27775a5aed2fea017890eaa3002803942c9fc",
+    "tests/acceptance/model.py": "719476a3fceb7639bab10721c8a5e7568bf78cd9ff39ec6aa85ac7742de1f88e",
+    "tests/acceptance/run.py": "6fff8b43d612fbe557e7c9d8a7b616a2f92f5edcbd56eed28120abddc45e2089",
+    "tests/acceptance/scene.sv": "f092392fa4dd7625dfad95eddbea4fd19f30b6e6c0867b2ff84fa9647f917bd6",
+    "tests/acceptance/summarize.py": "2f0aebd1eab2f0966244500a70ac636ef5b439b023d8b32d1dc65fa2dc2243f6",
+    "tests/checker_default/check.py": "1da6d883394794652d0c482ff2f1cd0ce54d37f7855b2d1b1a4419c4dd88ed55",
+    "tests/tb_checker_default.sv": "727ff99e6ed582b54bb924bdde99eac999057001575693ba465f95d276faebfa",
+    "tests/verdi61/capture.py": "af0b3ade4971e43789638e1866b25724e5fddaef8516338c292fb84612f96aee",
+    "tests/verdi61/dump.sv": "7c541e94766a6c4dd8dafd89a704064758e8ee908db33703c06b3e51c28813e0",
+    "tests/verdi61/open.py": "e40bdf7cb8507def57df7cf1bb5db43e36785f6ecd0823405c46e99fb3aa7df2",
+    "tests/verdi61/prepare.py": "4773f4211d76f525be6ba5958f24dae760caffcd817f4d510b08511f2dc29600",
+    "tests/verdi61/verify.py": "0e9214cdcdc36b1603df7a6bc1f6d7e47fe79a9c99001a2f824a328e01f288e0"
+  },
+  "exports": {
+    "alternating": {
+      "accepted": {
+        "/tb_checker_default/group_mon": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/accepted.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/accepted-0.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/group_mon",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating",
+          "elapsed_seconds": 0.08081429499725346,
+          "exit_code": 0,
+          "fsdb_sha256": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34",
+          "vcd": "alternating/accepted-0.vcd",
+          "vcd_sha256": "2e9dd9457265b38ad2a2d6224a82b416a461d7a22b3c489b29342731177625de"
+        },
+        "/tb_checker_default/members[0]/point": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/accepted.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/accepted-1.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/members[0]/point",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating",
+          "elapsed_seconds": 0.08195337500364985,
+          "exit_code": 0,
+          "fsdb_sha256": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34",
+          "vcd": "alternating/accepted-1.vcd",
+          "vcd_sha256": "c5270b7a3e90e098c43b22150e42f36a654530327c03be12fe33c8a58d7c3a58"
+        }
+      },
+      "current": {
+        "/tb_checker_default/group_mon": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/waves.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/current-0.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/group_mon",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating",
+          "elapsed_seconds": 0.08052509999834001,
+          "exit_code": 0,
+          "fsdb_sha256": "6f85940615d8098a0469251412fdfa96863b01b888c97f2fa865ad61163603cb",
+          "vcd": "alternating/current-0.vcd",
+          "vcd_sha256": "9883f9ac730fa1d30f6837d80f696b46f3e622383bb70f1c3603916fda115b0d"
+        },
+        "/tb_checker_default/members[0]/point": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/waves.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/current-1.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/members[0]/point",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating",
+          "elapsed_seconds": 0.08138198599044699,
+          "exit_code": 0,
+          "fsdb_sha256": "6f85940615d8098a0469251412fdfa96863b01b888c97f2fa865ad61163603cb",
+          "vcd": "alternating/current-1.vcd",
+          "vcd_sha256": "02785ae2c696c27202787ac16b9da22738c99defaaa5c10e4008773785d927e9"
+        }
+      }
+    },
+    "constant": {
+      "accepted": {
+        "/tb_checker_default/group_mon": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/accepted.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/accepted-0.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/group_mon",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant",
+          "elapsed_seconds": 0.07973331399261951,
+          "exit_code": 0,
+          "fsdb_sha256": "c208b8dbda4dd939f68d2f7c83e486b020723ab587ee968d970c8a1102f88249",
+          "vcd": "constant/accepted-0.vcd",
+          "vcd_sha256": "33fb71c87cf5f3902c2cf7972a349618744b70e45e37b81ee0a5ac481c68fe34"
+        },
+        "/tb_checker_default/members[0]/point": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/accepted.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/accepted-1.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/members[0]/point",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant",
+          "elapsed_seconds": 0.08561821200419217,
+          "exit_code": 0,
+          "fsdb_sha256": "c208b8dbda4dd939f68d2f7c83e486b020723ab587ee968d970c8a1102f88249",
+          "vcd": "constant/accepted-1.vcd",
+          "vcd_sha256": "f9847d35d2be1f456fc65d64d5ae46421320724fa648cf03a67bd0e48a561211"
+        }
+      },
+      "current": {
+        "/tb_checker_default/group_mon": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/waves.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/current-0.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/group_mon",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant",
+          "elapsed_seconds": 0.08048000099370256,
+          "exit_code": 0,
+          "fsdb_sha256": "bf82241fe65ce1ab4bcc02685cd58c965265a10858b9a30c47844b7baa58905d",
+          "vcd": "constant/current-0.vcd",
+          "vcd_sha256": "14700a2931b2b3cba9c4ae8faf468b72d92f94228b45171b7f32a0570a485564"
+        },
+        "/tb_checker_default/members[0]/point": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/waves.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/current-1.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_checker_default/members[0]/point",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant",
+          "elapsed_seconds": 0.07617387600475922,
+          "exit_code": 0,
+          "fsdb_sha256": "bf82241fe65ce1ab4bcc02685cd58c965265a10858b9a30c47844b7baa58905d",
+          "vcd": "constant/current-1.vcd",
+          "vcd_sha256": "d5094f49f398d922772e42580885fe2080e3a3550a6100c8009472fe429645e8"
+        }
+      }
+    },
+    "steady_ns": {
+      "accepted": {
+        "/tb_acceptance_ns/scene/all_dmc": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/accepted.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/accepted-0.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_acceptance_ns/scene/all_dmc",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns",
+          "elapsed_seconds": 0.08528711700637359,
+          "exit_code": 0,
+          "fsdb_sha256": "e6661fa47af777d2f13903d5028e526b4e92e11b921e5cbae5c2713cfb61b484",
+          "vcd": "steady_ns/accepted-0.vcd",
+          "vcd_sha256": "f66d11cf9861e68af2313212c13913032ebff7ad2a43796c96aa509e7fe11803"
+        }
+      },
+      "current": {
+        "/tb_acceptance_ns/scene/all_dmc": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdb2vcd",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/waves.fsdb",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/current-0.vcd",
+            "-sv",
+            "-seq",
+            "-keep_last_time",
+            "-s",
+            "/tb_acceptance_ns/scene/all_dmc",
+            "-level",
+            "1"
+          ],
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns",
+          "elapsed_seconds": 0.08908425200206693,
+          "exit_code": 0,
+          "fsdb_sha256": "35d64f8127eb6792b46abdfd27cc7be1106e958cfc3f14eec923537d5b8a0722",
+          "vcd": "steady_ns/current-0.vcd",
+          "vcd_sha256": "de5dc4ee07fcdbc79a4ddedd899275cdb0d503523d3fe39d3b1fe098dd40550b"
+        }
+      }
+    }
+  },
+  "files_sha256": {
+    "alternating/accepted-0.export.log": "a6a17667a333ffb5a8afc82e348a00452abd929e474ec5d2d96a308559a0803c",
+    "alternating/accepted-0.vcd": "2e9dd9457265b38ad2a2d6224a82b416a461d7a22b3c489b29342731177625de",
+    "alternating/accepted-1.export.log": "e88044108ed90269fb47213de05124b12abb85a4f06e69f7108e01843896ee05",
+    "alternating/accepted-1.vcd": "c5270b7a3e90e098c43b22150e42f36a654530327c03be12fe33c8a58d7c3a58",
+    "alternating/accepted-string-0.csv": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+    "alternating/accepted-string-0.export.log": "a82d49ad33a5e900391321d7026b702dfa903f9fe054b0a4fb9640d60aacd27e",
+    "alternating/accepted.fsdb": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34",
+    "alternating/commands.json": "025468394c8b12411526cd82d633052529f824498b7d2c330dbdbd79d154e6a5",
+    "alternating/current-0.export.log": "8705a24ad70af0832a84d2e1d688b6c58da0c99345c2b21be9143ce5732940f6",
+    "alternating/current-0.vcd": "9883f9ac730fa1d30f6837d80f696b46f3e622383bb70f1c3603916fda115b0d",
+    "alternating/current-1.export.log": "6227307c3bb13407d7601ab173a70c4644f54a0bc59b3a4d21452a3ec91f1bb4",
+    "alternating/current-1.vcd": "02785ae2c696c27202787ac16b9da22738c99defaaa5c10e4008773785d927e9",
+    "alternating/current-string-0.csv": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+    "alternating/current-string-0.export.log": "a82d49ad33a5e900391321d7026b702dfa903f9fe054b0a4fb9640d60aacd27e",
+    "alternating/fsdb2vcdLog/fsdb.00000.log": "645806e7e737b738278006d8474a6be535a378291fc12df7f0ce96ef9492e09f",
+    "alternating/fsdb2vcdLog/pes.bat": "b5a9b1477074b20f3c9b1394056d6796e0f9e5f44f9895669af541d9008c6097",
+    "alternating/fsdb2vcdLog/turbo.log": "9dd502b354f9b99961936d62d9925e14c64ab0ce6187ed9a090b48b9db2935bf",
+    "alternating/fsdbextractLog/fsdb.00000.log": "77f348b9464289e81a02cc5449c05a082ef36000da2a9506487db7061120b4c5",
+    "alternating/fsdbextractLog/fsdbextract.log": "20dd743e95275b4cf3b6430b6ca21ace073e4482f0bd82b88ab33fdc07d94228",
+    "alternating/fsdbextractLog/pes.bat": "b5a9b1477074b20f3c9b1394056d6796e0f9e5f44f9895669af541d9008c6097",
+    "alternating/native-coordinator-dependencies.d": "a7790f635bd0f66ea1967efad8bfdff912820f881b3e44a544fc34ac35c0fd16",
+    "alternating/native-coordinator-transitive-dependencies.d": "0988865d4e4b3a293cb7c94cc68efb82230ad636c94b4059019bc7cab25b2b78",
+    "alternating/native-dependencies.d": "848c25db9eff2d18feae53f8936d6d931e08fe56076c8cb219ed9d1b1867134e",
+    "alternating/native-transitive-dependencies.d": "7e3b2023c8229a47ec0fa5a31fcd7a55d93c8f24a8c6aad88c530bf1c737da0c",
+    "alternating/run.log": "3340ffff658d21e368d156762c76ee0a42e10856b88f40650f7ae16c80222245",
+    "alternating/source.tar.gz": "5508b56fa7b8392a1ee7aab48a56a841953dcadf17e4d90bf5c1b76150c486f1",
+    "alternating/verify.log": "dfdce0387771956142b32fc0c1de3b47507dd15f03e707b8f6216ca1d1eef145",
+    "alternating/waves.fsdb": "6f85940615d8098a0469251412fdfa96863b01b888c97f2fa865ad61163603cb",
+    "constant/accepted-0.export.log": "6cac74ed8eaf07878230f14cccd0821bf736ddb8ec2dcb749e7233f40682553a",
+    "constant/accepted-0.vcd": "33fb71c87cf5f3902c2cf7972a349618744b70e45e37b81ee0a5ac481c68fe34",
+    "constant/accepted-1.export.log": "d6131b75a32b002adf45f75117cd154973bcb8c0fed2ae4d6650bf516929cbec",
+    "constant/accepted-1.vcd": "f9847d35d2be1f456fc65d64d5ae46421320724fa648cf03a67bd0e48a561211",
+    "constant/accepted-string-0.csv": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+    "constant/accepted-string-0.export.log": "a82d49ad33a5e900391321d7026b702dfa903f9fe054b0a4fb9640d60aacd27e",
+    "constant/accepted.fsdb": "c208b8dbda4dd939f68d2f7c83e486b020723ab587ee968d970c8a1102f88249",
+    "constant/commands.json": "3c79cfa03d79ba6851ce372801cffa2488a964266c5de31b1955fda4cd74c53e",
+    "constant/current-0.export.log": "044529d0839ee4b29ab3539b0318a507ee930a6c91023e1266844b43b7dd5ef8",
+    "constant/current-0.vcd": "14700a2931b2b3cba9c4ae8faf468b72d92f94228b45171b7f32a0570a485564",
+    "constant/current-1.export.log": "040420b7dc99ccbfd013277ccca6a788bbcaf3032d5572ff7e980c095d925b9a",
+    "constant/current-1.vcd": "d5094f49f398d922772e42580885fe2080e3a3550a6100c8009472fe429645e8",
+    "constant/current-string-0.csv": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+    "constant/current-string-0.export.log": "a82d49ad33a5e900391321d7026b702dfa903f9fe054b0a4fb9640d60aacd27e",
+    "constant/fsdb2vcdLog/fsdb.00000.log": "d8e9b7db08e61b7e7ac3f964fdb4a04b583ef0bbfdd29e5a89529c18987bc8d2",
+    "constant/fsdb2vcdLog/pes.bat": "b5a9b1477074b20f3c9b1394056d6796e0f9e5f44f9895669af541d9008c6097",
+    "constant/fsdb2vcdLog/turbo.log": "d81b42ef74851f27975e82509d736b406c54df6413b1ff7c0903a33bf88552e8",
+    "constant/fsdbextractLog/fsdb.00000.log": "3973b1f9bea4c1e4bbf7c267a753af12c2dfc380087f913ae0cf48e3078282d4",
+    "constant/fsdbextractLog/fsdbextract.log": "0a050ec953386c49b6854c867b4271f62e788597bae72a0bade3d55cf1cb3e1b",
+    "constant/fsdbextractLog/pes.bat": "b5a9b1477074b20f3c9b1394056d6796e0f9e5f44f9895669af541d9008c6097",
+    "constant/native-coordinator-dependencies.d": "a7790f635bd0f66ea1967efad8bfdff912820f881b3e44a544fc34ac35c0fd16",
+    "constant/native-coordinator-transitive-dependencies.d": "0988865d4e4b3a293cb7c94cc68efb82230ad636c94b4059019bc7cab25b2b78",
+    "constant/native-dependencies.d": "848c25db9eff2d18feae53f8936d6d931e08fe56076c8cb219ed9d1b1867134e",
+    "constant/native-transitive-dependencies.d": "7e3b2023c8229a47ec0fa5a31fcd7a55d93c8f24a8c6aad88c530bf1c737da0c",
+    "constant/run.log": "8f173750fbf7aa9d13386e187c786552e462c7b42cf5629f062ae5aead13d038",
+    "constant/source.tar.gz": "175f316b0d8427f8ac04c85e97a370627ce534e61ef7ed686fffbed993c70c1a",
+    "constant/verify.log": "dfdce0387771956142b32fc0c1de3b47507dd15f03e707b8f6216ca1d1eef145",
+    "constant/waves.fsdb": "bf82241fe65ce1ab4bcc02685cd58c965265a10858b9a30c47844b7baa58905d",
+    "prepare.log": "c9bc6e5a75798077e2e8bd356c5f9087008349805c25d20932d6f327512d5254",
+    "steady_ns/accepted-0.export.log": "bd3621398174a8025f5e3f69e85746f516f73ad57a99d1794debfed901ed4361",
+    "steady_ns/accepted-0.vcd": "f66d11cf9861e68af2313212c13913032ebff7ad2a43796c96aa509e7fe11803",
+    "steady_ns/accepted-string-0.csv": "5b6510df6f145ee25eb16e13ae1439af8774024207a770f6a615f6945f490437",
+    "steady_ns/accepted-string-0.export.log": "a82d49ad33a5e900391321d7026b702dfa903f9fe054b0a4fb9640d60aacd27e",
+    "steady_ns/accepted.fsdb": "e6661fa47af777d2f13903d5028e526b4e92e11b921e5cbae5c2713cfb61b484",
+    "steady_ns/all_dmc.csv": "b735cc0588fa23bb1939df7919ce41eae64013c21206c1e2804a2e3bc01e9bda",
+    "steady_ns/commands.json": "64b692a376c2b272c916ec23fe2da243d9660231b539868fccf9c6fc65617232",
+    "steady_ns/comparison.json": "7c122c61f152dfe2e0c615a656285b1aacaa5bba9f89516510f63ad6ad2057a6",
+    "steady_ns/compile.log": "7a132082cd3a8abb8880909ff5c0dd2ba9d51636c6b9b8faf397926212dc6b34",
+    "steady_ns/current-0.export.log": "96fee7da94c02d866fdd831bdfaa3a07c5080b6effe32c668b87101d69011bc1",
+    "steady_ns/current-0.vcd": "de5dc4ee07fcdbc79a4ddedd899275cdb0d503523d3fe39d3b1fe098dd40550b",
+    "steady_ns/current-string-0.csv": "5b6510df6f145ee25eb16e13ae1439af8774024207a770f6a615f6945f490437",
+    "steady_ns/current-string-0.export.log": "a82d49ad33a5e900391321d7026b702dfa903f9fe054b0a4fb9640d60aacd27e",
+    "steady_ns/die0.csv": "933d1deb7068730e5476a4c544c909d0b317d6d10887d2870abbfe8c1cf17c60",
+    "steady_ns/die1.csv": "03e464e30956a71b1d1bd7ac6a623a93cbf2b1ec27b811994c0e4b7f74f3d167",
+    "steady_ns/expect.cfg": "5bbd8ab01a6e64b792dca8092d0ed43b9422c6ac3f6b2f13f0992730e2a72497",
+    "steady_ns/expected-actual.md": "9c65e969c627d93200091e736cb4ed24feafcc792b0c312180a02bc6dc9d0fe4",
+    "steady_ns/fsdb2vcdLog/fsdb.00000.log": "c8b779c1d677fce2cff828f66d4ba3b953d6e586c0069aa7ee2086c2f3e5b344",
+    "steady_ns/fsdb2vcdLog/pes.bat": "b5a9b1477074b20f3c9b1394056d6796e0f9e5f44f9895669af541d9008c6097",
+    "steady_ns/fsdb2vcdLog/turbo.log": "9a29b6198c24146f101fdf5fc3c7fa240aa51231cfe846c6db9c350a5c86c986",
+    "steady_ns/fsdbextractLog/fsdb.00000.log": "3d8a7a49ac9d6e50ad9ff604029fcc680946950d5657d248c801fa779e8a0a4b",
+    "steady_ns/fsdbextractLog/fsdbextract.log": "3498ea944b3a7ba79b24f61d45a67f060706c5892a49e636520a66b62d0f19b5",
+    "steady_ns/fsdbextractLog/pes.bat": "b5a9b1477074b20f3c9b1394056d6796e0f9e5f44f9895669af541d9008c6097",
+    "steady_ns/mixed.csv": "289c9ecf721cb2eb184f8ab2d277aff32ce7024ac211c9009d5d07ad37a8193b",
+    "steady_ns/native-coordinator-dependencies.d": "97ceb6681b4437d9899b7539b1a419de81b24c5b140b17b6a224cf58419b648f",
+    "steady_ns/native-coordinator-transitive-dependencies.d": "f450a4d56b40fbe0b656af7451a8b70dcebe2cacb5ee8669b104442a4f7b2573",
+    "steady_ns/native-dependencies.d": "cb3fedd0743a639c63897f0a4e8861f7eba4658b33d6f8214bfd1d717d331448",
+    "steady_ns/native-transitive-dependencies.d": "771fd87f33d4e18dc531c4cb21e2a57be71b4b1a38c6a2df997bc8b52c7953e3",
+    "steady_ns/p0.csv": "27d59d737bbcbc2338d2eecedcbdbd675d82eaf75cbc83583c0cecffd00fd3c1",
+    "steady_ns/p1.csv": "123fb2af99bb913fe0096aca17df9a108e63854be8835153e22eaa4217bc26d6",
+    "steady_ns/p10.csv": "1dab3a8bec0cc10a1535d928f7a8904ca3bc796ed782df7ea1562d49c29d6368",
+    "steady_ns/p11.csv": "9085206c3b80dd0b59f732fa514f81858362da608b3d206d7f628f3c7c96d0fb",
+    "steady_ns/p2.csv": "aebcf2c3bcea6cb0a4fb7141a2775a56288fb3531460d9f8fd4e1f0fe770e153",
+    "steady_ns/p3.csv": "e003fc945375c2bc62854c20254cecf9dcdd0b5df1dc758275c71ffa139fb194",
+    "steady_ns/p4.csv": "5bf1f184f82f3a0f6bcc473fe6a4fcf1ea09d2cfbd7c2ee2a6c4dc0205b541ed",
+    "steady_ns/p5.csv": "25a90de804243e47e5152926bd7c8e33021ec3416c9c4e6f8b4fefe7a357a69d",
+    "steady_ns/p6.csv": "f7138629a14a0b83b06e2fbde58e63c7bb6a3a23ac90268c5d3b5064e90408d2",
+    "steady_ns/p7.csv": "2f5d1746bed99c83e891f5f65577f7dc20c5c23b43c9b5f39d6039ea4439c22d",
+    "steady_ns/p8.csv": "60724ee75e6e2045658d707e50118474930e8c5fa02b0e859ef717fb52ff511d",
+    "steady_ns/p9.csv": "3c8240ae8cb21543ab56ea07ccb0f2290deddf283deef0a2e427e163c22a6072",
+    "steady_ns/reference.json": "c26c82b76ec84bc203e8e21622b0ac7284ca94d0573741bd992c66a4f9f40a72",
+    "steady_ns/run.log": "a76ce2556b9884889ec9a08666dc6fe767916cbf4fb8d7bcd0a9f3febf747eaf",
+    "steady_ns/source.tar.gz": "fde55d85b2c87e61c401f0dc177b5531b74a3ab11c942b11b001d282866e7dbe",
+    "steady_ns/stimulus.txt": "232b4902621c277ae7fb9531d58438dcf62cc7e9526c78161bda24aaaf65c4ab",
+    "steady_ns/waves.fsdb": "35d64f8127eb6792b46abdfd27cc7be1106e958cfc3f14eec923537d5b8a0722"
+  },
+  "note": "Original accepted images/FSDBs and feedback remain unchanged. Native sequential exports cover each whole FSDB; selected ordered signal changes over each reviewed interval and final default-check rows match freshly compiled product source exactly. No unselected signal or other interval is certified.",
+  "original_source_sha256": {
+    "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
+    "rtl/bw_check_report.sv": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba",
+    "rtl/bw_debug_hints.sv": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2",
+    "rtl/bw_default_check.svh": "13682c3eed8f00d77c9090e2bebbb98643f15a5f32895d3060d6f34e7f6f573f",
+    "rtl/bw_end_coordinator.c": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97",
+    "rtl/bw_end_protocol.svh": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e",
+    "rtl/bw_group_completion.svh": "fb3256199e7f9009b0619e0286990c2ea868a5e43c9b66e4bbeacb574276bcfd",
+    "rtl/bw_group_mon.sv": "203c13e0b29aa19a48295ff8b16e19a24cc93634145dd6016d5a27d9e456cee5",
+    "rtl/bw_hint_duration.sv": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02",
+    "rtl/bw_history.svh": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269",
+    "rtl/bw_mon_pkg.sv": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032",
+    "rtl/bw_mon_registry.svh": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad",
+    "rtl/bw_mon_registry_types.svh": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623",
+    "rtl/bw_mon_setup.sv": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d",
+    "rtl/bw_mon_transport.svh": "361d8fb995ef0065eb700ce7948605a1febe983fc481ad2a8f137aaa23a1c9d7",
+    "rtl/bw_point_completion.svh": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603",
+    "rtl/bw_point_mon.sv": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12",
+    "rtl/bw_point_recorder.sv": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df",
+    "rtl/bw_reset_capture.svh": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad",
+    "rtl/bw_scope_runtime.svh": "9f090aa541de523e88c3794614c4c7b954bc80e4504d5ca404626d987893b5ae",
+    "rtl/bw_slot_settlement.c": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+    "rtl/bw_slot_settlement.svh": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76",
+    "rtl/bw_stage_ownership.svh": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94",
+    "rtl/bw_stats_core.sv": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288",
+    "rtl/bw_target_completion.svh": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1",
+    "rtl/bw_variation_history.svh": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52",
+    "tests/acceptance/analysis.py": "6de807944dfbf38ee74fef9ac49a71fd737d8f31470a1959b14dadbb11c5f57a",
+    "tests/acceptance/build.py": "0f65e086e057eca49f36aebe5b42e64acbce0fc9859734ea19beb1a902409305",
+    "tests/acceptance/evidence.py": "0df9bce832dde0b0755914f469a27775a5aed2fea017890eaa3002803942c9fc",
+    "tests/acceptance/model.py": "719476a3fceb7639bab10721c8a5e7568bf78cd9ff39ec6aa85ac7742de1f88e",
+    "tests/acceptance/run.py": "6fff8b43d612fbe557e7c9d8a7b616a2f92f5edcbd56eed28120abddc45e2089",
+    "tests/acceptance/scene.sv": "f092392fa4dd7625dfad95eddbea4fd19f30b6e6c0867b2ff84fa9647f917bd6",
+    "tests/acceptance/summarize.py": "2f0aebd1eab2f0966244500a70ac636ef5b439b023d8b32d1dc65fa2dc2243f6",
+    "tests/checker_default/check.py": "1da6d883394794652d0c482ff2f1cd0ce54d37f7855b2d1b1a4419c4dd88ed55",
+    "tests/tb_checker_default.sv": "727ff99e6ed582b54bb924bdde99eac999057001575693ba465f95d276faebfa",
+    "tests/verdi61/capture.py": "af0b3ade4971e43789638e1866b25724e5fddaef8516338c292fb84612f96aee",
+    "tests/verdi61/dump.sv": "7c541e94766a6c4dd8dafd89a704064758e8ee908db33703c06b3e51c28813e0",
+    "tests/verdi61/open.py": "e40bdf7cb8507def57df7cf1bb5db43e36785f6ecd0823405c46e99fb3aa7df2",
+    "tests/verdi61/prepare.py": "4773f4211d76f525be6ba5958f24dae760caffcd817f4d510b08511f2dc29600",
+    "tests/verdi61/verify.py": "b70d0bf9b30d3fd0390bf9abab1a573e325adb00c59ac2867e3e45148cda9a98"
+  },
+  "prepare": {
+    "command": [
+      "python3",
+      "tests/verdi61/prepare.py",
+      "--output",
+      "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability-fresh-runs"
+    ],
+    "cwd": "/home/eda/bw-mon-ticket62-candidate-source",
+    "elapsed_seconds": 12.420619247990544,
+    "exit_code": 0
+  },
+  "reporter": {
+    "native_path": "/home/eda/app/synopsys/verdi/W-2024.09-SP1/platform/LINUXAMD64/bin/fsdbreport",
+    "native_sha256": "9b62c217aa260b4aafa0635b48e2db7bdf084069ee5c10bf4886adbefdd2429e",
+    "path": "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+    "resolved_launcher": "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/.wrapper",
+    "sha256": "af19f0efc9de078be4a19c7427168f5983c9b45aef5f94ea002ba83185c16060"
+  },
+  "scene_runs": {
+    "alternating": {
+      "compiled_rtl_sha256": {
+        "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
+        "rtl/bw_check_report.sv": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba",
+        "rtl/bw_debug_hints.sv": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2",
+        "rtl/bw_default_check.svh": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+        "rtl/bw_end_coordinator.c": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97",
+        "rtl/bw_end_protocol.svh": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e",
+        "rtl/bw_group_completion.svh": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+        "rtl/bw_group_mon.sv": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+        "rtl/bw_hint_duration.sv": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02",
+        "rtl/bw_history.svh": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269",
+        "rtl/bw_mon_pkg.sv": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032",
+        "rtl/bw_mon_registry.svh": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad",
+        "rtl/bw_mon_registry_types.svh": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623",
+        "rtl/bw_mon_setup.sv": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d",
+        "rtl/bw_mon_transport.svh": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+        "rtl/bw_point_completion.svh": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+        "rtl/bw_point_mon.sv": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12",
+        "rtl/bw_point_recorder.sv": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df",
+        "rtl/bw_reset_capture.svh": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad",
+        "rtl/bw_scope_runtime.svh": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+        "rtl/bw_slot_settlement.c": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+        "rtl/bw_slot_settlement.svh": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+        "rtl/bw_stage_ownership.svh": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94",
+        "rtl/bw_stats_core.sv": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288",
+        "rtl/bw_target_completion.svh": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1",
+        "rtl/bw_variation_history.svh": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+      },
+      "files": {
+        "commands.json": "alternating/commands.json",
+        "native-coordinator-dependencies.d": "alternating/native-coordinator-dependencies.d",
+        "native-coordinator-transitive-dependencies.d": "alternating/native-coordinator-transitive-dependencies.d",
+        "native-dependencies.d": "alternating/native-dependencies.d",
+        "native-transitive-dependencies.d": "alternating/native-transitive-dependencies.d",
+        "run.log": "alternating/run.log",
+        "source.tar.gz": "alternating/source.tar.gz",
+        "verify.log": "alternating/verify.log",
+        "waves.fsdb": "alternating/waves.fsdb"
+      },
+      "identical_default_check_rows": 5,
+      "new_fsdb_sha256": "6f85940615d8098a0469251412fdfa96863b01b888c97f2fa865ad61163603cb",
+      "old_fsdb_sha256": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34",
+      "source_changes": {
+        "rtl/bw_default_check.svh": {
+          "current": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+          "original": "13682c3eed8f00d77c9090e2bebbb98643f15a5f32895d3060d6f34e7f6f573f"
+        },
+        "rtl/bw_group_completion.svh": {
+          "current": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+          "original": "fb3256199e7f9009b0619e0286990c2ea868a5e43c9b66e4bbeacb574276bcfd"
+        },
+        "rtl/bw_group_mon.sv": {
+          "current": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+          "original": "203c13e0b29aa19a48295ff8b16e19a24cc93634145dd6016d5a27d9e456cee5"
+        },
+        "rtl/bw_mon_transport.svh": {
+          "current": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+          "original": "361d8fb995ef0065eb700ce7948605a1febe983fc481ad2a8f137aaa23a1c9d7"
+        },
+        "rtl/bw_point_completion.svh": {
+          "current": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+          "original": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603"
+        },
+        "rtl/bw_scope_runtime.svh": {
+          "current": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+          "original": "9f090aa541de523e88c3794614c4c7b954bc80e4504d5ca404626d987893b5ae"
+        },
+        "rtl/bw_slot_settlement.svh": {
+          "current": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+          "original": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76"
+        }
+      }
+    },
+    "constant": {
+      "compiled_rtl_sha256": {
+        "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
+        "rtl/bw_check_report.sv": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba",
+        "rtl/bw_debug_hints.sv": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2",
+        "rtl/bw_default_check.svh": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+        "rtl/bw_end_coordinator.c": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97",
+        "rtl/bw_end_protocol.svh": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e",
+        "rtl/bw_group_completion.svh": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+        "rtl/bw_group_mon.sv": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+        "rtl/bw_hint_duration.sv": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02",
+        "rtl/bw_history.svh": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269",
+        "rtl/bw_mon_pkg.sv": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032",
+        "rtl/bw_mon_registry.svh": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad",
+        "rtl/bw_mon_registry_types.svh": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623",
+        "rtl/bw_mon_setup.sv": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d",
+        "rtl/bw_mon_transport.svh": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+        "rtl/bw_point_completion.svh": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+        "rtl/bw_point_mon.sv": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12",
+        "rtl/bw_point_recorder.sv": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df",
+        "rtl/bw_reset_capture.svh": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad",
+        "rtl/bw_scope_runtime.svh": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+        "rtl/bw_slot_settlement.c": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+        "rtl/bw_slot_settlement.svh": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+        "rtl/bw_stage_ownership.svh": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94",
+        "rtl/bw_stats_core.sv": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288",
+        "rtl/bw_target_completion.svh": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1",
+        "rtl/bw_variation_history.svh": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+      },
+      "files": {
+        "commands.json": "constant/commands.json",
+        "native-coordinator-dependencies.d": "constant/native-coordinator-dependencies.d",
+        "native-coordinator-transitive-dependencies.d": "constant/native-coordinator-transitive-dependencies.d",
+        "native-dependencies.d": "constant/native-dependencies.d",
+        "native-transitive-dependencies.d": "constant/native-transitive-dependencies.d",
+        "run.log": "constant/run.log",
+        "source.tar.gz": "constant/source.tar.gz",
+        "verify.log": "constant/verify.log",
+        "waves.fsdb": "constant/waves.fsdb"
+      },
+      "identical_default_check_rows": 5,
+      "new_fsdb_sha256": "bf82241fe65ce1ab4bcc02685cd58c965265a10858b9a30c47844b7baa58905d",
+      "old_fsdb_sha256": "c208b8dbda4dd939f68d2f7c83e486b020723ab587ee968d970c8a1102f88249",
+      "source_changes": {
+        "rtl/bw_default_check.svh": {
+          "current": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+          "original": "13682c3eed8f00d77c9090e2bebbb98643f15a5f32895d3060d6f34e7f6f573f"
+        },
+        "rtl/bw_group_completion.svh": {
+          "current": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+          "original": "fb3256199e7f9009b0619e0286990c2ea868a5e43c9b66e4bbeacb574276bcfd"
+        },
+        "rtl/bw_group_mon.sv": {
+          "current": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+          "original": "203c13e0b29aa19a48295ff8b16e19a24cc93634145dd6016d5a27d9e456cee5"
+        },
+        "rtl/bw_mon_transport.svh": {
+          "current": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+          "original": "361d8fb995ef0065eb700ce7948605a1febe983fc481ad2a8f137aaa23a1c9d7"
+        },
+        "rtl/bw_point_completion.svh": {
+          "current": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+          "original": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603"
+        },
+        "rtl/bw_scope_runtime.svh": {
+          "current": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+          "original": "9f090aa541de523e88c3794614c4c7b954bc80e4504d5ca404626d987893b5ae"
+        },
+        "rtl/bw_slot_settlement.svh": {
+          "current": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+          "original": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76"
+        }
+      }
+    },
+    "steady_ns": {
+      "compiled_rtl_sha256": {
+        "rtl/bw_analysis_public.svh": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3",
+        "rtl/bw_check_report.sv": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba",
+        "rtl/bw_debug_hints.sv": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2",
+        "rtl/bw_default_check.svh": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+        "rtl/bw_end_coordinator.c": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97",
+        "rtl/bw_end_protocol.svh": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e",
+        "rtl/bw_group_completion.svh": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+        "rtl/bw_group_mon.sv": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+        "rtl/bw_hint_duration.sv": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02",
+        "rtl/bw_history.svh": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269",
+        "rtl/bw_mon_pkg.sv": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032",
+        "rtl/bw_mon_registry.svh": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad",
+        "rtl/bw_mon_registry_types.svh": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623",
+        "rtl/bw_mon_setup.sv": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d",
+        "rtl/bw_mon_transport.svh": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+        "rtl/bw_point_completion.svh": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+        "rtl/bw_point_mon.sv": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12",
+        "rtl/bw_point_recorder.sv": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df",
+        "rtl/bw_reset_capture.svh": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad",
+        "rtl/bw_scope_runtime.svh": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+        "rtl/bw_slot_settlement.c": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d",
+        "rtl/bw_slot_settlement.svh": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+        "rtl/bw_stage_ownership.svh": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94",
+        "rtl/bw_stats_core.sv": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288",
+        "rtl/bw_target_completion.svh": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1",
+        "rtl/bw_variation_history.svh": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+      },
+      "files": {
+        "all_dmc.csv": "steady_ns/all_dmc.csv",
+        "commands.json": "steady_ns/commands.json",
+        "comparison.json": "steady_ns/comparison.json",
+        "compile.log": "steady_ns/compile.log",
+        "die0.csv": "steady_ns/die0.csv",
+        "die1.csv": "steady_ns/die1.csv",
+        "expect.cfg": "steady_ns/expect.cfg",
+        "expected-actual.md": "steady_ns/expected-actual.md",
+        "mixed.csv": "steady_ns/mixed.csv",
+        "native-coordinator-dependencies.d": "steady_ns/native-coordinator-dependencies.d",
+        "native-coordinator-transitive-dependencies.d": "steady_ns/native-coordinator-transitive-dependencies.d",
+        "native-dependencies.d": "steady_ns/native-dependencies.d",
+        "native-transitive-dependencies.d": "steady_ns/native-transitive-dependencies.d",
+        "p0.csv": "steady_ns/p0.csv",
+        "p1.csv": "steady_ns/p1.csv",
+        "p10.csv": "steady_ns/p10.csv",
+        "p11.csv": "steady_ns/p11.csv",
+        "p2.csv": "steady_ns/p2.csv",
+        "p3.csv": "steady_ns/p3.csv",
+        "p4.csv": "steady_ns/p4.csv",
+        "p5.csv": "steady_ns/p5.csv",
+        "p6.csv": "steady_ns/p6.csv",
+        "p7.csv": "steady_ns/p7.csv",
+        "p8.csv": "steady_ns/p8.csv",
+        "p9.csv": "steady_ns/p9.csv",
+        "reference.json": "steady_ns/reference.json",
+        "run.log": "steady_ns/run.log",
+        "source.tar.gz": "steady_ns/source.tar.gz",
+        "stimulus.txt": "steady_ns/stimulus.txt",
+        "waves.fsdb": "steady_ns/waves.fsdb"
+      },
+      "identical_default_check_rows": 16,
+      "new_fsdb_sha256": "35d64f8127eb6792b46abdfd27cc7be1106e958cfc3f14eec923537d5b8a0722",
+      "old_fsdb_sha256": "e6661fa47af777d2f13903d5028e526b4e92e11b921e5cbae5c2713cfb61b484",
+      "source_changes": {
+        "rtl/bw_default_check.svh": {
+          "current": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083",
+          "original": "13682c3eed8f00d77c9090e2bebbb98643f15a5f32895d3060d6f34e7f6f573f"
+        },
+        "rtl/bw_group_completion.svh": {
+          "current": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6",
+          "original": "fb3256199e7f9009b0619e0286990c2ea868a5e43c9b66e4bbeacb574276bcfd"
+        },
+        "rtl/bw_group_mon.sv": {
+          "current": "70eaaac625bd30aa2aac83d02d022014df6b0fa8e4b955079b1429f1f0366b6d",
+          "original": "203c13e0b29aa19a48295ff8b16e19a24cc93634145dd6016d5a27d9e456cee5"
+        },
+        "rtl/bw_mon_transport.svh": {
+          "current": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d",
+          "original": "361d8fb995ef0065eb700ce7948605a1febe983fc481ad2a8f137aaa23a1c9d7"
+        },
+        "rtl/bw_point_completion.svh": {
+          "current": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca",
+          "original": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603"
+        },
+        "rtl/bw_scope_runtime.svh": {
+          "current": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f",
+          "original": "9f090aa541de523e88c3794614c4c7b954bc80e4504d5ca404626d987893b5ae"
+        },
+        "rtl/bw_slot_settlement.svh": {
+          "current": "ce5eb2b083257c6af7461112a528a17b535083004cea76874b3b047d40c8638f",
+          "original": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76"
+        }
+      }
+    }
+  },
+  "schema": "bw-verdi-source-applicability-v1",
+  "source_head": "154d45f2ba32242cd728c9996157cee296491fa2",
+  "state": "VERIFIED",
+  "string_exports": {
+    "alternating": {
+      "accepted": {
+        "/tb_checker_default/group_mon/scope_id": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/accepted.fsdb",
+            "-s",
+            "/tb_checker_default/group_mon/scope_id",
+            "-csv",
+            "-nolog",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/accepted-string-0.csv"
+          ],
+          "csv": "alternating/accepted-string-0.csv",
+          "csv_sha256": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating",
+          "elapsed_seconds": 0.043578543001785874,
+          "exit_code": 0,
+          "fsdb_sha256": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34"
+        }
+      },
+      "current": {
+        "/tb_checker_default/group_mon/scope_id": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/waves.fsdb",
+            "-s",
+            "/tb_checker_default/group_mon/scope_id",
+            "-csv",
+            "-nolog",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/current-string-0.csv"
+          ],
+          "csv": "alternating/current-string-0.csv",
+          "csv_sha256": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating",
+          "elapsed_seconds": 0.04304575199785177,
+          "exit_code": 0,
+          "fsdb_sha256": "6f85940615d8098a0469251412fdfa96863b01b888c97f2fa865ad61163603cb"
+        }
+      }
+    },
+    "constant": {
+      "accepted": {
+        "/tb_checker_default/group_mon/scope_id": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/accepted.fsdb",
+            "-s",
+            "/tb_checker_default/group_mon/scope_id",
+            "-csv",
+            "-nolog",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/accepted-string-0.csv"
+          ],
+          "csv": "constant/accepted-string-0.csv",
+          "csv_sha256": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant",
+          "elapsed_seconds": 0.04333334699913394,
+          "exit_code": 0,
+          "fsdb_sha256": "c208b8dbda4dd939f68d2f7c83e486b020723ab587ee968d970c8a1102f88249"
+        }
+      },
+      "current": {
+        "/tb_checker_default/group_mon/scope_id": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/waves.fsdb",
+            "-s",
+            "/tb_checker_default/group_mon/scope_id",
+            "-csv",
+            "-nolog",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant/current-string-0.csv"
+          ],
+          "csv": "constant/current-string-0.csv",
+          "csv_sha256": "f3b52f15aeead43f3b991244a6818591ba44048b62a4c127498baf190824d1a3",
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/constant",
+          "elapsed_seconds": 0.04377773900341708,
+          "exit_code": 0,
+          "fsdb_sha256": "bf82241fe65ce1ab4bcc02685cd58c965265a10858b9a30c47844b7baa58905d"
+        }
+      }
+    },
+    "steady_ns": {
+      "accepted": {
+        "/tb_acceptance_ns/scene/all_dmc/scope_id": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/accepted.fsdb",
+            "-s",
+            "/tb_acceptance_ns/scene/all_dmc/scope_id",
+            "-csv",
+            "-nolog",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/accepted-string-0.csv"
+          ],
+          "csv": "steady_ns/accepted-string-0.csv",
+          "csv_sha256": "5b6510df6f145ee25eb16e13ae1439af8774024207a770f6a615f6945f490437",
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns",
+          "elapsed_seconds": 0.0507378170004813,
+          "exit_code": 0,
+          "fsdb_sha256": "e6661fa47af777d2f13903d5028e526b4e92e11b921e5cbae5c2713cfb61b484"
+        }
+      },
+      "current": {
+        "/tb_acceptance_ns/scene/all_dmc/scope_id": {
+          "command": [
+            "/home/eda/app/synopsys/verdi/W-2024.09-SP1/bin/fsdbreport",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/waves.fsdb",
+            "-s",
+            "/tb_acceptance_ns/scene/all_dmc/scope_id",
+            "-csv",
+            "-nolog",
+            "-o",
+            "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns/current-string-0.csv"
+          ],
+          "csv": "steady_ns/current-string-0.csv",
+          "csv_sha256": "5b6510df6f145ee25eb16e13ae1439af8774024207a770f6a615f6945f490437",
+          "cwd": "/home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/steady_ns",
+          "elapsed_seconds": 0.05482694700185675,
+          "exit_code": 0,
+          "fsdb_sha256": "35d64f8127eb6792b46abdfd27cc7be1106e958cfc3f14eec923537d5b8a0722"
+        }
+      }
+    }
+  },
+  "verification_tool_sha256": {
+    "tests/verdi61/applicability.py": "99b3e810af740a688c8dc799b40f7ecdb44c3f8162285acf53cbf4b5ebf6412d",
+    "tests/verdi61/compare.py": "d67c996dd49a4f630f41b1b65a2a6cd9b22df9fad11ff8230fb78fc0ef8b18ef",
+    "tests/verdi61/verify.py": "0e9214cdcdc36b1603df7a6bc1f6d7e47fe79a9c99001a2f824a328e01f288e0"
+  },
+  "views": [
+    {
+      "accepted_fsdb_sha256": "e6661fa47af777d2f13903d5028e526b4e92e11b921e5cbae5c2713cfb61b484",
+      "accepted_image_sha256": "b9087517d7c2c5760a4a7c1ee41ffe3213a221821627be0739142c93820d7364",
+      "identical_trace_sha256": "355c2542fce712004659188a79f4f3169930da4d864ebf066cbc959c85ed0389",
+      "name": "named_group",
+      "range_fs": [
+        88000000,
+        112000000
+      ],
+      "scene": "steady_ns",
+      "signals": [
+        "/tb_acceptance_ns/scene/all_dmc/bandwidth_gbps",
+        "/tb_acceptance_ns/scene/all_dmc/bytes_complete",
+        "/tb_acceptance_ns/scene/all_dmc/direct_member_count",
+        "/tb_acceptance_ns/scene/all_dmc/recursive_point_count",
+        "/tb_acceptance_ns/scene/all_dmc/scope_id",
+        "/tb_acceptance_ns/scene/all_dmc/window_bytes",
+        "/tb_acceptance_ns/scene/all_dmc/window_end_ticks",
+        "/tb_acceptance_ns/scene/all_dmc/window_start_ticks"
+      ],
+      "unchanged": true
+    },
+    {
+      "accepted_fsdb_sha256": "c208b8dbda4dd939f68d2f7c83e486b020723ab587ee968d970c8a1102f88249",
+      "accepted_image_sha256": "9416c942f05fdac33c3abcc11905378e6823c134f0ee019beeaba1ca50677714",
+      "identical_trace_sha256": "06464dcdd31343307c078ea55de28653cff59e759b0a7e30f51687bb5cb10ee3",
+      "name": "default_phase",
+      "range_fs": [
+        4000000,
+        19000000
+      ],
+      "scene": "constant",
+      "signals": [
+        "/tb_checker_default/group_mon/bandwidth_gbps",
+        "/tb_checker_default/group_mon/bytes_complete",
+        "/tb_checker_default/group_mon/phase_candidate_count",
+        "/tb_checker_default/group_mon/phase_candidate_required",
+        "/tb_checker_default/group_mon/phase_confirmation_ticks",
+        "/tb_checker_default/group_mon/phase_current",
+        "/tb_checker_default/group_mon/phase_evidence_count",
+        "/tb_checker_default/group_mon/phase_evidence_required",
+        "/tb_checker_default/group_mon/phase_reason",
+        "/tb_checker_default/group_mon/phase_start_ticks",
+        "/tb_checker_default/group_mon/result_seq",
+        "/tb_checker_default/group_mon/scope_id",
+        "/tb_checker_default/group_mon/window_bytes",
+        "/tb_checker_default/group_mon/window_end_ticks",
+        "/tb_checker_default/group_mon/window_full",
+        "/tb_checker_default/group_mon/window_start_ticks",
+        "/tb_checker_default/members[0]/point/bandwidth_gbps",
+        "/tb_checker_default/members[0]/point/phase_current"
+      ],
+      "unchanged": true
+    },
+    {
+      "accepted_fsdb_sha256": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34",
+      "accepted_image_sha256": "17df211ba38a04a57fa78e168a21e0fb6edc6d03f58f5bb3967c5b64cc15205a",
+      "identical_trace_sha256": "18af9e7b637f963880bfd4a85e3e978aae717c23687877ac113dff5ec55ebff1",
+      "name": "sustained_boundary",
+      "range_fs": [
+        5000000,
+        9000000
+      ],
+      "scene": "alternating",
+      "signals": [
+        "/tb_checker_default/group_mon/bandwidth_gbps",
+        "/tb_checker_default/group_mon/bytes_complete",
+        "/tb_checker_default/group_mon/phase_candidate_count",
+        "/tb_checker_default/group_mon/phase_candidate_required",
+        "/tb_checker_default/group_mon/phase_confirmation_ticks",
+        "/tb_checker_default/group_mon/phase_current",
+        "/tb_checker_default/group_mon/phase_evidence_count",
+        "/tb_checker_default/group_mon/phase_evidence_required",
+        "/tb_checker_default/group_mon/phase_reason",
+        "/tb_checker_default/group_mon/phase_start_ticks",
+        "/tb_checker_default/group_mon/result_seq",
+        "/tb_checker_default/group_mon/scope_id",
+        "/tb_checker_default/group_mon/window_bytes",
+        "/tb_checker_default/group_mon/window_end_ticks",
+        "/tb_checker_default/group_mon/window_full",
+        "/tb_checker_default/group_mon/window_start_ticks",
+        "/tb_checker_default/members[0]/point/bandwidth_gbps",
+        "/tb_checker_default/members[0]/point/phase_current"
+      ],
+      "unchanged": true
+    },
+    {
+      "accepted_fsdb_sha256": "68c1fc71167aacec300bf3b68acac12942e766585d92276ad9fdf14786b01a34",
+      "accepted_image_sha256": "8b44109220e3499c5bbf7e7ea0ebbbc7d8bc324095e85fa2fc136c827c2e3901",
+      "identical_trace_sha256": "47e0dfae1720d1bd5d2b09ac3db729fdf7bc425c899cf09adfb0b086253df6fc",
+      "name": "steady_fail",
+      "range_fs": [
+        5000000,
+        26000000
+      ],
+      "scene": "alternating",
+      "signals": [
+        "/tb_checker_default/group_mon/bandwidth_gbps",
+        "/tb_checker_default/group_mon/bytes_complete",
+        "/tb_checker_default/group_mon/phase_candidate_count",
+        "/tb_checker_default/group_mon/phase_candidate_required",
+        "/tb_checker_default/group_mon/phase_confirmation_ticks",
+        "/tb_checker_default/group_mon/phase_current",
+        "/tb_checker_default/group_mon/phase_evidence_count",
+        "/tb_checker_default/group_mon/phase_evidence_required",
+        "/tb_checker_default/group_mon/phase_reason",
+        "/tb_checker_default/group_mon/phase_start_ticks",
+        "/tb_checker_default/group_mon/result_seq",
+        "/tb_checker_default/group_mon/scope_id",
+        "/tb_checker_default/group_mon/window_bytes",
+        "/tb_checker_default/group_mon/window_end_ticks",
+        "/tb_checker_default/group_mon/window_full",
+        "/tb_checker_default/group_mon/window_start_ticks",
+        "/tb_checker_default/members[0]/point/bandwidth_gbps",
+        "/tb_checker_default/members[0]/point/phase_current"
+      ],
+      "unchanged": true
+    }
+  ]
+}

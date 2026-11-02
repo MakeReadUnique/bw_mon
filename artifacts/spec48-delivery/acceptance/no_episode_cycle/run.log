@@ -1,0 +1,155 @@
+Chronologic VCS simulator copyright 1991-2024
+Contains Synopsys proprietary information.
+Compiler version W-2024.09-SP1_Full64; Runtime version W-2024.09-SP1_Full64;  Nov  2 11:25 2026
+*Verdi* Loading libsscore_vcs202409.so
+FSDB Dumper for VCS, Release Verdi_W-2024.09-SP1, Linux x86_64/64bit, 11/30/2024
+(C) 1996 - 2024 by Synopsys, Inc.
+*Verdi* : Create FSDB file '/home/eda/bw-mon-ticket62-candidate-runs/acceptance/no_episode_cycle/waves.fsdb'
+*Verdi* : Begin traversing the scopes, layer (1).
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[0].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[0].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[1].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[1].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[2].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[2].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[3].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[3].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[4].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[4].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[5].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[5].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[6].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[6].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[7].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[7].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[8].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[8].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[9].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[9].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[10].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[10].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[11].dut), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.ports[11].dut.mon), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.die0), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.die1), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.all_dmc), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the scope (tb_acceptance_cycle.scene.mixed), layer (1).
+*Verdi* : Enable +all dumping.
+*Verdi* : End of traversing.
+BW_ANALYSIS_CONFIG scope_kind=1 scope=die0_dmc basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=1 scope=die1_dmc basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=1 scope=all_dmc basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=1 scope=mixed basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p0 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p1 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p2 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p3 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p4 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p5 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p6 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p7 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p8 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p9 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p10 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=p11 basis=1 W=20 S=2 Q=24 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=10 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_READY time_ticks=1 points=12 groups=4 budget_ticks=40000000000 timescale=1fs deadline_ticks=40000000001
+TB_PASS acceptance basis=1
+$finish called from file "/home/eda/bw-mon-ticket62-candidate-source/.build/acceptance/tb_acceptance_cycle/f74a2db7da47b4efbac273ce9cbc40f9374d76cd1658af8fc1becbf0f4896fb7/source/tests/acceptance/scene.sv", line 164.
+BW_END_AUDIT ready=1 owners=41 pending_responsibilities=0 time_ticks=60000002
+BW_DEFAULT_CHECK scope_kind=1 scope=die0_dmc epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_GROUP_TERMINAL scope=die0_dmc state=NORMAL expected=119 captured=119 held=119 published=119 accepted=119 acked=119 reset_expected=1 reset_captured=1 input_generation=1428 closed_generation=1428 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=1 scope=die1_dmc epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_GROUP_TERMINAL scope=die1_dmc state=NORMAL expected=119 captured=119 held=119 published=119 accepted=119 acked=119 reset_expected=1 reset_captured=1 input_generation=1428 closed_generation=1428 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=1 scope=all_dmc epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_CHECK scope_kind=1 scope=all_dmc epoch=0 episode=0 result_seq=0 kind=scope_final phase=0 metric=e2e_bw unit=GB/s start_ticks=0 end_ticks=0 actual=UNAVAILABLE has_min=1 min=0 has_max=0 max=0 abs_tol=0 rel_tol_pct=0 effective_min=0 effective_max=0 bytes=0 events=0 duration_ticks=0 bytes_complete=0 events_complete=0 first_known=0 last_known=0 tail_known=0 duration_valid=0 member_reset=0 phase_kind=0 phase_result_seq=0 basis=0 W=0 S=0 samples=0 first_sample_ticks=0 last_sample_ticks=0 sample_span_ticks=0 mean_gbps=0 interval_known=0 coverage_complete=0 minmax_valid=0 stddev_valid=0 cv_valid=0 minmax_reason=NO_QUALIFIED_SAMPLES stddev_reason=NO_QUALIFIED_SAMPLES cv_reason=NO_QUALIFIED_SAMPLES excluded_warmup=0 excluded_foreign=0 unknown_samples=0 excluded_denominator=0 cfg_file=/home/eda/bw-mon-ticket62-candidate-runs/acceptance/no_episode_cycle/expect.cfg min_line=4 max_line=0 abs_line=0 rel_line=0 conclusion=WARNING reason=NO_EPISODE
+BW_GROUP_TERMINAL scope=all_dmc state=NORMAL expected=119 captured=119 held=119 published=119 accepted=119 acked=119 reset_expected=1 reset_captured=1 input_generation=1428 closed_generation=1428 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=1 scope=mixed epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_GROUP_TERMINAL scope=mixed state=NORMAL expected=119 captured=119 held=119 published=119 accepted=119 acked=119 reset_expected=1 reset_captured=1 input_generation=1428 closed_generation=1428 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p0 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_CHECK scope_kind=0 scope=p0 epoch=0 episode=0 result_seq=0 kind=scope_final phase=0 metric=e2e_bw unit=GB/s start_ticks=0 end_ticks=0 actual=UNAVAILABLE has_min=1 min=0 has_max=0 max=0 abs_tol=0 rel_tol_pct=0 effective_min=0 effective_max=0 bytes=0 events=0 duration_ticks=0 bytes_complete=0 events_complete=0 first_known=0 last_known=0 tail_known=0 duration_valid=0 member_reset=0 phase_kind=0 phase_result_seq=0 basis=0 W=0 S=0 samples=0 first_sample_ticks=0 last_sample_ticks=0 sample_span_ticks=0 mean_gbps=0 interval_known=0 coverage_complete=0 minmax_valid=0 stddev_valid=0 cv_valid=0 minmax_reason=NO_QUALIFIED_SAMPLES stddev_reason=NO_QUALIFIED_SAMPLES cv_reason=NO_QUALIFIED_SAMPLES excluded_warmup=0 excluded_foreign=0 unknown_samples=0 excluded_denominator=0 cfg_file=/home/eda/bw-mon-ticket62-candidate-runs/acceptance/no_episode_cycle/expect.cfg min_line=2 max_line=0 abs_line=0 rel_line=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p0 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=476 closed_generation=476 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p1 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p1 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p2 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p2 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p3 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p3 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=476 closed_generation=476 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p4 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p4 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p5 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p5 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p6 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p6 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=476 closed_generation=476 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p7 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p7 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p8 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p8 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p9 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p9 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=476 closed_generation=476 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p10 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=p10 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+BW_DEFAULT_CHECK scope_kind=0 scope=p11 epoch=0 episode=0 platform=0 metric=sustained_variation basis=1 W=20 S=2 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_SUMMARY status=WARNING pass=0 fail=0 warning=18 scopes_done=16 scopes_expected=16
+BW_POINT_TERMINAL scope=p11 state=NORMAL expected=119 captured=119 inflight=119 published=119 accepted=119 input_generation=595 closed_generation=595 time_ticks=60000002 stage=NONE
+$finish at simulation time             60000002
+BW_REPORT_COMPLETE audit=1 roles=41/41 terminals=16/16 summary=1 integrity=COMPLETE performance=WARNING time_ticks=60000002
+BW_SETTLE_STATS rounds=725 audits=2634 watchers=16 edges=3808 dirty_audits=2634 deferred=5766
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 60000002 fs
+CPU Time:      0.280 seconds;       Data structure size:   1.4Mb
+Mon Nov  2 11:25:11 2026

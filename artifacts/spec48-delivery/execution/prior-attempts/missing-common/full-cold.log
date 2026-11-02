@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "tests/scale/revised_suite.py", line 171, in <module>
+    raise SystemExit(main())
+  File "tests/scale/revised_suite.py", line 167, in main
+    return 0 if run_suite(a.tier,a.output_root.resolve(),a.cache_mode,a.lock.resolve()) else 1
+  File "tests/scale/revised_suite.py", line 82, in run_suite
+    if tier=='full':manifest['common_proof']=common_proof_inputs()
+  File "tests/scale/revised_suite.py", line 50, in common_proof_inputs
+    matrix=json.loads((directory/'completion-matrix.json').read_text())
+  File "/usr/lib64/python3.6/pathlib.py", line 1130, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/usr/lib64/python3.6/pathlib.py", line 1117, in open
+    opener=self._opener)
+  File "/usr/lib64/python3.6/pathlib.py", line 961, in _opener
+    return self._accessor.open(self, flags, mode)
+  File "/usr/lib64/python3.6/pathlib.py", line 310, in wrapped
+    return strfunc(str(pathobj), *args)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/eda/bw-mon-ticket62-candidate-source/tests/scale/history_evidence/final-campaign/completion-matrix.json'

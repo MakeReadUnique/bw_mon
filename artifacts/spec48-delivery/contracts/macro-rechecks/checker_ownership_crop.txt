@@ -1,0 +1,2 @@
+PASS checker_ownership_crop: /home/eda/bw-mon-ticket62-candidate-source/.build/tests/tb_checker_ownership/checker_ownership_crop.log
+1/1 contract cases passed

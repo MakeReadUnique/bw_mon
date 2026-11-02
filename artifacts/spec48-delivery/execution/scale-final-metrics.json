@@ -1,0 +1,497 @@
+{
+  "scope": "Scale qualification only; overall delivery still awaits contracts and independent packet audit.",
+  "suites": [
+    {
+      "tier": "quick",
+      "cache_mode": "cold",
+      "source_head": "154d45f2ba32242cd728c9996157cee296491fa2",
+      "manifest": "/home/eda/bw-mon-ticket62-candidate-runs/revised/suite-quick-cold.json",
+      "internal_seconds": 64.98798025900032,
+      "outer_command_seconds": 65.02955493600166,
+      "budget_seconds": 300,
+      "profiles": [
+        {
+          "name": "topology-quick-ns",
+          "elapsed_seconds": 11.459602952003479,
+          "simulation_peak_rss_kib": 151544,
+          "gnu_time_maximum_rss_kib": 151544,
+          "compile_reused": false,
+          "checked_raw": 81920,
+          "checked_windows": 40956,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cycle",
+          "elapsed_seconds": 11.885138942991034,
+          "simulation_peak_rss_kib": 163464,
+          "gnu_time_maximum_rss_kib": 163464,
+          "compile_reused": false,
+          "checked_raw": 81920,
+          "checked_windows": 81754,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cancel-ns",
+          "elapsed_seconds": 11.449133631002042,
+          "simulation_peak_rss_kib": 151960,
+          "gnu_time_maximum_rss_kib": 151960,
+          "compile_reused": false,
+          "checked_raw": 81408,
+          "checked_windows": 40700,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-seeded",
+          "elapsed_seconds": 9.888708272992517,
+          "simulation_peak_rss_kib": 123680,
+          "gnu_time_maximum_rss_kib": 123680,
+          "compile_reused": false,
+          "checked_raw": 3072,
+          "checked_windows": 729,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-seeded",
+          "elapsed_seconds": 9.945562581997365,
+          "simulation_peak_rss_kib": 123392,
+          "gnu_time_maximum_rss_kib": 123392,
+          "compile_reused": false,
+          "checked_raw": 3072,
+          "checked_windows": 1023,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-pending",
+          "elapsed_seconds": 9.555367961991578,
+          "simulation_peak_rss_kib": 132316,
+          "gnu_time_maximum_rss_kib": 132316,
+          "compile_reused": false,
+          "checked_raw": 7,
+          "checked_windows": 30003,
+          "difference_count": 0
+        }
+      ],
+      "checked_raw": 251399,
+      "checked_windows": 195165
+    },
+    {
+      "tier": "quick",
+      "cache_mode": "hot",
+      "source_head": "154d45f2ba32242cd728c9996157cee296491fa2",
+      "manifest": "/home/eda/bw-mon-ticket62-candidate-runs/revised/suite-quick-hot.json",
+      "internal_seconds": 22.15850720999879,
+      "outer_command_seconds": 22.199822792012128,
+      "budget_seconds": 120,
+      "profiles": [
+        {
+          "name": "topology-quick-ns",
+          "elapsed_seconds": 3.9822040620056214,
+          "simulation_peak_rss_kib": 149452,
+          "gnu_time_maximum_rss_kib": 149452,
+          "compile_reused": true,
+          "checked_raw": 81920,
+          "checked_windows": 40956,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cycle",
+          "elapsed_seconds": 4.282948833002592,
+          "simulation_peak_rss_kib": 165036,
+          "gnu_time_maximum_rss_kib": 165036,
+          "compile_reused": true,
+          "checked_raw": 81920,
+          "checked_windows": 81754,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cancel-ns",
+          "elapsed_seconds": 4.030820216998109,
+          "simulation_peak_rss_kib": 146944,
+          "gnu_time_maximum_rss_kib": 146944,
+          "compile_reused": true,
+          "checked_raw": 81408,
+          "checked_windows": 40700,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-seeded",
+          "elapsed_seconds": 3.0714891889947467,
+          "simulation_peak_rss_kib": 122572,
+          "gnu_time_maximum_rss_kib": 122572,
+          "compile_reused": true,
+          "checked_raw": 3072,
+          "checked_windows": 729,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-seeded",
+          "elapsed_seconds": 3.1182760770025197,
+          "simulation_peak_rss_kib": 123648,
+          "gnu_time_maximum_rss_kib": 123648,
+          "compile_reused": true,
+          "checked_raw": 3072,
+          "checked_windows": 1023,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-pending",
+          "elapsed_seconds": 2.857702405002783,
+          "simulation_peak_rss_kib": 132852,
+          "gnu_time_maximum_rss_kib": 132852,
+          "compile_reused": true,
+          "checked_raw": 7,
+          "checked_windows": 30003,
+          "difference_count": 0
+        }
+      ],
+      "checked_raw": 251399,
+      "checked_windows": 195165
+    },
+    {
+      "tier": "full",
+      "cache_mode": "cold",
+      "source_head": "154d45f2ba32242cd728c9996157cee296491fa2",
+      "manifest": "/home/eda/bw-mon-ticket62-candidate-runs/revised/suite-full-cold.json",
+      "internal_seconds": 1692.8749005169957,
+      "outer_command_seconds": 1693.2505023190024,
+      "budget_seconds": 1800,
+      "profiles": [
+        {
+          "name": "topology-quick-ns",
+          "elapsed_seconds": 11.305247740994673,
+          "simulation_peak_rss_kib": 152368,
+          "gnu_time_maximum_rss_kib": 152368,
+          "compile_reused": false,
+          "checked_raw": 81920,
+          "checked_windows": 40956,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cycle",
+          "elapsed_seconds": 12.619199791995925,
+          "simulation_peak_rss_kib": 166908,
+          "gnu_time_maximum_rss_kib": 166908,
+          "compile_reused": false,
+          "checked_raw": 81920,
+          "checked_windows": 81754,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-max-ns",
+          "elapsed_seconds": 457.8125924920023,
+          "simulation_peak_rss_kib": 2662768,
+          "gnu_time_maximum_rss_kib": 2662768,
+          "compile_reused": false,
+          "checked_raw": 10485760,
+          "checked_windows": 5242876,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-max-cycle",
+          "elapsed_seconds": 455.6943770759972,
+          "simulation_peak_rss_kib": 4056852,
+          "gnu_time_maximum_rss_kib": 4056852,
+          "compile_reused": false,
+          "checked_raw": 10485760,
+          "checked_windows": 10465274,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cancel-ns",
+          "elapsed_seconds": 11.362175265006954,
+          "simulation_peak_rss_kib": 149244,
+          "gnu_time_maximum_rss_kib": 149244,
+          "compile_reused": false,
+          "checked_raw": 81408,
+          "checked_windows": 40700,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-max-cancel-ns",
+          "elapsed_seconds": 452.16090623900527,
+          "simulation_peak_rss_kib": 2669040,
+          "gnu_time_maximum_rss_kib": 2669040,
+          "compile_reused": false,
+          "checked_raw": 10485248,
+          "checked_windows": 5242620,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-seeded",
+          "elapsed_seconds": 9.844325096011744,
+          "simulation_peak_rss_kib": 124940,
+          "gnu_time_maximum_rss_kib": 124940,
+          "compile_reused": false,
+          "checked_raw": 3072,
+          "checked_windows": 729,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-seeded",
+          "elapsed_seconds": 9.895835200994043,
+          "simulation_peak_rss_kib": 121604,
+          "gnu_time_maximum_rss_kib": 121604,
+          "compile_reused": false,
+          "checked_raw": 3072,
+          "checked_windows": 1023,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-expiry",
+          "elapsed_seconds": 11.192001447998337,
+          "simulation_peak_rss_kib": 134232,
+          "gnu_time_maximum_rss_kib": 134232,
+          "compile_reused": false,
+          "checked_raw": 24576,
+          "checked_windows": 6144,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-expiry",
+          "elapsed_seconds": 11.556099826993886,
+          "simulation_peak_rss_kib": 132876,
+          "gnu_time_maximum_rss_kib": 132876,
+          "compile_reused": false,
+          "checked_raw": 24576,
+          "checked_windows": 8190,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-deep",
+          "elapsed_seconds": 24.803405537008075,
+          "simulation_peak_rss_kib": 217048,
+          "gnu_time_maximum_rss_kib": 217048,
+          "compile_reused": false,
+          "checked_raw": 240000,
+          "checked_windows": 120000,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-deep",
+          "elapsed_seconds": 30.18019711499801,
+          "simulation_peak_rss_kib": 231892,
+          "gnu_time_maximum_rss_kib": 231892,
+          "compile_reused": false,
+          "checked_raw": 240000,
+          "checked_windows": 239997,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-reset",
+          "elapsed_seconds": 25.642645387997618,
+          "simulation_peak_rss_kib": 191752,
+          "gnu_time_maximum_rss_kib": 191752,
+          "compile_reused": false,
+          "checked_raw": 240000,
+          "checked_windows": 38665,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-reset",
+          "elapsed_seconds": 31.928986149010598,
+          "simulation_peak_rss_kib": 182340,
+          "gnu_time_maximum_rss_kib": 182340,
+          "compile_reused": false,
+          "checked_raw": 240000,
+          "checked_windows": 77330,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-pending",
+          "elapsed_seconds": 9.479698796989396,
+          "simulation_peak_rss_kib": 134972,
+          "gnu_time_maximum_rss_kib": 134972,
+          "compile_reused": false,
+          "checked_raw": 7,
+          "checked_windows": 30003,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-overrun",
+          "elapsed_seconds": 24.68015395499242,
+          "simulation_peak_rss_kib": 215564,
+          "gnu_time_maximum_rss_kib": 215564,
+          "compile_reused": false,
+          "checked_raw": 240000,
+          "checked_windows": 120000,
+          "difference_count": 0
+        }
+      ],
+      "checked_raw": 32957319,
+      "checked_windows": 21756261
+    },
+    {
+      "tier": "full",
+      "cache_mode": "hot",
+      "source_head": "154d45f2ba32242cd728c9996157cee296491fa2",
+      "manifest": "/home/eda/bw-mon-ticket62-candidate-runs/revised/suite-full-hot.json",
+      "internal_seconds": 1453.4697174510075,
+      "outer_command_seconds": 1453.8926493799954,
+      "budget_seconds": 1800,
+      "profiles": [
+        {
+          "name": "topology-quick-ns",
+          "elapsed_seconds": 3.9294573909864994,
+          "simulation_peak_rss_kib": 148932,
+          "gnu_time_maximum_rss_kib": 148932,
+          "compile_reused": true,
+          "checked_raw": 81920,
+          "checked_windows": 40956,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cycle",
+          "elapsed_seconds": 4.221781551997992,
+          "simulation_peak_rss_kib": 163984,
+          "gnu_time_maximum_rss_kib": 163984,
+          "compile_reused": true,
+          "checked_raw": 81920,
+          "checked_windows": 81754,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-max-ns",
+          "elapsed_seconds": 401.91597981999803,
+          "simulation_peak_rss_kib": 2666012,
+          "gnu_time_maximum_rss_kib": 2666012,
+          "compile_reused": true,
+          "checked_raw": 10485760,
+          "checked_windows": 5242876,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-max-cycle",
+          "elapsed_seconds": 417.9090514230047,
+          "simulation_peak_rss_kib": 4057368,
+          "gnu_time_maximum_rss_kib": 4057368,
+          "compile_reused": true,
+          "checked_raw": 10485760,
+          "checked_windows": 10465274,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-quick-cancel-ns",
+          "elapsed_seconds": 4.056272071000421,
+          "simulation_peak_rss_kib": 150128,
+          "gnu_time_maximum_rss_kib": 150128,
+          "compile_reused": true,
+          "checked_raw": 81408,
+          "checked_windows": 40700,
+          "difference_count": 0
+        },
+        {
+          "name": "topology-max-cancel-ns",
+          "elapsed_seconds": 426.08800673000223,
+          "simulation_peak_rss_kib": 2667972,
+          "gnu_time_maximum_rss_kib": 2667972,
+          "compile_reused": true,
+          "checked_raw": 10485248,
+          "checked_windows": 5242620,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-seeded",
+          "elapsed_seconds": 3.168974865999189,
+          "simulation_peak_rss_kib": 125764,
+          "gnu_time_maximum_rss_kib": 125764,
+          "compile_reused": true,
+          "checked_raw": 3072,
+          "checked_windows": 729,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-seeded",
+          "elapsed_seconds": 3.0752459530049236,
+          "simulation_peak_rss_kib": 124904,
+          "gnu_time_maximum_rss_kib": 124904,
+          "compile_reused": true,
+          "checked_raw": 3072,
+          "checked_windows": 1023,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-expiry",
+          "elapsed_seconds": 4.43239498299954,
+          "simulation_peak_rss_kib": 135172,
+          "gnu_time_maximum_rss_kib": 135172,
+          "compile_reused": true,
+          "checked_raw": 24576,
+          "checked_windows": 6144,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-expiry",
+          "elapsed_seconds": 4.793391087994678,
+          "simulation_peak_rss_kib": 133700,
+          "gnu_time_maximum_rss_kib": 133700,
+          "compile_reused": true,
+          "checked_raw": 24576,
+          "checked_windows": 8190,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-deep",
+          "elapsed_seconds": 18.16924723399279,
+          "simulation_peak_rss_kib": 217356,
+          "gnu_time_maximum_rss_kib": 217356,
+          "compile_reused": true,
+          "checked_raw": 240000,
+          "checked_windows": 120000,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-deep",
+          "elapsed_seconds": 23.37551386799896,
+          "simulation_peak_rss_kib": 229232,
+          "gnu_time_maximum_rss_kib": 229232,
+          "compile_reused": true,
+          "checked_raw": 240000,
+          "checked_windows": 239997,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-reset",
+          "elapsed_seconds": 18.76293578601326,
+          "simulation_peak_rss_kib": 193628,
+          "gnu_time_maximum_rss_kib": 193628,
+          "compile_reused": true,
+          "checked_raw": 240000,
+          "checked_windows": 38665,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-cycle-reset",
+          "elapsed_seconds": 24.998236113999155,
+          "simulation_peak_rss_kib": 181608,
+          "gnu_time_maximum_rss_kib": 181608,
+          "compile_reused": true,
+          "checked_raw": 240000,
+          "checked_windows": 77330,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-pending",
+          "elapsed_seconds": 2.8294329890049994,
+          "simulation_peak_rss_kib": 134032,
+          "gnu_time_maximum_rss_kib": 134032,
+          "compile_reused": true,
+          "checked_raw": 7,
+          "checked_windows": 30003,
+          "difference_count": 0
+        },
+        {
+          "name": "history-revised-ns-overrun",
+          "elapsed_seconds": 19.184593911995762,
+          "simulation_peak_rss_kib": 219080,
+          "gnu_time_maximum_rss_kib": 219080,
+          "compile_reused": true,
+          "checked_raw": 240000,
+          "checked_windows": 120000,
+          "difference_count": 0
+        }
+      ],
+      "checked_raw": 32957319,
+      "checked_windows": 21756261
+    }
+  ]
+}

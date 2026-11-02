@@ -1,0 +1,23 @@
+Chronologic VCS simulator copyright 1991-2024
+Contains Synopsys proprietary information.
+Compiler version W-2024.09-SP1_Full64; Runtime version W-2024.09-SP1_Full64;  Nov  2 11:29 2026
+BW_ANALYSIS_CONFIG scope_kind=0 scope=shared.# bucket[2] basis=0 W=1 S=1 Q=10 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=1 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=1 scope=shared.# bucket[2] basis=0 W=1 S=1 Q=10 episode_enabled=1 phase_enabled=1 strategy=PAIR6_R2 N=6 K=2 min_span=1 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_ANALYSIS_CONFIG scope_kind=0 scope=disabled."quote\#path basis=0 W=1 S=1 Q=0 episode_enabled=0 phase_enabled=0 strategy=PAIR6_R2 N=6 K=2 min_span=1 scale=SIX_WINDOW_MEAN steady_enter_rel=0.04 steady_exit_rel=0.08 raw_rms_enter_rel=0.10 raw_rms_exit_rel=0.12 trend_rel=0.10 trend_rms_rel=0.025 absolute=0
+BW_READY time_ticks=1 points=2 groups=1 budget_ticks=40000000000 timescale=1fs deadline_ticks=40000000001
+TB_PASS checker_empty
+$finish called from file "/home/eda/bw-mon-ticket62-candidate-source/tests/tb_checker_empty.sv", line 20.
+BW_END_AUDIT ready=1 owners=7 pending_responsibilities=0 time_ticks=2
+BW_DEFAULT_CHECK scope_kind=0 scope=shared.# bucket[2] epoch=0 episode=0 platform=0 metric=sustained_variation basis=0 W=1 S=1 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_POINT_TERMINAL scope=shared.# bucket[2] state=UNOBSERVED expected=0 captured=0 inflight=0 published=0 accepted=0 input_generation=0 closed_generation=0 time_ticks=2 stage=NONE
+BW_DEFAULT_CHECK scope_kind=1 scope=shared.# bucket[2] epoch=0 episode=0 platform=0 metric=sustained_variation basis=0 W=1 S=1 platform_start_ticks=0 platform_end_ticks=0 check_start_ticks=0 check_end_ticks=0 handoff_platform=0 reference_valid=0 reference_count=0 reference_seqs= reference_first_seq=0 reference_last_seq=0 reference_first_u=0 reference_last_u=0 reference_span=0 B=UNAVAILABLE steady_bandwidth_gbps=UNAVAILABLE threshold_pct=5 threshold_gbps=UNAVAILABLE max_deviation_gbps=UNAVAILABLE max_deviation_pct=UNAVAILABLE samples=0 first_u=0 last_u=0 over_runs=0 longest_count=0 longest_first_u=0 longest_last_u=0 longest_span=0 exclusion_count=0 quality_incomplete=1 episode_status=x episode_reason=DURATION_UNAVAILABLE platform_bytes_complete=0 platform_start_known=0 platform_end_known=0 episode_bytes_complete=0 episode_first_known=0 episode_last_known=0 episode_tail_known=0 conclusion=WARNING reason=NO_EPISODE
+BW_GROUP_TERMINAL scope=shared.# bucket[2] state=UNOBSERVED expected=0 captured=0 held=0 published=0 accepted=0 acked=0 reset_expected=1 reset_captured=1 input_generation=0 closed_generation=0 time_ticks=2 stage=NONE
+BW_SUMMARY status=WARNING pass=0 fail=0 warning=2 scopes_done=3 scopes_expected=3
+BW_POINT_TERMINAL scope=disabled."quote\#path state=UNOBSERVED expected=0 captured=0 inflight=0 published=0 accepted=0 input_generation=0 closed_generation=0 time_ticks=2 stage=NONE
+$finish at simulation time                    2
+BW_REPORT_COMPLETE audit=1 roles=7/7 terminals=3/3 summary=1 integrity=COMPLETE performance=WARNING time_ticks=2
+BW_SETTLE_STATS rounds=4 audits=3 watchers=3 edges=0 dirty_audits=3 deferred=7
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 2 fs
+CPU Time:      0.110 seconds;       Data structure size:   0.3Mb
+Mon Nov  2 11:29:51 2026

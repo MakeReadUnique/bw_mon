@@ -1,0 +1,6 @@
+Command Line: /home/eda/app/synopsys/verdi/W-2024.09-SP1/platform/LINUXAMD64/bin/fsdb2vcd /home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/waves.fsdb -o /home/eda/bw-mon-ticket62-candidate-runs/verdi-applicability/alternating/current-1.vcd -sv -seq -keep_last_time -s /tb_checker_default/members[0]/point -level 1
+uname(Linux localhost.localdomain 4.18.0-553.89.1.el8_10.x86_64 #1 SMP Fri Dec 12 10:42:53 UTC 2025 x86_64)
+Load signals (0)-(40000002) time 0.006619 0.004749 0.006785 delta 49872896 49872896 total 301420544 301420544
+Write signals (0)-(40000002) time 0.000610 0.000573 0.000000 delta 0 0 total 301420544 301420544
+Unload (0)-(40000002) time 0.000074 0.000074 0.000000 delta 0 0 total 301420544 301420544
+au time 0.057429 0.009486 0.014239 delta 44249088 44249088 total 239161344 239161344

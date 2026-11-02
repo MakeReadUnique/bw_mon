@@ -1,0 +1,2 @@
+PASS cfg_explicit_max_stride: /home/eda/bw-mon-ticket62-candidate-source/.build/tests/tb_cfg_explicit_max/cfg_explicit_max_stride.log
+1/1 contract cases passed

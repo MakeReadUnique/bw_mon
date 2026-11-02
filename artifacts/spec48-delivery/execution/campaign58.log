@@ -1,0 +1,1 @@
+CAMPAIGN58 PASS seconds=152.629 stages={'compile': 84.23258254400571, 'simulation': 67.93130429701705, 'verify': 0.30830574000719935} evidence=/home/eda/bw-mon-ticket62-candidate-runs/campaign58

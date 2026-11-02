@@ -1,0 +1,105 @@
+                         Chronologic VCS (TM)
+       Version W-2024.09-SP1_Full64 -- Mon Nov  2 11:26:16 2026
+
+                    Copyright (c) 1991 - 2024 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_registry_types.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_slot_settlement.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_registry.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_transport.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_target_completion.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_completion.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_group_completion.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_end_protocol.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_pkg.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_check_report.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_stage_ownership.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_check_report.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_default_check.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_check_report.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_debug_hints.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_scope_runtime.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_debug_hints.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_reset_capture.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_debug_hints.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_group_mon.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_scope_runtime.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_group_mon.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_analysis_public.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_group_mon.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_reset_capture.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_group_mon.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_hint_duration.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_scope_runtime.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_hint_duration.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_reset_capture.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_hint_duration.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_mon_setup.sv'
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_mon.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_scope_runtime.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_mon.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_analysis_public.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_mon.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_reset_capture.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_mon.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_recorder.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_scope_runtime.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_recorder.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_reset_capture.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_point_recorder.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_stats_core.sv'
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_scope_runtime.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_stats_core.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_reset_capture.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_stats_core.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_history.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_stats_core.sv'.
+Parsing included file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_variation_history.svh'.
+Back to file '/home/eda/bw-mon-ticket62-candidate-source/rtl/bw_stats_core.sv'.
+Parsing design file '/home/eda/bw-mon-ticket62-candidate-source/examples/bw_mon_quickstart.sv'
+Top Level Modules:
+       bw_mon_quickstart
+TimeScale is 1 fs / 1 fs
+Starting vcs inline pass...
+11 modules and 0 UDP read.
+recompiling package vcs_paramclassrepository
+recompiling package _vcs_DPI_package
+recompiling package bw_mon_pkg
+recompiling package bw_check_report_pkg
+recompiling module bw_debug_hints
+recompiling module bw_point_mon
+recompiling module bw_point_recorder
+recompiling module bw_point_record_scheduler
+recompiling module bw_stats_core
+recompiling module bw_stats_core_scheduler
+recompiling module bw_mon_quickstart
+All of 11 modules done
+rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+gcc -w  -pipe -fPIC -I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include -O -I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include    -c /home/eda/bw-mon-ticket62-candidate-source/rtl/bw_end_coordinator.c
+gcc -w  -pipe -fPIC -I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include -O -I/home/eda/app/synopsys/vcs/W-2024.09-SP1/include    -c /home/eda/bw-mon-ticket62-candidate-source/rtl/bw_slot_settlement.c
+if [ -x /home/eda/bw-mon-ticket62-candidate-runs/examples/bw_mon_quickstart/simv ]; then chmod a-x /home/eda/bw-mon-ticket62-candidate-runs/examples/bw_mon_quickstart/simv; fi
+g++  -o /home/eda/bw-mon-ticket62-candidate-runs/examples/bw_mon_quickstart/simv      -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib -L/home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1 bw_end_coordinator.o bw_slot_settlement.o   objs/amcQw_d.o   _862143_archive_1.so   SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o            -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o  _vcs_pli_stub_.o   /home/eda/app/synopsys/vcs/W-2024.09-SP1/linux64/lib/vcs_save_restore_new.o /home/eda/app/synopsys/verdi/W-2024.09-SP1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
+/home/eda/bw-mon-ticket62-candidate-runs/examples/bw_mon_quickstart/simv up to date
+CPU time: 1.601 seconds to compile + .294 seconds to elab + .377 seconds to link

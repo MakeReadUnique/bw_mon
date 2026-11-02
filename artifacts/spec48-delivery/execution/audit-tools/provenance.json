@@ -1,0 +1,9 @@
+{
+  "tool_commit": "13a652ac9e974026a5d4eb45cb325d41c6db00d7",
+  "files_sha256": {
+    "tools/spec48_audit.py": "24a486cf548ea4a605f724c19c79c7a304fcb028de71b1505588b25af2bda392",
+    "tools/test_spec48_audit.py": "de7d0c9cc612a9a97ca3c12e3da47d8de8b46f707d3aa872521855c85bb500d8"
+  },
+  "runtime_snapshot": "154d45f2ba32242cd728c9996157cee296491fa2",
+  "scope": "Post-run independent evidence audit; no product or consumed runtime input changed."
+}

@@ -1,0 +1,50 @@
+python3 tools/test_evidence.py
+PASS current measured source: 1 files
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.113s
+
+OK
+python3 tools/test_spec48_audit.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
+python3 tools/evidence.py restore waveforms
+PASS restore waveforms: 970 files -> /home/eda/bw-mon-ticket62-candidate-source
+python3 tools/evidence.py restore legacy-tests
+PASS restore legacy-tests: 47 files -> /home/eda/bw-mon-ticket62-candidate-source
+python3 tests/acceptance/test_publish.py
+test_analog_verifier_accepts_review_refresh_but_rejects_changed_evidence (__main__.PublishReviewCLI) ... ok
+test_changed_asset_clears_current_review_without_rewriting_evidence (__main__.PublishReviewCLI) ... ok
+test_rejects_wrong_consumed_c_or_local_header_metadata (__main__.PublishReviewCLI) ... ok
+test_rejects_wrong_sdk_header_hash_without_editing_the_sdk (__main__.PublishReviewCLI) ... ok
+test_republish_preserves_named_review_and_renders_current_global_status (__main__.PublishReviewCLI) ... ok
+test_review_of_external_view_is_invalidated_when_that_view_changes (__main__.PublishReviewCLI) ... ok
+test_third_publication_retains_one_archived_review_while_current_is_pending (__main__.PublishReviewCLI) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 78.256s
+
+OK
+python3 -m unittest discover -s tests/scale -p 'test_*.py'
+.PASS receipt-unit-probe /tmp/tmpwdtgt43x/runs/receipt-unit-probe/20261102T162808835162-871550/manifest.json
+PASS receipt-unit-probe /tmp/tmpwdtgt43x/runs/receipt-unit-probe/20261102T162809855630-871550/manifest.json
+...............................................................
+----------------------------------------------------------------------
+Ran 64 tests in 10.024s
+
+OK
+python3 -m unittest discover -s tests/campaign58 -p 'test_*.py'
+....................
+----------------------------------------------------------------------
+Ran 20 tests in 0.020s
+
+OK
+python3 -m unittest discover -s tests/verdi61 -p 'test_*.py'
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK

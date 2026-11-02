@@ -1,0 +1,803 @@
+{
+  "note": "Historical, failed, interrupted or diagnostic runs retain their actual identities and states. Prefix probes were intentionally killed and provide no acceptance PASS.",
+  "files": [
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/suite-full-cold.json",
+      "archived": "v1/suite-full-cold.json.gz",
+      "original_sha256": "796148a4c27d59c077cb78eb547af4f1db4dfb24cc54aa23c083e27f3335909d",
+      "state": "INCOMPLETE",
+      "checked_pass": false,
+      "elapsed_seconds": 1767.6489731940019,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-ns/20261102T090545139779-478834/manifest.json",
+      "archived": "v1/topology-max-ns/20261102T090545139779-478834-manifest.json.gz",
+      "original_sha256": "7f33ce7b50dbe4752bb547e243b5bf98cd7221e5278854f7585c3650b6c64c23"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-ns/20261102T090545139779-478834/simulation.time-v.txt",
+      "archived": "v1/topology-max-ns/20261102T090545139779-478834-simulation.time-v.txt.gz",
+      "original_sha256": "4b1d8e6a9134a8ad47685bb77c1292adfe246325eae6ef6423a75e1d87a56ed8"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-ns/20261102T090545139779-478834/verification.time-v.txt",
+      "archived": "v1/topology-max-ns/20261102T090545139779-478834-verification.time-v.txt.gz",
+      "original_sha256": "c5f805810dd04e877997e1bb5518ae7a96e91271575a426f65ac4ad429a01190"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-cycle/20261102T091446261303-478834/manifest.json",
+      "archived": "v1/topology-max-cycle/20261102T091446261303-478834-manifest.json.gz",
+      "original_sha256": "a496c34c51c6b9275968f2ec4514ad6dd03ee798533255ca7dde7c4e9ce0e761"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-cycle/20261102T091446261303-478834/simulation.time-v.txt",
+      "archived": "v1/topology-max-cycle/20261102T091446261303-478834-simulation.time-v.txt.gz",
+      "original_sha256": "66cd396414669da53270d6275bd124d8d30d49946427980a9059ffcfc7630597"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-cycle/20261102T091446261303-478834/verification.time-v.txt",
+      "archived": "v1/topology-max-cycle/20261102T091446261303-478834-verification.time-v.txt.gz",
+      "original_sha256": "2afd078a0fe874c22eb5256de0f5b24853de466b8362d8eeb066f6118f369c0e"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-cancel-ns/20261102T092438002515-478834/manifest.json",
+      "archived": "v1/topology-max-cancel-ns/20261102T092438002515-478834-manifest.json.gz",
+      "original_sha256": "68ec95c001481c48b41b5855eacca70181bc6cd0149a4cef9162b7636f3ce2da"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/runs/topology-max-cancel-ns/20261102T092438002515-478834/simulation.time-v.txt",
+      "archived": "v1/topology-max-cancel-ns/20261102T092438002515-478834-simulation.time-v.txt.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/suite-quick-cold.json",
+      "archived": "v1/suite-quick-cold.json.gz",
+      "original_sha256": "2223bf634833e45c5bc5bcdd81c830e79fdf42448adb71d39e8754b1651e04c0",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 98.90492528199684,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw_cal/.build/ticket62/qualification/suite-quick-hot.json",
+      "archived": "v1/suite-quick-hot.json.gz",
+      "original_sha256": "108c89d8204a55e0ba1e1910cbb4d470ee4776fa41173ae5e30c5016688f60f8",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 28.653931455999555,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/suite-full-cold.json",
+      "archived": "v2/suite-full-cold.json.gz",
+      "original_sha256": "529474b8f1a358ad4d3457ee1a84d61eddd16fb3839ab06caa6551cae6968f82",
+      "state": "INCOMPLETE",
+      "checked_pass": false,
+      "elapsed_seconds": 834.2113671469997,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/runs/topology-max-ns/20261102T100452000479-553928/manifest.json",
+      "archived": "v2/topology-max-ns/20261102T100452000479-553928-manifest.json.gz",
+      "original_sha256": "e4d439aa02ca94aa42e4b84ce7a66e125a91bcca005e3762f6f8cb972eb3d678"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/runs/topology-max-ns/20261102T100452000479-553928/simulation.time-v.txt",
+      "archived": "v2/topology-max-ns/20261102T100452000479-553928-simulation.time-v.txt.gz",
+      "original_sha256": "4b50fd91cfa594e066e192c8946c84c8c3c0037b21f1ba391d5a2681c0c6d861"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/runs/topology-max-ns/20261102T100452000479-553928/verification.time-v.txt",
+      "archived": "v2/topology-max-ns/20261102T100452000479-553928-verification.time-v.txt.gz",
+      "original_sha256": "92459cb30252e682c822c943b864a767f255434c7d81216cd96bd3759287ec6c"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/runs/topology-max-cycle/20261102T101428829028-553928/manifest.json",
+      "archived": "v2/topology-max-cycle/20261102T101428829028-553928-manifest.json.gz",
+      "original_sha256": "4e4c6bdbe602373fd737518b94d6a0abf7dbc6efc113b17c6c612b5ad75b5b97"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/runs/topology-max-cycle/20261102T101428829028-553928/simulation.time-v.txt",
+      "archived": "v2/topology-max-cycle/20261102T101428829028-553928-simulation.time-v.txt.gz",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/suite-quick-cold.json",
+      "archived": "v2/suite-quick-cold.json.gz",
+      "original_sha256": "b43ae31a6739a5352d202d7cee1c1a32581f2b21ca33269ffc966fdc9a606996",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 96.22433812200325,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-runs/revised/suite-quick-hot.json",
+      "archived": "v2/suite-quick-hot.json.gz",
+      "original_sha256": "bb2c683d619f2df6fe8f649c4c347707e2992e53d2eb20ebe77c616dd7525d7f",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 37.115256514000066,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/suite-full-cold.json",
+      "archived": "v3/suite-full-cold.json.gz",
+      "original_sha256": "ef394d9a4d5b1d3f1cde0a30e67739fc54111bb607e5e2d1d8af3c4b745a0c8f",
+      "state": "INCOMPLETE",
+      "checked_pass": false,
+      "elapsed_seconds": 1800.2709745059983,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-ns/20261102T110516859970-605679/manifest.json",
+      "archived": "v3/topology-max-ns/20261102T110516859970-605679-manifest.json.gz",
+      "original_sha256": "a4c9c0f2e7d7b9791c3a8ff25d418585f49394832d553ba24b14433c3dc90d36"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-ns/20261102T110516859970-605679/simulation.time-v.txt",
+      "archived": "v3/topology-max-ns/20261102T110516859970-605679-simulation.time-v.txt.gz",
+      "original_sha256": "83bbd4c599bf66f13601a50b56585b12829803bf5fc802afe298545cddd4f23d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-ns/20261102T110516859970-605679/verification.time-v.txt",
+      "archived": "v3/topology-max-ns/20261102T110516859970-605679-verification.time-v.txt.gz",
+      "original_sha256": "b1618eb2718a8a69da8e5a6b1d0e95471666a0434dcdf84262b8dae424d90903"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-cycle/20261102T111309357038-605679/manifest.json",
+      "archived": "v3/topology-max-cycle/20261102T111309357038-605679-manifest.json.gz",
+      "original_sha256": "55fafc9080126cd4b704b9abc92441231503f6781ce31c003a8a684dc846e3ce"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-cycle/20261102T111309357038-605679/simulation.time-v.txt",
+      "archived": "v3/topology-max-cycle/20261102T111309357038-605679-simulation.time-v.txt.gz",
+      "original_sha256": "fe21d13bd1b32e1e08f06ebe34679a79a5cf5e2e86556693a518636d1d62c346"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-cycle/20261102T111309357038-605679/verification.time-v.txt",
+      "archived": "v3/topology-max-cycle/20261102T111309357038-605679-verification.time-v.txt.gz",
+      "original_sha256": "e2697bfb7db359a4229cbfe5513eb8d6c1f69152814067a4b63ad5d60e852d69"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-cancel-ns/20261102T112141626309-605679/manifest.json",
+      "archived": "v3/topology-max-cancel-ns/20261102T112141626309-605679-manifest.json.gz",
+      "original_sha256": "01ddabbe139131f903477d9abc45f75163afb895d0b3f9270a725fd0deb161f3"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-cancel-ns/20261102T112141626309-605679/simulation.time-v.txt",
+      "archived": "v3/topology-max-cancel-ns/20261102T112141626309-605679-simulation.time-v.txt.gz",
+      "original_sha256": "ffc5991c162de9f4d35b8efab2af17444f31eaad176ade8cb110060cbd006897"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/runs/topology-max-cancel-ns/20261102T112141626309-605679/verification.time-v.txt",
+      "archived": "v3/topology-max-cancel-ns/20261102T112141626309-605679-verification.time-v.txt.gz",
+      "original_sha256": "ebbe99b89fc13bdfb470c959fccf42b14a9810be1aaeb325f8b1e2e857bd0072"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/suite-quick-cold.json",
+      "archived": "v3/suite-quick-cold.json.gz",
+      "original_sha256": "630013755734f894e353525b6d3b907e0943ea58cd133292bd4866d8c988f31b",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 92.3133671770047,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-final-runs/revised/suite-quick-hot.json",
+      "archived": "v3/suite-quick-hot.json.gz",
+      "original_sha256": "1d9bf9f64afe51b3f862ef61eea5325362376cf8b14393a3434690a5e90deb67",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 39.11182410400215,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/suite-full-cold.json",
+      "archived": "v4/suite-full-cold.json.gz",
+      "original_sha256": "d8d3a7276a23ff17b5e2870cab7da4b3b50f9551e6b60afe5e0061b8509d6e49",
+      "state": "INCOMPLETE",
+      "checked_pass": false,
+      "elapsed_seconds": 1800.338737936996,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-ns/20261102T125821459340-725067/manifest.json",
+      "archived": "v4/topology-max-ns/20261102T125821459340-725067-manifest.json.gz",
+      "original_sha256": "e9ba83f3f5a0372a7d094c7a8200e98b1995ac037e715026d3a4c596ed4ff21d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-ns/20261102T125821459340-725067/simulation.time-v.txt",
+      "archived": "v4/topology-max-ns/20261102T125821459340-725067-simulation.time-v.txt.gz",
+      "original_sha256": "ed4c7185a8f6d6890dc3e7636455c7dc29413f7d0ab5bec6071a93fdca09247f"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-ns/20261102T125821459340-725067/verification.time-v.txt",
+      "archived": "v4/topology-max-ns/20261102T125821459340-725067-verification.time-v.txt.gz",
+      "original_sha256": "7c20bdce072e1ebb77121edc850f50358004b89f6139b544aa29db23c1b0bf23"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-cycle/20261102T130646729607-725067/manifest.json",
+      "archived": "v4/topology-max-cycle/20261102T130646729607-725067-manifest.json.gz",
+      "original_sha256": "5f5c1fd669f8cec8cdf9579ffd2fcb6bfcaf216767d0b4577f01c687f520e86c"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-cycle/20261102T130646729607-725067/simulation.time-v.txt",
+      "archived": "v4/topology-max-cycle/20261102T130646729607-725067-simulation.time-v.txt.gz",
+      "original_sha256": "64666100829ed53c47e5b41b8ad27cb6bee982481b21245fefa4cb9a5810e53e"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-cycle/20261102T130646729607-725067/verification.time-v.txt",
+      "archived": "v4/topology-max-cycle/20261102T130646729607-725067-verification.time-v.txt.gz",
+      "original_sha256": "8981560a1a68080bb55159185e2cfb85b535a0074e8f686dcd75cec26da9678d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-cancel-ns/20261102T131556550600-725067/manifest.json",
+      "archived": "v4/topology-max-cancel-ns/20261102T131556550600-725067-manifest.json.gz",
+      "original_sha256": "726db35b887e4264f3e9c750dcb5d035182e65861edbcfb3143fa0594d5d4461"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-cancel-ns/20261102T131556550600-725067/simulation.time-v.txt",
+      "archived": "v4/topology-max-cancel-ns/20261102T131556550600-725067-simulation.time-v.txt.gz",
+      "original_sha256": "5011096a98cb12368fe268703142477af721ba8c78198aa50e146461c4dba498"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/runs/topology-max-cancel-ns/20261102T131556550600-725067/verification.time-v.txt",
+      "archived": "v4/topology-max-cancel-ns/20261102T131556550600-725067-verification.time-v.txt.gz",
+      "original_sha256": "4b63f8b8aa4433e51a3fc366b5a64ef8991d32eeea1f6501ba243cd6a5b1fe65"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/suite-quick-cold.json",
+      "archived": "v4/suite-quick-cold.json.gz",
+      "original_sha256": "435584319624026f3f4887d2c763f8e09255457e148b289cc75d895be4234217",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 107.35831666099693,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-delivery-runs/revised/suite-quick-hot.json",
+      "archived": "v4/suite-quick-hot.json.gz",
+      "original_sha256": "ac49a4adc8d00d32b5cc7488cb661c03896cd30aee43a76b331a879feba5c0a0",
+      "state": "VERIFIED",
+      "checked_pass": true,
+      "elapsed_seconds": 38.209689755996806,
+      "scope": "prior attempt only; never substitutes for final source"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/delivery/quick-cold.log",
+      "archived": "delivery/quick-cold.log.gz",
+      "original_sha256": "16ee1b55946d65af934086a468f22b21c16a90343c13e5f3ce3306241a3736cc"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/delivery/results.json",
+      "archived": "delivery/results.json.gz",
+      "original_sha256": "5e1419d829508cd64b20cb0233a04e64462af1df2969177b64bafce556214a76"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/delivery/quick-hot.log",
+      "archived": "delivery/quick-hot.log.gz",
+      "original_sha256": "93206b8e42e7530519df90b2b3c3e3d74e47fd7ee4bc8dfedc1723aedaaeff34"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/delivery/full-cold.log",
+      "archived": "delivery/full-cold.log.gz",
+      "original_sha256": "4852275463acf4aa2905bfa500e15649d480b0bf63ee5b6b750302703897e784"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/acceptance.log",
+      "archived": "release/acceptance.log.gz",
+      "original_sha256": "b9641036c4e1473bb5b34a17a59e9530acc40b0020f01cfd1366cd5936a3628b"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/results.json",
+      "archived": "release/results.json.gz",
+      "original_sha256": "dfa9622e343072e9059c0fb90e6409c28303c6fe46e92ea1b3c466b36b1c4c8c"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/bw_mon_quickstart-compile.log",
+      "archived": "release/bw_mon_quickstart-compile.log.gz",
+      "original_sha256": "bc8d1e6ae70419a53c2be715516102c920ec2a882cb3e9edf3c4f477889f1aa2"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/bw_mon_quickstart.log",
+      "archived": "release/bw_mon_quickstart.log.gz",
+      "original_sha256": "08227535e9817d4f2ca0155098b1328ea7adbb228a343207395da368a20908cb"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/bw_mon_grouped-compile.log",
+      "archived": "release/bw_mon_grouped-compile.log.gz",
+      "original_sha256": "43cdee78aa9910a7e6f2ebf59bc028a8eb00827cf73e07490655515f5d55eae7"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/bw_mon_grouped.log",
+      "archived": "release/bw_mon_grouped.log.gz",
+      "original_sha256": "da0051448151bd3aa54805a94882057eb5a6bd19161c348d796ca994d3be5433"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/release/verdi-applicability.log",
+      "archived": "release/verdi-applicability.log.gz",
+      "original_sha256": "219480def0467339b160748e349d38bbfa1026ca84d621c51a8b443062b989b0"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/collector-regressions.json",
+      "archived": "diagnostics/collector-regressions.json.gz",
+      "original_sha256": "099bcb25f48812bd8484b5cf7c8cf41e812f9bf23bfe7df2471db15044436245"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/collector-regressions.log",
+      "archived": "diagnostics/collector-regressions.log.gz",
+      "original_sha256": "a9e181402ecae76c8e08541bcd45ec5266e4eac251876a6af57de3f4625f057d"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/gate-after-publication-red.log",
+      "archived": "diagnostics/gate-after-publication-red.log.gz",
+      "original_sha256": "146ac82548788d51d0ee7cd0f66ece8f9f814b5aa87f0ac161f471d4eacddcb9"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/gate-after-publication-green.log",
+      "archived": "diagnostics/gate-after-publication-green.log.gz",
+      "original_sha256": "8b53219cfd31cd427bb70c69e3f035c2d126d74b9d938e1226b2b57eb5601d2e"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/verdi-launcher-fix.log",
+      "archived": "diagnostics/verdi-launcher-fix.log.gz",
+      "original_sha256": "24b25f30ea02a617774b7b22d81dc2d302ad2ad4ca3199594c28313a5835c387"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/verdi-strings.log",
+      "archived": "diagnostics/verdi-strings.log.gz",
+      "original_sha256": "7e29d2f9e7b63b28314163489bae995be9ea249cf6a7930617209c06c212e8a7"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/results.json",
+      "archived": "diagnostics/peek/results.json.gz",
+      "original_sha256": "9b090953d86e7452a4cf53b9d4b8f18f6fdf3c05681a1dc7b35027258adbe73d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/compile-command.json",
+      "archived": "diagnostics/peek/compile-command.json.gz",
+      "original_sha256": "5177d47ffc43a2fa1c3aaefa3989b802da539e0e084c18b141df56c6f48245a8"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/peek_probe.py",
+      "archived": "diagnostics/peek/peek_probe.py.gz",
+      "original_sha256": "24162c4e1dd83726fad1ecc9c7a0aede10d59d0e37eca0f99420d59a9c4b2426"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_analysis_public.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_analysis_public.svh.gz",
+      "original_sha256": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_check_report.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_check_report.sv.gz",
+      "original_sha256": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_debug_hints.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_debug_hints.sv.gz",
+      "original_sha256": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_default_check.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_default_check.svh.gz",
+      "original_sha256": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_end_coordinator.c",
+      "archived": "diagnostics/peek/source/rtl/bw_end_coordinator.c.gz",
+      "original_sha256": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_end_protocol.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_end_protocol.svh.gz",
+      "original_sha256": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_group_completion.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_group_completion.svh.gz",
+      "original_sha256": "fb3256199e7f9009b0619e0286990c2ea868a5e43c9b66e4bbeacb574276bcfd"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_group_mon.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_group_mon.sv.gz",
+      "original_sha256": "41b63fea12a7ae0310ea747f58397c97b8d5a546f2ccf76c87218cb9da6f39ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_hint_duration.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_hint_duration.sv.gz",
+      "original_sha256": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_history.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_history.svh.gz",
+      "original_sha256": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_mon_pkg.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_mon_pkg.sv.gz",
+      "original_sha256": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_mon_registry.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_mon_registry.svh.gz",
+      "original_sha256": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_mon_registry_types.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_mon_registry_types.svh.gz",
+      "original_sha256": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_mon_setup.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_mon_setup.sv.gz",
+      "original_sha256": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_mon_transport.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_mon_transport.svh.gz",
+      "original_sha256": "4cfee12e44e6764fe46493203ed6955b0546dc81e77cd66b70ae2d340e31a32d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_point_completion.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_point_completion.svh.gz",
+      "original_sha256": "af0262c9630d2efd805261e433e5718acaa6acd63906bc93ac7d4f9ae1ee2603"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_point_mon.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_point_mon.sv.gz",
+      "original_sha256": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_point_recorder.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_point_recorder.sv.gz",
+      "original_sha256": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_reset_capture.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_reset_capture.svh.gz",
+      "original_sha256": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_scope_runtime.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_scope_runtime.svh.gz",
+      "original_sha256": "9f090aa541de523e88c3794614c4c7b954bc80e4504d5ca404626d987893b5ae"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_slot_settlement.c",
+      "archived": "diagnostics/peek/source/rtl/bw_slot_settlement.c.gz",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_slot_settlement.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_slot_settlement.svh.gz",
+      "original_sha256": "1bb538a2968752d0cb4d19e69e8bbcc45898d9c306ccb988a817da86b468ff76"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_stage_ownership.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_stage_ownership.svh.gz",
+      "original_sha256": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_stats_core.sv",
+      "archived": "diagnostics/peek/source/rtl/bw_stats_core.sv.gz",
+      "original_sha256": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_target_completion.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_target_completion.svh.gz",
+      "original_sha256": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-peek-probe/source/rtl/bw_variation_history.svh",
+      "archived": "diagnostics/peek/source/rtl/bw_variation_history.svh.gz",
+      "original_sha256": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/results.json",
+      "archived": "diagnostics/grant/results.json.gz",
+      "original_sha256": "f6aec25fda19e20522fbeca443b0064fa328082307e228af176fb2473af0d5e5"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/compile-command.json",
+      "archived": "diagnostics/grant/compile-command.json.gz",
+      "original_sha256": "c287391bfa50ba068c46ea53442aaa8ecd350e20fbc9931cce22d4987cadc31f"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/grant_probe.py",
+      "archived": "diagnostics/grant/grant_probe.py.gz",
+      "original_sha256": "49d406ac2395003cd07ef5c4b8cd0f945d3faf1c237aaf2758cdd40dabaab4d1"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_analysis_public.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_analysis_public.svh.gz",
+      "original_sha256": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_check_report.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_check_report.sv.gz",
+      "original_sha256": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_debug_hints.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_debug_hints.sv.gz",
+      "original_sha256": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_default_check.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_default_check.svh.gz",
+      "original_sha256": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_end_coordinator.c",
+      "archived": "diagnostics/grant/source/rtl/bw_end_coordinator.c.gz",
+      "original_sha256": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_end_protocol.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_end_protocol.svh.gz",
+      "original_sha256": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_group_completion.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_group_completion.svh.gz",
+      "original_sha256": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_group_mon.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_group_mon.sv.gz",
+      "original_sha256": "41b63fea12a7ae0310ea747f58397c97b8d5a546f2ccf76c87218cb9da6f39ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_hint_duration.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_hint_duration.sv.gz",
+      "original_sha256": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_history.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_history.svh.gz",
+      "original_sha256": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_mon_pkg.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_mon_pkg.sv.gz",
+      "original_sha256": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_mon_registry.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_mon_registry.svh.gz",
+      "original_sha256": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_mon_registry_types.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_mon_registry_types.svh.gz",
+      "original_sha256": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_mon_setup.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_mon_setup.sv.gz",
+      "original_sha256": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_mon_transport.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_mon_transport.svh.gz",
+      "original_sha256": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_point_completion.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_point_completion.svh.gz",
+      "original_sha256": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_point_mon.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_point_mon.sv.gz",
+      "original_sha256": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_point_recorder.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_point_recorder.sv.gz",
+      "original_sha256": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_reset_capture.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_reset_capture.svh.gz",
+      "original_sha256": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_scope_runtime.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_scope_runtime.svh.gz",
+      "original_sha256": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_slot_settlement.c",
+      "archived": "diagnostics/grant/source/rtl/bw_slot_settlement.c.gz",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_slot_settlement.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_slot_settlement.svh.gz",
+      "original_sha256": "70eb78d3dce98de4ffddebf768355fd3d1103bd49e15e3871150e535619e9ccb"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_stage_ownership.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_stage_ownership.svh.gz",
+      "original_sha256": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_stats_core.sv",
+      "archived": "diagnostics/grant/source/rtl/bw_stats_core.sv.gz",
+      "original_sha256": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_target_completion.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_target_completion.svh.gz",
+      "original_sha256": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-grant-probe/source/rtl/bw_variation_history.svh",
+      "archived": "diagnostics/grant/source/rtl/bw_variation_history.svh.gz",
+      "original_sha256": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/results.json",
+      "archived": "diagnostics/collector/results.json.gz",
+      "original_sha256": "c0e5432747762c4bc07ea2fec4d9bdde23c69667a59020dea362b311f673f2a6"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/compile-command.json",
+      "archived": "diagnostics/collector/compile-command.json.gz",
+      "original_sha256": "d28d606a8e35670c6717212a5344d9f3590861ed8722a2447332c68d8b345998"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/collector_probe.py",
+      "archived": "diagnostics/collector/collector_probe.py.gz",
+      "original_sha256": "f391fad2cbf4938bdd16db69a0efa94d69f76162b25843d93d17d70b5c53cb31"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_analysis_public.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_analysis_public.svh.gz",
+      "original_sha256": "b3ebf7941c158bc4111cb4b128fe0a38fe0b718e335f4cd804f8009e559e29b3"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_check_report.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_check_report.sv.gz",
+      "original_sha256": "f00052aca36153d8f497a20ce0d7d8629da0cae43b131e78ca765715264925ba"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_debug_hints.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_debug_hints.sv.gz",
+      "original_sha256": "99bf4ca88dd67494fbf47335d845865414f065382991abb79801d36a0d311df2"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_default_check.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_default_check.svh.gz",
+      "original_sha256": "82a2d6f934df4018bf090c6935f47745a058234427ee433d56ffcfb194d02083"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_end_coordinator.c",
+      "archived": "diagnostics/collector/source/rtl/bw_end_coordinator.c.gz",
+      "original_sha256": "48c8fa1f07eec14b8fad6a88a01d0d5882a66aa6b6db42707b84c541eff53c97"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_end_protocol.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_end_protocol.svh.gz",
+      "original_sha256": "af4e27035b6377344f73893d63239ea861ee7b5d36cc1710a35e541190e60e5e"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_group_completion.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_group_completion.svh.gz",
+      "original_sha256": "6e534fbbdeef2817d706dfc810a27ca8367e58f957846049dc2ac0003f89c3c6"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_group_mon.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_group_mon.sv.gz",
+      "original_sha256": "052a0cf2a005ff9ba283b235e8f8325252d88393afa1ad40c0777ee4a7d1372d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_hint_duration.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_hint_duration.sv.gz",
+      "original_sha256": "f2baa0b8a36749cebd35afaa2bbac25f1b60422084e6596391be231e2f210a02"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_history.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_history.svh.gz",
+      "original_sha256": "91dca982ccaacfc782f6efcfe90b1f98f043ad08eee9108e1f2af1af40bb2269"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_mon_pkg.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_mon_pkg.sv.gz",
+      "original_sha256": "b03a07262c57eb8a042d56039b0eea759ca3215254447308df30784d5659b032"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_mon_registry.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_mon_registry.svh.gz",
+      "original_sha256": "dee7411f110946907bb16d61982c8eb1097c2e2e3791c244e1deba85922065ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_mon_registry_types.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_mon_registry_types.svh.gz",
+      "original_sha256": "70c574d7d148a0dce33e3bbf2baf93cab2ebc55473d2385af2015683655a8623"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_mon_setup.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_mon_setup.sv.gz",
+      "original_sha256": "6de97d4bd769d6793e5a12a9587df9fcc09a7f7c9cbf23fd196831fabf6f550d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_mon_transport.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_mon_transport.svh.gz",
+      "original_sha256": "555c7e86485af4fe947036fd72ec13537525aa529a857bb4619724c00a956a1d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_point_completion.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_point_completion.svh.gz",
+      "original_sha256": "95031b48093a5bd41fbde70f6656298fb37482a73b64fd9f5ad43552972b72ca"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_point_mon.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_point_mon.sv.gz",
+      "original_sha256": "aef385a187cddd56a38895f7eeaa8cec0f76283dbd1b5dfe9216122b74be5f12"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_point_recorder.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_point_recorder.sv.gz",
+      "original_sha256": "a71cf33be935d644b5ec14c7c25a83a4e616e889dfa507d976c3c3b79ec697df"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_reset_capture.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_reset_capture.svh.gz",
+      "original_sha256": "cfc859c54936a6bdef70e7ec06d18f9b562be90454dc59389f76dc6f2c6488ad"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_scope_runtime.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_scope_runtime.svh.gz",
+      "original_sha256": "216f71f50320d8212a3003f54dab338ec6b2ca41f8e61effe26902b34248ae3f"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_slot_settlement.c",
+      "archived": "diagnostics/collector/source/rtl/bw_slot_settlement.c.gz",
+      "original_sha256": "fb7155821ecbfe51f755eb8dab03d0c8b9cd2d04ec34723b49e24fd586e6966d"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_slot_settlement.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_slot_settlement.svh.gz",
+      "original_sha256": "70eb78d3dce98de4ffddebf768355fd3d1103bd49e15e3871150e535619e9ccb"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_stage_ownership.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_stage_ownership.svh.gz",
+      "original_sha256": "54e0a1a7c586b0cdbcb21a035efeedc0f1c45847b84abc53610fdc40e2785f94"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_stats_core.sv",
+      "archived": "diagnostics/collector/source/rtl/bw_stats_core.sv.gz",
+      "original_sha256": "db310206a82204d774663522b017ad4343cc45362ccf35a0810a02a02a5ea288"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_target_completion.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_target_completion.svh.gz",
+      "original_sha256": "1d0bfe29470f47c449bdee3f7d679531bfdfaab993fd200faf307fc7d98758e1"
+    },
+    {
+      "original_path": "/home/eda/bw-mon-ticket62-collector-probe/source/rtl/bw_variation_history.svh",
+      "archived": "diagnostics/collector/source/rtl/bw_variation_history.svh.gz",
+      "original_sha256": "42fd7eed984d45d7ba478e128067a96e0f4bce25eaa286802f54b53139012c52"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/original-checker-sensitivity.log",
+      "archived": "diagnostics/original-checker-sensitivity.log.gz",
+      "original_sha256": "d1207cbf87d520efa8173ccf31fbfbe0f6a3204484267cf7f732764180dc6af5"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/checker-green.log",
+      "archived": "diagnostics/checker-green.log.gz",
+      "original_sha256": "edcd09bd8531d8871c71bdce5ef3310153de2de0b92372166bfc615b895f4dc3"
+    },
+    {
+      "original_path": "/tmp/bw-mon-ticket62/terminal-green.log",
+      "archived": "diagnostics/terminal-green.log.gz",
+      "original_sha256": "9ede5e80d45470e2e637ab815b108a76874f2b205a3300f55337855122204eb5"
+    }
+  ]
+}
