@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run every contract once after timing qualification, with disjoint test tops."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -26,16 +27,19 @@ def partition(cases,workers):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True)
-    args=parser.parse_args();output=args.output.resolve();output.mkdir(parents=True,exist_ok=True)
-    cases=json.loads((ROOT/'tests/cases.json').read_text());groups=partition(cases,min(3,os.cpu_count() or 1))
-    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,universal_newlines=True).strip()
-    status=subprocess.check_output(['git','status','--porcelain'],cwd=ROOT)
+    parser.add_argument('--source',type=Path,default=ROOT,help='clean fixed checkout whose native contracts will run')
+    args=parser.parse_args();source=args.source.resolve();output=args.output.resolve()
+    if output.exists():raise ValueError('Choose a new immutable contract output directory')
+    output.mkdir(parents=True)
+    cases=json.loads((source/'tests/cases.json').read_text());groups=partition(cases,min(3,os.cpu_count() or 1))
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,universal_newlines=True).strip()
+    status=subprocess.check_output(['git','status','--porcelain'],cwd=source)
     if status:raise ValueError('Contract campaign requires a clean fixed source')
     started=time.monotonic();jobs=[];record=[]
     for index,group in enumerate(groups):
         path=output/('shard-%d.log'%index);stream=path.open('w')
-        command=[sys.executable,str(ROOT/'tests/run.py'),'--no-cache']+[case['name'] for case in group]
-        process=subprocess.Popen(command,cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
+        command=[sys.executable,str(source/'tests/run.py'),'--no-cache']+[case['name'] for case in group]
+        process=subprocess.Popen(command,cwd=source,stdout=stream,stderr=subprocess.STDOUT)
         jobs.append((process,stream,path,group,command))
     observed={};okay=True
     for process,stream,path,group,command in jobs:
@@ -50,11 +54,13 @@ def main():
                 name=line.split(':',1)[0].split(' ',1)[1]
                 if name in observed:raise ValueError('Contract executed in multiple shards: '+name)
                 observed[name]=line
-    unchanged=(subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,universal_newlines=True).strip()==head and
-               not subprocess.check_output(['git','status','--porcelain'],cwd=ROOT).strip())
+    unchanged=(subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,universal_newlines=True).strip()==head and
+               not subprocess.check_output(['git','status','--porcelain'],cwd=source).strip())
     okay=okay and unchanged and set(observed)=={case['name'] for case in cases}
     report=dict(source_head=head,source_unchanged=unchanged,cold=True,workers=len(jobs),jobs=record,
-                elapsed_seconds=time.monotonic()-started,checked_pass=okay)
+                elapsed_seconds=time.monotonic()-started,checked_pass=okay,
+                driver_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                inventory_verifier_sha256=hashlib.sha256(Path(case_inventory.__code__.co_filename).read_bytes()).hexdigest())
     (output/'campaign.json').write_text(json.dumps(report,indent=2)+'\n')
     for case in cases:
         if case['name'] in observed:print(observed[case['name']],flush=True)

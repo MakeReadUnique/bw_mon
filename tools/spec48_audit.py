@@ -20,7 +20,7 @@ def read(path):
 
 
 def case_inventory(cases,output):
-    rows=re.findall(r'^(PASS|FAIL) ([A-Za-z0-9_]+):',output,re.M)
+    rows=re.findall(r'^(PASS|FAIL) ([A-Za-z0-9_-]+):',output,re.M)
     expected=[case['name'] for case in cases]
     require([name for state,name in rows]==expected and all(state=='PASS' for state,name in rows),
             'missing, duplicate, reordered, failed or extra contract case')

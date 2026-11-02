@@ -10,6 +10,11 @@ from contract_campaign import partition
 
 
 class CompleteContractInventory(unittest.TestCase):
+    def test_real_contract_names_can_contain_a_hyphen(self):
+        cases=[{'name':'storage_failure_report_cfg-line'}]
+        output='PASS storage_failure_report_cfg-line: raw.log\n1/1 contract cases passed\n'
+        self.assertEqual(case_inventory(cases,output),['storage_failure_report_cfg-line'])
+
     def test_delivery_rejects_outer_budget_overrun_or_incomplete_execution(self):
         names=['quick-cold','quick-hot','full-cold','full-hot','campaign58','acceptance',
                'bw_mon_quickstart-compile','bw_mon_quickstart','bw_mon_grouped-compile',
