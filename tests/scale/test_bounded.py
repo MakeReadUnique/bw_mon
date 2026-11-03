@@ -91,6 +91,7 @@ class BoundedAcceptance(unittest.TestCase):
                 (directory/'simv').write_text('native payload '+str(attempts[0]))
             elif name=='verification':
                 (directory/'verification.json').write_text('{"difference_count":0}\n')
+                (directory/'qualification.json').write_text('{}\n')
             (directory/(name+'.log')).write_text('attempt '+str(attempts[0]))
             (directory/(name+'.time-v.txt')).write_text('receipt\n')
             bounded.save(directory/(name+'.stage.json'),result)
@@ -101,6 +102,9 @@ class BoundedAcceptance(unittest.TestCase):
             root=Path(d);scenario=ReceiptScenario()
             self.assertTrue(bounded.run_bounded(scenario,root,True))
             first=json.loads(Path(json.loads((root/(scenario.name+'-latest.json')).read_text())['manifest']).read_text())
+            self.assertIn('tests/scale/memory_advice.c',first['source_sha256'])
+            self.assertTrue(any(str(arg).endswith('/tests/scale/memory_advice.c')
+                                for arg in first['stages']['compile']['command']))
             native=Path(first['build']);original=(native/'compile-success.json').read_bytes()
             # Existing second-resolution attempt names also need distinct IDs.
             time.sleep(1.01)

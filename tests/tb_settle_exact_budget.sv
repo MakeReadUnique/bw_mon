@@ -5,7 +5,7 @@ module tb_settle_exact_budget;
   logic clk=0;
   bit end_requested=0;
   bit transport_complete=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("settle.end.p0"),.WINDOW_WIDTH(40000),.UPDATE_STRIDE(1),.FIXED_BYTES(8),
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(3)) p0(.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_point_mon #(.POINT_ID("settle.end.p1"),.WINDOW_WIDTH(40000),.UPDATE_STRIDE(1),.FIXED_BYTES(16),
@@ -16,22 +16,22 @@ module tb_settle_exact_budget;
     .EPISODE_ENABLE(1),.SILENCE_THRESHOLD(3)) parent(.clk(clk),.reset_n(1'b1));
   settle_exact_budget_clock driver();
   initial begin
-    define_group("settle.end.child",1);add_point_member("settle.end.child","settle.end.p0");
-    define_group("settle.end.parent",2);add_group_member("settle.end.parent","settle.end.child");
-    add_point_member("settle.end.parent","settle.end.p1");finish_configuration();wait(monitor_ready);
+    add_point_member("settle.end.child","settle.end.p0");
+    add_group_member("settle.end.parent","settle.end.child");
+    add_point_member("settle.end.parent","settle.end.p1");wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
-    #(LIMIT-$time);end_requested<=1;
+    #(measurement_start_ticks+LIMIT-$time);end_requested<=1;
   end
   function automatic bit ready_to_finish();
-    return $time==LIMIT && p0.result_seq==40000 && p1.result_seq==40000 &&
+    return $time==measurement_start_ticks+LIMIT && p0.result_seq==40000 && p1.result_seq==40000 &&
       child.result_seq==40000 && parent.result_seq==40000 &&
       p0.accepted_record_seq==2 && p1.accepted_record_seq==2 &&
       child.accepted_record_seq==2 && parent.accepted_record_seq==2;
   endfunction
   function automatic void final_verdict();
     if(!ready_to_finish() || core_failure_pending() ||
-       p0.window_start_ticks!=0 || p0.window_end_ticks!=LIMIT ||
-       child.window_end_ticks!=LIMIT || parent.window_end_ticks!=LIMIT ||
+       p0.window_start_ticks!=measurement_start_ticks || p0.window_end_ticks!=measurement_start_ticks+LIMIT ||
+       child.window_end_ticks!=measurement_start_ticks+LIMIT || parent.window_end_ticks!=measurement_start_ticks+LIMIT ||
        p0.window_bytes!=8 || p1.window_bytes!=16 || child.window_bytes!=8 || parent.window_bytes!=24 ||
        p0.total_bytes!=16 || p1.total_bytes!=32 || child.total_bytes!=16 || parent.total_bytes!=48 ||
        !p0.window_full || !p1.window_full || !child.window_full || !parent.window_full ||

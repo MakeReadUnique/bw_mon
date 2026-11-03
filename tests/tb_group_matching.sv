@@ -2,7 +2,7 @@ module tb_group_matching;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3),.EXPECTED_GROUP_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("tb.noc1.p0"),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),.FIXED_BYTES(8)) p0
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_point_mon #(.POINT_ID("tb.noc1.p1"),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),.FIXED_BYTES(16)) p1
@@ -15,12 +15,10 @@ module tb_group_matching;
   bw_group_mon #(.GROUP_ID("tb.noc1.p0"),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) reuse
     (.clk(clk),.reset_n(1'b1));
   initial begin
-    define_group("noc1",2);
     add_point_member("noc1","tb.noc1",BW_PREFIX);
     add_point_member("noc1","tb.noc1.p0");
-    define_group("tb.noc1.p0",1);
     add_point_member("tb.noc1.p0","tb.noc1.p0");
-    finish_configuration();wait(monitor_ready);
+    wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
     #499999;clk=1;#1;clk=0;
     #499999;clk=1;#1;clk=0;

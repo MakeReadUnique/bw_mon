@@ -3,7 +3,7 @@ module tb_report_final_forward;
   import bw_mon_pkg::*;
   logic clk=0,valid=1;
   bit deferred_finish=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("order.a"),.WINDOW_BASIS(BW_CYCLE),.WINDOW_WIDTH(1),
     .UPDATE_STRIDE(1),.FIXED_BYTES(8),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2)) a
     (.clk(clk),.reset_n(1'b1),.valid(valid));

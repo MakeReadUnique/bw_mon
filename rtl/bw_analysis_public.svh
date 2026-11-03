@@ -9,6 +9,9 @@
   bw_u64_t episode_bytes,episode_events,episode_duration_ticks;
   real episode_e2e_gbps;
   bw_episode_result_t episode_result;
+  string phase_strategy=BW_PHASE_STRATEGY;
+  bw_phase_reason_t phase_reason;
+  bw_u64_t phase_evidence_required,phase_candidate_required,phase_minimum_span;
   bw_phase_t phase_current;
   bw_phase_t phase_candidate;
   bit phase_active;
@@ -30,6 +33,7 @@
   real phase_fit_mean;
   real phase_fit_delta;
   real phase_fit_rms;
+  real phase_fit_trend_rms;
   bw_phase_result_t phase_result;
 
   // Final identities remain distinct from live epoch/episode/phase fields.

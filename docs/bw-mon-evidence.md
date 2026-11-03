@@ -1,24 +1,27 @@
 # 测试证据与复现
 
-PR 保留监测器源码、测试用例、最终结果摘要和九张真实 Verdi 截图。生成的 FSDB、原始运行数据、旧准备记录和重复源码快照已移出当前版本。它们仍可从固定的历史提交取回，不需要再次提交。
+PR 保留监测器源码、测试用例、最终结果摘要和真实 Verdi 截图。生成的 FSDB、原始运行数据及源码快照从记录的固定提交取回，不覆盖本地运行结果。
 
-本次是文件整理：RTL、组件用例、参考模型和实际输入的 300 个文件哈希不变。已完成的测试结果见[结果摘要](../evidence/README.md)。
+历史 `b22e32e` 的427组件／42场证明保留原来源；接入简化、默认阶段及完成协议采用新版独立证明。两者的适用范围及实际结果见[结果摘要](../evidence/README.md)，不能互相替代。
 
 ## 离线检查已保存的结果
 
 ```sh
 make verify-evidence
 
-# 也可以只检查一类
-python3 tools/evidence.py verify compatibility --current-source
-python3 tools/evidence.py verify scale --current-source
+# 新版完整串行矩阵、当前源码适用性及已确认的波形资产
+python3 tools/evidence.py verify spec48 --current-source
+
+# 下列入口只重放历史证明，不把历史通过绑定到当前源码
+python3 tools/evidence.py verify compatibility
+python3 tools/evidence.py verify scale
 python3 tools/evidence.py verify waveforms
 python3 tools/evidence.py verify common
 ```
 
-需要 Python 3.6+、Git 和已记录提交。工具从 `b22e32e1beb704beb290e65f7af20bbe44065a34` 读取相应文件，在临时目录运行原校验器；完成后清理临时文件。它检查记录完整性、输入/源码哈希、预期与实际值、时间预算及图片来源，不启动仿真器。
+需要 Python 3.6+、Git 和已记录提交。历史证明从 `b22e32e1beb704beb290e65f7af20bbe44065a34` 读取；新版证明使用交付摘要记录的独立归档提交 `4bf1e03ecc8991f14d0018c2c5d95aa9b6b8bb1a`，运行快照为 `154d45f2ba32242cd728c9996157cee296491fa2`。工具在临时目录重放校验器，检查原始输入再生成、源码／工具／构建回执、预期／实际／差异、串行时序、预算及资产哈希，不启动仿真器。
 
-`--current-source` 另外核对当前 300 个已测源码/输入。以后修改实现后，这个检查可能失败，不能把旧结果当成新代码的通过证明。
+`verify spec48 --current-source` 与 `make verify-evidence` 核对新版实测源码清单，并拒绝遗漏的新RTL文件；历史证明仍按其原源码核验。显式历史入口的 `--current-source` 只用于对照旧300文件清单，升级后失败是预期行为。任何来源检查失败均不能用旧结果替当前代码背书。
 
 若浅克隆缺少记录提交，先明确取回一次：
 
@@ -38,7 +41,7 @@ make evidence-waveforms
 ./artifacts/review-analog/open.sh clock_stop_cycle
 ```
 
-需要文档所列 Verdi 环境。九张截图仍是原已确认图片，字节内容不变；命令打开对应的原始 FSDB 与保存视图。当前实现另经 42 场端到端验证，全部 672 个公开 CSV 和最终结果与保留数据一致，这不是新的人工确认。
+上述命令打开历史九图；它们的42场／672个CSV及人工确认只属于原资产。新版四图的具体区间、用户反馈、哈希与打开命令见[聚焦验收说明](../evidence/verdi61/README.md)，来源改变后须另行核对适用性。
 
 恢复工具遇到已有且内容不同的文件会拒绝覆盖。需要单独导出时可以使用：
 
@@ -51,8 +54,8 @@ python3 tools/evidence.py restore waveforms --destination /tmp/bw-wave-review
 以下命令需要 VCS、Verdi/FSDB 支持和项目的 native helper 构建环境，见[构建说明](bw-mon-scheduling.md)。
 
 ```sh
-make test                 # 组件测试
-make acceptance           # 12 点 / 4 组，42 场端到端测试
+make test                 # 597项契约测试
+make acceptance           # 12 点 / 4 组，43 场端到端测试
 make scale-quick          # 日常规模 / 边界回归
 make scale-quick BW_CACHE_MODE=hot # 使用匹配的已有构建
 make scale-full           # 完整修订矩阵，先恢复依赖的 COMMON 记录
@@ -72,7 +75,7 @@ python3 tests/scale/revised_suite.py full --cache-mode hot --output-root .build/
 ## 历史记录
 
 - [最终规模/历史证明](https://github.com/MakeReadUnique/bw_mon/tree/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign)：四套件、32 次运行、原始输入和完整审计记录。
-- [427 组件 / 42 场端到端证明](https://github.com/MakeReadUnique/bw_mon/tree/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility)：当前实现的对照、完整日志和 FSDB。
+- [427 组件 / 42 场端到端证明](https://github.com/MakeReadUnique/bw_mon/tree/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility)：历史产品的对照、完整日志和 FSDB。
 - [原人工审阅数据](https://github.com/MakeReadUnique/bw_mon/tree/b22e32e1beb704beb290e65f7af20bbe44065a34/artifacts/acceptance)：原图片、视图、确认记录和输入/结果表。
 - [旧规模准备记录](https://github.com/MakeReadUnique/bw_mon/tree/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/evidence)与[旧历史记录](https://github.com/MakeReadUnique/bw_mon/tree/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/history_evidence)：只保留原有历史含义。已停止或未启动的运行仍未通过。
 

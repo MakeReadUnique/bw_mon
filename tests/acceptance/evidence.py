@@ -87,7 +87,7 @@ def runtime_evidence(root, out):
 
 def project_sources(out, folder, manifest):
     native = manifest['runtime_evidence']
-    if native.get('schema_version', 1) == 2:
+    if native.get('schema_version', 1) in (2, 3):
         path = folder / native['source_archive']
         assert path.name == native['source_archive'], 'source archive must be beside its scene'
         assert sha(path) == native['source_archive_sha256'], ('source archive changed', folder.name)
@@ -138,7 +138,7 @@ def scene_runtime_evidence(root, out, folder, manifest, freeze):
         assert len(dependencies) == 3 and set(dependencies[1:]) == set(sdk)
         assert '-I' + str(Path(sdk[0]).parent) in command
     else:
-        assert native['schema_version'] == 2, ('unsupported runtime evidence version', folder.name)
+        assert native['schema_version'] in (2, 3), ('unsupported runtime evidence version', folder.name)
         assert dependencies[0] == str(Path(manifest['source_snapshot']) / 'rtl/bw_slot_settlement.c'), ('native receipt names a different source snapshot', folder.name)
         assert native['runtime_head'] == manifest['base_revision']
         assert native['source_snapshot_sha256'] == sources, ('compiled snapshot changed', folder.name)
@@ -148,6 +148,8 @@ def scene_runtime_evidence(root, out, folder, manifest, freeze):
         expected_command = [arg.replace('@SOURCE@', manifest['source_snapshot']).replace('@BUILD@', native['build_directory']) for arg in fingerprint['command']]
         assert command == expected_command, ('compile options changed', folder.name)
         assert set(native['native_dependencies_sha256']) == set(dependencies[1:])
+        snapshot = Path(manifest['source_snapshot'])
+        normalized = {}
         full = folder / 'native-transitive-dependencies.d'
         assert sha(full) == native['native_transitive_makefile_sha256'], ('transitive native receipt changed', folder.name)
         transitive = make_dependencies(full.read_text())
@@ -155,8 +157,6 @@ def scene_runtime_evidence(root, out, folder, manifest, freeze):
         hashes = native['native_transitive_dependencies_sha256']
         assert set(hashes) == set(transitive[1:])
         assert all(hashes.get(name) == digest for name, digest in native['native_dependencies_sha256'].items())
-        normalized = {}
-        snapshot = Path(manifest['source_snapshot'])
         for name, digest in hashes.items():
             try:
                 key = str(Path(name).relative_to(snapshot))
@@ -164,6 +164,28 @@ def scene_runtime_evidence(root, out, folder, manifest, freeze):
             except ValueError:
                 key = name
             normalized[key] = digest
+        if native['schema_version'] == 3:
+            # The ending-protocol native unit carries the same receipt
+            # invariants under its own name.
+            coordinator_file = folder / 'native-coordinator-dependencies.d'
+            assert sha(coordinator_file) == native['coordinator_dependency_makefile_sha256'], ('coordinator receipt changed', folder.name)
+            coordinator_dependencies = make_dependencies(coordinator_file.read_text())
+            assert coordinator_dependencies[0] == str(snapshot / 'rtl/bw_end_coordinator.c'), ('coordinator receipt names a different source snapshot', folder.name)
+            assert set(native['coordinator_dependencies_sha256']) == set(coordinator_dependencies[1:])
+            coordinator_full = folder / 'native-coordinator-transitive-dependencies.d'
+            assert sha(coordinator_full) == native['coordinator_transitive_makefile_sha256'], ('coordinator transitive receipt changed', folder.name)
+            coordinator_transitive = make_dependencies(coordinator_full.read_text())
+            assert coordinator_transitive[0] == coordinator_dependencies[0]
+            coordinator_hashes = native['coordinator_transitive_dependencies_sha256']
+            assert set(coordinator_hashes) == set(coordinator_transitive[1:])
+            assert all(coordinator_hashes.get(name) == digest for name, digest in native['coordinator_dependencies_sha256'].items())
+            for name, digest in coordinator_hashes.items():
+                try:
+                    key = str(Path(name).relative_to(snapshot))
+                    assert hashlib.sha256(files[key]).hexdigest() == digest, ('native project header changed', key)
+                except ValueError:
+                    key = name
+                normalized[key] = digest
         assert normalized == fingerprint['native_header_sha256'], ('native header fingerprint changed', folder.name)
         assert {Path(name).name for name in hashes}.issuperset({'svdpi.h', 'vpi_user.h'})
     return {'head': native['runtime_head'], 'rtl_sha256': sources}

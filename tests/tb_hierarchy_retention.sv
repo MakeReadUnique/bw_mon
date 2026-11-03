@@ -8,7 +8,10 @@ module tb_hierarchy_retention;
   bit point_reset_case,size_case;
   bw_record_t frame;
   bw_control_t control;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(12),.EXPECTED_GROUP_COUNT(4)) setup();
+  bw_test_consumer_gate gate;
+  bit partial_pending=0;
+  bw_u64_t partial_seq=0;
+  bw_mon_setup setup();
   bw_group_mon #(.GROUP_ID("die0_dmc"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) die0 (.clk(clk),.reset_n(child_reset_n));
   bw_group_mon #(.GROUP_ID("die1_dmc"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) die1 (.clk(clk),.reset_n(1'b1));
   bw_group_mon #(.GROUP_ID("all_dmc"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) all_dmc (.clk(clk),.reset_n(1'b1));
@@ -52,17 +55,16 @@ module tb_hierarchy_retention;
     first_mixed_bytes=(point_reset_case || size_case) ? 320 : 384;
     first_all_events=point_reset_case ? 7 : 8;first_mixed_events=point_reset_case ? 5 : 6;
     for(int p=0;p<12;p++)begin
-      point_handles[p]=register_point($sformatf("p%0d",p),$sformatf("controlled.p%0d",p),BW_NS,1,1,"default");
+      point_handles[p]=register_point($sformatf("p%0d",p),$sformatf("controlled.p%0d",p),BW_NS,1,1);
       sources[p]=point_source_handle(point_handles[p]);
     end
-    define_group("die0_dmc",4);define_group("die1_dmc",4);define_group("all_dmc",2);define_group("mixed",3);
     for(int p=0;p<4;p++)add_point_member("die0_dmc",$sformatf("p%0d",p));
     for(int p=4;p<8;p++)add_point_member("die1_dmc",$sformatf("p%0d",p));
     add_group_member("all_dmc","die0_dmc");add_group_member("all_dmc","die1_dmc");
     add_group_member("mixed","die0_dmc");add_point_member("mixed","p8");add_point_member("mixed","p9");
-    finish_configuration();wait(monitor_ready);
+    wait(monitor_ready);
     for(int p=0;p<12;p++)begin
-      control='0;control.point_handle=point_handles[p];control.control_seq=1;control.reset_n=1;
+      control='0;control.point_handle=point_handles[p];control.control_seq=1;control.reset_n=1;control.timestamp_ticks=measurement_start_ticks;
       publish_control(sources[p],control);
     end
     #103900000;
@@ -71,16 +73,18 @@ module tb_hierarchy_retention;
       control='0;control.point_handle=point_handles[0];control.control_seq=2;control.source_epoch=1;
       control.timestamp_ticks=$time;control.reset_n=0;publish_control(sources[0],control);
     end
-    #(104000000-$time);clk=1;slow=(order=="all_first") ? 9 : 7;
+    #(measurement_start_ticks+104000000-$time);clk=1;slow=(order=="all_first") ? 9 : 7;
     frame='0;frame.record_seq=1;frame.edge_index=1;frame.timestamp_ticks=$time;
     frame.byte_inc=64;frame.event_inc=1;frame.bytes_complete=1;frame.events_complete=1;frame.reset_n=1;
-    for(int p=0;p<12;p++)if(p!=slow)publish_point(p,1);
-    #1;clk=0;check_partial(1,slow);
+    gate=bw_test_gate_for(slow==9 ? "mixed" : "die1_dmc");
+    gate.resume_after_group=slow==9 ? "all_dmc" : "mixed";gate.resume_after_seq=1;gate.paused=1;
+    partial_seq=1;partial_pending=1;
+    for(int p=0;p<12;p++)publish_point(p,1);
+    #1;clk=0;
     if(retained_frame_count(sources[10])!=0 || retained_frame_count(sources[11])!=0)
       $fatal(1,"ungrouped sources must not retain ancestor transport copies");
-    #(104400000-$time);publish_frame(sources[slow],frame);
-    #1;
-    if(all_dmc.raw_record.timestamp_ticks!=104000000 || mixed.raw_record.timestamp_ticks!=104000000 ||
+    if(partial_pending)$fatal(1,"same-time partial receipt observation missing");
+    if(all_dmc.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 || mixed.raw_record.timestamp_ticks!=measurement_start_ticks+104000000 ||
        all_dmc.raw_record.edge_index!=1 || mixed.raw_record.edge_index!=1 ||
        all_dmc.raw_record.byte_inc!=first_all_bytes || mixed.raw_record.byte_inc!=first_mixed_bytes ||
        all_dmc.raw_record.event_inc!=first_all_events || mixed.raw_record.event_inc!=first_mixed_events ||
@@ -91,34 +95,48 @@ module tb_hierarchy_retention;
        all_dmc.total_bytes!=first_all_bytes || mixed.total_bytes!=first_mixed_bytes ||
        die0.stats_epoch!=bw_u64_t'(mode=="child_reset") || all_dmc.stats_epoch!=0 || mixed.stats_epoch!=0 ||
        retained_frame_count(die0.transport_source)!=0)
-      $fatal(1,"late direct consumer must receive the same original group frame without an extra statistics cycle");
-    #(104450000-$time);child_reset_n=1;
+      $fatal(1,"same-time slow direct consumer must receive the same original group frame without an extra statistics cycle");
+    #(measurement_start_ticks+104450000-$time);child_reset_n=1;
     if(point_reset_case)begin
       control.control_seq=3;control.timestamp_ticks=$time;control.reset_n=1;
       publish_control(sources[0],control);
     end
     // Reverse the parent order on the next actual edge; no consumer cursor resets.
-    #(104500000-$time);clk=1;slow=(slow==9) ? 7 : 9;
+    #(measurement_start_ticks+104500000-$time);clk=1;slow=(slow==9) ? 7 : 9;
     frame.record_seq=2;frame.edge_index=2;frame.timestamp_ticks=$time;
-    for(int p=0;p<12;p++)if(p!=slow)publish_point(p,0);
-    #1;clk=0;check_partial(2,slow);
-    #(104900000-$time);publish_frame(sources[slow],frame);
-    #1;
+    gate=bw_test_gate_for(slow==9 ? "mixed" : "die1_dmc");
+    gate.resume_after_group=slow==9 ? "all_dmc" : "mixed";gate.resume_after_seq=2;gate.paused=1;
+    partial_seq=2;partial_pending=1;
+    for(int p=0;p<12;p++)publish_point(p,0);
+    #1;clk=0;
+    if(partial_pending)$fatal(1,"reverse same-time partial observation missing");
     if(all_dmc.accepted_record_seq!=2 || mixed.accepted_record_seq!=2 ||
        all_dmc.total_bytes!=first_all_bytes+512 || all_dmc.total_events!=first_all_events+8 ||
        mixed.total_bytes!=first_mixed_bytes+384 || mixed.total_events!=first_mixed_events+6 ||
        retained_frame_count(die0.transport_source)!=0 || retained_frame_count(die1.transport_source)!=0)
       $fatal(1,"opposite lawful consumer orders must preserve sums and release only fully acknowledged source data");
-    #(105000001-$time);
-    if(all_dmc.window_start_ticks!=104000000 || all_dmc.window_end_ticks!=105000000 ||
+    #(measurement_start_ticks+105000001-$time);
+    if(all_dmc.window_start_ticks!=measurement_start_ticks+104000000 || all_dmc.window_end_ticks!=measurement_start_ticks+105000000 ||
        all_dmc.window_bytes!=first_all_bytes+512 || all_dmc.window_events!=first_all_events+8 ||
        all_dmc.window_valid==size_case || all_dmc.bytes_complete==size_case || !all_dmc.events_complete ||
        all_dmc.member_reset_coverage!=point_reset_case ||
        mixed.window_bytes!=first_mixed_bytes+384 || mixed.window_events!=first_mixed_events+6 ||
        mixed.window_valid==size_case || mixed.bytes_complete==size_case || !mixed.events_complete ||
        mixed.member_reset_coverage!=point_reset_case)
-      $fatal(1,"physical delivery delay must preserve exact original-time half-open windows");
+      $fatal(1,"same-time consumer progress must preserve exact original-time half-open windows");
     $display("TB_PASS hierarchy_retention order=%s mode=%s T104=%0d/%0d,%0d/%0d leaf_streams_released_before_second_parent",
       order,mode,first_all_bytes,first_all_events,first_mixed_bytes,first_mixed_events);$finish;
   end
+  task automatic observe_partial();
+    forever begin
+      wait(partial_pending);
+      if(slow==9)wait(group_batches["all_dmc"].acked==partial_seq);
+      else wait(group_batches["mixed"].acked==partial_seq);
+      check_partial(partial_seq,slow);partial_pending=0;
+    end
+  endtask
+  hierarchy_retention_observer observer();
 endmodule
+program hierarchy_retention_observer;
+  initial tb_hierarchy_retention.observe_partial();
+endprogram

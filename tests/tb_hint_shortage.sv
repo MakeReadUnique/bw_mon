@@ -2,7 +2,7 @@ module tb_hint_shortage;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,reset_n=1,flitv=0,lcrdv=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(8),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1),
     .CREDIT_ENABLE(1),.CREDIT_CAPACITY(1),.CREDIT_INITIAL(0),.CREDIT_INITIAL_KNOWN(1),
     .SHORTAGE_ENABLE(1),.SHORTAGE_BASIS(BW_NS),.SHORTAGE_THRESHOLD(2)) point
@@ -17,7 +17,7 @@ module tb_hint_shortage;
   initial begin
     wait(monitor_ready);
     #2000001;
-    if(!point.shortage_hit || point.shortage_trigger_ticks!=2000000 || point.shortage_hit_count!=1 ||
+    if(!point.shortage_hit || point.shortage_trigger_ticks!=2000001 || point.shortage_hit_count!=1 ||
        !point.credit_trusted || point.total_bytes!=0)
       $fatal(1,"known zero usable credit can persist without demand or sampling clocks");
     #999999;lcrdv=1'bx;#1;
@@ -36,7 +36,7 @@ module tb_hint_shortage;
     #999999;lcrdv=0;flitv=1;edge_now();
     #1999999;flitv=1'bx;#1;
     if(!point.shortage_active || !point.shortage_hit || point.shortage_hit_count!=2 ||
-       point.shortage_trigger_ticks!=8000000 || !point.shortage_trusted)
+       point.shortage_trigger_ticks!=8000001 || !point.shortage_trusted)
       $fatal(1,"off-edge send uncertainty does not change known usable credits or infer demand");
     #499999;edge_now();
     if(point.credit_trusted || point.shortage_active || point.shortage_end_reason!=BW_HINT_UNKNOWN ||

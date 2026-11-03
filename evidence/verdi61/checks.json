@@ -1,0 +1,65 @@
+{
+  "issue": "https://github.com/MakeReadUnique/bw_mon/issues/61",
+  "full_contract_suite": {
+    "status": "PASS",
+    "passed": 589,
+    "total": 589,
+    "failures": 0,
+    "command": "python3 tests/run.py",
+    "exit_code": 0,
+    "started": {
+      "command": "python3 tests/run.py",
+      "started_utc_approx": "2026-11-01T10:50:28.436716+00:00",
+      "started_head": "eadec744516a125cca3441f29a27420b66285b6b",
+      "start_time_note": "Derived from process elapsed seconds; no performance-budget claim."
+    },
+    "completed_at_utc": "2026-11-01T11:17:51.839934+00:00",
+    "completed_head": "c6a7e28e378e07440ce93adcfeb31bfc65ab459e",
+    "tested_existing_sources_unchanged_since_start": true,
+    "result_file": "contract-results.txt",
+    "result_sha256": "ed8f66f5aeeb3125e0caa44442d71b353c911b63329c0ca5ac89c2d802005a45"
+  },
+  "focused_evidence": {
+    "status": "PASS",
+    "fresh_product_runs": 3,
+    "native_views": 4,
+    "exact_cursor_values": 62,
+    "independent_public_checker_results": 10,
+    "independent_public_checker_expected": {
+      "constant": "5 PASS",
+      "alternating": "5 FAIL"
+    },
+    "source_aware_verifier": "make verify-verdi61",
+    "source_aware_verifier_status": "PASS",
+    "python_compile": "python3 -m py_compile tests/verdi61/*.py",
+    "python_compile_status": "PASS",
+    "portable_source_reopen": "Actual Verdi import: 0 errors, 0 warnings"
+  },
+  "code_review": {
+    "standards": {
+      "findings": 0,
+      "report": "No documented-standard violations or actionable baseline smells."
+    },
+    "spec": {
+      "findings": 0,
+      "report": "Four native views, frozen raw evidence, independent numerical results and source applicability satisfy the implementation scope. Actual user confirmation remains required; ticket correctly remains open."
+    },
+    "baseline": "eadec744516a125cca3441f29a27420b66285b6b",
+    "reviewed_head": "c6a7e28e378e07440ce93adcfeb31bfc65ab459e",
+    "issue_comment": "https://github.com/MakeReadUnique/bw_mon/issues/61#issuecomment-6557067717"
+  },
+  "human_acceptance": "ACCEPTED: actual user reply on 2026-11-02; exact feedback and accepted assets/intervals are recorded in review.json",
+  "scope_note": "The automatic results and reviews above retain their original source and scope. Human acceptance is recorded separately in review.json; it does not close the parent specification or satisfy the remaining final delivery gates.",
+  "final_source_applicability": {
+    "runtime_snapshot": "154d45f2ba32242cd728c9996157cee296491fa2",
+    "status": "PASS",
+    "views": 4,
+    "cursor_fields": 62,
+    "proof": {
+      "commit": "4bf1e03ecc8991f14d0018c2c5d95aa9b6b8bb1a",
+      "path": "artifacts/spec48-delivery/verdi-applicability",
+      "manifest_sha256": "d2bc9937993470c6e7a536aaa63b880980205e1ba4b6c58a5b69054c21dc7e07"
+    },
+    "note": "Original automatic checks above retain their original scope; final597 contracts and budgets are reported by the Spec48 delivery manifest. Actual human feedback is unchanged."
+  }
+}

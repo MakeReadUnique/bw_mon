@@ -1,7 +1,7 @@
 # Numeric and storage contracts
 
 All physical timestamps use integer 1 fs ticks. The monitoring system has one
-40,000 ns budget from its original setup start; point or group statistics reset
+40,000 ns budget from its published common measurement start T; point or group statistics reset
 never restarts it. Window, episode, phase, source and transport identities are
 separate. Lifetime sequences and acceptance receipts do not rewind on reset.
 
@@ -38,7 +38,7 @@ is accepted independently of its numeric metadata.
 `checked_add` widens to65 bits and `checked_mul` to128 bits after rejecting unknown
 operands. `checked_sub` rejects a negative difference before subtraction. Time
 predicates are pure; an unknown time returns false, while the checked entry reports
-an INTEGER_UNKNOWN core error. The actual40us boundary is inclusive; the next tick
+an INTEGER_UNKNOWN core error. The actual T+40us boundary is inclusive; the next tick
 is unsupported. Decimal GB/s conversion and fitting occur only after integer time
 and count operations. Credit permission/attempted balance uses65/66-bit arithmetic;
 credit protocol anomalies lose trust and still retain known bytes.
@@ -94,6 +94,22 @@ physical delivery time. Closed fragments retain their individual identities and
 summaries. The ordered prior-episode activity marker and one selected last steady
 remain intact. Fit evidence retains its actual N samples/span.
 
+The default sustained-variation checker has a separate lossless pending stream
+captured before those summaries. It preserves seq/epoch/episode, both physical
+and logical endpoints, raw bandwidth bits, and every validity/reset flag.
+Compression requires equal values and flags plus affine sequence and all four
+endpoints; changing cycle/time relationships or window-left geometry splits a
+run. Invalid rows are retained as breaks, never filtered and rejoined. Original
+seven-row confirmation support seqs and min/max envelope are frozen by the phase
+owner independently of the latest six-row fit. This pending checker prefix is
+retained through terminal episode attribution; it is not recoverable from a
+variation mean/min/max summary. Scope-owned bounded semantic watermarks track
+ordered immutable `(epoch,episode,platform)` identities after buffers are released;
+replays with new delivery counters cannot resettle them or poison a new identity.
+Episode delivery/semantic receipts commit only after successful default and
+explicit settlement, then raw buffers release. Disabled active scopes retain evidence for the
+partial-terminal work rather than manufacturing a finalized platform.
+
 Package transport is a different owner: one durable frame/control stream per
 source, unique authoritative ACK positions per direct consumer, release through
 ALL direct ACKs. A group output is durable and its core has accepted or reset-
@@ -134,12 +150,7 @@ and current/requested use. Ordinary builds expose neither that API nor a capacit
 configuration. Tests cover every storage owner and final-reachable failure;
 injection does not prove nominal-scale correctness or real malloc recovery.
 
-Fatal handling respects observed VCS behavior: `$fatal` in a final block can return
-to the caller. Runtime Seen is latched before fatal; final boundaries additionally
-consult read-only Pending deferred candidates. A cancelable same-slot timeout
-candidate never suppresses valid runtime records. A real failure suppresses later
-formal phase/episode/check/summary output, and ScopeDone remains the last final
-hook. Deferred Postponed actions remain read-only.
+Fatal startup/configuration handling latches terminal failure before `$fatal`, which may return from a VCS final block. Runtime numeric/storage failures instead warn and quarantine their typed owner and dependent ancestors. Active consumer responsibilities are cancelled independently of frozen ancestry; a healthy sibling keeps its unread data until its own ACK. Same-time completion diagnostics run in the writable coordinator after posted grants and producer certificates. Read-only contract observers only inspect settled state. The unified final report responsibility audit is a separate follow-up.
 
 The runner hashes its options, absolute sources, recursive RTL headers, explicit
 fixture units and each case's compile defines. Fault builds cannot reuse an
@@ -152,12 +163,9 @@ metrics, valid zero and duplicate final summaries.
 slice. `history_trace_{ns,cycle}` checks an independently worked17-edge,2-point/
 group table with W3/S2, zero/sizeX/validX, partial cuts, reset and changed/stopped
 clock. `variation_pending_retention` checks six raw transfers followed by30000ns
-quiet and unresolved K60000, selecting exactly the three owned windows. The
-4096-frame `transport_growth` scene verifies a prompt peer, durable backlog and
-controls, late automatic original-time collection, known partial quality and
-all-consumer release. Arithmetic/MAX/D16, raw numeric/policy/query/core failures
+quiet and unresolved K60000, selecting exactly the three owned windows. The4096-edge `transport_growth` scene now preserves the original byte/event/window/quality literals with synchronous original-time delivery. `transport_capacity4096` separately verifies4096 real distinct-edge records retained in one source at the storage component seam. `transport_same_time_pressure4096` verifies4096 aggregate frames plus two controls held at one timestamp by real group consumers over controlled producers; its cancellation counterpart checks release of only the failed consumer's responsibilities. These are distinct scopes, not a relabelled positive-time backlog success. Arithmetic/MAX/D16, raw numeric/policy/query/core failures
 and the `storage_failure_*` owner matrix have their exact expectations in
-`tests/cases.json`; existing hierarchy/deadline/alignment/epoch tests are retained.
+`tests/cases.json`; existing hierarchy/completion/alignment/epoch tests are retained.
 
 Public-point resource pilots preserve exact source snapshots, driver hashes,
 commands, configuration, GNU time-v compile/simulation RSS and all online result

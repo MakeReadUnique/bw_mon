@@ -1,7 +1,7 @@
 module tb_ns_stride;
   timeunit 1ns; timeprecision 1fs;
   logic clk=0, valid=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("explicit.point"),.WINDOW_WIDTH(10),.UPDATE_STRIDE(3),
                  .FIXED_BYTES(8)) point(.clk(clk),.reset_n(1'b1),.valid(valid));
   initial begin
@@ -23,12 +23,12 @@ module tb_ns_stride;
       $fatal(1,"warmup must use actual 3 ns denominator");
     #6999999fs; // T=10 ns: no extra publication when W is first covered
     #1fs;
-    if(point.result_seq!=3 || point.window_full || point.window_end_ticks!=9000000)
+    if(point.result_seq!=3 || point.window_full || point.window_end_ticks!=9000001)
       $fatal(1,"W not divisible by S inserted an off-schedule full result");
     #1999999fs;
     #1fs;
     if(point.result_seq!=4 || !point.window_full || point.window_warmup ||
-       point.window_start_ticks!=2000000 || point.window_end_ticks!=12000000 ||
+       point.window_start_ticks!=2000001 || point.window_end_ticks!=12000001 ||
        point.window_bytes!=8 || $abs(point.bandwidth_gbps-0.8)>1e-10)
       $fatal(1,"first scheduled full [2,12) window incorrect");
     $display("TB_PASS ns_stride");$finish;

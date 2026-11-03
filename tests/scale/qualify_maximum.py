@@ -98,21 +98,25 @@ assert all(len(rows)==1 for rows in markers.values()), 'start/final marker count
 for rows in markers.values():
     assert rows[0]['points']==str(scenario.points) and rows[0]['groups']==str(len(scenario.groups))
 start=markers['SCALE_RUN_START'][0];end=markers['SCALE_PASS'][0]
+policy=json.loads((attempt/'input.json').read_text())['analysis']
+fixed=policy['N']==6 and policy['K']==2
+assert fixed or (policy['N']==3 and policy['K']==4), 'unrecognized recorded phase policy'
+origin=int(markers['BW_READY'][0]['time_ticks']) if fixed else 0
 for key,value in dict(scopes=scenario.points+len(scenario.groups),edges=scenario.clock.edges,
-                      end_ticks=scenario.end,basis=int(scenario.basis=='cycle'),W=scenario.width,
+                      end_ticks=origin+scenario.end,basis=int(scenario.basis=='cycle'),W=scenario.width,
                       S=scenario.stride,variant=scenario.variant,waves=0).items():
     assert start[key]==str(value),('start marker',key)
-assert end['end_ticks']==str(scenario.end) and end['checked_raw']==str(result['checked_raw'])
+assert end['end_ticks']==str(origin+scenario.end) and end['checked_raw']==str(result['checked_raw'])
 if scenario.variant=='baseline':
     factor=1000000 if scenario.basis=='ns' else 500000;offset=0 if scenario.basis=='ns' else 250000
-    start=(scenario.width+2*scenario.stride)*factor+offset
-    confirm=(scenario.width+5*scenario.stride)*factor+offset
+    start=(scenario.width+(policy['N']-1)*scenario.stride)*factor+offset
+    confirm=start+(policy['K']-1)*scenario.stride*factor
     assert len(phases)==scenario.points+len(scenario.groups)
     cards={scenario.identity(k,i):1 if k=='point' else len(scenario.leaves[i]) for k,i in scenario.scopes()}
     for phase in phases:
         card=cards[phase['scope']]
-        expected=dict(kind=2,epoch=0,episode=1,phase=1,result_seq=1,start_ticks=start,confirm_ticks=confirm,
-                      end_ticks=scenario.end,start_known=1,end_known=0,
+        expected=dict(kind=2,epoch=0,episode=1,phase=1,result_seq=1,start_ticks=origin+start,confirm_ticks=origin+confirm,
+                      end_ticks=origin+scenario.end,start_known=1,end_known=0,
                       start_bytes=64*scenario.clock.lt(start)*card,start_events=scenario.clock.lt(start)*card,
                       end_bytes=64*scenario.clock.edges*card,end_events=scenario.clock.edges*card,reason=2)
         for field,value in expected.items():assert phase[field]==str(value),(phase['scope'],field)

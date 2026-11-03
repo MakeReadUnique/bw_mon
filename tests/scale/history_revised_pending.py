@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from time_origin import measurement_start
 
 SOURCE = Path(__file__).resolve().parents[1]/'tb_variation_pending_retention.sv'
 
@@ -16,8 +17,11 @@ class PendingScenario:
     def manifest(self):
         return dict(schema='revised-history-pending-v1', properties=['H5'],
                     public_entry='bw_point_mon', points=1, groups=0, basis='ns', width=1, stride=1,
-                    phase=dict(N=3, K=60000, minimum_span=2, rms_abs=1000, trend_abs=1,
-                               steady_abs=0, all_relative=0), silence_threshold=30000,
+                    phase=dict(N=6, K=2, minimum_span=1, fit='adjacent physical-time pairs',
+                               steady_enter_rel=.04, steady_exit_rel=.08, raw_rms_enter_rel=.10,
+                               raw_rms_exit_rel=.12, trend_rel=.10, paired_rms_rel=.025, absolute=0), silence_threshold=30000,
+                    input_time_basis='offset from published measurement start',
+                    migration='original six transfers and Q30000 retained; final-tail uncertainty retains the suffix under fixed K2',
                     first_edge_ticks=250000, real_edges=7, selected_transfers=6, transferred_bytes=48,
                     end_ticks=30003250001, expected_windows=30003, pending_samples_minimum=30000,
                     expected_selected_samples=3, expected_sample_ticks=[1000000, 2000000, 3000000],
@@ -63,6 +67,10 @@ class PendingScenario:
     def verify(self, attempt):
         log = (attempt/'simulation.log').read_text() if (attempt/'simulation.log').exists() else ''
         errors = []
+        try:
+            origin = measurement_start(log)
+        except ValueError as error:
+            errors.append(str(error)); origin = 0
         if len(re.findall(r'^TB_PASS variation_pending_retention ', log, re.M)) != 1 or re.search(r'Fatal:|Error-\[|BW_CORE_ERROR', log):
             errors.append('public_literal_contract_failed')
         rows = re.findall(r'^HISTORY_PENDING_STORAGE (.*)$', log, re.M)
@@ -80,6 +88,9 @@ class PendingScenario:
                 errors.append(prefix+'_packet_count')
                 return
             for field, expected in fields.items():
+                if field in ('first_ticks', 'last_ticks', 'tail_ticks', 'confirm_ticks',
+                             'start_ticks', 'end_ticks', 'first_sample_ticks', 'last_sample_ticks'):
+                    expected += origin
                 if packets[0].get(field) != str(expected):
                     errors.append(prefix+'_'+field)
         require_packet('BW_EPISODE', dict(scope='pending.subject', scope_kind=0, epoch=0, episode=1, result_seq=1,
@@ -95,13 +106,20 @@ class PendingScenario:
                        excluded_warmup=0, excluded_foreign=0, unknown_samples=0, excluded_denominator=0))
         require_packet('BW_LAST_STEADY', dict(scope='pending.subject', epoch=0, episode=1, result_seq=1,
                        found=0, selection_valid=0, phase=0, phase_result_seq=0))
-        require_packet('BW_SUMMARY', dict(status='STATISTICS_ONLY', **{'pass':0, 'fail':0, 'warning':0,
+        # Phase analysis stays enabled, so the public default checker settles
+        # the never-confirmed platform honestly: one NO_CONFIRMED_STEADY
+        # warning row reaches the summary; no phase packet or explicit check
+        # exists for this short suffix-retention subject.
+        require_packet('BW_DEFAULT_CHECK', dict(scope='pending.subject', epoch=0, episode=1, platform=0,
+                       metric='sustained_variation', reference_valid=0, samples=0,
+                       conclusion='WARNING', reason='NO_CONFIRMED_STEADY'))
+        require_packet('BW_SUMMARY', dict(status='WARNING', **{'pass':0, 'fail':0, 'warning':1,
                        'scopes_done':1, 'scopes_expected':1}))
         if any(line.startswith(('BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ')) for line in log.splitlines()):
             errors.append('unexpected_pending_phase_or_check')
         lines = log.splitlines()
         summary_positions = [i for i, line in enumerate(lines) if line.startswith('BW_SUMMARY ')]
-        final_prefixes = ('BW_EPISODE ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ')
+        final_prefixes = ('BW_EPISODE ', 'BW_VARIATION ', 'BW_LAST_STEADY ', 'BW_PHASE ', 'BW_PHASE_METRICS ', 'BW_CHECK ', 'BW_DEFAULT_CHECK ')
         if len(summary_positions) == 1 and any(i > summary_positions[0] and line.startswith(final_prefixes)
                                              for i, line in enumerate(lines)):
             errors.append('summary_precedes_final_packet')
@@ -109,8 +127,8 @@ class PendingScenario:
                                          'history_peak', 'clock_peak', 'episode_final', 'phase_final'} or
                          resource.get('episode_count_peak') != 30000 or resource.get('phase_count_peak') != 30000):
             errors.append('complete_exact_pending_measurement')
-        result = dict(profile=self.name, difference_count=len(errors), checked_raw=7, checked_windows=30003,
-                      selected_samples=3, selected_sample_ticks=[1000000, 2000000, 3000000],
+        result = dict(profile=self.name, difference_count=len(errors), measurement_start_ticks=origin,checked_raw=7, checked_windows=30003,
+                      selected_samples=3, selected_sample_ticks=[origin+t for t in [1000000, 2000000, 3000000]],
                       mean_gbps=16, stddev_gbps=0, cv_pct=0, resource_measurements=resource)
         (attempt/'diffs.json').write_text(json.dumps(errors, indent=2)+'\n')
         (attempt/'verification.json').write_text(json.dumps(result, indent=2, sort_keys=True)+'\n')

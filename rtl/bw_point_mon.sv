@@ -1,9 +1,8 @@
 module bw_point_mon #(
   parameter string POINT_ID = "__BW_AUTO__",
-  parameter string CLOCK_CONTEXT = "default",
   parameter logic [1:0] WINDOW_BASIS = bw_mon_pkg::BW_NS,
   parameter logic [63:0] WINDOW_WIDTH = 0,
-  parameter logic [63:0] UPDATE_STRIDE = 0,
+  parameter logic [63:0] UPDATE_STRIDE = WINDOW_WIDTH,
   parameter logic [63:0] FIXED_BYTES = 64'b0,
   parameter bw_mon_pkg::bw_protocol_t PROTOCOL = bw_mon_pkg::BW_VALID_ONLY,
   parameter logic [1:0] DYNAMIC_BYTES = 0,
@@ -19,21 +18,8 @@ module bw_point_mon #(
   parameter logic [1:0] SHORTAGE_BASIS = 2'bxx,
   parameter logic [63:0] SHORTAGE_THRESHOLD = 64'bx,
   parameter logic [1:0] EPISODE_ENABLE = 0,
-  parameter logic [63:0] SILENCE_THRESHOLD = 0,
-  parameter logic [1:0] PHASE_ENABLE = 0,
-  parameter logic [63:0] PHASE_N = 0,
-  parameter logic [63:0] PHASE_MIN_SPAN = 0,
-  parameter logic [63:0] PHASE_K = 0,
-  parameter real PHASE_STEADY_ENTER_ABS = -1.0,
-  parameter real PHASE_STEADY_ENTER_REL = -1.0,
-  parameter real PHASE_STEADY_EXIT_ABS = -1.0,
-  parameter real PHASE_STEADY_EXIT_REL = -1.0,
-  parameter real PHASE_RMS_ENTER_ABS = -1.0,
-  parameter real PHASE_RMS_ENTER_REL = -1.0,
-  parameter real PHASE_RMS_EXIT_ABS = -1.0,
-  parameter real PHASE_RMS_EXIT_REL = -1.0,
-  parameter real PHASE_TREND_ABS = -1.0,
-  parameter real PHASE_TREND_REL = -1.0
+  parameter logic [63:0] SILENCE_THRESHOLD = bw_mon_pkg::BW_DEFAULT_SILENCE_THRESHOLD,
+  parameter logic [1:0] PHASE_ENABLE = EPISODE_ENABLE
 ) (
   input logic clk,
   input logic reset_n,
@@ -48,6 +34,37 @@ module bw_point_mon #(
   import bw_mon_pkg::*;
   string scope_id, monitor_path;
   bw_scope_t scope_kind = BW_POINT;
+  `include "bw_scope_runtime.svh"
+  import "DPI-C" context function chandle bw_native_watch_point_clock(input string scope_path);
+  function void bw_native_point_edge();
+    expect_point_edge(scope_id,$time,clock_observer,my_point_ledger);
+  endfunction
+  function int bw_native_point_audit();
+    bw_point_batch batch;
+    if(!monitor_ready || runtime_failed())return 0;
+    if(my_point_ledger==null)my_point_ledger=point_batches[scope_id];
+    batch=my_point_ledger;
+    // A posted grant is a real continuation dependency. Auditing it before
+    // its program has run would mistake runnable work for a missing receipt.
+    if(batch.grant>slot_settlement_generation ||
+       recorder.settlement_required>slot_settlement_generation ||
+       core.settlement_required>slot_settlement_generation ||
+       hints.backpressure_hint.completion_dependency()>slot_settlement_generation ||
+       hints.credit_shortage_hint.completion_dependency()>slot_settlement_generation)return 1;
+    close_point_batch(scope_id,batch);
+    if(runtime_failed())return 0;
+    if(recorder.requested_actions!=recorder.consumed_actions ||
+       recorder.published_control_seq!=recorder.control_seq || captured_resets.size()!=0 ||
+       core.requested_actions!=core.consumed_actions ||
+       hints.backpressure_hint.completion_pending() ||
+       hints.credit_shortage_hint.completion_pending())
+      runtime_scope_error(BW_POINT,scope_id,"POINT_COMPLETION","stage=POSTED_ACTION runnable action has no receipt or continuation");
+    return 0;
+  endfunction
+  export "DPI-C" function bw_native_point_edge;
+  export "DPI-C" function bw_native_point_audit;
+  // Effective public configuration after omission defaults are applied.
+  bw_u64_t effective_stride, effective_silence;
   int source_handle;
   int transport_source;
   bw_record_t raw_record;
@@ -146,6 +163,8 @@ module bw_point_mon #(
     core.use_external_reset_capture();hints.use_external_reset_capture();
     monitor_path=$sformatf("%m");
     scope_id=(POINT_ID=="__BW_AUTO__") ? monitor_path : POINT_ID;
+    effective_stride=UPDATE_STRIDE;
+    effective_silence=resolve_silence_threshold(SILENCE_THRESHOLD,EPISODE_ENABLE);
     validate_point_protocol(PROTOCOL,DYNAMIC_BYTES,FIXED_BYTES,scope_id);
     validate_credit_config(PROTOCOL,CREDIT_ENABLE,CREDIT_CAPACITY,CREDIT_INITIAL,
                            CREDIT_INITIAL_KNOWN,CREDIT_RETURN_TIMING,scope_id);
@@ -153,30 +172,92 @@ module bw_point_mon #(
                          BACKPRESSURE_THRESHOLD,scope_id,"backpressure");
     validate_hint_config(PROTOCOL==BW_CREDIT,SHORTAGE_ENABLE,SHORTAGE_BASIS,
                          SHORTAGE_THRESHOLD,scope_id,"credit_shortage");
-    validate_episode_config(EPISODE_ENABLE,SILENCE_THRESHOLD,WINDOW_BASIS,scope_id);
-    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,PHASE_N,PHASE_MIN_SPAN,PHASE_K,
-      PHASE_STEADY_ENTER_ABS,PHASE_STEADY_ENTER_REL,PHASE_STEADY_EXIT_ABS,PHASE_STEADY_EXIT_REL,
-      PHASE_RMS_ENTER_ABS,PHASE_RMS_ENTER_REL,PHASE_RMS_EXIT_ABS,PHASE_RMS_EXIT_REL,
-      PHASE_TREND_ABS,PHASE_TREND_REL,scope_id);
-    validate_window(WINDOW_BASIS,WINDOW_WIDTH,UPDATE_STRIDE,scope_id);
+    validate_episode_config(EPISODE_ENABLE,effective_silence,WINDOW_BASIS,scope_id);
+    validate_phase_config(PHASE_ENABLE,EPISODE_ENABLE,WINDOW_BASIS,scope_id);
+    validate_window(WINDOW_BASIS,WINDOW_WIDTH,effective_stride,scope_id);
     initialize_reset_capture(monitor_path,"reset_n");
     source_handle=register_point(scope_id,monitor_path,WINDOW_BASIS,
-                                 WINDOW_WIDTH,UPDATE_STRIDE,CLOCK_CONTEXT);
+                                 WINDOW_WIDTH,effective_stride);
     transport_source=point_source_handle(source_handle);
-    // Ready is monotonic. Subscribe to per-instance identity only after the
-    // global barrier, avoiding a global cross-module string callback fanout.
-    wait(monitor_ready);
+    register_point_completion(scope_id);
+    my_point_ledger=point_batches[scope_id];
+    register_end_role(scope_key(BW_POINT,scope_id),"owner");
+    register_end_role(scope_key(BW_POINT,scope_id),"core");
+    // Only really generated duration hints own an end responsibility; an
+    // unsupported or disabled branch explicitly declares none.
+    if((PROTOCOL===BW_VALID_READY) && BACKPRESSURE_ENABLE)
+      register_end_role(scope_key(BW_POINT,scope_id),"hint");
+    if((PROTOCOL===BW_CREDIT) && SHORTAGE_ENABLE)
+      register_end_role(scope_key(BW_POINT,scope_id),"hint");
+    clock_observer=bw_native_watch_point_clock(monitor_path);
+    if(clock_observer==null)core_error("SLOT_SCHEDULER",scope_id,"cannot register independent raw-clock observer");
+    my_point_ledger.settlement_watch=clock_observer;
+    register_settlement_watch(BW_POINT,scope_id,clock_observer);
+    declare_scope_preparation(transport_source);
+    // Once the t=0 collection slot ends, a missing coordinator cannot arrive
+    // legally. This check does not depend on clocks, traffic or reset release.
+    fork begin
+      #(1);
+      if (!monitor_configured)
+        core_error("SETUP_MISSING",scope_id,
+          "a connected observation point requires exactly one bw_mon_setup");
+    end join_none
+    // Internal preparation completes inside the sealed slot, before the one
+    // ready publication; ready only then unlocks normal monitoring.
+    wait(configuration_sealed);
     wait(recorder.scope_id==scope_id && core.scope_id==scope_id && hints.configured &&
       hints.backpressure_hint.reset_capture_ready && hints.credit_shortage_hint.reset_capture_ready);
     reset_observer_ready=1;bw_native_reset_snapshot(reset_capture_handle);
+    wait(core.reset_applied && recorder.reset_observed &&
+      core.consumed_actions==core.requested_actions && captured_resets.size()==0 &&
+      recorder.published_control_seq==recorder.control_seq &&
+      hints.backpressure_hint.startup_prepared && hints.credit_shortage_hint.startup_prepared);
+    note_scope_prepared(transport_source);
+    wait(monitor_ready);
   end
-  always @(record_toggle)
-    if (monitor_ready && raw_record.record_seq!=0)begin
-      publish_frame(transport_source,raw_record);
-      if(!core_failure_seen)recorder.note_record_published(raw_record.record_seq);
+  final begin
+    if(!monitor_configured && !core_failure_pending())
+      core_error("SETUP_MISSING",scope_id,"simulation ended without bw_mon_setup");
+    // The global audit freezes the persistent responsibility ledger before
+    // any settlement, independently of which owner finalizes first.
+    ensure_end_audit();
+    if(monitor_ready && !monitor_time_supported($time))
+      runtime_scope_error(BW_POINT,scope_id,"SIM_TIME_LIMIT","point finalization exceeds the immutable monitor budget");
+    if(monitor_ready && !core_failure_seen) begin : point_terminal_evidence
+      string end_stage;
+      end_stage="NONE";
+      // Typed owner evidence for an interrupted ending; no queue drain runs.
+      if(recorder.requested_actions!=recorder.consumed_actions)end_stage="RECORDER_ACTIONS";
+      else if(recorder.published_control_seq!=recorder.control_seq)end_stage="CONTROL_PUBLICATION";
+      else if(captured_resets.size()!=0)end_stage="RESET_CAPTURE";
+      else if(core.requested_actions!=core.consumed_actions)end_stage="CORE_ACTIONS";
+      else if(hints.backpressure_hint.completion_pending() ||
+              hints.credit_shortage_hint.completion_pending())end_stage="HINT_ACTIONS";
+      else if(hints.backpressure_hint.timer_due_at_end() ||
+              hints.credit_shortage_hint.timer_due_at_end())end_stage="TIMER_DUE";
+      note_point_terminal(scope_id,recorder.requested_actions==recorder.consumed_actions &&
+        recorder.published_control_seq==recorder.control_seq && captured_resets.size()==0 &&
+        core.requested_actions==core.consumed_actions &&
+        !hints.backpressure_hint.completion_pending() && !hints.credit_shortage_hint.completion_pending(),
+        end_stage);
     end
+    if(!core_failure_seen)
+      note_role_receipt(scope_key(BW_POINT,scope_id),"owner",scope_disabled(BW_POINT,scope_id));
+  end
+  always @(record_toggle) begin : publish_record
+    if (monitor_ready && raw_record.record_seq!=0 && !runtime_failed())begin
+`ifdef BW_MON_TEST_FAULTS
+      if(take_point_fault(scope_id,"publication"))disable publish_record;
+`endif
+      publish_frame(transport_source,raw_record);
+      if(!runtime_failed())begin
+        recorder.note_record_published(raw_record.record_seq);
+        point_publication_receipt(scope_id,raw_record.record_seq,my_point_ledger);
+      end
+    end
+  end
   always @(control_toggle)
-    if (monitor_ready && raw_control.control_seq!=0)begin
+    if (configuration_sealed && raw_control.control_seq!=0 && !runtime_failed())begin
       publish_control(transport_source,raw_control);
       if(!core_failure_seen)recorder.note_control_published(raw_control.control_seq);
     end
@@ -206,20 +287,7 @@ module bw_point_mon #(
   bw_stats_core #(.WINDOW_BASIS(WINDOW_BASIS),.WINDOW_WIDTH(WINDOW_WIDTH),
                   .UPDATE_STRIDE(UPDATE_STRIDE),.EPISODE_ENABLE(EPISODE_ENABLE),
                   .SILENCE_THRESHOLD(SILENCE_THRESHOLD),
-                  .PHASE_ENABLE(PHASE_ENABLE),
-                  .PHASE_N(PHASE_N),
-                  .PHASE_MIN_SPAN(PHASE_MIN_SPAN),
-                  .PHASE_K(PHASE_K),
-                  .PHASE_STEADY_ENTER_ABS(PHASE_STEADY_ENTER_ABS),
-                  .PHASE_STEADY_ENTER_REL(PHASE_STEADY_ENTER_REL),
-                  .PHASE_STEADY_EXIT_ABS(PHASE_STEADY_EXIT_ABS),
-                  .PHASE_STEADY_EXIT_REL(PHASE_STEADY_EXIT_REL),
-                  .PHASE_RMS_ENTER_ABS(PHASE_RMS_ENTER_ABS),
-                  .PHASE_RMS_ENTER_REL(PHASE_RMS_ENTER_REL),
-                  .PHASE_RMS_EXIT_ABS(PHASE_RMS_EXIT_ABS),
-                  .PHASE_RMS_EXIT_REL(PHASE_RMS_EXIT_REL),
-                  .PHASE_TREND_ABS(PHASE_TREND_ABS),
-                  .PHASE_TREND_REL(PHASE_TREND_REL)) core
+                  .PHASE_ENABLE(PHASE_ENABLE)) core
     (.scope_id(scope_id),.scope_kind(scope_kind),.record(raw_record),.record_toggle(record_toggle),
      .stats_reset_n(reset_n),.accepted_record_seq(accepted_record_seq),
      .progress_watermark_ticks(BW_U64_MAX),
@@ -244,7 +312,9 @@ module bw_point_mon #(
      .episode_events_complete(episode_events_complete),.episode_member_reset_coverage(episode_member_reset_coverage),
      .episode_duration_valid(episode_duration_valid),.episode_e2e_valid(episode_e2e_valid),
      .episode_e2e_gbps(episode_e2e_gbps),.episode_result(episode_result),
-     .phase_current(phase_current),
+     .phase_reason(phase_reason),.phase_evidence_required(phase_evidence_required),
+                  .phase_candidate_required(phase_candidate_required),.phase_minimum_span(phase_minimum_span),
+                  .phase_current(phase_current),
      .phase_candidate(phase_candidate),
      .phase_active(phase_active),
      .phase_eligible(phase_eligible),
@@ -264,6 +334,6 @@ module bw_point_mon #(
      .phase_confirmation_ticks(phase_confirmation_ticks),
      .phase_fit_mean(phase_fit_mean),
      .phase_fit_delta(phase_fit_delta),
-     .phase_fit_rms(phase_fit_rms),
+     .phase_fit_rms(phase_fit_rms),.phase_fit_trend_rms(phase_fit_trend_rms),
      .phase_result(phase_result));
 endmodule

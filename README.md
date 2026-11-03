@@ -2,7 +2,13 @@
 
 用于 SoC 仿真验证的通用带宽监测器（bandwidth monitor）。目标是提供可复用的 SystemVerilog `module`，观察 master、memory 接口与 NoC 链路，统计带宽并辅助定位传输间隙和长时间反压。
 
-仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、显式注册启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility/README.md)及[修订规模/历史验收](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)已实际通过；PR 审查和 issue 关闭与这些测量结果分别记录。
+第一次接入请看[中文用户手册](docs/bw-mon-user-guide-zh.md)：从可运行例子开始，说明如何例化、接线、配置窗口、使用 bind、汇总多个接口，以及查看结果和设置性能目标。示例代码和目标文件位于 [examples](examples/)。
+
+可先运行[单接口例子](examples/bw_mon_quickstart.sv)，再运行[类型 bind 与两接口聚合例子](examples/bw_mon_grouped.sv)。两者共用手册第 3 节的编译命令；后一个例子包含成员配置、结果读取和正常结束步骤。
+
+新版[四个真实 Verdi 聚焦视图](evidence/verdi61/README.md)给出具名组源码层级、阶段边界／确认和持续5%检查的预期／实际；用户已确认四张图及表列区间，自动核验与实际反馈分别记录。
+
+仓库提供纯仿真的 SystemVerilog 监测器，支持类型 bind、自动注册和统一启动、valid-only、valid-ready 与 flitv/lcrdv 的固定或动态逐传输计量和精确 ns / cycle 滑动窗口（含停钟、恢复与变频），并提供独立信用账本诊断和持续反压、信用不足提示。过程、阶段、最终指标和按点/组身份检查均已实现。[427项组件与42场端到端兼容性验证](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/review/compatibility/README.md)及[修订规模/历史验收](https://github.com/MakeReadUnique/bw_mon/blob/b22e32e1beb704beb290e65f7af20bbe44065a34/tests/scale/revised_evidence/final-campaign/README.md)保留其原始源码身份；接入简化的新版证据按[实现规格](https://github.com/MakeReadUnique/bw_mon/issues/48)重新取得。PR 审查和 issue 关闭与测量结果分别记录。
 
 当前 PR 只保留源码、测试、[最终结果摘要](evidence/README.md)和关键截图。FSDB、完整数据包及中间记录按需从固定历史提交恢复到本地忽略目录，见[复现说明](docs/bw-mon-evidence.md)。`make verify-evidence` 可离线复验已保存的结果。
 
@@ -12,9 +18,9 @@
 日常入口实际覆盖128点/32组；完整入口真实覆盖16,384点/4,096组、全部拓扑上限及少量范围的80,000沿深历史，串行计时并独立核验。
 预算、固定输入、冷 / 热缓存和可移植证据见[最大拓扑验收](docs/bw-mon-max-topology.md)及[历史验收](docs/bw-mon-history.md)。
 旧的四场 MAX 长跑及历史 MAX 场景保持用户停止 / 未启动身份，不由新入口恢复或计为通过。
-日常回归实测冷构建96.6秒、缓存构建25.5秒；两票共同完整套件为906.6秒和829.5秒，均满足各自预算，独立差异为零。
+历史产品 `b22e32e` 的日常回归为冷构建96.6秒、缓存25.5秒，完整套件为906.6秒和829.5秒；这些数字只适用于原来源。新版的最终源码、覆盖与预算另行记录于[验收摘要](evidence/README.md)。
 
-自行集成 VCS 工程时还需编译私有 `rtl/bw_slot_settlement.c`，启用 `+vpi`、`-debug_access`（波形可用 `-debug_access+all`）并提供已安装 VCS 的 SDK 头目录；具体命令见[调度与构建说明](docs/bw-mon-scheduling.md)。公开集成仍为点、组和 setup 三个入口，计量与分析保留在 SV。
+自行集成 VCS 工程时还需编译私有 `rtl/bw_slot_settlement.c` 和 `rtl/bw_end_coordinator.c`，启用 `+vpi`、`-debug_access`（波形可用 `-debug_access+all`）、`-assert svaext`，并提供已安装 VCS 的 SDK 头目录；具体命令见[调度与构建说明](docs/bw-mon-scheduling.md)。公开集成仍为点、组和 setup 三个入口，计量与分析保留在 SV。
 
 单点与聚合组可通过 `+BW_EXPECT=FILE` 按完整类型/身份配置全程与最后稳定段原始带宽、每段爬坡/下降时间及 min/max/标准差/CV 预期，逐指标输出非终止的 PASS / FAIL / WARNING 与一次最终汇总；见[键表与结算接口](docs/bw-mon-expectations.md)。
 
@@ -47,3 +53,5 @@
 固定公开信号、独立预期/实际/差异、真实 Verdi 视图和工具命令。自动检查、agent
 图像检查、人工 T6 记录及规模验收分别标记。[九张新波形图的人工评审](https://github.com/MakeReadUnique/bw_mon/issues/33#issuecomment-6411618527)
 已于 2026-10-26 获用户确认；该记录只覆盖 Issue 中列出的视图和区间。
+
+最终运行来源、597项契约、43场公开场景、四图人工确认适用性及冷／热预算见[最终来源验收](evidence/README.md)。

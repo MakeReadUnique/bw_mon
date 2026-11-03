@@ -2,7 +2,7 @@ module tb_group_wide;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("p0"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(64'hffffffff)) p0
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_point_mon #(.POINT_ID("p1"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),.FIXED_BYTES(64'hffffffff)) p1
@@ -10,8 +10,8 @@ module tb_group_wide;
   bw_group_mon #(.GROUP_ID("wide"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1)) group_mon
     (.clk(clk),.reset_n(1'b1));
   initial begin
-    define_group("wide",2);add_point_member("wide","p0");add_point_member("wide","p1");
-    finish_configuration();wait(monitor_ready);
+    add_point_member("wide","p0");add_point_member("wide","p1");
+    wait(monitor_ready);
     #250000;clk=1;#1;clk=0;
     if(group_mon.raw_record.byte_inc!=64'd8589934590 || group_mon.raw_record.event_inc!=2)
       $fatal(1,"group per-edge increment must not truncate to a single-point32-bit amount");

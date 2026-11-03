@@ -1,5 +1,7 @@
 # T6 波形查看旧指南（历史说明）
 
+接入简化后的新版人工验收见[四个真实 Verdi 聚焦视图](../evidence/verdi61/README.md)；新资产的实际用户反馈仍待完成。下面的九图确认只适用于历史资产。
+
 > 交付目录已精简：当前 PR 保留源码、最终摘要和截图。下面的历史证据链接指向固定提交；本地查看/复验请先看[证据与复现说明](bw-mon-evidence.md)。
 
 当前人工评审见[新的九张模拟曲线图](https://github.com/MakeReadUnique/bw_mon/issues/33)。用户 MakeReadUnique 已于 2026-10-26 [确认全部满足需求](https://github.com/MakeReadUnique/bw_mon/issues/33#issuecomment-6411618527)，范围是该 Issue 中列出的九个视图及区间。本页保留旧图的查看说明；原始清单和生成记录中的 PENDING 是当时的状态。

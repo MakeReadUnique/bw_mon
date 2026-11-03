@@ -6,7 +6,7 @@ Integrate the ordinary point/group and setup modules, enable episode analysis wi
 an explicit silence threshold, and pass one scene file:
 
 ```systemverilog
-bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+bw_mon_setup setup();
 bw_point_mon #(.POINT_ID("tb.port[0].bw"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
   .FIXED_BYTES(152), .EPISODE_ENABLE(1), .SILENCE_THRESHOLD(2)) bw
   (.clk(clk), .reset_n(reset_n), .valid(valid));
@@ -16,14 +16,93 @@ bw_point_mon #(.POINT_ID("tb.port[0].bw"), .WINDOW_WIDTH(4), .UPDATE_STRIDE(1),
 ./simv +BW_EXPECT=/path/to/scene.cfg
 ```
 
-The file is read once when registration freezes at Ready. Its rules survive
-statistics resets. There is no hot reload. With no file, statistics continue
-and the summary is `STATISTICS_ONLY`. An explicitly missing/unreadable file is
+The file is read once during preparation, after registration freezes and before
+the single Ready publication. Its rules survive
+statistics resets. There is no hot reload. Phase-enabled scopes also run the
+fixed default sustained-variation check without an expectation file. With phase
+analysis disabled and no explicit rule, the summary is `STATISTICS_ONLY`.
+An explicitly missing/unreadable file is
 a nonfatal cfg WARNING. Enabling a target does not enable episode analysis or
 choose Q; missing episode evidence produces WARNING.
 An empty `+BW_EXPECT=` value warns before file I/O, and a bare `+BW_EXPECT` warns
 that a path is required. Unrelated names such as `+BW_EXPECTED` do not select
 expectation checking.
+
+## Default sustained-variation check
+
+Enabling phase analysis also enables this rule in `bw_check_report`; no extra
+module, file, threshold, duration, reference-count or near-zero setting is needed.
+It settles each confirmed steady platform once at its episode's final boundary.
+No usable platform gives one episode WARNING; no episode gives one final scope
+WARNING. Effective analysis facts are prepared before Ready, including a finish
+immediately after Ready. Ordinary warmup and reference waiting do not produce repeated warnings.
+
+The reference is the earliest six consecutive valid windows fully contained in
+the final platform, spanning at least `min(W,5*S)` in the selected basis.
+`B=sum(y)/6` is frozen and the reference rows themselves are checked. It differs
+from the steady phase's raw bytes divided by duration; both are reported.
+For positive B, a row exceeds the limit exactly when `abs(y-B)>0.05*B`.
+Equality passes, with no epsilon, file tolerance, or positive near-zero floor.
+B=0 or insufficient reference/coverage gives WARNING.
+
+A FAIL needs at least two consecutive new valid exceedance rows whose original
+logical endpoints span at least W. Alternating high/low deviations continue the
+same run. Invalid evidence, an in-band row, reset or a confirmed exclusion breaks
+it. Replayed snapshots/final records add neither samples nor results, including
+a higher delivery number for an already settled logical identity. Durable
+logical episode/platform watermarks survive release of raw buffers. Original
+cycle positions govern cycle windows even when clocks stop or change frequency;
+record delivery time never supplies elapsed duration. A reliable FAIL survives
+later missing evidence or truncation; otherwise incomplete evidence gives WARNING. Quality is scoped to the platform
+and its owned check interval: unknown bytes before a fully observed later
+platform do not taint that platform, while the explicit episode rule retains its
+own incomplete evidence.
+Explicit bandwidth, time and CV targets remain independent, and their PASS cannot
+overwrite this rule's FAIL. Summary priority is FAIL > WARNING > PASS > STATISTICS_ONLY.
+
+`BW_DEFAULT_CHECK` reports typed full scope identity, epoch/episode/platform,
+window basis/W/S, final platform and check boundaries, exact reference sequence
+membership/count/span, B and raw steady bandwidth, absolute/relative peak
+deviation, threshold, over-limit run count and longest run endpoints/count/span,
+quality, conclusion and reason. Ns logical positions/spans use original fs ticks;
+cycle positions/spans use original local cycle indices.
+
+Each platform keeps ownership through undetermined intervals and intervening
+short platforms, until the next independently qualified platform boundary or
+the trusted final episode cutoff. Handoff requires at least two consecutive
+valid publications inside the new final interval with logical span at least W.
+It does not require a reference: a platform with five contained reference
+windows may take ownership and still report WARNING.
+
+Normal steps use the original seven confirmation samples of both platforms,
+with disjoint raw min/max envelopes and a continuous monotonic bridge no longer
+than W+S. Private reset-event generations and original event timestamps distinguish
+an actual member reset transition from held known reset coverage. Held reset
+before both supports does not invent a crossing; actual reset transitions in
+support/bridge evidence prevent a normal-step exemption. The phase evidence owner never reads B, the 5% threshold or a checker
+verdict. It reports the physical change separately from the arrived-new-level
+recognition suffix, the exact exemption and the retained old prefix. Existing
+independently confirmed RAMP/FALL ranges retain their own exclusions. Final
+crop rechecks support, handoff and reference eligibility from retained raw
+publications. A later reset can leave an earlier handoff fully supported within
+the trusted prefix; uncertainty still attaches to the terminal platform.
+
+`BW_STAGE_HANDOFF` reports final qualification publications and logical span.
+`BW_STAGE_STEP` reports typed platform identities, original seven-row support
+ranges/envelopes, bridge sequence range and span, arrival/wait suffix,
+exemption/preserved-prefix bounds and acceptance/rejection reason.
+`BW_DEFAULT_CHECK.handoff_platform` identifies the next owner. Insufficient
+reference rows are reported as candidate membership with unavailable B.
+
+Product coverage includes real normal 100→200 steps, independent RAMP/FALL,
+short-platform pauses and sustained anomalies, early FAIL followed by later
+PASS, and alternating ±8% traffic that remains STEADY while checking FAIL.
+The four frozen input files and phase timelines remain unchanged. Actual
+endpoint geometry governs reference qualification: the frozen NS harness's
+final tail is 1fs after its last publication, so its twelve-window terminal
+case contains six full reference rows. A separate exactly aligned public
+fixture has five and warns. This is an explicit timing applicability difference
+from the prototype, not a changed rule or an arbitrary-step recognition claim.
 
 ## File grammar and complete supported keys
 

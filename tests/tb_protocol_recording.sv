@@ -5,7 +5,7 @@ module tb_protocol_recording;
   logic vv=0,vrv=0,vrr=0,cf=0,cr=0;
   logic [63:0] vs=0,vrs=0,cs=0;
   logic ck=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(3)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("valid"),.PROTOCOL(BW_VALID_ONLY),.DYNAMIC_BYTES(1),
     .WINDOW_WIDTH(4),.UPDATE_STRIDE(1)) vo
     (.clk(clk),.reset_n(1'b1),.valid(vv),.size_bytes(vs),.size_known(1'b1));

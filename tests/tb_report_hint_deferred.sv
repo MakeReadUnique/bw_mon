@@ -2,7 +2,7 @@ module tb_report_hint_deferred;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   bit deferred_finish=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("hint.deferred"),.PROTOCOL(BW_VALID_READY),
     .WINDOW_BASIS(BW_CYCLE),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .BACKPRESSURE_ENABLE(1),.BACKPRESSURE_BASIS(BW_NS),.BACKPRESSURE_THRESHOLD(1)) point

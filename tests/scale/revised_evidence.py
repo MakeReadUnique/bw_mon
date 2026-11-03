@@ -16,15 +16,23 @@ import sys
 import tempfile
 import time
 
-QUICK = ['topology-quick-ns','topology-quick-cycle','history-revised-ns-seeded',
-         'history-revised-cycle-seeded','history-revised-pending']
+QUICK = ['topology-quick-ns','topology-quick-cycle','topology-quick-cancel-ns',
+         'history-revised-ns-seeded','history-revised-cycle-seeded','history-revised-pending']
 FULL = ['topology-quick-ns','topology-quick-cycle','topology-max-ns','topology-max-cycle',
+        'topology-quick-cancel-ns','topology-max-cancel-ns',
         'history-revised-ns-seeded','history-revised-cycle-seeded','history-revised-ns-expiry',
-        'history-revised-cycle-expiry','history-revised-ns-deep','history-revised-cycle-deep','history-revised-pending']
+        'history-revised-cycle-expiry','history-revised-ns-deep','history-revised-cycle-deep',
+        'history-revised-ns-reset','history-revised-cycle-reset','history-revised-pending','history-revised-ns-overrun']
 COMPONENT_CASES = ['numeric_arithmetic_known','numeric_add_unknown','numeric_mul_unknown','numeric_add_overflow',
                    'numeric_mul_overflow','numeric_queue_range','numeric_subtract_known','numeric_subtract_underflow',
                    'numeric_subtract_unknown','history_trace_ns','history_trace_cycle','phase_delayed',
                    'metrics_stopped_history','reset_member_controls','reset_rewarm']
+
+
+def verification_input_name(name):
+    # This receipt-format rule is repeated here to keep archived verify.py
+    # self-contained before its indexed source closure has been unpacked.
+    return name not in {'manifest.json','verification.json','diffs.json','qualification.json'} and not name.startswith('verification.')
 
 
 def sha(path):
@@ -91,7 +99,34 @@ def validate_run_metadata(run):
     require(accounted<=total+0.005,'executed stage durations exceed parent run duration')
 
 
-def audit_run(manifest_path,source=None,attempt=None,native_build=None):
+def validate_source_bound_verification(manifest,attempt):
+    require(sha(attempt/'qualification.json')==manifest.get('qualification_sha256'),'source-bound audit receipt missing or changed')
+    proof=json.loads((attempt/'qualification.json').read_text())
+    require(proof.get('schema')=='bw-source-bound-verification-v1','unknown source-bound audit receipt')
+    require((proof.get('scenario'),proof.get('started_utc'),proof.get('attempt_directory'))==
+            (manifest['scenario'],manifest['started_utc'],manifest['stages']['simulation']['cwd']),
+            'source-bound audit belongs to another attempt')
+    stage=manifest['stages']['verification'];command=stage['command']
+    require(command[-2:] == ['qualify',proof['attempt_directory']] and command[-3]==manifest['scenario'] and
+            command[-6]==str(Path(manifest['source_snapshot'])/'tests/scale/bounded.py'),
+            'source-bound audit was not the measured frozen verification worker')
+    first=utc_seconds(proof['audit_started_utc']);last=utc_seconds(proof['audit_finished_utc'])
+    require(first>=utc_seconds(stage['started_utc'])-0.05 and last<=utc_seconds(stage['finished_utc'])+0.05 and
+            last>=first and abs(last-first-proof['elapsed_seconds'])<0.1,'source-bound audit lies outside its measured stage')
+    require(proof['simulation_stage_sha256']==sha(attempt/'simulation.stage.json'),'source-bound audit checked another simulation')
+    for key in ('source_sha256','input_sha256','build_receipt_sha256'):
+        require(proof.get(key)==manifest[key],'source-bound audit identity mismatch: '+key)
+    require(proof['regenerated_inputs_sha256']==manifest['input_sha256'],'independent regenerated input mismatch')
+    expected={name:digest for name,digest in manifest['evidence_sha256'].items() if verification_input_name(name)}
+    require(proof['consumed_sha256']==expected and all(sha(attempt/name)==digest for name,digest in expected.items()),
+            'consumed raw artifacts changed after the original audit')
+    require(proof['verification_sha256']==sha(attempt/'verification.json') and proof['diffs_sha256']==sha(attempt/'diffs.json'),
+            'independent audit output changed')
+    require(json.loads((attempt/'verification.json').read_text())==manifest['verification'],
+            'recorded independent summary differs from its checked output')
+
+
+def audit_run(manifest_path,source=None,attempt=None,native_build=None,replay=True):
     manifest=json.loads(manifest_path.read_text())
     name=manifest['scenario']
     require(name in FULL,'unknown revised scenario')
@@ -108,6 +143,11 @@ def audit_run(manifest_path,source=None,attempt=None,native_build=None):
     build_receipt=json.loads((native_build/'compile-success.json').read_text())
     recorded_compile=manifest['stages']['compile']
     if recorded_compile['state']=='CACHED':recorded_compile=recorded_compile['original']
+    if 'tests/scale/memory_advice.c' in manifest['source_sha256']:
+        require(manifest.get('memory_advice',{}).get('method')=='MADV_HUGEPAGE',
+                'process-local memory advice was not declared')
+        require(any(str(arg).endswith('/tests/scale/memory_advice.c') for arg in recorded_compile['command']),
+                'declared memory advice was not compiled into the measured simulator')
     require(build_receipt['stage']==recorded_compile and
             json.loads((native_build/'compile.stage.json').read_text())==recorded_compile,
             'native attempt differs from original run receipt: '+name)
@@ -129,6 +169,12 @@ def audit_run(manifest_path,source=None,attempt=None,native_build=None):
     require(manifest['stages']['compile']['state'] in ('COMPLETED','CACHED'),'incomplete compilation')
     identity=hashlib.sha256(json.dumps(manifest['build_identity'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
     require(identity==manifest['compile_digest'],'build identity mismatch')
+    if manifest.get('qualification_sha256') or not replay:
+        validate_source_bound_verification(manifest,attempt)
+    if not replay:
+        evidence=manifest['verification']
+        require(evidence.get('difference_count')==0,'independent differences: '+name)
+        return dict(scenario=name,checked_raw=evidence.get('checked_raw'),checked_windows=evidence.get('checked_windows'),difference_count=0)
     module='topology_revised' if name.startswith('topology-') else 'history_revised'
     with tempfile.TemporaryDirectory(prefix='bw-revised-replay-') as temporary:
         replay=Path(temporary)
@@ -432,12 +478,13 @@ def main():
     sub=parser.add_subparsers(dest='command')
     audit=sub.add_parser('audit-runs');audit.add_argument('manifests',nargs='+',type=Path)
     audit.add_argument('--member-sensitivity',action='store_true')
+    audit.add_argument('--receipts-only',action='store_true',help='revalidate the source-bound audit already performed in each measured run')
     make=sub.add_parser('archive');make.add_argument('output',type=Path);make.add_argument('--destination',type=Path,required=True)
     check=sub.add_parser('verify');check.add_argument('directory',type=Path)
     args=parser.parse_args()
     started=time.monotonic()
     if args.command=='audit-runs':
-        result=dict(checked_pass=True,runs=[audit_run(p) for p in args.manifests])
+        result=dict(checked_pass=True,runs=[audit_run(p,replay=not args.receipts_only) for p in args.manifests])
         if args.member_sensitivity:
             reference=next(p for p in args.manifests if json.loads(p.read_text())['scenario']=='topology-quick-ns')
             result['member_sensitivity']=audit_compensating_members(reference)

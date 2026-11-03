@@ -2,7 +2,7 @@ module tb_credit_timing;
   timeunit 1ns;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,flitv=1,lcrdv=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(4)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.PROTOCOL(BW_CREDIT),.FIXED_BYTES(64),.WINDOW_WIDTH(2),.UPDATE_STRIDE(1),
     .CREDIT_ENABLE(1),.CREDIT_CAPACITY(1),.CREDIT_INITIAL(0),.CREDIT_INITIAL_KNOWN(1),
     .CREDIT_RETURN_TIMING(BW_RETURN_NEXT_CYCLE)) next_credit

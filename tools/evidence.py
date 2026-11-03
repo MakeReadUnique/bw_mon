@@ -16,7 +16,10 @@ SOURCE = 'b22e32e1beb704beb290e65f7af20bbe44065a34'
 SCALE = 'tests/scale/revised_evidence/final-campaign'
 COMPATIBILITY = 'tests/review/compatibility'
 COMMON = 'tests/scale/history_evidence/final-campaign'
+DELIVERY = 'evidence/spec48-delivery.json'
+SPEC48 = 'artifacts/spec48-delivery'
 GROUPS = {
+    'spec48': [SPEC48],
     'scale': [SCALE],
     'compatibility': [COMPATIBILITY],
     'common': [COMMON, 'tests/scale/evidence/final-runtime-467b722',
@@ -36,13 +39,19 @@ def digest(path):
     return value.hexdigest()
 
 
-def check_current_source():
-    expected = json.loads((ROOT / 'evidence/source-hashes.json').read_text())
-    changed = [name for name, value in expected['files'].items()
-               if not (ROOT / name).is_file() or digest(ROOT / name) != value]
+def check_current_source(root=ROOT, use_delivery=True):
+    delivery=root/DELIVERY
+    current=use_delivery and delivery.exists()
+    expected=json.loads((delivery if current else root/'evidence/source-hashes.json').read_text())
+    files=expected['source_sha256'] if current else expected['files']
+    changed = [name for name, value in files.items()
+               if not (root / name).is_file() or digest(root / name) != value]
+    if current:
+        changed += [str(path.relative_to(root)) for path in (root/'rtl').rglob('*')
+                    if path.is_file() and str(path.relative_to(root)) not in files]
     if changed:
         raise ValueError('Current measured inputs differ: ' + ', '.join(changed))
-    print('PASS current measured source: {} files'.format(len(expected['files'])), flush=True)
+    print('PASS current measured source: {} files'.format(len(files)), flush=True)
 
 
 def extract_snapshot(repo, revision, paths, destination):
@@ -103,27 +112,41 @@ def extract_snapshot(repo, revision, paths, destination):
 
 
 def restore(kind, destination):
-    count = extract_snapshot(ROOT, SOURCE, GROUPS[kind], destination)
+    source=SOURCE
+    if kind=='spec48':
+        delivery=json.loads((ROOT/DELIVERY).read_text())
+        if delivery.get('state')!='VERIFIED':
+            raise ValueError('Spec 48 delivery is not complete')
+        source=delivery['archive_commit']
+    count = extract_snapshot(ROOT, source, GROUPS[kind], destination)
     print('PASS restore {}: {} files -> {}'.format(kind, count, destination), flush=True)
     return count
 
 
 def verify(kind, current_source):
+    new_delivery=(ROOT/DELIVERY).exists()
     if current_source:
-        check_current_source()
+        check_current_source(use_delivery=kind in ('all','spec48'))
     selected = ['compatibility', 'scale', 'waveforms', 'common'] if kind == 'all' else [kind]
+    if kind=='all' and new_delivery:
+        selected.append('spec48')
     for name in selected:
         with tempfile.TemporaryDirectory(prefix='bw-evidence-verify-') as temporary:
             target = Path(temporary)
             restore(name, target)
             if name == 'waveforms':
                 extract_snapshot(ROOT, SOURCE, ['tests/acceptance', 'rtl'], target)
-            if name == 'scale':
+            if name == 'spec48':
+                commands = [[sys.executable, str(ROOT/'tests/scale/revised_evidence.py'),
+                             'verify', str(target/SPEC48/'revised')],
+                            [sys.executable, str(ROOT/'tools/spec48_audit.py'), str(target/SPEC48)],
+                            [sys.executable, str(ROOT/'tests/verdi61/verify.py')]]
+            elif name == 'scale':
                 commands = [[sys.executable, str(target / SCALE / 'verify.py'),
                              'verify', str(target / SCALE)]]
             elif name == 'compatibility':
                 command = [sys.executable, str(target / COMPATIBILITY / 'verify.py')]
-                if current_source:
+                if current_source and not (kind=='all' and new_delivery):
                     command += ['--current-source', '--source-root', str(ROOT)]
                 commands = [command]
             elif name == 'waveforms':
@@ -144,7 +167,7 @@ def main():
     unpack.add_argument('kind', choices=sorted(GROUPS))
     unpack.add_argument('--destination', type=Path, default=ROOT)
     check = commands.add_parser('verify', help='replay records in a temporary directory; no simulator')
-    check.add_argument('kind', choices=['all', 'scale', 'compatibility', 'waveforms', 'common'])
+    check.add_argument('kind', choices=['all', 'scale', 'compatibility', 'waveforms', 'common', 'spec48'])
     check.add_argument('--current-source', action='store_true')
     commands.add_parser('check-source', help='compare current inputs with the measured source hashes')
     args = parser.parse_args()

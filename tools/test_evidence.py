@@ -1,11 +1,39 @@
 #!/usr/bin/env python3
 """Exercise restoration with real Git objects and existing local user data."""
 import subprocess
+import hashlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
-from evidence import extract_snapshot
+from evidence import extract_snapshot, check_current_source
+
+
+class CurrentSourceEvidence(unittest.TestCase):
+    def test_current_delivery_checks_new_source_without_relabelling_historical_hashes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            (root/'evidence').mkdir();(root/'rtl').mkdir()
+            source=root/'rtl/example.sv';source.write_text('new measured source\n')
+            old={'files':{'rtl/example.sv':hashlib.sha256(b'old measured source\n').hexdigest()}}
+            (root/'evidence/source-hashes.json').write_text(json.dumps(old))
+            delivery={'source_sha256':{'rtl/example.sv':hashlib.sha256(source.read_bytes()).hexdigest()}}
+            (root/'evidence/spec48-delivery.json').write_text(json.dumps(delivery))
+            check_current_source(root)
+            self.assertEqual(json.loads((root/'evidence/source-hashes.json').read_text()),old)
+            source.write_text('later unqualified change\n')
+            with self.assertRaisesRegex(ValueError,'example.sv'):
+                check_current_source(root)
+
+    def test_new_production_file_cannot_escape_current_delivery_inventory(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            (root/'evidence').mkdir();(root/'rtl').mkdir()
+            (root/'evidence/spec48-delivery.json').write_text(json.dumps({'source_sha256':{}}))
+            (root/'rtl/new.sv').write_text('new unqualified module\n')
+            with self.assertRaisesRegex(ValueError,'new.sv'):
+                check_current_source(root)
 
 
 class RestoreEvidence(unittest.TestCase):

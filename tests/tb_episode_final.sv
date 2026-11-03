@@ -2,7 +2,7 @@ module tb_episode_final;
   timeunit 1fs;timeprecision 1fs;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("episode.final"),.WINDOW_WIDTH(4),.UPDATE_STRIDE(1),
     .FIXED_BYTES(8),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(4)) point
     (.clk(clk),.reset_n(1'b1),.valid(valid));

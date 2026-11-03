@@ -81,9 +81,10 @@ variant also proves validX with ready0 is known idle, and flitv1/lcrdv0 still co
 One `bw_group_mon` per group observes the common real clock and its local statistics
 reset. `die0_dmc={p0..p3}`, `die1_dmc={p4..p7}`, `all_dmc={die0_dmc,die1_dmc}` and
 `mixed={die0_dmc,p8,p9}`; p10/p11 remain independent. Direct/recursive cardinalities
-are4/4,4/4,2/8,3/6. One setup declares12 points AND4 groups. Definitions/member rules
-then `finish_configuration()` seal the DAG; traffic starts on an actual edge
-strictly after Ready. No manual publication/read/ACK/time advancement is needed.
+are4/4,4/4,2/8,3/6. One parameterless setup discovers the12 points and4 real group
+instances, then automatically seals their t=0 member rules. Traffic starts on an
+actual edge strictly after the published common measurement start T. No manual
+publication/read/ACK or finish call is needed.
 
 Default Point ID is the bound public monitor hierarchy. The example overrides
 IDs to p0...p11. E5 explicitly registers `tb.top.master0.bw` and `memory_all`,
@@ -95,22 +96,22 @@ Local reset changes only local statistics/epoch; source records/receipts continu
 ## Complete configuration references
 
 The [API tables](bw-mon-api.md) specify required/default/illegal behavior for all
-protocol, fixed/dynamic bytes, credit, hint, identity/member/count, timeout, window,
+protocol, fixed/dynamic bytes, credit, hint, identity/member, window,
 episode and fit parameters. [Numeric/storage contracts](bw-mon-numeric-storage.md)
 are authoritative for raw knownness, ranges, exact retention, representation
 failures and resource accounting. Key facts for integration:
 
 | Configuration | Object / unit / defaults and constraints |
 | --- | --- |
-| Sampling/time | All production scopes1fs/1fs; timestamps unsigned64 fs. Actual positive edges, maximum target2GHz; immutable40us system budget from original setup, never renewed by local reset. No extra drain beyond budget. |
-| Setup | Raw logic64 point count required1..16384; group count default0, maximum4096. Known positive startup/missing-record timeouts default100ns/1ns; one actual expected edge starts each missing deadline across all levels. |
-| IDs/members | Point default `__BW_AUTO__`, explicit nonempty unique overrides. Group ID required. Direct count known positive after dedup; total count includes free points. Exact/dot-segment Point prefix or exact Group membership, no cycles/recursive overlap. Same clock context/W/S/basis. Depth8, edges65536, parents16. |
+| Sampling/time | All production scopes1fs/1fs; timestamps unsigned64 fs. Edges must be strictly later than published T; maximum target2GHz. The inclusive T+40us budget is never renewed by local reset. No extra drain beyond budget. |
+| Setup | One parameterless instance discovers up to16384 points and4096 groups, including ungrouped points. It seals after all finite t=0 scheduling, prepares all scopes and reports in the first positive slot, and publishes ready once. No manual counts or public timeouts. |
+| IDs/members | Point default `__BW_AUTO__`, explicit nonempty unique overrides. Each real group instance declares its Group ID. Direct counts are derived after typed deduplication. Exact/dot-segment Point prefix or exact Group membership, no cycles/recursive overlap. Same W/S/basis and a common sampling clock. Depth8, edges65536, parents16. |
 | Window | Raw logic2 basis defaults BW_NS; raw logic64 W/S required0<S<=W. W<=40000ns or80000cycles. Physical coverage/GB/s remain actual, including stop/frequency gaps. |
 | Accounting | Protocol default valid-only, also valid-ready and credit. Dynamic policy rawlogic2 known0/1 defaults0; fixed bytes default0, known0..2^32-1. Dynamic size/knownness are per transfer; zero bytes remains an event. |
 | Credit | Enabled only by explicit known0/1 policy (default0); known capacity required, zero legal; initial knowledge default0, known seed must be within capacity. Return defaults NEXT_CYCLE, optional SAME_CYCLE. Diagnostic anomalies lose trust without clamping or changing known bytes. |
 | Hints | Each independent known0/1 enable defaults0. Supported/enabled hints require explicit BW_NS/BW_CYCLE basis and positive64-bit threshold; defaultsX otherwise unused. NS follows live conditions during clock stop; cycle counts complete local cycles. |
 | Episode | Explicit known0/1 enable default0; enabled Q required known positive64 in window basis. No universal Q. Actual next edge supplies tail; confirmation silence is excluded from e2e duration. |
-| Phase | Explicit known0/1 enable default0, requires episodes. N>=3, positive minimum span and K; each absolute/relative fit coefficient must be explicit finite/nonnegative (sentinel defaults-1). Exit>=entry and trend strictly separates steady. Fit REL0.05 means5%, while cfg REL5 means5%. Storage/index limits are representational, not user queue settings. |
+| Phase | Known 0/1 control follows EPISODE_ENABLE when omitted. Internal PAIR6_R2 uses six adjacent-paired observations, actual physical timestamps, K=2 and min(W,5S). Steady entry/hold delta 4%/8% and raw RMS 10%/12%; trend delta≥10% and pair RMS≤2.5%; absolute coefficients zero. No public algorithm overrides. Evidence, candidate progress, reason and strategy are observable. |
 | Performance | [Complete48-key table](bw-mon-expectations.md),12 metric families, exact typed full ID; lower/upper/range plus additive absolute+percent tolerance, defaults absent bounds/zero tolerances. CV absolute tolerance is percentage points. No automatic stage enable/target/scale/inheritance. |
 
 Known disabled policies may leave unused seeds/thresholds unknown; unknown policies

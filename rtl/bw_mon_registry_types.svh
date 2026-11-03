@@ -13,13 +13,32 @@
     bw_u64_t seq=0;
   endclass
 
+  // Cumulative per-scope completion ledgers. Defined beside the registry
+  // state so a source/group can hold its own ledger handle directly and the
+  // hot transport/audit paths avoid keyed lookups; the package-level
+  // id-keyed maps in the completion headers hold these same objects.
+  class bw_point_batch;
+    bw_u64_t expected=0,captured=0,inflight=0,published=0,accepted=0;
+    bw_u64_t ticks=0,input_generation=0,closed_generation=0,grant=0;
+    bit cancelled=0;
+    chandle settlement_watch=null;
+  endclass
+  class bw_group_batch;
+    bw_u64_t expected=0,captured=0,held=0,published=0,accepted=0,acked=0;
+    bw_u64_t reset_expected=0,reset_captured=0;
+    bw_u64_t ticks=0,input_generation=0,closed_generation=0,grant=0;
+    bit cancelled=0;
+  endclass
+
   class bw_source_state;
     bw_scope_t kind;
-    string id, clock_context, monitor_path;
+    string id, monitor_path;
     bw_basis_t basis;
     bw_u64_t width, stride;
+    bit requires_preparation=0,preparation_complete=0;
     int point_handle=-1, group_handle=-1;
-    int parents[$];
+    int parents[$]; // frozen dependency graph
+    bit active_consumers[int]; // mutable direct subscription responsibilities
     bw_record_t frames[$];
     bw_control_frame_t controls[$];
     bw_u64_t frame_acks[int], control_acks[int];
@@ -27,17 +46,26 @@
     bw_u64_t frame_base_seq=1, control_base_seq=1, last_control_seq=0;
     bw_u64_t origin_control_seq[int], origin_control_ticks[int], origin_epoch[int];
     bw_u64_t progress_watermark_ticks=BW_U64_MAX;
+    // Hot-path mirrors of the failure map and the settlement watch, written
+    // only by the failure/settlement machinery and registration.
+    bit failed=0;
+    chandle settlement_watch=null;
+    bw_point_batch point_ledger=null;
+    bw_group_batch group_ledger=null;
   endclass
 
   class bw_group_state;
     string id, owner_path;
-    bit declared=0, owner_registered=0;
-    int expected_members, source_handle;
+    bit owner_registered=0;
+    int source_handle;
     int members[$];
     bw_member_rule_t rules[$];
     bit [16383:0] recursive_points='0;
     int traversal_state=0, depth=0; // unvisited, active, resolved; nested group count
     bw_notification notification;
+    bit failed=0;
+    chandle settlement_watch=null;
+    bw_group_batch ledger=null;
     function new();
       notification=new;
     endfunction
@@ -47,6 +75,4 @@
   bw_group_state registered_groups[$];
   int point_by_id[string], group_by_id[string];
   bit configuration_finished=0;
-  int unsigned expected_group_count=0, declared_group_count=0;
   bw_u64_t configuration_seq=0;
-  bw_u64_t missing_record_timeout_ticks=BW_TICKS_PER_NS;

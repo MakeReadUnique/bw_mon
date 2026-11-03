@@ -20,6 +20,9 @@ module bw_point_recorder #(
 );
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
+  localparam bw_scope_t scope_kind=BW_POINT;
+  `include "bw_scope_runtime.svh"
+  bit scheduler_running=0,scheduler_cancelled=0;
   bw_u64_t record_seq = 0, edge_index = 0;
   bw_u64_t control_seq = 0, source_epoch = 0;
   bw_u64_t requested_actions = 0, consumed_actions = 0;
@@ -34,18 +37,23 @@ module bw_point_recorder #(
   function void use_external_reset_capture();external_reset_capture=1;endfunction
   function void use_publication_receipts();publication_receipts=1;endfunction
   function void note_control_published(logic [63:0] sequence_number);
-    if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"control publication receipt is unknown");return;end
+    if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"control publication receipt is unknown");
+    return;end
     if(sequence_number!=control.control_seq || sequence_number<=published_control_seq)
       core_error("RECORDER_RECEIPT",scope_id,"control publication receipt does not match the held payload");
-    if(!core_failure_seen)published_control_seq=sequence_number;
+    if(runtime_failed())return;
+    if(!runtime_failed())published_control_seq=sequence_number;
   endfunction
   function void note_record_published(logic [63:0] sequence_number);
-    if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"frame publication receipt is unknown");return;end
+    if($isunknown(sequence_number))begin core_error("INTEGER_UNKNOWN",scope_id,"frame publication receipt is unknown");
+    return;end
     if(sequence_number!=record.record_seq || sequence_number<=published_record_seq)
       core_error("RECORDER_RECEIPT",scope_id,"frame publication receipt does not match the held payload");
-    if(!core_failure_seen)published_record_seq=sequence_number;
+    if(runtime_failed())return;
+    if(!runtime_failed())published_record_seq=sequence_number;
   endfunction
-  function void apply_captured_reset(logic value,bw_u64_t ticks);observe_reset(value,ticks);endfunction
+  function void apply_captured_reset(logic value,bw_u64_t ticks);observe_reset(value,ticks);
+    if(runtime_failed())return;endfunction
   `include "bw_reset_capture.svh"
   typedef struct packed {
     bw_u64_t timestamp_ticks;
@@ -66,16 +74,20 @@ module bw_point_recorder #(
 
   function automatic void observe_reset(logic reset_value,bw_u64_t at_ticks);
     bw_control_t next_control;
+    if(runtime_failed())return;
     if (reset_observed && observed_reset === reset_value) return;
     check_monitor_time(at_ticks,scope_id);
+    if(runtime_failed())return;
     if (reset_value === 1'b0 && (!reset_observed || observed_reset !== 1'b0)) begin
-      source_epoch=checked_add(source_epoch,1,{scope_id," source epoch"});
+      source_epoch=checked_add_tag(source_epoch,1,"source epoch");
+      if(runtime_failed())return;
       last_assert_ticks=at_ticks;
       assertion_observed=1;
     end
     observed_reset=reset_value;
     reset_observed=1;
-    control_seq=checked_add(control_seq,1,{scope_id," control"});
+    control_seq=checked_add_tag(control_seq,1,"control");
+    if(runtime_failed())return;
     next_control='0;
     next_control.timestamp_ticks=at_ticks;
     next_control.control_seq=control_seq;
@@ -83,9 +95,10 @@ module bw_point_recorder #(
     next_control.point_handle=point_handle_for_id(scope_id);
     next_control.reset_n=reset_value;
     check_storage_growth(pending_controls.size(),scope_id,"recorder.controls",next_control.timestamp_ticks,edge_index,record_seq);
-    if(core_failure_seen)return;
+    if(runtime_failed())return;
     pending_controls.push_back(next_control);
     requested_actions=checked_add(requested_actions,1,scope_id);
+    if(runtime_failed())return;
     settlement_required=request_slot_settlement(scope_id);
   endfunction
 
@@ -98,8 +111,12 @@ module bw_point_recorder #(
 
   always @(posedge clk) begin : capture_edge
     pending_sample_t sample;
-    if (monitor_ready && $time > measurement_start_ticks) begin
+    if (monitor_ready && $time > measurement_start_ticks && !runtime_failed()) begin
+`ifdef BW_MON_TEST_FAULTS
+      if(take_point_fault(scope_id,"capture"))disable capture_edge;
+`endif
       check_monitor_time($time,scope_id);
+      if(runtime_failed())disable capture_edge;
       // Protocol controls and size always come from the same pre-NBA beat.
       // A same-time assertion has priority; release preserves this edge view.
       sample.sample.reset_n = reset_n;
@@ -109,15 +126,19 @@ module bw_point_recorder #(
       sample.sample.lcrdv = lcrdv;
       sample.sample.size_bytes = size_bytes;
       sample.sample.size_known = size_known;
-      edge_index = checked_add(edge_index,1,{scope_id," edge"});
-      record_seq = checked_add(record_seq,1,{scope_id," record"});
+      edge_index = checked_add_tag(edge_index,1,"edge");
+      if(runtime_failed())disable capture_edge;
+      record_seq = checked_add_tag(record_seq,1,"record");
+      if(runtime_failed())disable capture_edge;
       sample.timestamp_ticks=$time;
       sample.edge_index=edge_index;
       sample.record_seq=record_seq;
       check_storage_growth(pending_samples.size(),scope_id,"recorder.samples",sample.timestamp_ticks,sample.edge_index,sample.record_seq);
-      if(!core_failure_seen)begin
+      if(!runtime_failed())begin
         pending_samples.push_back(sample);
+        point_capture_receipt(scope_id,sample.record_seq,my_point_ledger);
         requested_actions=checked_add(requested_actions,1,scope_id);
+        if(runtime_failed())disable capture_edge;
         settlement_required=request_slot_settlement(scope_id);
       end
     end
@@ -126,22 +147,37 @@ module bw_point_recorder #(
   task automatic drain_actions();
     pending_sample_t sample;
     logic transfer;
-    while (consumed_actions != requested_actions) begin
-      wait(slot_settlement_generation>=settlement_required);
+    while (consumed_actions != requested_actions && !runtime_failed()) begin
+      wait(slot_settlement_generation>=settlement_required || runtime_cancelled ||
+           core_failure_seen || monitoring_shared_disabled);
+      if(runtime_failed())return;
       if (pending_controls.size()!=0) begin
         control=pending_controls.pop_front();
         consumed_actions=checked_add(consumed_actions,1,scope_id);
+        if(runtime_failed())return;
         control_toggle<=!control_toggle;
-        @(control_toggle);
-        if(publication_receipts)wait(published_control_seq>=control.control_seq);
+        @(control_toggle or runtime_cancelled);
+        if(runtime_failed())return;
+        if(publication_receipts)wait(published_control_seq>=control.control_seq || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
+        if(runtime_failed())return;
         // A ReNBA waiter can wake before module consumers copy the payload.
         // Hold it through a writable quiescent generation before exposing the
         // next item, including multiple controls captured at the same tick.
+        // The hold is the next iteration's (or the next drain cycle's) wait
+        // below: settlement_required is monotonic, so awaiting it covers this
+        // publication's grant before another tuple is exposed.
         settlement_required=request_slot_settlement(scope_id);
-        wait(slot_settlement_generation>=settlement_required);
         continue;
       end
       sample=pending_samples.pop_front();
+      point_inflight_receipt(scope_id,sample.record_seq,my_point_ledger);
+`ifdef BW_MON_TEST_FAULTS
+      if(take_point_fault(scope_id,"held"))begin
+        // A held tuple remains an obligation even though its queue is empty.
+        wait(runtime_cancelled || core_failure_seen || monitoring_shared_disabled);return;
+      end
+`endif
       sampled_view=sample.sample;
       if (assertion_observed && last_assert_ticks==sample.timestamp_ticks)
         sampled_view.reset_n=1'b0;
@@ -170,6 +206,7 @@ module bw_point_recorder #(
           if (sampled_view.size_bytes > 64'hffffffff)
             core_error("TRANSFER_BYTES",scope_id,
               $sformatf("sampled bytes=%0d exceeds 2^32-1",sampled_view.size_bytes));
+          if(runtime_failed())return;
           record.byte_inc = sampled_view.size_bytes;
         end else record.bytes_complete = 0;
       end else if (transfer !== 1'b0) begin
@@ -177,11 +214,17 @@ module bw_point_recorder #(
         record.bytes_complete = 0;
       end
       consumed_actions=checked_add(consumed_actions,1,scope_id);
+      if(runtime_failed())return;
       record_toggle <= !record_toggle;
-      @(record_toggle);
-      if(publication_receipts)wait(published_record_seq>=record.record_seq);
+      @(record_toggle or runtime_cancelled);
+      if(runtime_failed())return;
+      if(publication_receipts)wait(published_record_seq>=record.record_seq || runtime_cancelled ||
+          core_failure_seen || monitoring_shared_disabled);
+      if(runtime_failed())return;
+      // Same merged hold as the control path: the next wait on the monotonic
+      // settlement_required covers this publication's quiescent generation
+      // before another tuple is exposed.
       settlement_required=request_slot_settlement(scope_id);
-      wait(slot_settlement_generation>=settlement_required);
     end
   endtask
 
@@ -191,9 +234,20 @@ endmodule
 // A private coordinator waits for the shared writable end-of-slot generation.
 // Upward module-type references bind to each owning instance.
 program bw_point_record_scheduler;
-  timeunit 1fs; timeprecision 1fs;
-  initial forever begin
-    wait(bw_point_recorder.requested_actions != bw_point_recorder.consumed_actions);
-    bw_point_recorder.drain_actions();
+  timeunit 1fs;timeprecision 1fs;
+  initial begin
+    fork begin : actual_worker
+    bw_point_recorder.scheduler_running=1;
+    forever begin
+      wait(bw_point_recorder.runtime_cancelled || bw_point_recorder.requested_actions!=bw_point_recorder.consumed_actions);
+      if(bw_point_recorder.runtime_failed())break;
+      bw_point_recorder.drain_actions();
+    end
+    bw_point_recorder.scheduler_running=0;
+    bw_point_recorder.scheduler_cancelled=bw_point_recorder.runtime_cancelled || bw_mon_pkg::scope_disabled(bw_mon_pkg::bw_scope_t'(bw_point_recorder.scope_kind),bw_point_recorder.scope_id);
+    end join_none
+    // VCS implicitly ends simulation when all program containers finish.
+    // This inert host owns no monitor action; the actual worker above exits.
+    wait(1'b0);
   end
 endprogram

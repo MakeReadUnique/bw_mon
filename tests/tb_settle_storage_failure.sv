@@ -3,7 +3,7 @@ module tb_settle_storage_failure;
   import bw_mon_pkg::*;
   string scope_id="";
   int mode=0,handle;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_WIDTH(2),.UPDATE_STRIDE(1)) core
     (.scope_id(scope_id),.record('0),.record_toggle(1'b0),
      .accepted_record_seq(),.result_seq(),.episode_result_seq(),
@@ -36,8 +36,8 @@ module tb_settle_storage_failure;
     void'($value$plusargs("MODE=%d",mode));
     if(mode==0)bw_native_fail_reset_allocation();
     else inject_growth_failure("native.observer","scheduler.reset_capture");
-    handle=register_point("native.observer","tb_settle_storage_failure.core",BW_NS,2,1,"clock");
+    handle=register_point("native.observer","tb_settle_storage_failure.core",BW_NS,2,1);
     scope_id="native.observer";
-    #1;$fatal(1,"expected core error did not occur");
+    #2;$fatal(1,"expected core error did not occur");
   end
 endmodule

@@ -24,7 +24,7 @@ module tb_adapter_decode;
   timeunit 1ns;timeprecision 1fs;
   logic clk=0,valid=1,ready=1;
   logic [1:0] size_code=1;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_encoded_adapter target(clk,valid,ready,size_code);
   initial begin
     wait(bw_mon_pkg::monitor_ready);

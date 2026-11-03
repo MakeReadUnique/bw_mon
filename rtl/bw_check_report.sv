@@ -2,6 +2,27 @@ package bw_check_report_pkg;
   timeunit 1fs; timeprecision 1fs;
   import bw_mon_pkg::*;
 
+  typedef struct {
+    bw_check_window_t first,last;
+    bw_u64_t count;
+  } default_run_t;
+  typedef struct packed {
+    bw_u64_t epoch,episode,platform;
+  } default_identity_t;
+  `include "bw_stage_ownership.svh"
+  class bw_default_scope extends bw_stage_evidence;
+    bit enabled=0,have_seq=0;
+    // Bounded terminal trust: only the audit-authorized ending settlement of
+    // a disabled owner computes counts from frozen verified evidence.
+    bit terminal_trust=0;
+    bw_u64_t last_seq;
+    // Core final streams are synchronous and ordered by logical epoch/episode,
+    // then immutable platform ID. Durable logical watermarks survive raw release;
+    // delivery counters never stand in for identity and cannot poison a new ID.
+    bit have_episode_identity=0,have_phase_identity=0,have_default_identity=0;
+    default_identity_t episode_identity,phase_identity,default_identity;
+  endclass
+
   class bw_check_report extends bw_report_sink;
     localparam int E2E_BW=0,STEADY_BW=1,RAMP_TIME=2,FALL_TIME=3,
       STEADY_WINDOW_MIN=4,STEADY_WINDOW_MAX=5,STEADY_STDDEV=6,STEADY_CV=7,
@@ -28,6 +49,8 @@ package bw_check_report_pkg;
       bw_variation_result_t variation;
     } check_context_t;
     local scope_state_t scopes[$];
+    local bw_default_scope default_scopes[$];
+    `include "bw_default_check.svh"
     local metric_rule_t rules[$];
     local int scope_by_id[string];
     local bw_report_summary_t totals;
@@ -238,6 +261,7 @@ package bw_check_report_pkg;
 
     virtual function void on_ready();
       scope_state_t entry;
+      bw_default_scope default_scope;
       metric_rule_t empty_rule;
       int fd,line_no,current,split,read_error,metric,part,rule;
       string line,body,kind,id,key,token,section_id,section_kind,io_detail,argument_suffix;
@@ -255,6 +279,13 @@ package bw_check_report_pkg;
           if(core_failure_seen)return;
           scope_by_id[{entry.kind==BW_POINT ? "point:" : "group:",entry.id}]=scopes.size();
           scopes.push_back(entry);
+          default_scope=new();
+          key=scope_key(entry.kind,entry.id);
+          if(check_analysis.exists(key))begin
+            default_scope.enabled=check_analysis[key].enabled;default_scope.basis=check_analysis[key].basis;
+            default_scope.width=check_analysis[key].width;default_scope.stride=check_analysis[key].stride;
+          end
+          default_scopes.push_back(default_scope);
           for(int m=0;m<METRIC_COUNT;m++) begin
             check_storage_growth(rules.size(),entry.id,"report.rules",$time);
             if(core_failure_seen)return;
@@ -441,7 +472,7 @@ package bw_check_report_pkg;
         string record_kind,real measured,string evidence_reason,bit final_settlement=0);
       int r;
       string conclusion,reason,actual;
-      if(core_failure_seen || (final_settlement && core_failure_pending())) return;
+      if(scope_failed(context_value.scope_kind,scopes[index].id) || (final_settlement && core_failure_pending()))return;
       if(!enabled_rule(index,metric)) return;
       r=index*METRIC_COUNT+metric;reason=evidence_reason;
       if(reason=="NONE" && !finite_real(measured)) reason="ACTUAL_NONFINITE";
@@ -455,7 +486,7 @@ package bw_check_report_pkg;
       end else begin
         conclusion="PASS";totals.pass_count=checked_add(totals.pass_count,1,scopes[index].id);
       end
-      if(core_failure_seen || (final_settlement && core_failure_pending())) return;
+      if(scope_failed(context_value.scope_kind,scopes[index].id) || (final_settlement && core_failure_pending()))return;
       $display("BW_CHECK scope_kind=%0d scope=%s epoch=%0d episode=%0d result_seq=%0d kind=%s phase=%0d metric=%s unit=%s start_ticks=%0d end_ticks=%0d actual=%s has_min=%0b min=%.17g has_max=%0b max=%.17g abs_tol=%.17g rel_tol_pct=%.17g effective_min=%.17g effective_max=%.17g bytes=%0d events=%0d duration_ticks=%0d bytes_complete=%0b events_complete=%0b first_known=%0b last_known=%0b tail_known=%0b duration_valid=%0b member_reset=%0b phase_kind=%0d phase_result_seq=%0d basis=%0d W=%0d S=%0d samples=%0d first_sample_ticks=%0d last_sample_ticks=%0d sample_span_ticks=%0d mean_gbps=%.17g interval_known=%0b coverage_complete=%0b minmax_valid=%0b stddev_valid=%0b cv_valid=%0b minmax_reason=%s stddev_reason=%s cv_reason=%s excluded_warmup=%0d excluded_foreign=%0d unknown_samples=%0d excluded_denominator=%0d cfg_file=%s min_line=%0d max_line=%0d abs_line=%0d rel_line=%0d conclusion=%s reason=%s",
         context_value.scope_kind,scopes[index].id,context_value.stats_epoch,context_value.episode_id,
         context_value.result_seq,record_kind,context_value.phase_id,metric_name(metric),metric_unit(metric),
@@ -539,25 +570,36 @@ package bw_check_report_pkg;
       int index,metric;
       string reason;
       real measured;
-      if(core_failure_seen || totals.finalized || result.result_seq==0) return;
+      default_identity_t identity,episode_identity;
+      if(scope_failed(result.scope_kind,scope_id) || totals.finalized || result.result_seq==0)return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
+      identity='{epoch:result.stats_epoch,episode:result.episode_id,platform:result.phase_id};
+      episode_identity='{epoch:result.stats_epoch,episode:result.episode_id,platform:0};
+      if(default_scopes[index].have_episode_identity && episode_identity<=default_scopes[index].episode_identity)return;
+      if(default_scopes[index].have_phase_identity && identity<=default_scopes[index].phase_identity)return;
       if(scopes[index].have_phase_seq && result.result_seq<=scopes[index].last_phase_seq) return;
+      default_growth(index,default_scopes[index].phases.size(),"default.phases",result.end_ticks);
+      if(scope_failed(result.scope_kind,scope_id))return;
+      default_scopes[index].phases.push_back(result);
+      if(result.phase_kind===BW_PHASE_RAMP || result.phase_kind===BW_PHASE_FALL)begin
+        if(scopes[index].time_epoch!=result.stats_epoch || scopes[index].time_episode!=result.episode_id) begin
+          scopes[index].time_epoch=result.stats_epoch;scopes[index].time_episode=result.episode_id;
+          scopes[index].saw_ramp=0;scopes[index].saw_fall=0;
+        end
+        if(result.phase_kind==BW_PHASE_RAMP) begin
+          metric=RAMP_TIME;scopes[index].saw_ramp=1;scopes[index].ever_ramp=1;
+        end else begin
+          metric=FALL_TIME;scopes[index].saw_fall=1;scopes[index].ever_fall=1;
+        end
+        reason=duration_evidence_reason(result);measured=0;
+        if(reason=="NONE") measured=real'(result.duration_ticks)/real'(BW_TICKS_PER_NS);
+        settle(index,metric,phase_context(result),"phase",measured,reason);
+        if(scope_failed(result.scope_kind,scope_id))return;
+      end
+      default_scopes[index].have_phase_identity=1;default_scopes[index].phase_identity=identity;
       scopes[index].have_phase_seq=1;scopes[index].last_phase_seq=result.result_seq;
-      if(result.phase_kind!==BW_PHASE_RAMP && result.phase_kind!==BW_PHASE_FALL) return;
-      if(scopes[index].time_epoch!=result.stats_epoch || scopes[index].time_episode!=result.episode_id) begin
-        scopes[index].time_epoch=result.stats_epoch;scopes[index].time_episode=result.episode_id;
-        scopes[index].saw_ramp=0;scopes[index].saw_fall=0;
-      end
-      if(result.phase_kind==BW_PHASE_RAMP) begin
-        metric=RAMP_TIME;scopes[index].saw_ramp=1;scopes[index].ever_ramp=1;
-      end else begin
-        metric=FALL_TIME;scopes[index].saw_fall=1;scopes[index].ever_fall=1;
-      end
-      reason=duration_evidence_reason(result);measured=0;
-      if(reason=="NONE") measured=real'(result.duration_ticks)/real'(BW_TICKS_PER_NS);
-      settle(index,metric,phase_context(result),"phase",measured,reason);
     endfunction
 
     function automatic string selection_evidence_reason(bw_episode_result_t result);
@@ -579,21 +621,26 @@ package bw_check_report_pkg;
       string reason,selection_reason,episode_reason;
       real measured;
       bit same_time_episode;
-      if(core_failure_seen || totals.finalized || result.result_seq==0) return;
+      default_identity_t identity;
+      if(scope_failed(result.scope_kind,scope_id) || totals.finalized || result.result_seq==0)return;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(result.scope_kind,scope_id);
       if(index<0 || scopes[index].done) return;
+      identity='{epoch:result.stats_epoch,episode:result.episode_id,platform:0};
+      if(default_scopes[index].have_episode_identity && identity<=default_scopes[index].episode_identity)return;
       if(scopes[index].have_seq && result.result_seq<=scopes[index].last_seq) return;
-      scopes[index].have_seq=1;scopes[index].last_seq=result.result_seq;scopes[index].saw_episode=1;
+      if(!settle_default_episode(index,result))return;
       context_value=episode_context(result);
       reason=e2e_evidence_reason(result);measured=0;
       if(reason=="NONE") measured=result.e2e_gbps;
       settle(index,E2E_BW,context_value,"episode",measured,reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       episode_reason="NONE";
       if(result.status===BW_EPISODE_RESET_INTERRUPTED) episode_reason="RESET_INTERRUPTED";
       else if(result.status===BW_EPISODE_TRUNCATED) episode_reason="OBSERVATION_TRUNCATED";
       else if(result.status!==BW_EPISODE_COMPLETE) episode_reason="EPISODE_NOT_COMPLETE";
       settle_variation(index,context_value,"episode",0,episode_reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       selection_reason=selection_evidence_reason(result);
       steady_context=phase_context(result.last_steady);
       steady_context.scope_kind=result.scope_kind;steady_context.stats_epoch=result.stats_epoch;
@@ -608,12 +655,18 @@ package bw_check_report_pkg;
         if(reason=="NONE") measured=result.last_steady.bandwidth_gbps;
       end
       settle(index,STEADY_BW,steady_context,"last_steady",measured,reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       settle_variation(index,steady_context,"last_steady",1,selection_reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
       same_time_episode=scopes[index].time_epoch==result.stats_epoch && scopes[index].time_episode==result.episode_id;
       if(!same_time_episode || !scopes[index].saw_ramp)
         settle(index,RAMP_TIME,context_value,"episode",0,episode_reason=="NONE" ? "NO_CONFIRMED_RAMP" : episode_reason);
       if(!same_time_episode || !scopes[index].saw_fall)
         settle(index,FALL_TIME,context_value,"episode",0,episode_reason=="NONE" ? "NO_CONFIRMED_FALL" : episode_reason);
+      if(scope_failed(result.scope_kind,scope_id))return;
+      default_scopes[index].have_episode_identity=1;default_scopes[index].episode_identity=identity;
+      scopes[index].have_seq=1;scopes[index].last_seq=result.result_seq;scopes[index].saw_episode=1;
+      default_scopes[index].raw.delete();default_scopes[index].phases.delete();
     endfunction
 
     virtual function void scope_done(bw_scope_t kind,string scope_id,bw_u64_t stats_epoch);
@@ -626,11 +679,20 @@ package bw_check_report_pkg;
       if(!monitor_time_supported($time)) begin check_monitor_time($time,scope_id);return;end
       index=find_scope(kind,scope_id);
       if(index<0 || scopes[index].done) return;
-      if(!scopes[index].saw_episode) begin
+      if(scope_disabled(kind,scope_id))begin
+        // The still-active episode of a disabled owner gets one terminal
+        // settlement from evidence submitted before the failure; it never
+        // manufactures a platform, a trusted suffix or a scope PASS. The
+        // per-episode default identity is the replay guard.
+        if(!settle_terminal_default(index))return;
+        totals.warning_count=checked_add(totals.warning_count,1,scope_id);
+        $display("BW_CHECK_WARNING scope_kind=%0d scope=%s reason=MONITOR_DISABLED",kind,scope_id);
+      end else if(!scopes[index].saw_episode) begin
         // No record numbers are interpreted as zero measurements.
         empty_result.scope_kind=kind;empty_result.stats_epoch=stats_epoch;
         empty_result.variation='{window_basis:BW_NS,minmax_reason:BW_METRIC_NO_SAMPLES,
           stddev_reason:BW_METRIC_NO_SAMPLES,cv_reason:BW_METRIC_NO_SAMPLES,default:0};
+        if(!settle_default_episode(index,empty_result))return;
         context_value=episode_context(empty_result);
         for(int m=0;m<METRIC_COUNT;m++) begin
           if(m==RAMP_TIME && scopes[index].ever_ramp) continue;
@@ -638,6 +700,10 @@ package bw_check_report_pkg;
           settle(index,m,context_value,"scope_final",0,"NO_EPISODE",1);
           if(core_failure_pending()) return;
         end
+      end
+      if(!scope_disabled(kind,scope_id))begin
+        if(scope_failed(kind,scope_id))return;
+        default_scopes[index].raw.delete();default_scopes[index].phases.delete();
       end
       scopes[index].done=1;totals.scopes_done=checked_add(totals.scopes_done,1,scope_id);
       if(core_failure_pending() || totals.scopes_done!=totals.scopes_expected) return;

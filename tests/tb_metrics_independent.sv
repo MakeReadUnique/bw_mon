@@ -3,14 +3,14 @@ module tb_metrics_independent;
   import bw_mon_pkg::*;
   logic clk=0,valid=0;
   logic [63:0] bytes=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("metrics.independent"),.WINDOW_WIDTH(1),.UPDATE_STRIDE(1),
     .DYNAMIC_BYTES(1),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2)) point
     (.clk(clk),.reset_n(1'b1),.valid(valid),.size_bytes(bytes),.size_known(1'b1));
   initial begin
     wait(monitor_ready);
     for(int t=1;t<=6;t++)begin
-      #(ns_to_ticks(t)-$time);valid=t<=3;bytes=t==3 ? 64'bx : t*10;clk=1;#1;clk=0;
+      #(measurement_start_ticks+ns_to_ticks(t)-$time);valid=t<=3;bytes=t==3 ? 64'bx : t*10;clk=1;#1;clk=0;
     end
     if(point.episode_result.e2e_valid || point.episode_result.bytes_complete ||
        !point.episode_result.events_complete || !point.episode_result.duration_valid ||

@@ -9,7 +9,9 @@ integration remains point/bind, group module and unified setup.
 ## Build requirements
 
 Compile `bw_mon_pkg.sv` first, then `bw_check_report.sv`, the remaining
-`rtl/*.sv`, `rtl/bw_slot_settlement.c` and the testbench. Include `rtl/` for the
+`rtl/*.sv`, both native sources (`rtl/bw_slot_settlement.c` and
+`rtl/bw_end_coordinator.c`), and the testbench. The second native source verifies
+the final report after all SystemVerilog final blocks. Include `rtl/` for the
 SV headers and the installed VCS `include/` directory for `svdpi.h` and
 `vpi_user.h`.
 
@@ -21,7 +23,7 @@ and `-kdb`. For example, the compiler argument list includes:
 -full64 -sverilog +vpi -debug_access -assert svaext
 +incdir+rtl -CFLAGS -I<VCS-installation>/include
 rtl/bw_mon_pkg.sv rtl/bw_check_report.sv <remaining-RTL.sv>
-rtl/bw_slot_settlement.c <testbench.sv>
+rtl/bw_slot_settlement.c rtl/bw_end_coordinator.c <testbench.sv>
 ```
 
 `tests/run.py`, `tests/acceptance/run.py`, `tests/scale/run.py` and the standalone
@@ -81,9 +83,57 @@ the existing representation/storage guards. No history depth, slot count,
 positive-time drain, synthetic sampling edge or fixed number of delta rounds is
 introduced. Ordinary point traffic still has its direct local core path.
 
-Existing read-only deferred deadline checks continue to inspect durable state.
-The combined regressions cover startup/deadline arrivals, timer-first metadata,
-stopped clocks, reset/deassert sampling and final Pending/runtime Seen guards.
+The current group implementation uses independent actual-edge expectations and writable completion audits, with explicit continuation grants and producer certificates. Durable capture/held/publication/core/ACK receipts survive queue removal and advisory wake loss. Read-only observers verify original-time outcomes. Frozen topology supplies causality; active subscriptions supply release obligations. No physical missing deadline remains. The version-qualified results below describe their historical source only.
+
+## Settlement work indexing
+
+The native adapter audits a dirty watcher set rather than scanning every scope
+on every callback. Raw clock/reset changes, posted continuations and durable
+receipts mark their owning watcher. An audit that still depends on a producer
+or a granted continuation keeps its watcher dirty. Native grant tracking defers
+dispatch until the shared generation reaches the grant; the audit still precedes
+the next generation advance. A callback never substitutes for a receipt.
+Shared or fatal failure cancels native grant deferral, allowing pending watchers
+to reach their existing failure guards even though the generation has stopped.
+The `settle_shared_pending` contract checks that a real edge followed by a
+same-time shared arithmetic failure cancels workers without accepting records
+and leaves later user simulation runnable.
+
+Watcher lookup includes both scope kind and ID. Point and group namespaces stay
+independent even when their ID text is equal. Separate point and group tables
+avoid nested lookups on receipt paths. Worker submodules use the same
+typed lookup for timer-only work while clocks are stopped. They cache the owner
+handle after registration, allowing subsequent requests to combine grant
+reporting, dirty marking and callback registration in one native call. Early
+preparation requests retain the fallback until a handle exists. The
+point receipt path also reuses its registered ledger and watcher, including
+the sticky cancellation state; ID-only component calls retain their lookup.
+Owner-local audits use the same cached failure guard as their workers. The
+`settle_typed_owners` contract checks these completions through a native read-only
+observer at the original statistics deadline.
+Transport entries validate the group handle, then reuse its integer index for
+member and cursor lookups; member-index and receipt checks remain at the entry.
+Each input scan reads its frozen direct-member count once before iterating.
+
+`BW_SETTLE_STATS` reports cumulative callback rounds, dispatched audits, created
+watchers, raw clock changes, dirty audits and deferred grant checks at simulation
+end. `edges` counts all observed clock transitions, including falling edges;
+`deferred` counts skipped dispatches rather than completed work. Counters are
+diagnostic and do not establish completion. `BW_SETTLE_PROGRESS` periodically
+reports progress during long runs.
+
+Reproduce the three maximum-topology performance checks serially with cold
+compilation and the unchanged 600-second end-to-end budget:
+
+```sh
+python3 tests/scale/topology_revised.py \
+  topology-max-ns topology-max-cycle topology-max-cancel-ns \
+  --output-root .build/settlement-max --force-compile
+```
+
+Each bounded run records source snapshots, input hashes, independent verification
+differences, stage times, host load and peak RSS in its manifest and stage
+receipts. A timeout or missing verification is a failed acceptance result.
 
 ## Version-qualified evidence
 

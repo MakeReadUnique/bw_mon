@@ -8,7 +8,16 @@ TICKS=1000000
 LEAVES={'p'+str(p):[p] for p in range(12)}
 LEAVES.update(die0=list(range(4)),die1=list(range(4,8)),all_dmc=list(range(8)),mixed=[0,1,2,3,8,9])
 PRIMARY=['protocols','steady','start_stop','varying','point_reset','child_reset','upper_reset','size_unknown','valid_unknown','reset_unknown','clock_stop','frequency','hints','zero','no_episode','truncated','isolated','e2']
-SUPPLEMENTAL=['e3_boundary','e3_delayed','e4_boundary','e4_below','e4_low','e5']
+SUPPLEMENTAL=['e3_boundary','e3_delayed','e3_delayed_fixed','e4_boundary','e4_below','e4_low','e5']
+
+def require_scene_inventory(configurations):
+ names=[c['scene']+'_'+c['basis'] for c in configurations]
+ current={s+'_'+b for s in PRIMARY for b in ('ns','cycle')} | {s+'_ns' for s in SUPPLEMENTAL}
+ historical=current-{'e3_delayed_fixed_ns'}
+ assert len(names)==len(set(names)), 'duplicate scene identity'
+ if all(c['N']==6 for c in configurations):assert set(names)==current, 'incomplete fixed-policy matrix'
+ else:assert set(names) in (historical,current), 'incomplete historical/mixed matrix'
+ return len(names)
 
 def expected_scope_id(c,name):
  if c['example_ids'] and name=='p0':return 'tb.top.master0.bw'
@@ -16,7 +25,7 @@ def expected_scope_id(c,name):
  return {'die0':'die0_dmc','die1':'die1_dmc'}.get(name,name)
 
 def configuration(scene,basis):
- c={'scene':scene,'basis':basis,'W':10 if basis=='ns' else 20,'S':1 if basis=='ns' else 2,'Q':12 if basis=='ns' else 24,'N':3,'span':2 if basis=='ns' else 4,'K':2,'end_ticks':160*TICKS+1,'top':'tb_acceptance_'+basis,'example_ids':False}
+ c={'scene':scene,'basis':basis,'W':10 if basis=='ns' else 20,'S':1 if basis=='ns' else 2,'Q':12 if basis=='ns' else 24,'N':6,'K':2,'end_ticks':160*TICKS+1,'top':'tb_acceptance_'+basis,'example_ids':False}
  if scene in ['start_stop']:c['end_ticks']=100*TICKS+1
  if scene in ['varying','e5']:c['end_ticks']=180*TICKS+1
  if scene in ['zero','no_episode','isolated']:c['end_ticks']=60*TICKS+1
@@ -24,9 +33,16 @@ def configuration(scene,basis):
  if scene=='e2':c['end_ticks']=40*TICKS+1
  if scene.startswith('e4_'):c['end_ticks']=130*TICKS+1
  if scene=='e3_boundary':c.update(top='tb_acceptance_e3_boundary',Q=30,end_ticks=170*TICKS+1)
- if scene=='e3_delayed':c.update(top='tb_acceptance_e3_delayed',W=100,S=10,Q=60,K=4,span=20,end_ticks=196*TICKS+1)
+ if scene.startswith('e3_delayed'):c.update(top='tb_acceptance_e3_delayed',W=100,S=10,Q=60,end_ticks=(216 if scene=='e3_delayed_fixed' else 196)*TICKS+1)
  if scene=='e5':c.update(top='tb_acceptance_e5',example_ids=True)
+ c['span']=min(c['W'],5*c['S'])
  return c
+
+def at_measurement_start(c,rows,start):
+ """Translate original relative inputs by the public T, without changing them."""
+ if start<=0:raise ValueError('ready must publish a positive measurement start')
+ shifted=dict(c,start_ticks=start,end_ticks=c['end_ticks']+start)
+ return shifted,[[row[0]+start]+row[1:] for row in rows]
 
 def controls(scene,t):
  # Known defaults; selected faults occupy their own independent scene only.
@@ -44,7 +60,7 @@ def stimulus(c):
  scene=c['scene'];end=c['end_ticks'];edges=list(range(500000,end-1,500000))
  if scene in ['clock_stop','hints']:edges=[t for t in edges if not 80*TICKS<=t<=100*TICKS]
  if scene=='frequency':edges=list(range(500000,80*TICKS,500000))+list(range(80500000,end-1,TICKS))
- if scene.startswith('e4_') or scene=='e3_delayed':edges=list(range(TICKS,end-1,TICKS))
+ if scene.startswith('e4_') or scene.startswith('e3_delayed'):edges=list(range(TICKS,end-1,TICKS))
  if scene=='e3_boundary':edges=list(range(80*TICKS,104*TICKS,2*TICKS))+list(range(132*TICKS,end-1,2*TICKS))
  extra=[]
  if scene in ['point_reset','child_reset','upper_reset','size_unknown','valid_unknown','reset_unknown']:extra=[103900000,104100000]
@@ -68,6 +84,7 @@ def stimulus(c):
   if scene=='e2':active=1 if t in e2 else 0;amount[0]=e2.get(t,64)
   if scene=='e3_boundary':active=1 if t in [80*TICKS,84*TICKS,100*TICKS,132*TICKS] else 0;amount[0]=128 if t in [84*TICKS,132*TICKS] else 64
   if scene=='e3_delayed':active=1 if t in [95*TICKS,135*TICKS] else 0;amount[0]=640 if t==95*TICKS else 0
+  if scene=='e3_delayed_fixed':active=1 if t in [95*TICKS,155*TICKS] else 0;amount[0]=640 if t==95*TICKS else 0
   if scene.startswith('e4_'):
    active=1 if TICKS<=t<=100*TICKS else 0
    amount[0]=128 if scene=='e4_low' else 151 if scene=='e4_below' and t==50*TICKS else 152
@@ -109,13 +126,13 @@ def frame_table(rows):
    frames[name].append(f)
  return frames
 
-def own_reset(scene,name):
- return (103900000,104100000) if ((scene=='point_reset' and name=='p0') or (scene=='child_reset' and name=='die0') or (scene=='upper_reset' and name=='all_dmc')) else None
+def own_reset(scene,name,start=0):
+ return (start+103900000,start+104100000) if ((scene=='point_reset' and name=='p0') or (scene=='child_reset' and name=='die0') or (scene=='upper_reset' and name=='all_dmc')) else None
 
 def window_table(c,rows,frames):
- result={};clocks=[r[0] for r in rows if r[1]]
+ result={};clocks=[r[0] for r in rows if r[1]];start=c.get('start_ticks',0)
  for name,leaves in LEAVES.items():
-  reset=own_reset(c['scene'],name);segments=[(0,reset[0],0),(reset[1],c['end_ticks'],1)] if reset else [(0,c['end_ticks'],0)]
+  reset=own_reset(c['scene'],name,start);segments=[(start,reset[0],0),(reset[1],c['end_ticks'],1)] if reset else [(start,c['end_ticks'],0)]
   windows=[];sequence=0
   for origin,end,epoch in segments:
    scheduled=[]
@@ -127,8 +144,8 @@ def window_table(c,rows,frames):
      left=max(0,j-c['W']);scheduled.append((actual[j][1],actual[left][1],actual[left][0],actual[j][0],j-left,j>=c['W']))
    for t,left,lc,rc,cc,full in scheduled:
     selected=[f for f in frames[name] if left<=f['t']<t];b=sum(f['bytes'] for f in selected);e=sum(f['events'] for f in selected)
-    unknown=c['scene']=='reset_unknown' and 0 in leaves and left<104100000 and t>103900000
-    member=(c['scene']=='point_reset' and 0 in leaves and left<104100000 and t>103900000) or any(f['reset_points'] for f in selected)
+    unknown=c['scene']=='reset_unknown' and 0 in leaves and left<start+104100000 and t>start+103900000
+    member=(c['scene']=='point_reset' and 0 in leaves and left<start+104100000 and t>start+103900000) or any(f['reset_points'] for f in selected)
     bc=all(f['bc'] for f in selected) and not unknown;ec=all(f['ec'] for f in selected) and not unknown
     sequence+=1
     windows.append({'seq':sequence,'epoch':epoch,'start':left,'end':t,'start_cycle':lc,'end_cycle':rc,'coverage':t-left,'cycles':cc,'bytes':b,'events':e,'bw':Fraction(b*TICKS,t-left),'bpc':Fraction(b,cc) if cc else Fraction(0),'full':full,'warm':not full,'bc':bc,'ec':ec,'denom':True,'member':bool(member),'valid':bool(full and bc)})
@@ -142,7 +159,7 @@ def expectations(c):
   return "[point p0]\ne2e_bw_min_gbps=160\ne2e_bw_rel_tol_pct=5\n"
  if scene=='e5':
   return "[point tb.top.master0.bw]\nsteady_bw_min_gbps=80\nsteady_bw_rel_tol_pct=5\ne2e_bw_min_gbps=60\nramp_time_max_ns=30\nsteady_cv_max_pct=5\n[group memory_all]\nsteady_bw_min_gbps=160\nepisode_cv_max_pct=10\n"
- if scene=='e3_delayed':
+ if scene.startswith('e3_delayed'):
   return "[point p0]\nsteady_bw_max_gbps=0\nsteady_window_min_min_gbps=6.4\n[group all_dmc]\nsteady_bw_max_gbps=0\nsteady_window_min_min_gbps=6.4\n"
  if scene=='varying':
   return ''.join('[%s]\ne2e_bw_min_gbps=0\nsteady_bw_min_gbps=%d\nepisode_cv_max_pct=10\nramp_time_max_ns=30\nfall_time_max_ns=30\n'%(scope,bw) for scope,bw in [('point p0',128),('group all_dmc',1024)])

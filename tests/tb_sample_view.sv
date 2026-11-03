@@ -3,7 +3,7 @@ module tb_sample_view;
   import bw_mon_pkg::*;
   logic clk=0,valid=1,next_valid=0;
   logic [63:0] size_bytes=8,next_size=999;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.DYNAMIC_BYTES(1),.WINDOW_WIDTH(10),.UPDATE_STRIDE(1)) point
     (.clk(clk),.reset_n(1'b1),.valid(valid),.size_bytes(size_bytes),.size_known(1'b1));
   // DUT-like nonblocking updates change both control and size after an edge.

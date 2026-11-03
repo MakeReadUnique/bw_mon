@@ -14,15 +14,14 @@ implementation tickets extend this same public contract.
 Compile `rtl/bw_mon_pkg.sv`, then `rtl/bw_check_report.sv`, then the other
 `rtl/*.sv` files, plus `rtl/bw_slot_settlement.c`. The report package must precede `bw_mon_setup.sv`. All production
 builds need `+vpi`, `-debug_access` (or waveform `-debug_access+all`), the installed
-VCS include directory through `-CFLAGS -I<VCS>/include`, `+incdir+rtl` and `-assert svaext` for the package headers and deferred
-deadline assertions, including point-only setups. Headers are included by the package or public modules and are not standalone
+VCS include directory through `-CFLAGS -I<VCS>/include`, `+incdir+rtl` and `-assert svaext` for the package headers and scheduler assertions, including point-only setups. Headers are included by the package or public modules and are not standalone
 compilation units. All production
 scopes use `timeunit 1fs; timeprecision 1fs`; timestamps are unsigned 64-bit integer
 femtosecond ticks, read directly with `$time` in that scope. A nanosecond is
 1,000,000 ticks. Do not override production time units or precision.
 The private native adapter preserves ordered reset input and writable same-time
 closure; [scheduling and build details](bw-mon-scheduling.md) include its tested
-tool contract and public regressions. The point/group/setup interfaces are unchanged.
+tool contract and public regressions.
 
 ```systemverilog
 // Once for every target module instance of this type:
@@ -30,8 +29,8 @@ bind data_port bw_point_mon #(
   .WINDOW_WIDTH(10), .UPDATE_STRIDE(1), .FIXED_BYTES(64)
 ) bw (.clk(clk), .reset_n(reset_n), .valid(valid));
 
-// Once in the testbench; include every point, including ungrouped points:
-bw_mon_setup #(.EXPECTED_POINT_COUNT(12)) bw_setup();
+// Once in the testbench; discovers every point, including ungrouped points:
+bw_mon_setup bw_setup();
 
 initial begin
   wait (bw_mon_pkg::monitor_ready);
@@ -46,26 +45,47 @@ retains the actual instance path. An explicit empty string is an error. Reset
 never re-registers an identity. The reserved default parameter value is
 `"__BW_AUTO__"`.
 
-Registration and configuration each explicitly notify startup state. Startup
-does not infer completion from process ordering, a zero-delay barrier or a queue
-being temporarily empty. The last required registration freezes the configuration
-and records `bw_mon_pkg::measurement_start_ticks`. Before that, no sampling edge
-contributes. A setup watchdog terminates an incomplete startup in simulation time;
-an active-region registration at the exact deadline participates before that
-decision. An edge at the common start itself is excluded.
+Registration and membership calls are legal only at actual time zero, including
+finite initial, `#0`, NBA and subsequent same-time scheduling chains. The library
+checks actual time in its own time scope, even when the caller uses a coarse
+timescale. The setup seals configuration at the first representable positive
+time step, resolves forward references, deduplicates members and prepares every
+scope, initial reset snapshot and report registration in that same time slot.
+It then publishes the persistent `bw_mon_pkg::monitor_ready` exactly once.
+Initial reset and stopped clocks do not delay startup.
+
+The published `bw_mon_pkg::measurement_start_ticks` is the common measurement
+start T; use it rather than assuming a fixed 1 fs start. No sampling edge at or
+before T contributes. Without a local reset, ns publications begin at T+S;
+the startup snapshot has result sequence zero. All scopes share the inclusive
+T+40 microsecond budget, which a local reset cannot renew. Reports retain
+absolute timestamps. The `BW_READY` record gives actual point/group counts,
+T, time scale, budget duration and absolute deadline.
+
+One setup and at least one reachable point are required when monitoring is
+connected. Empty scopes, missing/duplicate setup, invalid identities or topology,
+positive-time registration/member calls, and ending before ready are terminating
+startup errors; they suppress normal completion summaries. No manual count,
+finish call or startup timeout remains.
 
 ## Initial configuration
 
 | Object | Parameter | Type / unit | Requirement and illegal behavior |
 | --- | --- | --- | --- |
-| setup | `EXPECTED_POINT_COUNT` | four-state unsigned logic [63:0] count | Required, 1..16,384; zero or excess is fatal |
-| setup | `STARTUP_TIMEOUT_NS` | four-state unsigned logic [63:0] integer ns | Default 100, positive; missing points at deadline are fatal |
+| setup | none | one `bw_mon_setup` instance | Actual point/group counts are discovered; no counts or timeouts are configured |
 | point/group/core | `WINDOW_BASIS` | raw logic [1:0], validated before enum conversion | `BW_NS` (default) or `BW_CYCLE`; fixed before startup |
 | point/group/core | `WINDOW_WIDTH` | raw unsigned logic [63:0] integer ns or cycles | Required, 1..40,000 ns or 1..80,000 cycles according to basis |
-| point/group/core | `UPDATE_STRIDE` | raw unsigned logic [63:0] integer ns or cycles | Required, `0<S<=W`; uses the same basis as W |
+| point/group/core | `UPDATE_STRIDE` | raw unsigned logic [63:0] integer ns or cycles | Omitted: effective W; explicit must be known `0<S<=W`; uses the same basis as W |
 | point | `POINT_ID` | string | Default `__BW_AUTO__`; otherwise nonempty, unique exact ID |
-| point | `CLOCK_CONTEXT` | string | Default `default`, nonempty; an integration declaration, not proof of physical wiring |
 | point/recorder | `FIXED_BYTES` | four-state 64-bit parameter, bytes/transfer | Default 0 (legal zero-byte transfers); fixed mode requires known value at most 2^32−1 |
+
+Parameter defaults directly express `UPDATE_STRIDE=WINDOW_WIDTH` and Q=10.
+Explicit zero, unknown or out-of-range values remain configuration errors;
+there is no reserved integer value that silently becomes an omission.
+`CLOCK_CONTEXT` is removed: points, type binds and groups no longer declare or
+check a clock label, and no clock-consistency probing replaces it. A shared
+sampling clock remains a documented usage prerequisite of hierarchical
+aggregation; asynchronous aggregation stays out of scope.
 
 The selected protocol determines whether a transfer occurred (see below). The recorder samples control
 at the actual positive edge, creates one normalized record per edge, including
@@ -166,7 +186,7 @@ once older than the maximum retained cycle window.
 Core errors print `BW_CORE_ERROR code=... scope=... time_ticks=...` with relevant
 expected/received counts, identities or arithmetic operands and terminate using
 `$fatal`. Current codes cover empty/duplicate identities, bad window/byte/count
-configuration, startup timeout, frozen registration/configuration, out-of-order
+configuration, missing setup/incomplete startup, frozen registration/configuration, out-of-order
 record time/sequence, actual-edge sequence and exact unsigned arithmetic overflow. Counters widen before
 checking addition/multiplication; they never silently wrap or clamp.
 
@@ -186,7 +206,8 @@ This numerical tolerance is separate from the cfg performance tolerance.
 | --- | --- |
 | `ns_bind` | One type bind to two real target instances; default IDs; transfers at 1, 2.5 and 10 ns of 64 B; `[0,10)`=128 B/12.8 GB/s, `[1,11)`=192 B/19.2 GB/s, `[2,12)`=128 B/12.8 GB/s; empty point stays independent; stopped clock eventually zero |
 | `ns_stride` | Explicit identity; 8 B events at 0.25 and 2.75 ns; W=10/S=3, T=3 warmup=16 B/3 ns, first full publication T=12 with `[2,12)`=8 B/10 ns; no T=10 insertion |
-| `startup_*` | Empty/duplicate ID, illegal W/S, missing point, late registration and repeated configuration terminate with precise diagnostic; exact deadline arrival succeeds |
+| `startup_*` | Empty/duplicate ID, illegal W/S, positive-time registration and repeated configuration terminate with precise diagnostics |
+| `auto_*` | Automatic bind discovery with different actual counts, finite t=0 scheduling, prepared reset/hint/report snapshots before one ready, coarse-time lifecycle checks, real group topology errors and early finish |
 | `byte_config_error` | Per-transfer byte count above 2^32−1 terminates |
 | `cycle_window` | Independent .25/.75/1.25/2.25/12.25/12.75/13.25/13.75 ns edge table; W2/S1; sub-ns warmup, frequency change, stopped-clock hold and resume; actual-time GB/s and B/cycle; ns history expires during the same stop |
 | `cycle_stride` | 2 GHz known-valid event table with W5/S3 and W3/S3; no off-schedule first full result; left/right events and S=W adjacent windows |
@@ -339,9 +360,9 @@ later frame at the same T still supplies metadata and receives acceptance; time
 alone never suppresses a frame. These coordinators are instantiated internally;
 integrators do not drive them.
 
-The global `monitor_start_ticks` is fixed by the one configuration call and is
-independent of every local statistics origin. The supported duration is 40,000 ns
-from that system start. A subsequent action beyond it terminates with
+The global `monitor_start_ticks` equals the published common measurement start T
+and is independent of every local statistics origin. The supported duration is
+40,000 ns from T, including the endpoint. A subsequent action beyond it terminates with
 `SIM_TIME_LIMIT`, including after a local reset near the limit. Internal queues
 grow/reclaim automatically; queue-index representation exhaustion reports
 `STORAGE_RANGE` with scope and entry count. No user history-depth setting is added.
@@ -561,19 +582,17 @@ integer-fs testbench time and checks actual raw timestamps against its event tab
 ## Aggregation and startup
 
 Instantiate one `bw_group_mon` per Group ID and use the shared configuration
-entry points. Points register only their own identity/configuration; they need no
-Group ID or data wiring to a group. A grouped setup explicitly declares its total
-group count and calls `finish_configuration()` after all definitions/rules:
+entry points. Each real group instance declares its Group ID. Points register only
+their own identity/configuration; they need no Group ID or data wiring to a group.
+The setup discovers counts and seals all t=0 member rules automatically:
 
 ```systemverilog
-bw_mon_setup #(.EXPECTED_POINT_COUNT(3), .EXPECTED_GROUP_COUNT(1)) setup();
+bw_mon_setup setup();
 bw_group_mon #(.GROUP_ID("noc1"), .WINDOW_WIDTH(2), .UPDATE_STRIDE(1)) noc1
   (.clk(clk), .reset_n(group_statistics_reset_n));
 initial begin
-  define_group("noc1", 2); // expected direct members after deduplication
   add_point_member("noc1", "tb.noc1", BW_PREFIX);
   add_point_member("noc1", "tb.noc1.p0"); // duplicate hit counts once
-  finish_configuration();
   wait(monitor_ready);
   // Drive traffic on a sampling edge strictly after measurement_start_ticks.
 end
@@ -584,7 +603,8 @@ configuration; the third may remain ungrouped. Point IDs and Group IDs have
 separate namespaces. `BW_EXACT` is the default match kind. `BW_PREFIX` matches a
 complete dot-delimited hierarchy prefix, including that prefix itself; `noc1`
 cannot match `noc10`. A prefix ending with a dot already supplies the delimiter.
-No matches, an empty group, or a deduplicated member-count mismatch is fatal.
+No matches or an empty group is fatal. The direct-member count is derived after
+deduplication; a subgroup counts as one direct member.
 Groups can also contain explicitly named subgroups, alone or mixed with points.
 Use `add_group_member(parent, child)` for an exact Group ID; a Point ID with the
 same text remains a different source. The generic entry
@@ -595,30 +615,25 @@ recursive paths through different direct members are errors.
 
 | Entry/configuration | Type / default | Contract |
 | --- | --- | --- |
-| setup `EXPECTED_POINT_COUNT` | four-state unsigned 64-bit input, required | Known 1..16,384, all unique points including ungrouped points |
-| setup `EXPECTED_GROUP_COUNT` | four-state unsigned 64-bit input, default 0 | Known 0..4,096; zero retains automatic point-only configuration completion |
-| setup `MISSING_RECORD_TIMEOUT_NS` | four-state unsigned 64-bit integer ns, default 1 | Known positive duration; exact tick conversion checked before use |
-| setup `STARTUP_TIMEOUT_NS` | four-state unsigned 64-bit integer ns, default 100 | Known positive; original setup deadline is unchanged by local resets |
+| `bw_mon_setup` | one parameterless instance | Discovers all points and groups, including ungrouped points and intermediate groups |
 | group `GROUP_ID` | string, required | Nonempty unique group owner; equal Point ID text is legal |
-| group clock/window parameters | same basis/W/S/context as points | Every direct member must share clock context, basis, width and stride |
-| `define_group(id, expected_members)` | four-state unsigned 64-bit count | Known 1..16,384 direct members after deduplication |
-| `add_point_member(group,id,match)` | exact Point ID or segment prefix | May be called only before configuration is sealed |
-| `add_group_member(group,child)` | exact Group ID | Subgroup may be declared later before configuration is sealed |
+| group clock/window parameters | same basis/W/S as points | Every direct member must share basis, width and stride; a common actual sampling clock is a usage prerequisite |
+| `add_point_member(group,id,match)` | exact Point ID or segment prefix | Legal only at actual t=0; target may register later in that time slot |
+| `add_group_member(group,child)` | exact Group ID | Legal only at actual t=0; subgroup may register later in that time slot |
 | `add_member(group,kind,id,match)` | explicit `BW_POINT` / `BW_GROUP`; match defaults `BW_EXACT` | Unknown/invalid kind, or group prefix, is fatal |
-| `finish_configuration()` | explicit one-time action | Seals definitions/rules; still waits for required point registrations and group owners |
 
-Counts are validated before narrowing to internal bounded indices. Partial X/Z and
-values such as 2^32+1 cannot silently become a valid count of one. Registration,
-configuration, reference, owner, context, edge/fanout and member-count checks finish
+Actual counts retain the 16,384-point and 4,096-group limits. Registration,
+configuration, reference, owner, window, edge/fanout and capacity checks finish
 before ready. A tri-color traversal rejects cycles, computes recursive point sets
 and checks at most eight nested group levels. Each direct member must contribute
 a disjoint recursive point set; point/subgroup, sibling and diamond overlaps fail
 with the conflicting Point ID and both typed paths. No path is automatically
 removed. Reuse between independent scopes is allowed. Up to 65,536 deduplicated
 direct edges and sixteen direct parents per point or group source are checked; their actual maximum-scale execution is a later acceptance
-step. Missing owner/point/configuration completion reaches a bounded startup error,
-with IDs/counts in the log. Same-deadline NBA registration chains participate
-before that decision.
+step. A member rule without a real owning group, an invalid reference or an empty
+group fails during sealing, with the object and actual startup state in the log.
+All finite t=0 scheduling chains participate; any positive-time configuration
+call is late even if it executes before the setup's seal action in that slot.
 
 Compile the package first, add `+incdir+rtl`, and enable VCS deferred-assertion
 support with `-assert svaext`. The registry/transport headers are part of
@@ -626,7 +641,7 @@ support with `-assert svaext`. The registry/transport headers are part of
 these options and hashes included RTL headers recursively as well as compilation
 units, so editing a header invalidates the compile cache.
 
-## Group results, consumption and deadlines
+## Group results and same-time consumption
 
 A group exposes the same window identity/epoch/sequence, raw totals, endpoints,
 coverage, GB/s/B-cycle and independent quality scalars as a point, directly at
@@ -645,8 +660,7 @@ known bytes/events with checked unsigned 64-bit arithmetic, preserving the
 original timestamp and actual edge index. Byte and event completeness propagate
 separately. No child bandwidth or cumulative statistic is an input. Before input
 acknowledgement, the group output is durable and its own core has accepted or
-explicitly handled the frame during reset. All direct consumers must acknowledge
-before a source record is released. Ungrouped sources still validate publication
+explicitly handled the frame during reset. Every active direct consumer must acknowledge, or have its responsibility explicitly cancelled by quarantine, before a source record is released. The frozen dependency graph is retained separately from active subscriptions. Ungrouped sources still validate publication
 order but require no retained communication backlog.
 
 The group captures expected actual edges without blocking. Missing/duplicate/
@@ -658,10 +672,7 @@ original scheduled endpoint. The collector merges controls and frames in origina
 timestamp order; same-time controls precede the frame. Pending source progress is
 propagated through direct parent groups at every hierarchy level.
 
-Missing-frame deadlines use original expected T plus the configured physical
-interval, including when an earlier frame completed while a newer one was
-pending. Same-slot module NBA/ReNBA arrival and later same-T clock metadata settle
-before deferred failure. A stopped shared clock creates no new expected edges.
+Independent native actual-edge observers establish group obligations even if capture fails. Writable completion audits wait on explicit posted grants and durable producer certificates through the frozen DAG. Each group records capture, held input, output publication, local core/reset receipt and input ACK separately. Controls, captured resets and due core timer actions also require receipts. No physical missing-record timeout, fixed quiet-round count, next-edge wait or queue-empty certificate exists. A stopped shared clock creates no new expected edges.
 Ns windows continue when caught up; cycle snapshots hold. Known point reset keeps
 ancestor history until natural expiry and supplies timestamped reset coverage even
 without clocks. Group statistics reset clears only its core while collection,
@@ -678,11 +689,10 @@ Core diagnostics include `GROUP_COUNT`, `GROUP_REFERENCE`, `GROUP_DEFINITION`,
 `DUPLICATE_OWNER`, `EMPTY_GROUP`, `MEMBER_COUNT`, `MEMBER_RULE`, `GROUP_CONTEXT`,
 `GROUP_CYCLE`, `GROUP_OVERLAP`, `GROUP_DEPTH`,
 `TOPOLOGY_LIMIT`, `CONFIG_FROZEN`, `RECORD_SEQUENCE`, `EDGE_SEQUENCE`,
-`RECORD_TIME`, `FRAME_ALIGNMENT`, `UNEXPECTED_FRAME`, `FRAME_TIMEOUT`,
+`RECORD_TIME`, `FRAME_ALIGNMENT`, `GROUP_COMPLETION`,
 `CONTROL_SEQUENCE`, `CONTROL_ORIGIN`, `ACK_SEQUENCE` and unexpected premature
 release. Logs identify the group/source and expected/received time, edge or
-sequence as appropriate. These errors terminate; observation incompleteness
-continues with known contributions and explicit quality.
+sequence as appropriate. Runtime errors warn and quarantine the typed owner and its dependent ancestors. Failed consumers cancel only their own inbound obligations; reliable children and siblings continue. Quarantine is sticky across reset. Startup/configuration failures remain fatal. Observation incompleteness continues with known contributions and explicit quality.
 
 Reproduction uses `python3 tests/run.py group_basic group_matching group_delayed
 transport_retention group_metadata_order group_metadata_reactive
@@ -724,12 +734,14 @@ blocks before they emit results.
 ## Traffic episodes and e2e results
 
 Episode analysis uses the shared `bw_stats_core` behind ordinary point/group
-input paths. The raw logic [1:0] `EPISODE_ENABLE` policy accepts known0/1. Set `EPISODE_ENABLE=1` and explicitly configure
+input paths. The raw logic [1:0] `EPISODE_ENABLE` policy accepts known0/1. Set `EPISODE_ENABLE=1` and optionally configure
 `SILENCE_THRESHOLD=Q`. Q is a positive known unsigned 64-bit integer in the
-selected `WINDOW_BASIS` (ns or local cycles). There is no cross-interface Q
-default. `EPISODE_ENABLE=0` is the default window-only mode; Q is then unused.
-An enabled missing/zero/unknown Q is `EPISODE_CONFIG` before the point registers
-and before ready. An unrepresentable ns-to-tick conversion is a core arithmetic
+selected `WINDOW_BASIS` (ns or local cycles). An omitted Q defaults to 10 in
+the selected basis (10 ns or ten local cycles) when episode analysis is enabled.
+`EPISODE_ENABLE=0` is the default window-only mode; Q is then unused and not
+validated. An enabled zero/unknown/unrepresentable Q is `EPISODE_CONFIG` before
+the point registers and before ready; illegal effective values never fall back
+to the default. An unrepresentable ns-to-tick conversion is a core arithmetic
 error. These are startup parameters and cannot be changed during simulation.
 
 A definite transfer starts or extends an episode, including a zero-byte
@@ -827,36 +839,33 @@ in `tests/cases.json` select the episode regressions individually.
 
 ## Automatic traffic phases
 
-Set `PHASE_ENABLE=1` together with enabled episodes and an explicit Q. Phases
-consume the same newly published real GB/s window results shown at the public
-point. There is no second bandwidth window, external phase label, performance
-target input or Verdi-side calculation. Repeated or missing ramp, steady and
-fall phases are allowed; a zero-bandwidth plateau can be steady.
+Set `EPISODE_ENABLE=1` to enable episodes and the fixed default phase strategy.
+Omitted `PHASE_ENABLE` follows the episode switch. Explicit `PHASE_ENABLE=0`
+retains episode statistics without phases; explicit 1 requires enabled episodes.
+Both switches accept only known 0/1. Q defaults to 10 in the selected basis and
+remains independent of phase confirmation.
 
-The following parameters are shared by point, group and core. All settings are fixed
-before ready. Disabled phase analysis is the default; when enabled every entry
-below must be explicit, including zero relative coefficients.
+Point, group and shared core use the internal `PAIR6_R2` policy. The old N,
+minimum-span, K and ABS/REL module parameters have been removed; there is no
+expert override. Existing integrations must remove those arguments and recompile.
+Repository VCS entries use `-error=AOUP`: VCS otherwise warns and ignores an
+undefined parameter override. Custom VCS build commands should retain this flag
+so removed options receive the simulator's native elaboration error.
 
-| Parameter | Type / unit | Required value / behavior |
-| --- | --- | --- |
-| `PHASE_ENABLE` | raw logic [1:0], known0/1 | Default 0; enabled analysis also requires `EPISODE_ENABLE=1` |
-| `PHASE_N` | known unsigned64 count | Required N>=3; automatic queue storage uses signed32 indices, so larger than 2,147,483,647 is a representation error rather than an arbitrary analysis cap |
-| `PHASE_MIN_SPAN` | known unsigned64 ns / cycles | Required positive span in the window basis; ns is converted with checked integer arithmetic |
-| `PHASE_K` | known unsigned64 count | Required positive number of consecutive equal candidates |
-| `PHASE_STEADY_ENTER_ABS`, `PHASE_STEADY_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite coefficients for steady entry |
-| `PHASE_STEADY_EXIT_ABS`, `PHASE_STEADY_EXIT_REL` | real GB/s / unitless fraction | Exit coefficients must each be at least the corresponding entry coefficient |
-| `PHASE_RMS_ENTER_ABS`, `PHASE_RMS_ENTER_REL` | real GB/s / unitless fraction | Explicit nonnegative finite residual-fit entry coefficients |
-| `PHASE_RMS_EXIT_ABS`, `PHASE_RMS_EXIT_REL` | real GB/s / unitless fraction | Exit coefficients must each be at least the corresponding entry coefficient |
-| `PHASE_TREND_ABS`, `PHASE_TREND_REL` | real GB/s / unitless fraction | ABS must exceed steady EXIT ABS; REL must be at least steady EXIT REL, guaranteeing strict separation for every nonnegative mean |
+| Internal rule | Fixed behavior |
+| --- | --- |
+| Evidence | Six consecutive eligible raw windows |
+| Fit | Three adjacent-pair mean points, using actual physical timestamps |
+| Minimum span | min(W, 5×S), in the window basis |
+| Confirmation | Two consecutive equal candidates |
+| Steady entry / hold | Absolute fitted total change ≤4% / 8% of the six-window mean; raw residual RMS ≤10% / 12% |
+| Ramp / fall | Absolute fitted total change ≥10% of the mean; paired-point residual RMS ≤2.5%; sign determines direction |
+| Zero | All six zero-valued eligible windows support STEADY; no activity creates no episode |
 
-Coefficient defaults of -1 are deliberately invalid sentinels, not engineering
-thresholds. Each tolerance is ABS+REL*mean: REL=0.05 means five percent of the
-fit mean, unlike performance cfg keys ending `_rel_tol_pct`, where 5 means five
-percent. N full samples do not bypass `PHASE_MIN_SPAN`; an unattainable span
-remains explicitly insufficient rather than creating a phase. Bad settings are
-fatal `PHASE_CONFIG` before point registration/ready; queue representation uses
-`STORAGE_RANGE`. Nonrepresentable fit or tolerance arithmetic is fatal
-`PHASE_FIT` with scope and publication/operand context.
+All absolute coefficients are zero. Raw window observations and their residuals
+remain available; the pair fit does not smooth the measurements used for
+variation or performance checks. Stage recognition is independent of a
+performance verdict.
 
 Eligible evidence is new, full, byte-complete, positive-denominator and owned by
 the active episode. Before a new episode, all older activity is at or before
@@ -867,14 +876,12 @@ source reset generation. Unknown older observations independently fail window
 quality until they expire. Own statistics reset clears this ownership with the
 window history. Known silent background is not other-episode activity.
 
-The most recent N consecutive eligible results also require the configured
-span. Fit time uses actual physical publication timestamps, with integer tick
-differences taken before real conversion, including in cycle mode after a
-frequency change. The equal-weight least-squares fit reports its mean, total
-trend delta over those N points and residual RMS. Constant values use a relative
-value origin so an exactly constant 6.4 GB/s series has zero residual even with
-zero tolerances; there is no epsilon clamp. Residual RMS is phase evidence,
-not the later performance population standard deviation.
+The six consecutive eligible results must also satisfy the fixed minimum span.
+Fit time uses actual physical timestamps, with integer tick differences taken
+before real conversion, including cycle mode after a frequency change. The
+six-window mean supplies the relative scale. `phase_fit_rms` is the raw-window
+residual RMS against the paired fit; `phase_fit_trend_rms` is the three-pair
+residual RMS. Neither is the performance population standard deviation.
 
 Strict steady/ramp/fall conditions use entry tolerances; an existing steady
 phase uses wider exit tolerances. A changed candidate starts its K count at1.
@@ -890,6 +897,8 @@ Public ordinary point fields are:
 
 | Fields | Meaning |
 | --- | --- |
+| `phase_strategy`, `phase_reason` | Fixed strategy version and typed explanation; `phase_reason_name()` gives DISABLED, NO_EPISODE, warmup/quality/ownership exclusions, evidence shortage, confirmation progress or confirmed state |
+| `phase_evidence_required`, `phase_candidate_required`, `phase_minimum_span` | Fixed six-sample/two-confirmation requirements and actual min(W,5S) in the selected basis |
 | `phase_current`, `phase_candidate`, `phase_active` | Current/candidate `BW_PHASE_UNDETERMINED`, `RAMP`, `STEADY` or `FALL`; active means a confirmed reliable fragment exists |
 | `phase_id`, `phase_result_seq` | Lifetime confirmed-fragment identity and delivered final-fragment sequence; discarded outside-episode fragments can leave ID gaps |
 | `phase_window_seq` | Last consumed window `result_seq`; unchanged on a held cycle snapshot |
@@ -898,7 +907,7 @@ Public ordinary point fields are:
 | `phase_candidate_count`, `phase_candidate_ticks` | Consecutive candidate count and first-candidate time |
 | `phase_candidate_total_bytes`, `phase_candidate_total_events` | Known raw cumulative snapshots strictly before that candidate publication |
 | `phase_start_ticks`, `phase_confirmation_ticks` | Confirmed current boundary and later confirmation time |
-| `phase_fit_valid`, `phase_fit_mean`, `phase_fit_delta`, `phase_fit_rms` | Latest qualified fit in GB/s; invalid evidence clears validity rather than extending an old fit |
+| `phase_fit_valid`, `phase_fit_mean`, `phase_fit_delta`, `phase_fit_rms`, `phase_fit_trend_rms` | Latest qualified fit in GB/s; invalid evidence clears validity rather than extending an old fit |
 | `phase_result` | Latest immutable static `bw_phase_result_t` final record |
 
 The synchronous bridge is `emit_phase_result(string scope_id,
@@ -920,14 +929,12 @@ after the measured episode is discarded. Unknown ends remain unknown, and an
 unconfirmed candidate never becomes a formal fragment. Own reset clears current
 phase fields/evidence while preserving old-epoch final records and lifetime IDs.
 
-For example,640 B at 95 ns and a zero-byte event at 135 ns with W100/S10,
-N3/span20/K4 and Q60 produce steady candidate120, confirmation150 and final
-interval[120,136). Its raw start/end byte snapshots are both640; the phase's
-window fit mean is6.4 GB/s while its raw interval bytes are zero. This is an
-acceptance vector, not a product default. Tests also cover true-time fitting
-across 11/12/14 ns and 10.5/11/12 ns, hysteresis/equality, changing/cancelled candidates, repeated
-ramps/falls/plateaus, old zero/unknown residue, reset, zero mean, no activity,
-insufficient span, explicit configuration failures and real arithmetic overflow.
+A confirmation may occur after the last transfer while the independently
+configured Q is still collecting silence. Final intervals are clipped to the
+actual episode tail. Insufficient phase evidence never invalidates an otherwise
+complete positive-duration episode average. The fixed-input product suite covers
+constant and repeated platforms, rise/fall, alternating ±2% and ±8%, short
+activity, zero-byte activity, no activity, gaps and reset recovery.
 
 
 ## Final interval metrics
@@ -1004,6 +1011,28 @@ metrics also retain RESET/TRUNCATED reasons rather than losing their interruptio
 context behind a generic boundary reason. A previously settled
 complete phase remains valid after a later gap, reset or observation end.
 
+The fixed default sustained-variation rule is separate from these explicit
+variation metrics. With phase analysis enabled it needs no `BW_EXPECT` file:
+`bw_check_report` builds the earliest six consecutive fully platform-contained
+windows with logical span at least `min(W,5*S)`, freezes their mean B, and checks
+the reference rows too. Strict `abs(y-B)>0.05*B` must hold for >=2 consecutive new
+valid rows spanning W in original ns-tick/cycle positions to FAIL. Equality,
+CV and phase-fit residuals do not redefine this rule. Zero/missing reference or
+incomplete coverage warns; positive near-zero references follow the same rule.
+Every platform settles once at terminal episode attribution, preserving earlier
+FAIL and keeping explicit metric counters independent. See
+[expectation and report contract](bw-mon-expectations.md#default-sustained-variation-check).
+
+Phase records additionally retain original recognition support in
+`support_first_seq`, `support_last_seq`, `support_count` and
+`support_min_gbps`/`support_max_gbps`. The fixed first confirmation uses seven
+original valid rows; advancing the six-row fit does not replace that support.
+Private raw evidence preserves both window endpoints and actual cycle positions
+for final reference/cutoff checks. `BW_DEFAULT_CHECK` reports B separately from
+raw steady bandwidth and includes reference membership, runs, quality and reason;
+`BW_DEFAULT_EXCLUSION` reports independently confirmed phase ranges. Normal-step
+handoff attribution is a separate following implementation requirement.
+
 Episode records also contain `last_steady_found`, `last_steady_selection_valid`,
 `last_steady_reason` and embedded immutable `last_steady`. Only a normally
 completed episode with a known last transfer and actual tail makes representative
@@ -1078,14 +1107,7 @@ Reproduce with `python3 tests/run.py` or pass any listed case name. These
 component/raw-point vectors do not claim full group composition, waveform manual
 review or target-scale acceptance.
 
-Deferred deadline checks cache their current condition and error detail in Active,
-then use a read-only fatal action in Postponed. VCS forbids setting a failure latch
-from that action. `core_failure_pending()` therefore combines the runtime
-`core_failure_seen` latch with current per-owner deferred candidates at finalization
-boundaries. A same-slot arrival cancels its candidate. Runtime record emission
-continues to use the terminal runtime latch, so a provisional deadline candidate
-cannot discard a valid result. Tests cover both a late arrival retaining normal
-final output and a real timeout suppressing sibling episode/hint final results.
+Missing-stage diagnostics run in the writable native coordinator after explicit current continuations and producer certificates are exhausted. Read-only contract observers verify the final state at the original timestamp. A scoped runtime failure preserves healthy sibling episode/hint output. Positive-time old-edge input is invalid and cannot revive a disabled scope. The unified final-report responsibility audit remains separate from local completion.
 
 The compile-cache fingerprint includes ROOT, runner content/options, absolute
 compilation-unit paths/content, explicitly listed `case.sources` fixtures, the
@@ -1105,19 +1127,17 @@ tickets.
 ## Typed hierarchy and independent statistics
 
 The T4 topology uses twelve registered points, including ungrouped p10/p11, and
-four group owners. Its definitions are explicit:
+four real group instances, with Group IDs `die0_dmc`, `die1_dmc`, `all_dmc`
+and `mixed`. Their t=0 member rules include:
 
 ```systemverilog
-define_group("die0_dmc", 4); // add points p0...p3
-define_group("die1_dmc", 4); // add points p4...p7
-define_group("all_dmc", 2);
+// Add points p0...p3 to die0_dmc and p4...p7 to die1_dmc.
 add_group_member("all_dmc", "die0_dmc");
 add_group_member("all_dmc", "die1_dmc");
-define_group("mixed", 3);
 add_group_member("mixed", "die0_dmc");
 add_point_member("mixed", "p8");
 add_point_member("mixed", "p9");
-// finish_configuration() follows all point-membership rules.
+// The one setup seals all rules automatically after the t=0 slot.
 ```
 
 `all_dmc` has two direct members and eight recursive points; `mixed` has three
@@ -1151,12 +1171,11 @@ exact; small-vector real calculations use absolute tolerance 1e-10.
 `hierarchy_retention_{all_first,mixed_first}` changes lawful parent completion
 order on consecutive original edges for all four E1 scenarios, and verifies
 retained frames, independent quality and final sums through the controlled
-package seam. `hierarchy_depth_transport` sends a leaf at the exact
-original T+1 ns deadline through two NBAs and eight group levels; all levels keep
+package seam. `hierarchy_depth_transport` sends a leaf through same-time
+NBAs and eight group levels at its actual original edge; all levels keep
 T/edge and complete in that same physical slot. Its three maximum-size point
 increments produce exactly 12,884,901,885 B at the root; the real tolerance 1e-4
-GB/s is below 8e-15 relative. The matching missing case terminates at the original
-deadline rather than adding a timeout per level. Clock-stop known/unknown point
+GB/s is below 8e-15 relative. The matching missing case quarantines the affected ancestor path at the original edge timestamp while reliable leaves continue. Clock-stop known/unknown point
 controls, their expiry and a reset of a middle group with existing history are
 also checked. A sampled observation gap retains the other points' known bytes
 and events through all eight levels, with both completeness flags false. A later
@@ -1256,6 +1275,40 @@ configuration and metadata validation, checked unsigned arithmetic, exact event/
 clock/publication runs, independent source ACK retention, contextual test-only
 allocation rejection and reproducible resource evidence. Public names and numeric
 widths remain stable; malformed policies cannot become known-zero accounting.
+
+## Ending audit and the one report-complete marker
+
+Simulation ending depends on no final-block order. The first owner to reach
+its final runs one idempotent global audit (`BW_END_AUDIT`), freezing the
+durable responsibility ledger; every point and group then leaves a typed
+terminal line `BW_POINT_TERMINAL` / `BW_GROUP_TERMINAL`
+(`state=NORMAL|UNOBSERVED|DISABLED|INTERRUPTED`, with the responsible
+`stage=` on interruption). After all SV finals, one native end-of-simulation
+callback verifies every registered owner/core/hint role receipt and every
+scope terminal, then emits exactly one `BW_REPORT_COMPLETE` line carrying
+`roles=k/k terminals=m/m summary=0|1 integrity=COMPLETE|INCOMPLETE
+performance=PASS|FAIL|WARNING|STATISTICS_ONLY|NONE`. Monitoring integrity is
+named independently of the process exit and the performance summary; a
+quarantined or interrupted scope makes the marker `integrity=INCOMPLETE`.
+
+When any receipt or terminal is missing, the marker is replaced by exactly one
+`BW_REPORT_INCOMPLETE reason=...` line and no completion marker is backfilled.
+The reason family is closed:
+
+| reason | meaning |
+| --- | --- |
+| `CORE_FAILURE` | a fatal core error already stopped monitoring |
+| `NO_END_AUDIT` | no owner final ever ran the global audit |
+| `NOT_READY` | monitoring never published ready (carries `stage=`) |
+| `MISSING_ROLE_RECEIPT` | a registered owner/core/hint role left no terminal receipt (carries `owner=`/`role=`) |
+| `MISSING_SCOPE_TERMINAL` | a registered scope left no terminal line (carries `scope=`) |
+
+An externally killed or stalled process produces neither marker nor summary;
+that absence is the external evidence of an unclean ending and is never
+replaced by invented in-library missing-frame diagnostics. Drivers that finish
+in the same time slot as their last posted input honestly settle as
+`INTERRUPTED stage=GENERATION`; advancing one representable slot after the
+endpoint lets the final generation close normally.
 
 ## Reproducible end-to-end scenes
 

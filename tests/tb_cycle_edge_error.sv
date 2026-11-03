@@ -4,7 +4,7 @@ module tb_cycle_edge_error;
   bw_record_t record;
   bit record_toggle=0;
   int source_handle;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_BASIS(BW_CYCLE), .WINDOW_WIDTH(2), .UPDATE_STRIDE(1)) core
     (.scope_id("cycle.component"), .record(record), .record_toggle(record_toggle),
      .stats_reset_n(1'b1),.member_control('0),.member_control_toggle(1'b0),
@@ -32,7 +32,7 @@ module tb_cycle_edge_error;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   initial begin
-    source_handle=register_point("cycle.component","tb_cycle_edge_error.core",BW_CYCLE,2,1,"clk");
+    source_handle=register_point("cycle.component","tb_cycle_edge_error.core",BW_CYCLE,2,1);
     wait(monitor_ready);
     #1000000;
     record='0;
@@ -49,6 +49,8 @@ module tb_cycle_edge_error;
     record.edge_index=13;
     record_toggle<=!record_toggle;
     #1;
-    $fatal(1,"expected core error did not occur");
+    if(!scope_disabled(BW_POINT,"cycle.component") || core.accepted_record_seq!=1)
+      $fatal(1,"bad edge must not receive acceptance after reliable first frame");
+    $display("TB_PASS cycle_edge_error quarantined");$finish;
   end
 endmodule

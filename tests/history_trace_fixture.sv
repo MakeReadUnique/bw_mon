@@ -16,20 +16,17 @@ module history_trace_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg
   bw_u64_t cycle_right_ticks[8]='{1250000,2250000,3250000,5250000,7250000,10250000,11250000,12250000};
   bit cycle_complete[8]='{1,1,1,0,0,1,1,1};
   bit cycle_reset[8]='{0,0,0,0,0,0,1,1};
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(2),.EXPECTED_GROUP_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_point_mon #(.POINT_ID("history.variable"),.DYNAMIC_BYTES(1),.WINDOW_BASIS(BASIS),
     .WINDOW_WIDTH(3),.UPDATE_STRIDE(2),.EPISODE_ENABLE(1),.SILENCE_THRESHOLD(2),
-    .PHASE_ENABLE(1),.PHASE_N(3),.PHASE_MIN_SPAN(2),.PHASE_K(2),
-    .PHASE_STEADY_ENTER_ABS(0),.PHASE_STEADY_ENTER_REL(0),.PHASE_STEADY_EXIT_ABS(0),.PHASE_STEADY_EXIT_REL(0),
-    .PHASE_RMS_ENTER_ABS(0),.PHASE_RMS_ENTER_REL(0),.PHASE_RMS_EXIT_ABS(0),.PHASE_RMS_EXIT_REL(0),
-    .PHASE_TREND_ABS(1),.PHASE_TREND_REL(0)) variable_point
+    .PHASE_ENABLE(1)) variable_point
     (.clk(clk),.reset_n(reset_n),.valid(valid),.size_bytes(bytes_now),.size_known(1'b1));
   bw_point_mon #(.POINT_ID("history.fixed"),.FIXED_BYTES(8),.WINDOW_BASIS(BASIS),.WINDOW_WIDTH(3),.UPDATE_STRIDE(2)) fixed_point
     (.clk(clk),.reset_n(1'b1),.valid(1'b1));
   bw_group_mon #(.GROUP_ID("history.group"),.WINDOW_BASIS(BASIS),.WINDOW_WIDTH(3),.UPDATE_STRIDE(2)) group_mon
     (.clk(clk),.reset_n(1'b1));
   task automatic sample(bw_u64_t tick,logic valid_value,logic [63:0] byte_value);
-    #(tick-$time-1);valid=valid_value;bytes_now=byte_value;
+    #(measurement_start_ticks+tick-$time-1);valid=valid_value;bytes_now=byte_value;
     #1;clk=1;#1;clk=0;
     if(group_mon.accepted_record_seq!=group_mon.raw_record.record_seq)
       $fatal(1,"group raw increment must enter its core on the original edge");
@@ -42,10 +39,11 @@ module history_trace_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg
     i=int'(group_mon.result_seq)-1;
     if(i<0 || i>7 || group_mon.result_seq!=checked_windows+1)$fatal(1,"unexpected publication sequence");
     if(BASIS==BW_NS)begin
-      right_tick=(2*bw_u64_t'(i+1))*BW_TICKS_PER_NS;left_tick=(i==0) ? 0 : right_tick-3000000;
+      right_tick=measurement_start_ticks+(2*bw_u64_t'(i+1))*BW_TICKS_PER_NS;
+      left_tick=(i==0) ? measurement_start_ticks : right_tick-3000000;
       expected_bytes=ns_bytes[i];expected_events=ns_events[i];complete=ns_complete[i];reset_coverage=ns_reset[i];
     end else begin
-      left_tick=cycle_left_ticks[i];right_tick=cycle_right_ticks[i];
+      left_tick=measurement_start_ticks+cycle_left_ticks[i];right_tick=measurement_start_ticks+cycle_right_ticks[i];
       expected_bytes=cycle_bytes[i];expected_events=cycle_events[i];complete=cycle_complete[i];reset_coverage=cycle_reset[i];
       expected_cycles=cycle_right[i]-cycle_left[i];
       if(group_mon.window_start_cycle!=cycle_left[i] || group_mon.window_end_cycle!=cycle_right[i] ||
@@ -67,14 +65,14 @@ module history_trace_fixture #(parameter bw_mon_pkg::bw_basis_t BASIS=bw_mon_pkg
   endtask
   history_trace_checker checker();
   initial begin
-    define_group("history.group",2);add_point_member("history.group","history.variable");add_point_member("history.group","history.fixed");
-    finish_configuration();wait(monitor_ready);
+    add_point_member("history.group","history.variable");add_point_member("history.group","history.fixed");
+    wait(monitor_ready);
     sample(250000,1,4);sample(750000,1,4);sample(1250000,1,4);sample(1750000,1,4);sample(2250000,1,4);
     sample(2750000,1,0);sample(3250000,1,'x);sample(3750000,1'bx,4);sample(5250000,0,'x);
     sample(6250000,1,8);sample(7250000,1,8);sample(8250000,1,8);sample(10250000,1,8);sample(10750000,1,8);
-    #(11100000-$time);reset_n=0;sample(11250000,1,8);
-    #(11500000-$time);reset_n=1;sample(11750000,1,8);sample(12250000,1,0);
-    #(16000001-$time);
+    #(measurement_start_ticks+11100000-$time);reset_n=0;sample(11250000,1,8);
+    #(measurement_start_ticks+11500000-$time);reset_n=1;sample(11750000,1,8);sample(12250000,1,0);
+    #(measurement_start_ticks+16000001-$time);
     if(checked_windows!=8 || group_mon.raw_record.record_seq!=17 || group_mon.accepted_record_seq!=17 ||
        group_mon.total_bytes!=204 || group_mon.total_events!=31 || group_mon.stats_epoch!=0 ||
        variable_point.total_bytes!=8 || variable_point.total_events!=2 || variable_point.stats_epoch!=1 ||

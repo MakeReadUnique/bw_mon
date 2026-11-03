@@ -5,7 +5,7 @@ module tb_member_control_error;
   bit control_toggle=0;
   int handle;
   bit invalid_point=0;
-  bw_mon_setup #(.EXPECTED_POINT_COUNT(1)) setup();
+  bw_mon_setup setup();
   bw_stats_core #(.WINDOW_WIDTH(2), .UPDATE_STRIDE(1)) core
     (.scope_id("control.scope"), .record('0), .record_toggle(1'b0),
      .member_control(control), .member_control_toggle(control_toggle),.stats_reset_n(1'b1),
@@ -33,7 +33,7 @@ module tb_member_control_error;
      .phase_fit_mean(),.phase_fit_delta(),.phase_fit_rms(),
      .phase_result());
   initial begin
-    handle=register_point("origin.point","tb_member_control_error",BW_NS,2,1,"clk");
+    handle=register_point("origin.point","tb_member_control_error",BW_NS,2,1);
     void'($value$plusargs("INVALID_POINT=%d",invalid_point));
     wait(monitor_ready);
     #1000000;
@@ -44,6 +44,9 @@ module tb_member_control_error;
     #1000000;
     control.timestamp_ticks=$time;
     control_toggle<=!control_toggle;
-    #1; $fatal(1,"expected core error did not occur");
+    #1;
+    if(!scope_disabled(BW_POINT,"control.scope") || core.accepted_control_count!=(invalid_point ? 0 : 1))
+      $fatal(1,"invalid control must stop before map/receipt mutation");
+    $display("TB_PASS member_control_error quarantined");$finish;
   end
 endmodule
