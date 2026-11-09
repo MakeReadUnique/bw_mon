@@ -36,6 +36,8 @@
 
 ## 架构规划
 
+当前实现总览见[架构说明 HTML](docs/bw-mon-architecture.html)，包含自动启动、模块与数据流、同刻完成与隔离、默认阶段和持续 5% 检查，以及统一结束报告；可离线用浏览器打开。
+
 使用 wayfinder 的 GitHub Issues 决策地图记录已确认架构。本地 `.scratch/bw-mon-architecture/` 仅保留迁移前的历史归档。
 
 - [通用 SoC 带宽监测器架构地图](https://github.com/MakeReadUnique/bw_mon/issues/1)
